@@ -12,7 +12,7 @@ public class Handler {
             return "stop";
         }
         else if (message.equals("/searchMusician")){
-            return "some link";
+            return HandlerVkApi.getMusicianLink("some musician");
         }
         return "unknown command";
     }
