@@ -1,9 +1,14 @@
 package handlers;
 
 import bots.ConsoleBot;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
+import user.User;
+
+import java.util.Scanner;
 
 public class Handler {
-    public static String getMessage(String message, ConsoleBot bot){
+    public static String getMessage(String message, ConsoleBot bot, User user) throws ClientException, ApiException {
         if (message.equals("/help")){
             return "some help info";
         }
@@ -11,8 +16,8 @@ public class Handler {
             bot.stop();
             return "stop";
         }
-        else if (message.equals("/searchMusician")){
-            return HandlerVkApi.getMusicianLink("some musician");
+        else if (message.equals("/link")){
+            return HandlerVkApi.getMusicianLink("lida", user);
         }
         return "unknown command";
     }

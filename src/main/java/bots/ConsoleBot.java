@@ -4,6 +4,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import handlers.Handler;
 import handlers.HandlerVkApi;
+import user.User;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -13,12 +14,13 @@ public class ConsoleBot {
     private boolean work = true;
 
     public void run(Scanner input) throws ClientException, ApiException, URISyntaxException, IOException {
-        while (!HandlerVkApi.initUser()){
+        User user;
+        do {
             System.out.println("Auth");
-        }
+        } while ((user = HandlerVkApi.initUser()) == null);
         while(work){
-            String message = input.nextLine();
-            System.out.println(Handler.getMessage(message, this));
+            String message = input.next();
+            System.out.println(Handler.getMessage(message, this, user));
         }
     }
 
