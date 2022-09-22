@@ -8,4 +8,4 @@ target
 *.xml
 
 #ignore anon info
-src/main/resources/application.properties
+src/main/resources/*.properties

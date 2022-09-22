@@ -4,35 +4,46 @@ import bots.ConsoleBot;
 import com.vk.api.sdk.objects.groups.Group;
 import user.User;
 
-import java.util.Scanner;
-
 public class Handler {
-    public static String getMessages(Scanner input, ConsoleBot bot, User user){
-        String message = input.next();
-        if (message.equals("/help")){
-            return "some help info";
+    private static final String helpInfo = "I'm bot helping interacting with music industry." +
+                                            "I could find vk page of musician you would like, join you to his group." +
+                                            "To get link to verified artist you use /link artist name or tag." +
+                                            "For joining use /join artist name or tag." +
+                                            "For stopping use /stop." +
+                                            "You could display help info again with /help.";
+
+    public static String executeMessage(String input, User user, ConsoleBot bot){
+        String[] message = input.split(" ", 2);
+        switch (message[0]) {
+            case "/help" -> {
+                return helpInfo;
+            }
+            case "/stop" -> {
+                bot.stop();
+                return "stopped";
+            }
+            case "/link" -> {
+                Group group = HandlerVkApi.searchVerifiedGroup(message[1], user);
+                if (group == null) {
+                    return "Couldn't find verified group(";
+                }
+                return "https://vk.com/" + group.getScreenName();
+            }
+            case "/join" -> {
+                if (HandlerVkApi.joinGroup(message[1], user)) {
+                    return "Joined to group or you already a member";
+                }
+                return "Couldn't join group(";
+            }
+            case "/turn_on_notifications" -> {
+                HandlerVkApi.turnNotifications(true, HandlerVkApi.searchGroups(message[1], user).get(0), user);
+                return "not done";
+            }
+            case "/turn_off_notifications" -> {
+                HandlerVkApi.turnNotifications(false, HandlerVkApi.searchGroups(message[1], user).get(0), user);
+                return "not done";
+            }
         }
-        else if (message.equals("/stop")) {
-            bot.stop();
-            return "stop";
-        }
-        else if (message.equals("/link")){
-            Group group =  HandlerVkApi.getMusicianGroup(input.nextLine(), user);
-            System.out.println(group);
-            if (group == null){
-                return "error:HandlerVkApi:getMusicianGroup";
-            }
-            if (HandlerVkApi.joinGroup(group.getId(), user)){
-                System.out.println("Joined to group");
-            }
-            else {
-                System.out.println("error:HandlerVkApi:joinGroup");
-            }
-            if (!HandlerVkApi.notificationTurn()){
-                System.out.println("error:HandlervkApi:notificationTurn");
-            }
-            System.out.println("https://vk.com/" + group.getScreenName());
-        }
-        return "unknown command";
+        return "Unknown command. Use /help to get possible commands.";
     }
 }
