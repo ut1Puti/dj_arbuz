@@ -34,7 +34,7 @@ public class HandlerVkApi {
                     .execute()
                     .getItems().get(0);
         } catch (ApiException | ClientException e){
-            System.out.println("error: groups search");
+            System.out.println("error:groups.search");
             e.printStackTrace();
         }
         return null;
@@ -45,7 +45,17 @@ public class HandlerVkApi {
             vk.groups().join(user).groupId(id).execute();
             return true;
         } catch (ClientException | ApiException e){
-            System.out.println("error: group join");
+            System.out.println("error:group.join");
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean notificationTurn(int id, User user){
+        try{
+            vk.groups()
+        } catch (ClientException | ApiException e){
+            System.out.println("error:group.join");
             e.printStackTrace();
         }
         return false;

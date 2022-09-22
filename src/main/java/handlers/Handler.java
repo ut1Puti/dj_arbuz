@@ -20,10 +20,16 @@ public class Handler {
             Group group =  HandlerVkApi.getMusicianGroup(input.nextLine(), user);
             System.out.println(group);
             if (group == null){
-                return "error: HandlerVkApi: getMusicianGroup";
+                return "error:HandlerVkApi:getMusicianGroup";
             }
             if (HandlerVkApi.joinGroup(group.getId(), user)){
                 System.out.println("Joined to group");
+            }
+            else {
+                System.out.println("error:HandlerVkApi:joinGroup");
+            }
+            if (!HandlerVkApi.notificationTurn()){
+                System.out.println("error:HandlervkApi:notificationTurn");
             }
             System.out.println("https://vk.com/" + group.getScreenName());
         }
