@@ -1,15 +1,14 @@
 package handlers;
 
 import bots.ConsoleBot;
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.groups.Group;
 import user.User;
 
 import java.util.Scanner;
 
 public class Handler {
-    public static String getMessage(String message, ConsoleBot bot, User user){
+    public static String getMessages(Scanner input, ConsoleBot bot, User user){
+        String message = input.next();
         if (message.equals("/help")){
             return "some help info";
         }
@@ -18,7 +17,7 @@ public class Handler {
             return "stop";
         }
         else if (message.equals("/link")){
-            Group group =  HandlerVkApi.getMusicianGroup("lida", user);
+            Group group =  HandlerVkApi.getMusicianGroup(input.nextLine(), user);
             System.out.println(group);
             if (group == null){
                 return "error: HandlerVkApi: getMusicianGroup";
