@@ -7,20 +7,25 @@ import user.User;
 import java.util.Scanner;
 
 public class ConsoleBot {
-    private boolean work = true;
+    private boolean work = false;
 
-    public void run(){
-        System.out.println("Auth");
-        User user = HandlerVkApi.initUser();
-        while(work){
-            //тут крч ошибка если много символов выводишь в консоль, хз как пофиксить
-            //вылазит не всегда. Точно вылазит если пытаться вывети /help больше чем в одну строку
-            //сделать это надо потому что он не помещается в одну видимую на экране строку
-            System.out.println(Handler.executeMessage(new Scanner(System.in).nextLine(), user, this));
+    public void start(Scanner input){
+        User user = null;
+        while (user == null){
+            user = Handler.executeStartMessage(input.nextLine(), input);
         }
+        System.out.println("Auth completed");
+        work = true;
+        run(input, user);
     }
 
     public void stop(){
         work = false;
+    }
+
+    public void run(Scanner input, User user){
+        while(work){
+            System.out.println(Handler.executeMessage(input.nextLine(), user, this));
+        }
     }
 }
