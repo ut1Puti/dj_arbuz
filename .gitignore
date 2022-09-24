@@ -6,6 +6,7 @@ target
 .idea/*.xml
 *.iml
 *.xml
-
+#ignored Mac file system
+.DS_Store
 #ignore anon info
 src/main/resources/*.properties
