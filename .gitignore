@@ -6,6 +6,10 @@ target
 .idea/*.xml
 *.iml
 *.xml
+*.json
+#ignored ide's files
+
+
 #ignored Mac file system
 .DS_Store
 #ignore anon info
