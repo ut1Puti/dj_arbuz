@@ -1,31 +1,43 @@
 package bots;
 
 import handlers.Handler;
-import handlers.HandlerVkApi;
+import handlers.HandlerResponse;
 import user.User;
 
 import java.util.Scanner;
 
+/**
+ * Класс консольного бота
+ * @author Кедровских Олег
+ * @version 0.9
+ */
 public class ConsoleBot {
-    private boolean work = false;
+    /** Поле показывающее работает ли бот */
+    private boolean working;
 
-    public void start(Scanner input){
+    /**
+     * Процедура получающая ответы от пользователя и отправляющая ответы.
+     * Работает до тех пор пока пользователь не прекратит работу бота.
+     * @param input Сканнер получаюший сообщения от пользователя
+     */
+    public void run(Scanner input){
+        working = true;
         User user = null;
-        while (user == null){
-            user = Handler.executeStartMessage(input.nextLine(), input);
+        while(working){
+            HandlerResponse response = Handler.executeMessage(input.nextLine(), user, this);
+            if (response.hasOutMessage()){
+                System.out.println(response.getOutMessage());
+            }
+            if (response.hasCreateUser()){
+                user = response.getCreateUser().createUser();
+            }
         }
-        System.out.println("Auth completed");
-        work = true;
-        run(input, user);
     }
 
+    /**
+     * Процедура прекращающая работу бота
+     */
     public void stop(){
-        work = false;
-    }
-
-    public void run(Scanner input, User user){
-        while(work){
-            System.out.println(Handler.executeMessage(input.nextLine(), user, this));
-        }
+        working = false;
     }
 }

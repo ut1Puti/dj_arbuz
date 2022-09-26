@@ -1,8 +1,9 @@
 package database;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Storage {
-    Map<Integer, String> map = new HashMap();
+    Map<Integer, List<String>> map = new HashMap();
 }

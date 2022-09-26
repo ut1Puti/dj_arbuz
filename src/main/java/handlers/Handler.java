@@ -1,62 +1,99 @@
 package handlers;
 
 import bots.ConsoleBot;
+import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.objects.groups.Group;
+import user.CreateUser;
 import user.User;
 
-import java.util.Scanner;
-
+/**
+ * Класс утилитных методов создающий ответы на сообщения пользователя
+ * @author Кедровских Олег
+ * @version 1.0
+ */
 public class Handler {
+    /** Поле обработчика запросов к Vk API */
+    private static HandlerVkApi vk  = new HandlerVkApi();
+    /** Поле с информацией о доступных ф-циях бота */
     private static final String helpInfo = """
-            I'm bot helping interacting with music industry
-            I could find vk page of musician you would like, join you to his group
-            To get link to verified artist you use /link artist name or tag
-            To get group id use /id artist name or tag
-            For stopping use /stop
-            You could display help info again with /help""";
+            Привет, я бот помогающий взаимодействовать с музыкальной индустрией.
+            Я могу найти страницу исполнителя, выдав в качестве результата id или ссылку на его группу в вк.
+            Чтоб запустить бота используйте /start и следуйте дальнейшим указаниям по аутентификации с помощью вк.
+            Команда "/relogin" нужна для повторной аутентификации.
+            Чтобы получить ссылку на подтвержденного исполнителя используйте команду 
+            "/link имя артиста или его псевдоним".
+            Чтобы получить id на подтвержденного исполнителя используйте команду
+            "/id имя артиста или его псевдоним".
+            чтобы остановить бота используйте 
+            "/stop".
+            Вы можете вызвать это сообщение еще раз использовав 
+            "/help".""";
 
-    public static User executeStartMessage(String message, Scanner input){
-        if (message.equals("/start")){
-            System.out.println("Auth. Enter opened in browser link:");
-            return new HandlerVkApi().initUser(input);
-        }
-        System.out.println("Enter /start to start bot");
-        return null;
-    }
-
-    public static String executeMessage(String message, User user, ConsoleBot bot){
+    /** Метод определяющий команды в сообщении пользователя и возвращающий ответ
+     * @param message - сообщение пользователя
+     * @param user - пользователь отправивший сообщение
+     * @param callingBot - бот из которого был вызван метод
+     * @return возвращает ответ на сообщение пользователя
+     */
+    public static HandlerResponse executeMessage(String message, User user, ConsoleBot callingBot) {
         String[] commandAndArg = message.split(" ", 2);
         switch (commandAndArg[0]) {
             case "/help" -> {
-                return helpInfo;
+                return new HandlerResponse(helpInfo, null);
+            }
+            case "/start", "/relogin" -> {
+                String authURL = vk.getAuthURL();
+                CreateUser createUser = vk.getCreateUser();
+                if (authURL == null || createUser == null){
+                    return new HandlerResponse("Перейдите по ссылке, чтобы пройти аутентификацию:\n " + authURL + ".", createUser);
+                }
+                return new HandlerResponse("Ошибка при аутентификации. Повторите позже.", null);
             }
             case "/stop" -> {
-                bot.stop();
-                return "stopped";
+                callingBot.stop();
+                return new HandlerResponse("Остановлен.", null);
             }
             case "/link" -> {
-                Group group = HandlerVkApi.searchVerifiedGroup(commandAndArg[1], user);
-                if (group == null) {
-                    return "Couldn't find verified group(";
+                Group group;
+                try {
+                    group = vk.searchVerifiedGroup(commandAndArg[1], user);
+                } catch (ApiTokenExtensionRequiredException e) {
+                    return new HandlerResponse("Продлите токен с помощью команды /relogin.", null);
                 }
-                return "https://vk.com/" + group.getScreenName();
+                if (group == null) {
+                    return new HandlerResponse("Я не смог найти верефицированную группу с таким названием.", null);
+                }
+                return new HandlerResponse("https://vk.com/" + group.getScreenName(), null);
             }
             case "/id" -> {
-                Group group = HandlerVkApi.searchVerifiedGroup(commandAndArg[1], user);
-                if (group == null) {
-                    return "Couldn't find verified group(";
+                Group group;
+                try {
+                    group = vk.searchVerifiedGroup(commandAndArg[1], user);
+                } catch (ApiTokenExtensionRequiredException e) {
+                    return new HandlerResponse("Продлите токен с помощью команды /relogin.", null);
                 }
-                return String.valueOf(group.getId());
+                if (group == null) {
+                    return new HandlerResponse("Я не смог найти верефицированную группу с таким названием.", null);
+                }
+                return new HandlerResponse(String.valueOf(group.getId()), null);
             }
             case "/turn_on_notifications" -> {
-                HandlerVkApi.turnNotifications(true, HandlerVkApi.searchVerifiedGroup(commandAndArg[1], user), user);
-                return "not done";
+                try {
+                    vk.turnNotifications(true, commandAndArg[1], user);
+                } catch (ApiTokenExtensionRequiredException e) {
+                    return new HandlerResponse("Продлите токен с помощью команды /relogin", null);
+                }
+                return new HandlerResponse("not done", null);
             }
             case "/turn_off_notifications" -> {
-                HandlerVkApi.turnNotifications(false, HandlerVkApi.searchVerifiedGroup(commandAndArg[1], user), user);
-                return "not done";
+                try {
+                    vk.turnNotifications(false, commandAndArg[1], user);
+                } catch (ApiTokenExtensionRequiredException e) {
+                    return new HandlerResponse("Продлите токен с помощью команды /relogin", null);
+                }
+                return new HandlerResponse("not done", null);
             }
         }
-        return "Unknown command. Use /help to get possible commands.";
+        return new HandlerResponse("Неизвестная команда. Используйте /help, чтобы увидеть доступные", null);
     }
 }
