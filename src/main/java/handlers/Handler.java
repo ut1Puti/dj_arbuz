@@ -6,10 +6,11 @@ import com.vk.api.sdk.objects.groups.Group;
 import user.CreateUser;
 import user.User;
 
+// подумать как лучше обрабатывать exceptions
 /**
  * Класс утилитных методов создающий ответы на сообщения пользователя
  * @author Кедровских Олег
- * @version 1.0
+ * @version 0.9
  */
 public class Handler {
     /** Поле обработчика запросов к Vk API */

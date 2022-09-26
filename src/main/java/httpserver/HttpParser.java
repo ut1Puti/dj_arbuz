@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+//сделать javadoc(весь пакет)
+//переписать с вменяемыми переменными и методами(весь пакет)
 public class HttpParser {
     public static String parseRequest(InputStream inputStream) throws IOException {
         InputStreamReader reader = new InputStreamReader(inputStream);

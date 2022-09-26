@@ -18,6 +18,8 @@ import java.util.List;
 
 import static com.vk.api.sdk.objects.groups.Fields.VERIFIED;
 
+// закончить уведомления
+// подумать над exceptions
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
  * @author Кедровских Олег

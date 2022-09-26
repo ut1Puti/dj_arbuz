@@ -6,6 +6,7 @@ import user.User;
 
 import java.util.Scanner;
 
+// подумать как лучше обрабатывать exceptions
 /**
  * Класс консольного бота
  * @author Кедровских Олег

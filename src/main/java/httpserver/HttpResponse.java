@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+//сделать javadoc(весь пакет)
+//переписать с вменяемыми переменными и методами(весь пакет)
 public class HttpResponse {
     public static String createResponse(String getFileName) throws IOException {
         StringBuilder html = new StringBuilder();

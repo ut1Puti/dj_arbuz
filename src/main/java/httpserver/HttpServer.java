@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+//сделать javadoc(весь пакет)
+//переписать с вменяемыми переменными и методами(весь пакет)
 public class HttpServer {
     private static HttpServer server = null;
     private ServerSocket serverSocket;
