@@ -49,20 +49,23 @@ public class MessageHandler {
                         try {
                             vk.turnNotifications(true, commandAndArg[1], user);
                         } catch (ApiTokenExtensionRequiredException e) {
-                            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP, null);
+                            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP);
                         }
-                        return new HandlerResponse("not done", null);
+                        return new HandlerResponse("not done");
                     }
                     case "/turn_off_notifications" -> {
                         try {
                             vk.turnNotifications(false, commandAndArg[1], user);
                         } catch (ApiTokenExtensionRequiredException e) {
-                            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP, null);
+                            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP);
                         }
-                        return new HandlerResponse("not done", null);
+                        return new HandlerResponse("not done");
                     }
                 }
             }
+        }
+        else {
+            return getNotAuthedResponse().appendTextMessage(getUnknownCommandResponse());
         }
         return getUnknownCommandResponse();
     }
@@ -72,7 +75,7 @@ public class MessageHandler {
      * @return ответ на команду /help содержит HELP_INFO
      */
     private static HandlerResponse getHelpResponse(){
-        return new HandlerResponse(TextResponse.HELP_INFO, null);
+        return new HandlerResponse(TextResponse.HELP_INFO);
     }
 
     /**
@@ -82,7 +85,7 @@ public class MessageHandler {
     private static HandlerResponse getStartReloginResponse(){
         String authURL = vk.getAuthURL();
         if (authURL == null){
-            return new HandlerResponse(TextResponse.AUTH_ERROR, null);
+            return new HandlerResponse(TextResponse.AUTH_ERROR);
         }
         return new HandlerResponse(TextResponse.AUTH_GO_VIA_LINK + authURL + ".", vk);
     }
@@ -94,7 +97,7 @@ public class MessageHandler {
      */
     private static HandlerResponse getStopResponse(ConsoleBot callingBot){
         callingBot.stop();
-        return new HandlerResponse(TextResponse.STOP_INFO, null);
+        return new HandlerResponse(TextResponse.STOP_INFO);
     }
 
     /**
@@ -102,7 +105,7 @@ public class MessageHandler {
      * @return ответ содержащий NOT_AUTHED_USER
      */
     private static HandlerResponse getNotAuthedResponse(){
-        return new HandlerResponse(TextResponse.NOT_AUTHED_USER, null);
+        return new HandlerResponse(TextResponse.NOT_AUTHED_USER);
     }
 
     /**
@@ -116,12 +119,12 @@ public class MessageHandler {
         try {
             group = vk.searchVerifiedGroup(groupName, user);
         } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(TextResponse.UPDATE_TOKEN, null);
+            return new HandlerResponse(TextResponse.UPDATE_TOKEN);
         }
         if (group == null) {
-            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP, null);
+            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP);
         }
-        return new HandlerResponse(TextResponse.VK_ADDRESS + group.getScreenName(), null);
+        return new HandlerResponse(TextResponse.VK_ADDRESS + group.getScreenName());
     }
 
     /**
@@ -135,12 +138,12 @@ public class MessageHandler {
         try {
             group = vk.searchVerifiedGroup(groupName, user);
         } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(TextResponse.UPDATE_TOKEN, null);
+            return new HandlerResponse(TextResponse.UPDATE_TOKEN);
         }
         if (group == null) {
-            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP, null);
+            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP);
         }
-        return new HandlerResponse(String.valueOf(group.getId()), null);
+        return new HandlerResponse(String.valueOf(group.getId()));
     }
 
     /**
@@ -148,6 +151,6 @@ public class MessageHandler {
      * @return ответ содержащий UNKNOWN_COMMAND
      */
     private static HandlerResponse getUnknownCommandResponse(){
-        return new HandlerResponse(TextResponse.UNKNOWN_COMMAND, null);
+        return new HandlerResponse(TextResponse.UNKNOWN_COMMAND);
     }
 }

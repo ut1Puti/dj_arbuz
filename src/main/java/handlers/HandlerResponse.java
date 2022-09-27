@@ -9,9 +9,9 @@ import user.CreateUser;
  */
 public class HandlerResponse {
     /** Поле текстового сообщения */
-    private String textMessage;
+    private String textMessage = null;
     /** Поле содержащее интерфейс для создания или обновления пользователя */
-    private CreateUser updateUser;
+    private CreateUser updateUser = null;
 
     /**
      * Конструктор - создание объекта с определенными параметрами
@@ -20,6 +20,22 @@ public class HandlerResponse {
      */
     public HandlerResponse(String textMessage, CreateUser updateUser){
         this.textMessage = textMessage;
+        this.updateUser = updateUser;
+    }
+
+    /**
+     * Конструктор - создание объекта с определенными параметрами
+     * @param textMessage - текстовое сообщение
+     */
+    public HandlerResponse(String textMessage){
+        this.textMessage = textMessage;
+    }
+
+    /**
+     * Конструктор - создание объекта с определенными параметрами
+     * @param updateUser - интерфейс для обновления или создания пользователя
+     */
+    public HandlerResponse(CreateUser updateUser){
         this.updateUser = updateUser;
     }
 
@@ -53,5 +69,17 @@ public class HandlerResponse {
      */
     public CreateUser getUpdateUser(){
         return updateUser;
+    }
+
+    /**
+     * Метод объединяющий сообщения разных ответов
+     * @param anotherHandlerResponse - другой ответ
+     * @return ответ вызвавший этот метод, с добавленным сообщением другого ответа
+     */
+    HandlerResponse appendTextMessage(HandlerResponse anotherHandlerResponse) {
+        if (anotherHandlerResponse != null && anotherHandlerResponse.textMessage != null) {
+            this.textMessage = this.textMessage + "\n" + anotherHandlerResponse.textMessage;
+        }
+        return this;
     }
 }
