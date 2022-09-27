@@ -11,4 +11,4 @@ target
 .DS_Store
 
 #ignore anon info
-src/main/resources/*.properties
+src/main/resources/anonsrc

@@ -1,4 +1,4 @@
-package handlers;
+package handlers.vkapi;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
@@ -18,21 +18,29 @@ import java.util.List;
 
 import static com.vk.api.sdk.objects.groups.Fields.VERIFIED;
 
-// закончить уведомления
-// подумать над exceptions
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
  * @author Кедровских Олег
  * @author Щеголев Андрей
  * @version 0.6
  */
-public class HandlerVkApi {
+public class VkApiHandler implements CreateUser {
     /** Поле транспортного клиента */
     private final TransportClient transportClient = new HttpTransportClient();
     /** Поле класс позволяющего работать с Vk SDK Java */
     private final VkApiClient vk = new VkApiClient(transportClient);
-    /** Поле сервера получающего токены пользователя и переправляющего их на tg бота */
-    private HttpServer server = null;
+    /** Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота */
+    private HttpServer httpServer = null;
+    /** Поле конфигурации vk приложения */
+    private final VkAppConfiguration appConfiguration;
+
+    /**
+     * Конструктор по пути до файла с конфигурацией приложения
+     * @param configPath - путь до файла с конфигурацией
+     */
+    public VkApiHandler(String configPath) {
+        appConfiguration = new VkAppConfiguration(configPath);
+    }
 
     /**
      * Метод возвращающий ссылку для аутентификации
@@ -40,51 +48,47 @@ public class HandlerVkApi {
      */
     public String getAuthURL(){
         try {
-            if (server == null){
-                server = HttpServer.getInstance();
-            }
+            httpServer = HttpServer.getInstance();
         } catch (IOException e){
             return null;
         }
-        return VkApiConfig.AUTH_URL;
+        return appConfiguration.AUTH_URL;
     }
 
     /**
-     * Метод возвращаюший интерфейс для создания пользователя
+     * Метод интерфейса CreateUser создающий пользователя.
+     * Создается с помощью Vk Java SDK, получая код с сервера
      * @return интерфейс для создания пользователя
      */
-    public CreateUser getCreateUser(){
-        return () -> {
-            try {
-                if (server == null) {
-                    server = HttpServer.getInstance();
-                }
-                String code = getCodeFromHttpRequest(server.getCode());
-                UserAuthResponse authResponse = vk.oAuth()
-                        .userAuthorizationCodeFlow(
-                                VkApiConfig.APP_ID,
-                                VkApiConfig.CLIENT_SECRET,
-                                VkApiConfig.REDIRECT_URI,
-                                code)
-                        .execute();
-                return new User(authResponse.getUserId(), authResponse.getAccessToken());
-            } catch (ApiException | IOException | ClientException e) {
-                    return null;
-            }
-        };
+    @Override
+    public User createUser(){
+        try {
+            httpServer = HttpServer.getInstance();
+            String authCode = getAuthCodeFromHttpRequest(httpServer.getHttpRequestGetParametrs());
+            UserAuthResponse authResponse = vk.oAuth()
+                    .userAuthorizationCodeFlow(
+                            appConfiguration.APP_ID,
+                            appConfiguration.CLIENT_SECRET,
+                            appConfiguration.REDIRECT_URL,
+                            authCode)
+                    .execute();
+            return new User(authResponse.getUserId(), authResponse.getAccessToken());
+        } catch (ApiException | IOException | ClientException e) {
+            return null;
+        }
     }
 
     /**
      * Метод, который ищет все группы по запросу
      * @param groupName - запрос
-     * @param user - пользователь сделавщий запрос
+     * @param callingUser - пользователь сделавщий запрос
      * @return список групп полученных по запросу
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
-    public List<Group> searchGroups(String groupName, User user) throws ApiTokenExtensionRequiredException {
+    public List<Group> searchGroups(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
         try {
-            return vk.groups().search(user, groupName)
-                    .offset(0).count(3)
+            return vk.groups().search(callingUser, groupName)
+                    .offset(0).count(5)
                     .execute()
                     .getItems();
         } catch (ApiException | ClientException e){
@@ -96,20 +100,20 @@ public class HandlerVkApi {
     /**
      * Метод, который ищет подтвержденные группы по запросу
      * @param groupName - запрос
-     * @param user - пользователь сделавщий запрос
+     * @param callingUser - пользователь сделавщий запрос
      * @return верифицированную группу
      *         если групп оказалось больше одной возвращает с большим числом подписчиков, то есть первую из списка
      *         если верифицированная группа не нашлась, возвращает null
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
-    public Group searchVerifiedGroup(String groupName, User user) throws ApiTokenExtensionRequiredException {
-        List<Group> foundGroups = searchGroups(groupName, user);
+    public Group searchVerifiedGroup(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
+        List<Group> foundGroups = searchGroups(groupName, callingUser);
         if (foundGroups == null) {
             return null;
         }
         for (Group foundGroup : foundGroups) {
             try {
-                List<GetByIdObjectLegacyResponse> foundVerifiedGroups = vk.groups().getByIdObjectLegacy(user)
+                List<GetByIdObjectLegacyResponse> foundVerifiedGroups = vk.groups().getByIdObjectLegacy(callingUser)
                         .groupId(String.valueOf(foundGroup.getId()))
                         .fields(VERIFIED)
                         .execute();
@@ -122,34 +126,34 @@ public class HandlerVkApi {
     }
 
     /**
-     * работаем
+     *
      * @param turn - показывает надо ли включить или выключить уведомления
      * @param groupName - запрос
-     * @param user - пользователь сделваший запрос
+     * @param callingUser - пользователь сделваший запрос
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
-    public void turnNotifications(boolean turn, String groupName, User user) throws ApiTokenExtensionRequiredException {
-        Group group = searchVerifiedGroup(groupName, user);
+    public void turnNotifications(boolean turn, String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
+        Group foundGroup = searchVerifiedGroup(groupName, callingUser);
         try {
-            vk.wall().get(user).domain(group.getScreenName()).offset(0).count(3).execute();
+            vk.wall().get(callingUser).domain(foundGroup.getScreenName()).offset(0).count(3).execute();
         } catch (ClientException | ApiException e) {
             System.out.println(e.getMessage());
         }
     }
 
     /**
-     * получает code из get параметров GET запроса на сервер
+     * Метод, который получает code из get параметров GET запроса на сервер
      * @param httpRequestGetParametrs - get параметры отправленные на сервер
      * @return code
      */
-    private String getCodeFromHttpRequest(String httpRequestGetParametrs){
-        StringBuilder codeBuilder = new StringBuilder();
+    private String getAuthCodeFromHttpRequest(String httpRequestGetParametrs){
+        StringBuilder authCodeBuilder = new StringBuilder();
         for (int i = httpRequestGetParametrs.lastIndexOf("code=") + "code=".length(); i < httpRequestGetParametrs.length(); i++){
             if (httpRequestGetParametrs.charAt(i) == '&'){
                 break;
             }
-            codeBuilder.append(httpRequestGetParametrs.charAt(i));
+            authCodeBuilder.append(httpRequestGetParametrs.charAt(i));
         }
-        return codeBuilder.toString();
+        return authCodeBuilder.toString();
     }
 }

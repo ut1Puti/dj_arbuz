@@ -1,16 +1,16 @@
 package bots;
 
-import handlers.Handler;
+import handlers.MessageHandler;
 import handlers.HandlerResponse;
+import handlers.TextResponse;
 import user.User;
 
 import java.util.Scanner;
 
-// подумать как лучше обрабатывать exceptions
 /**
  * Класс консольного бота
  * @author Кедровских Олег
- * @version 0.9
+ * @version 1.0
  */
 public class ConsoleBot {
     /** Поле показывающее работает ли бот */
@@ -25,12 +25,15 @@ public class ConsoleBot {
         working = true;
         User user = null;
         while(working){
-            HandlerResponse response = Handler.executeMessage(input.nextLine(), user, this);
-            if (response.hasOutMessage()){
-                System.out.println(response.getOutMessage());
+            HandlerResponse response = MessageHandler.executeMessage(input.nextLine(), user, this);
+            if (response.hasTextMessage()){
+                System.out.println(response.getTextMessage());
             }
             if (response.hasCreateUser()){
-                user = response.getCreateUser().createUser();
+                user = response.getUpdateUser().createUser();
+                if (user == null){
+                    System.out.println(TextResponse.AUTH_ERROR);
+                }
             }
         }
     }

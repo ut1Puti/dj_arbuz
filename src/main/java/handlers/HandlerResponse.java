@@ -9,34 +9,34 @@ import user.CreateUser;
  */
 public class HandlerResponse {
     /** Поле текстового сообщения */
-    private String outMessage;
+    private String textMessage;
     /** Поле содержащее интерфейс для создания или обновления пользователя */
-    private CreateUser createUser;
+    private CreateUser updateUser;
 
     /**
      * Конструктор - создание объекта с определенными параметрами
-     * @param outMessage - текстовое сообщение
-     * @param createUser - интерфейс для обновления или создания пользователя
+     * @param textMessage - текстовое сообщение
+     * @param updateUser - интерфейс для обновления или создания пользователя
      */
-    public HandlerResponse(String outMessage, CreateUser createUser){
-        this.outMessage = outMessage;
-        this.createUser = createUser;
+    public HandlerResponse(String textMessage, CreateUser updateUser){
+        this.textMessage = textMessage;
+        this.updateUser = updateUser;
     }
 
     /**
      * Метод проверяющий наличии текстового сообщения
      * @return наличие текстовое сообщение
      */
-    public boolean hasOutMessage(){
-        return outMessage != null;
+    public boolean hasTextMessage(){
+        return textMessage != null;
     }
 
     /**
      * Метод возвращающий текстовое сообщение
      * @return текствое сообщение
      */
-    public String getOutMessage(){
-        return outMessage;
+    public String getTextMessage(){
+        return textMessage;
     }
 
     /**
@@ -44,14 +44,14 @@ public class HandlerResponse {
      * @return наличие интерфейса для обновления или создания пользователя
      */
     public boolean hasCreateUser(){
-        return createUser != null;
+        return updateUser != null;
     }
 
     /**
      * Метод возвращающий интерфейс для обновления или создания пользователя
      * @return интерфейс для обновления или создания пользователя
      */
-    public CreateUser getCreateUser(){
-        return createUser;
+    public CreateUser getUpdateUser(){
+        return updateUser;
     }
 }

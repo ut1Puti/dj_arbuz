@@ -1,12 +1,10 @@
 package user;
 
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
-
-import java.io.IOException;
-
-//сделать javadoc
-//подумать над exceptions
+/**
+ * Интерфейс позволяющий переопределить каким образом будут получаться переменные для создания пользователя
+ * @author Кедровских Олег
+ * @version 1.0
+ */
 @FunctionalInterface
 public interface CreateUser {
     public User createUser();

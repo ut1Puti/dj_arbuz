@@ -21,7 +21,7 @@ public class HttpServer {
         return server;
     }
 
-    public String getCode() throws IOException{
+    public String getHttpRequestGetParametrs() throws IOException{
         String code;
 
         Socket socket = serverSocket.accept();
