@@ -33,7 +33,9 @@ public class TextResponse {
     /** Поле сообщения с просьбой пройти аутентификации через vk  */
     public static final String NOT_AUTHED_USER = "Сначала пройдите аутентификацию с помощью вк. Для этого используйте /start";
     /** Поле сообщения неизвестной команды */
-    public static final String UNKNOWN_COMMAND = "Неизвестная команда. Используйте /help, чтобы увидеть доступные";
+    public static final String UNKNOWN_COMMAND = """ 
+            Неизвестная команда, либо пользователь не прошел аутентификацию.
+            Используйте /help, чтобы увидеть доступные, либо /start чобы пройти аутентификацию""";
     /** Поле содерщащее адрес vk */
     public static final String VK_ADDRESS = "https://vk.com/";
 }

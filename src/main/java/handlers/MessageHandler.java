@@ -36,32 +36,31 @@ public class MessageHandler {
                 }
             }
         }
-        if (user == null){
-            return getNotAuthedResponse();
-        }
-        if (commandAndArg.length == 2) {
-            switch (commandAndArg[0]) {
-                case "/link" -> {
-                    return getGroupURL(commandAndArg[1], user);
-                }
-                case "/id" -> {
-                    return getGroupId(commandAndArg[1], user);
-                }
-                case "/turn_on_notifications" -> {
-                    try {
-                        vk.turnNotifications(true, commandAndArg[1], user);
-                    } catch (ApiTokenExtensionRequiredException e) {
-                        return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP, null);
+        if (user != null) {
+            if (commandAndArg.length == 2) {
+                switch (commandAndArg[0]) {
+                    case "/link" -> {
+                        return getGroupURL(commandAndArg[1], user);
                     }
-                    return new HandlerResponse("not done", null);
-                }
-                case "/turn_off_notifications" -> {
-                    try {
-                        vk.turnNotifications(false, commandAndArg[1], user);
-                    } catch (ApiTokenExtensionRequiredException e) {
-                        return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP, null);
+                    case "/id" -> {
+                        return getGroupId(commandAndArg[1], user);
                     }
-                    return new HandlerResponse("not done", null);
+                    case "/turn_on_notifications" -> {
+                        try {
+                            vk.turnNotifications(true, commandAndArg[1], user);
+                        } catch (ApiTokenExtensionRequiredException e) {
+                            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP, null);
+                        }
+                        return new HandlerResponse("not done", null);
+                    }
+                    case "/turn_off_notifications" -> {
+                        try {
+                            vk.turnNotifications(false, commandAndArg[1], user);
+                        } catch (ApiTokenExtensionRequiredException e) {
+                            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP, null);
+                        }
+                        return new HandlerResponse("not done", null);
+                    }
                 }
             }
         }
