@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import java.io.*;
-import java.lang.invoke.SwitchPoint;
 import java.util.*;
 
 /**
@@ -29,28 +28,26 @@ public class Storage {
      * @param groupId - айди группы
      */
     private void addNewGroup(String groupId, String userId) {
-        List<String> newList = new LinkedList<>();
-        newList.add(userId);
-        map.put(groupId, newList);
+        map.put(groupId, Collections.singletonList(userId));
     }
 
     /**
      * Метод для добавления информации для имеющегося в базе группы
      *
      * @param groupId - Айди группы
-     * @param userId
+     * @param userId  - Айди пользователя
      */
     private void addOldGroup(String groupId, String userId) {
-        List<String> updatedList = map.get(groupId);
-        updatedList.add(userId);
-        map.put(groupId, updatedList);
+        map.get(groupId)
+           .add(userId);
     }
 
     /**
      * метод для добавления информации  где происходит ветвление на методы добавления старой/новой группы
+     *
      * @param groupId - айди группы
-     * @param userID - айди пользователя
-     * @see Storage#addNewGroup(String, String) 
+     * @param userID  - айди пользователя
+     * @see Storage#addNewGroup(String, String)
      * @see Storage#addOldGroup(String, String)
      */
     public void addInfoToGroup(String groupId, String userID) {
@@ -85,16 +82,16 @@ public class Storage {
 
     /**
      * Метод для возврата хеш таблицы с помощью созданнового json файла
-     * @see Storage#saveToJsonFile()
      *
+     * @see Storage#saveToJsonFile()
      */
     public void returnStorageFromDatabase() {
         try {
             FileReader file = new FileReader("src/main/resources/Users_database.json");
-            Gson jsonFile = new Gson();
             Scanner scanner = new Scanner(file);
             try {
                 String json = scanner.nextLine();
+                Gson jsonFile = new Gson();
                 map = jsonFile.fromJson(json, new TypeToken<Map<String, List<String>>>() {
                 }.getType());
             } catch (Exception e) {
@@ -104,5 +101,13 @@ public class Storage {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void main(String[] args) {
+        Storage base = new Storage();
+        base.returnStorageFromDatabase();
+        base.addInfoToGroup("1234", "abc");
+        base.saveToJsonFile();
+        System.out.println(base.map);
     }
 }
