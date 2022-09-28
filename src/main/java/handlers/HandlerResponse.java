@@ -3,7 +3,7 @@ package handlers;
 import user.CreateUser;
 
 /**
- * Класс ответов handler'а
+ * Класс ответов обработчика сообщений
  * @author Кедровских Олег
  * @version 1.0
  */
@@ -49,7 +49,7 @@ public class HandlerResponse {
 
     /**
      * Метод возвращающий текстовое сообщение
-     * @return текствое сообщение
+     * @return текстовое сообщение
      */
     public String getTextMessage(){
         return textMessage;

@@ -4,9 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-//сделать javadoc(весь пакет)
-//переписать с вменяемыми переменными и методами(весь пакет)
+/**
+ * Класс создающий ответ http сервера
+ * @author Кедровских Олег
+ * @version 0.1
+ */
 public class HttpResponse {
+    /**
+     * Метод возвращающий ответ http сервера
+     * @param getFileName - имя файла из get запроса
+     * @return ответ сервера
+     * @throws IOException - возникает при проблемах с открытие файла
+     */
     public static String createResponse(String getFileName) throws IOException {
         StringBuilder html = new StringBuilder();
         String response = null;

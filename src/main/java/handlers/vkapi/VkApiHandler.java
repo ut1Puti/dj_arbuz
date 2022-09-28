@@ -92,9 +92,8 @@ public class VkApiHandler implements CreateUser {
                     .execute()
                     .getItems();
         } catch (ApiException | ClientException e){
-            System.out.println(e.getMessage());
+            return null;
         }
-        return null;
     }
 
     /**
@@ -119,7 +118,7 @@ public class VkApiHandler implements CreateUser {
                         .execute();
                 return foundVerifiedGroups.get(0);
             } catch (ApiException | ClientException e) {
-                System.out.println(e.getMessage());
+                return null;
             }
         }
         return null;
