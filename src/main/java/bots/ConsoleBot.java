@@ -29,7 +29,7 @@ public class ConsoleBot {
             if (response.hasTextMessage()){
                 System.out.println(response.getTextMessage());
             }
-            if (response.hasCreateUser()){
+            if (response.hasUpdateUser()){
                 user = response.getUpdateUser().createUser();
                 if (user == null){
                     System.out.println(TextResponse.AUTH_ERROR);

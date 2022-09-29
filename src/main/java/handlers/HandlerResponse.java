@@ -59,7 +59,7 @@ public class HandlerResponse {
      * Метод проверяющий наличии интерфейса для обновления или создания пользователя
      * @return наличие интерфейса для обновления или создания пользователя
      */
-    public boolean hasCreateUser(){
+    public boolean hasUpdateUser(){
         return updateUser != null;
     }
 
