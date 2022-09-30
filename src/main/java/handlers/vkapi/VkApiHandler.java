@@ -16,7 +16,7 @@ import user.User;
 import java.io.IOException;
 import java.util.List;
 
-import static com.vk.api.sdk.objects.groups.Fields.VERIFIED;
+import static com.vk.api.sdk.objects.groups.Fields.MEMBERS_COUNT;
 
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
@@ -102,27 +102,32 @@ public class VkApiHandler implements CreateUser {
      * @param groupName - запрос
      * @param callingUser - пользователь сделавщий запрос
      * @return верифицированную группу
-     *         если групп оказалось больше одной возвращает с большим числом подписчиков, то есть первую из списка
+     *         если групп оказалось больше одной возвращает с большим числом подписчиков
      *         если верифицированная группа не нашлась, возвращает null
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
     public Group searchVerifiedGroup(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
         List<Group> foundGroups = searchGroups(groupName, callingUser);
-        if (foundGroups == null) {
+        if (foundGroups == null || foundGroups.size() == 0) {
             return null;
         }
+        int maxMembersCount = Integer.MIN_VALUE;
+        Group resultGroup = null;
         for (Group foundGroup : foundGroups) {
             try {
                 List<GetByIdObjectLegacyResponse> foundVerifiedGroups = vk.groups().getByIdObjectLegacy(callingUser)
                         .groupId(String.valueOf(foundGroup.getId()))
-                        .fields(VERIFIED)
+                        .fields(MEMBERS_COUNT)
                         .execute();
-                return foundVerifiedGroups.get(0);
+                if (foundVerifiedGroups.get(0).getMembersCount() > maxMembersCount){
+                    maxMembersCount = foundVerifiedGroups.get(0).getMembersCount();
+                    resultGroup = foundVerifiedGroups.get(0);
+                }
             } catch (ApiException | ClientException e) {
-                System.out.println(e.getMessage());
+                return null;
             }
         }
-        return null;
+        return resultGroup;
     }
 
     /**
