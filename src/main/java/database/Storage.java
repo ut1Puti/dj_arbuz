@@ -102,12 +102,4 @@ public class Storage {
             System.out.println(e.getMessage());
         }
     }
-
-    public static void main(String[] args) {
-        Storage base = new Storage();
-        base.returnStorageFromDatabase();
-        base.addInfoToGroup("1234", "abc");
-        base.saveToJsonFile();
-        System.out.println(base.map);
-    }
 }
