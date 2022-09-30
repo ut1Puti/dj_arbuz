@@ -6,6 +6,7 @@ target
 .idea/*.xml
 *.iml
 *.xml
+*.json
 
 #игнорирование файла файловой системы mac os
 .DS_Store
