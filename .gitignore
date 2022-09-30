@@ -1,16 +1,15 @@
-#ignored directories
+#игнорируемые директории 
 target
 .idea/
 
-#ignored ide's files
+#игнорируемые файлы ide
 .idea/*.xml
 *.iml
 *.xml
 *.json
-#ignored ide's files
 
-
-#ignored Mac file system
+#игнорирование файла файловой системы mac os
 .DS_Store
-#ignore anon info
-src/main/resources/*.properties
+
+#игнорирование информации по конфигурации приложения
+anonsrc

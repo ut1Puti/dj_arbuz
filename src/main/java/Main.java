@@ -1,19 +1,17 @@
 import bots.ConsoleBot;
 import database.Storage;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import httpserver.HttpServer;
+import java.io.IOException;
 import java.util.Scanner;
 import database.Storage;
-public class Main {
-    public static void main(String[] args){
-        /*
-        Scanner s = new Scanner(System.in);
-        Storage storage = new Storage();
-        new ConsoleBot().start(s);
-        s.close();
-         */
 
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        HttpServer server = HttpServer.getInstance();
+        Scanner input = new Scanner(System.in);
+        new ConsoleBot().run(input);
+        server.stop();
+        input.close();
     }
 }
