@@ -6,9 +6,10 @@ target
 .idea/*.xml
 *.iml
 *.xml
+*.json
 
 #игнорирование файла файловой системы mac os
 .DS_Store
 
 #игнорирование информации по конфигурации приложения
-src/main/resources/anonsrc
+anonsrc

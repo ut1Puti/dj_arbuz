@@ -37,7 +37,8 @@ class VkAppConfiguration {
             return;
         }
         AUTH_URL = prop.getProperty("authUrl");
-        APP_ID = Integer.parseInt(prop.getProperty("appId"));
+        String appId = prop.getProperty("appId");
+        APP_ID = appId == null ? null : Integer.parseInt(appId);
         CLIENT_SECRET = prop.getProperty("clientSecret");
         REDIRECT_URL = prop.getProperty("redirectUri");
     }

@@ -49,7 +49,7 @@ public class MessageHandler {
                         try {
                             vk.turnNotifications(true, commandAndArg[1], user);
                         } catch (ApiTokenExtensionRequiredException e) {
-                            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP);
+                            return new HandlerResponse(TextResponse.NO_GROUP);
                         }
                         return new HandlerResponse("not done");
                     }
@@ -57,7 +57,7 @@ public class MessageHandler {
                         try {
                             vk.turnNotifications(false, commandAndArg[1], user);
                         } catch (ApiTokenExtensionRequiredException e) {
-                            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP);
+                            return new HandlerResponse(TextResponse.NO_GROUP);
                         }
                         return new HandlerResponse("not done");
                     }
@@ -84,9 +84,11 @@ public class MessageHandler {
      */
     private static HandlerResponse getStartReloginResponse(){
         String authURL = vk.getAuthURL();
+
         if (authURL == null){
             return new HandlerResponse(TextResponse.AUTH_ERROR);
         }
+
         return new HandlerResponse(TextResponse.AUTH_GO_VIA_LINK + authURL + ".", vk);
     }
 
@@ -117,13 +119,15 @@ public class MessageHandler {
     private static HandlerResponse getGroupURL(String groupName, User user){
         Group group;
         try {
-            group = vk.searchVerifiedGroup(groupName, user);
+            group = vk.searchGroup(groupName, user);
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
         }
+
         if (group == null) {
-            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP);
+            return new HandlerResponse(TextResponse.NO_GROUP);
         }
+
         return new HandlerResponse(TextResponse.VK_ADDRESS + group.getScreenName());
     }
 
@@ -136,13 +140,15 @@ public class MessageHandler {
     private static HandlerResponse getGroupId(String groupName, User user){
         Group group;
         try {
-            group = vk.searchVerifiedGroup(groupName, user);
+            group = vk.searchGroup(groupName, user);
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
         }
+
         if (group == null) {
-            return new HandlerResponse(TextResponse.NO_VERIFIED_GROUP);
+            return new HandlerResponse(TextResponse.NO_GROUP);
         }
+
         return new HandlerResponse(String.valueOf(group.getId()));
     }
 
