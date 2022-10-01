@@ -81,7 +81,7 @@ public class HttpParser {
         while ((_byte = reader.read()) >= 0){
             if (_byte == CR) {
                 if ((_byte = reader.read()) == LF) {
-                    if (secondIteration){
+                    if (secondIteration) {
                         return;
                     }
                     request.headers.put(key.toString(), value.toString());
@@ -93,7 +93,7 @@ public class HttpParser {
                 }
             }
             secondIteration = false;
-            if ((char)_byte == SP){
+            if ((char)_byte == SP) {
                 isKey = false;
                 continue;
             }
@@ -101,7 +101,7 @@ public class HttpParser {
                 key.append((char) _byte);
             }
             else {
-                value.append((char)_byte);
+                value.append((char) _byte);
             }
         }
     }
@@ -115,10 +115,10 @@ public class HttpParser {
     private static void parseBody(InputStreamReader reader, HttpRequest request) throws IOException {
         StringBuilder bodyBuilder = new StringBuilder();
         int _byte;
-        if (!reader.ready()){
+        if (!reader.ready()) {
             return;
         }
-        while ((_byte = reader.read()) >= 0){
+        while ((_byte = reader.read()) >= 0) {
             bodyBuilder.append((char)_byte);
         }
         request.body = bodyBuilder.toString();
