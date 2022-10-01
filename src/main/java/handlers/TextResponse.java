@@ -3,6 +3,7 @@ package handlers;
 /**
  * Класс возможных ответов на сообщения пользователя
  * @author Кедровских Олег
+ * @author Щеголев Андрей
  * @version 1.0
  */
 public class TextResponse {

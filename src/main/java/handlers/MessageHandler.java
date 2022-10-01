@@ -10,7 +10,7 @@ import user.User;
  * Класс утилитных методов создающий ответы на сообщения пользователя
  *
  * @author Кедровских Олег
- * @author Андрей Щеголев
+ * @author Щеголев Андрей
  * @version 1.0
  */
 public class MessageHandler {
