@@ -16,7 +16,7 @@ public class MessageHandlerTests {
         assertNull(response.getUpdateUser());
 
         response = MessageHandler.executeMessage("/abrakadabra", user, null);
-        assertEquals(response.getTextMessage(), TextResponse.NOT_AUTHED_USER + "\n" + TextResponse.UNKNOWN_COMMAND);
+        assertEquals(response.getTextMessage(), TextResponse.NOT_AUTHED_USER);
         assertNull(response.getUpdateUser());
 
         response = MessageHandler.executeMessage("/start", user, null);

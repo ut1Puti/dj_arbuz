@@ -15,7 +15,6 @@ import user.CreateUser;
 import user.User;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import com.vk.api.sdk.objects.groups.Fields;
 
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
+ *
  * @author Кедровских Олег
  * @author Щеголев Андрей
  * @version 0.6
@@ -120,38 +120,48 @@ public class VkApiHandler implements CreateUser {
         int maxMembersCount = Integer.MIN_VALUE;
         Group resultGroup = null;
         for (Group foundGroup : foundGroups) {
+            List<GetByIdObjectLegacyResponse> foundByIdGroups;
             try {
-                List<GetByIdObjectLegacyResponse> foundByIdGroups = vk.groups()
+                foundByIdGroups = vk.groups()
                         .getByIdObjectLegacy(callingUser)
                         .groupId(String.valueOf(foundGroup.getId()))
                         .fields(Fields.MEMBERS_COUNT)
                         .execute();
-
-                if (foundByIdGroups.isEmpty()) {
-                    continue;
-                }
-                if (isNameDifferent(groupName, foundByIdGroups.get(0).getName())){
-                    continue;
-                }
-
-                if (foundByIdGroups.get(0).getMembersCount() > maxMembersCount) {
-                    maxMembersCount = foundByIdGroups.get(0).getMembersCount();
-                    resultGroup = foundByIdGroups.get(0);
-                }
-
             } catch (ApiException | ClientException e) {
                 continue;
+            }
+
+            if (foundByIdGroups.isEmpty()) {
+                continue;
+            }
+
+            GetByIdObjectLegacyResponse foundByIdGroup = foundByIdGroups.get(0);
+            String[] foundByIdGroupNames = foundByIdGroup.getName().split("[/|]");
+            for (String foundByIdGroupName : foundByIdGroupNames) {
+
+                if (isNameDifferent(groupName, foundByIdGroupName)) {
+                    continue;
+                }
+
+                if (foundByIdGroup.getMembersCount() > maxMembersCount) {
+                    maxMembersCount = foundByIdGroup.getMembersCount();
+                    resultGroup = foundByIdGroup;
+                }
+
             }
         }
         return resultGroup;
     }
+
+
     public void subscribeTo(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
-        Group resutlBeforeSearch = searchGroup(groupName, callingUser);
+        Group resultBeforeSearch = searchGroup(groupName, callingUser);
         if(dataBase == null) {
             dataBase = Storage.storageGetInstance();
         }
-        dataBase.addInfoToGroup(resutlBeforeSearch.getScreenName(),String.valueOf(callingUser.getId()));
+        dataBase.addInfoToGroup(resultBeforeSearch.getScreenName(),String.valueOf(callingUser.getId()));
     }
+
     /**
      *
      * @param turn - показывает надо ли включить или выключить уведомления
@@ -209,7 +219,7 @@ public class VkApiHandler implements CreateUser {
      * Метод, который ищет буквы в которых отличаются две строки
      * @param firstString - первая строка
      * @param secondString - вторая строка
-     * @return пару, элементы которой это сктроки состоящие из букв в которых слова различаются
+     * @return пару, элементы которой это строки состоящие из букв в которых слова различаются
      */
     private Pair<String> stringDifference(String firstString, String secondString) {
         return diffHelper(firstString, secondString, new HashMap<>());
@@ -219,8 +229,8 @@ public class VkApiHandler implements CreateUser {
      * Метод рекурсивно ищущий несовпадающие элементы
      * @param firstString - первая строка
      * @param secondString - вторая строка
-     * @param lookup - Map хранящий несовпавшие элементы
-     * @return пару строк состоящих из несовпавших символов
+     * @param lookup - Map хранящий не совпавшие элементы
+     * @return пару строк состоящих из не совпавших символов
      */
     private Pair<String> diffHelper(String firstString, String secondString, Map<Long, Pair<String>> lookup) {
         long key = ((long) firstString.length()) | secondString.length();

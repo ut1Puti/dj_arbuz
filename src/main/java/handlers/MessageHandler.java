@@ -10,6 +10,7 @@ import user.User;
  * Класс утилитных методов создающий ответы на сообщения пользователя
  *
  * @author Кедровских Олег
+ * @author Андрей Щеголев
  * @version 1.0
  */
 public class MessageHandler {
@@ -123,22 +124,6 @@ public class MessageHandler {
     }
 
     /**
-     * Метод для подписки пользователя
-     * @param groupName - Название группы
-     * @param user - айди юзера
-     * @return - возврат текста для сообщения
-     */
-    private static HandlerResponse subscribeTo(String groupName, User user) {
-        Group group;
-        try {
-            vk.subscribeTo(groupName, user);
-        } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(TextResponse.UPDATE_TOKEN);
-        }
-        return new HandlerResponse(TextResponse.SUBSCRIBE);
-    }
-
-    /**
      * Метод возвращающий ответ на /link
      *
      * @param groupName - имя группы
@@ -180,6 +165,22 @@ public class MessageHandler {
         }
 
         return new HandlerResponse(String.valueOf(group.getId()));
+    }
+
+    /**
+     * Метод для подписки пользователя
+     * @param groupName - Название группы
+     * @param user - айди юзера
+     * @return - возврат текста для сообщения
+     */
+    private static HandlerResponse subscribeTo(String groupName, User user) {
+        Group group;
+        try {
+            vk.subscribeTo(groupName, user);
+        } catch (ApiTokenExtensionRequiredException e) {
+            return new HandlerResponse(TextResponse.UPDATE_TOKEN);
+        }
+        return new HandlerResponse(TextResponse.SUBSCRIBE);
     }
 
     /**
