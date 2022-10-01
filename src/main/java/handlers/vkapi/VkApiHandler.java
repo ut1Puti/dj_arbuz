@@ -153,7 +153,12 @@ public class VkApiHandler implements CreateUser {
         return resultGroup;
     }
 
-
+    /**
+     * Метод для подписки пользователя(сохранение в базу данных айди и группы)
+     * @param groupName - Название групы
+     * @param callingUser - пользователь
+     * @throws ApiTokenExtensionRequiredException
+     */
     public void subscribeTo(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
         Group resultBeforeSearch = searchGroup(groupName, callingUser);
         if(dataBase == null) {
