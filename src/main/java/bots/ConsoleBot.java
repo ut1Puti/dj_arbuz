@@ -26,15 +26,20 @@ public class ConsoleBot {
         User user = null;
         while(working){
             HandlerResponse response = MessageHandler.executeMessage(input.nextLine(), user, this);
+
             if (response.hasTextMessage()){
                 System.out.println(response.getTextMessage());
             }
+
             if (response.hasUpdateUser()){
                 user = response.getUpdateUser().createUser();
+
                 if (user == null){
                     System.out.println(TextResponse.AUTH_ERROR);
                 }
+
             }
+
         }
     }
 

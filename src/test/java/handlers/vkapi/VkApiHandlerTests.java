@@ -28,9 +28,9 @@ public class VkApiHandlerTests {
     }
 
     @Test
-    public void SearchVerifiedGroupTest() throws ApiTokenExtensionRequiredException {
+    public void SearchGroupTest() throws ApiTokenExtensionRequiredException {
         createUser();
-        Group testGroup = vk.searchVerifiedGroup("lida", testUser);
+        Group testGroup = vk.searchGroup("lida", testUser);
         assertEquals(testGroup.getId(), 147725517);
         assertEquals(testGroup.getScreenName(), "lidamudota");
     }

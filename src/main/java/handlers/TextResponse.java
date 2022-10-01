@@ -25,7 +25,7 @@ public class TextResponse {
     /** Поле сооббщения о необходимости обновить токен */
     public static final String UPDATE_TOKEN = "Продлите токен с помощью команды /relogin.";
     /** Поле сообщения об отсутствии подтвержденной группы */
-    public static final String NO_VERIFIED_GROUP = "Я не смог найти верефицированную группу с таким названием.";
+    public static final String NO_GROUP = "Я не смог найти группу с таким названием.";
     /** Поле сообщения об остановке бота  */
     public static final String STOP_INFO = "Остановлен.";
     /** Поле сообщения с просьбой перейти по ссылке */
@@ -33,9 +33,7 @@ public class TextResponse {
     /** Поле сообщения с просьбой пройти аутентификации через vk  */
     public static final String NOT_AUTHED_USER = "Сначала пройдите аутентификацию с помощью вк. Для этого используйте /start";
     /** Поле сообщения неизвестной команды */
-    public static final String UNKNOWN_COMMAND = """ 
-            Неизвестная команда, либо пользователь не прошел аутентификацию.
-            Используйте /help, чтобы увидеть доступные, либо /start чобы пройти аутентификацию""";
+    public static final String UNKNOWN_COMMAND = "Неизвестная команда.  Используйте /help, чтобы увидеть доступные.";
     /** Поле содерщащее адрес vk */
     public static final String VK_ADDRESS = "https://vk.com/";
 }
