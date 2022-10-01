@@ -9,11 +9,13 @@ import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
+import database.Storage;
 import httpserver.HttpServer;
 import user.CreateUser;
 import user.User;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,7 @@ public class VkApiHandler implements CreateUser {
     private final VkApiClient vk = new VkApiClient(transportClient);
     /** Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота */
     private HttpServer httpServer = null;
+    private Storage dataBase = null;
     /** Поле конфигурации vk приложения */
     private final VkAppConfiguration appConfiguration;
 
@@ -142,7 +145,13 @@ public class VkApiHandler implements CreateUser {
         }
         return resultGroup;
     }
-
+    public void subscribeTo(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
+        Group resutlBeforeSearch = searchGroup(groupName, callingUser);
+        if(dataBase == null) {
+            dataBase = Storage.storageGetInstance();
+        }
+        dataBase.addInfoToGroup(resutlBeforeSearch.getScreenName(),String.valueOf(callingUser.getId()));
+    }
     /**
      *
      * @param turn - показывает надо ли включить или выключить уведомления

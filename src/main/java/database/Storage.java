@@ -2,6 +2,8 @@ package database;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +21,9 @@ public class Storage {
     /**
      * Поле хеш таблицы где ключ - айди группы, значение - список пользователей
      */
-    private Map<String, List<String>> map;
+    private Map<String, List<String>> groupsBase;
+    //private Map<String,List<String>> usersBase; <- в будущем добавим отображение айдишников всех групп
+    private static Storage storage = null;
 
     /**
      * Метод для создания нового пользователя в наш класс
@@ -28,7 +32,9 @@ public class Storage {
      * @param groupId - айди группы
      */
     private void addNewGroup(String groupId, String userId) {
-        map.put(groupId, Collections.singletonList(userId));
+        List<String> newList = new LinkedList<>();
+        newList.add(userId);
+        groupsBase.put(groupId, newList);
     }
 
     /**
@@ -38,8 +44,11 @@ public class Storage {
      * @param userId  - Айди пользователя
      */
     private void addOldGroup(String groupId, String userId) {
-        map.get(groupId)
-           .add(userId);
+
+        if (!groupsBase.get(groupId).contains(userId)) {
+            groupsBase.get(groupId)
+                      .add(userId);
+        }
     }
 
     /**
@@ -51,7 +60,7 @@ public class Storage {
      * @see Storage#addOldGroup(String, String)
      */
     public void addInfoToGroup(String groupId, String userID) {
-        if (map.get(groupId) == null) {
+        if (groupsBase.get(groupId) == null) {
             addNewGroup(groupId, userID);
         } else {
             addOldGroup(groupId, userID);
@@ -61,8 +70,16 @@ public class Storage {
     /**
      * Конструктор создания класса
      */
-    public Storage() {
-        map = new HashMap<>();
+    private Storage() {
+        groupsBase = new HashMap<>();
+        returnStorageFromDatabase();
+    }
+
+    public static Storage storageGetInstance() {
+        if (storage == null) {
+            storage = new Storage();
+        }
+        return storage;
     }
 
     /**
@@ -70,9 +87,9 @@ public class Storage {
      */
     public void saveToJsonFile() {
         Gson gson = new Gson();
-        String json = gson.toJson(map);
+        String json = gson.toJson(groupsBase);
         try {
-            FileWriter file = new FileWriter("src/main/resources/Users_database.json");
+            FileWriter file = new FileWriter("src/main/resources/anonsrc/Users_database.json");
             file.write(json);
             file.close();
         } catch (IOException e) {
@@ -87,12 +104,12 @@ public class Storage {
      */
     public void returnStorageFromDatabase() {
         try {
-            FileReader file = new FileReader("src/main/resources/Users_database.json");
+            FileReader file = new FileReader("src/main/resources/anonsrc/Users_database.json");
             Scanner scanner = new Scanner(file);
             try {
                 String json = scanner.nextLine();
                 Gson jsonFile = new Gson();
-                map = jsonFile.fromJson(json, new TypeToken<Map<String, List<String>>>() {
+                groupsBase = jsonFile.fromJson(json, new TypeToken<Map<String, List<String>>>() {
                 }.getType());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -101,5 +118,9 @@ public class Storage {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public Map<String, List<String>> getGroupsBase() {
+        return groupsBase;
     }
 }
