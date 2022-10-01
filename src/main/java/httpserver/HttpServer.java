@@ -50,9 +50,6 @@ public class HttpServer {
         OutputStream outputStream = socket.getOutputStream();
 
         HttpRequest request = HttpParser.parseRequestLine(inputStream);
-        System.out.println(request.method + " " + request.requestTarget + " " + request.httpVersion);
-        System.out.println(request.headers);
-        System.out.println(request.body);
 
         StringBuilder fileName = new StringBuilder();
         boolean isFileNameGot = false;
