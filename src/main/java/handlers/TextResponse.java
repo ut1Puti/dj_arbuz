@@ -38,4 +38,5 @@ public class TextResponse {
     public static final String VK_ADDRESS = "https://vk.com/";
 
     public static final String SUBSCRIBE = "Вы успешно подписаны на группу!";
+    /** Поле сообщения подписки на группу*/
 }
