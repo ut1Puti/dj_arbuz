@@ -118,22 +118,22 @@ public class VkApiHandler implements CreateUser {
         Group resultGroup = null;
         for (Group foundGroup : foundGroups) {
             try {
-                List<GetByIdObjectLegacyResponse> foundVerifiedGroups = vk.groups()
+                List<GetByIdObjectLegacyResponse> foundByIdGroups = vk.groups()
                         .getByIdObjectLegacy(callingUser)
                         .groupId(String.valueOf(foundGroup.getId()))
                         .fields(Fields.MEMBERS_COUNT)
                         .execute();
 
-                if (foundVerifiedGroups.isEmpty()) {
+                if (foundByIdGroups.isEmpty()) {
                     continue;
                 }
-                if (isNameDifferent(groupName, foundVerifiedGroups.get(0).getName())){
+                if (isNameDifferent(groupName, foundByIdGroups.get(0).getName())){
                     continue;
                 }
 
-                if (foundVerifiedGroups.get(0).getMembersCount() > maxMembersCount) {
-                    maxMembersCount = foundVerifiedGroups.get(0).getMembersCount();
-                    resultGroup = foundVerifiedGroups.get(0);
+                if (foundByIdGroups.get(0).getMembersCount() > maxMembersCount) {
+                    maxMembersCount = foundByIdGroups.get(0).getMembersCount();
+                    resultGroup = foundByIdGroups.get(0);
                 }
 
             } catch (ApiException | ClientException e) {
@@ -187,9 +187,12 @@ public class VkApiHandler implements CreateUser {
     private boolean isNameDifferent(String baseName, String searchName) {
         String lowerCaseBaseName = baseName.toLowerCase();
         String lowerCaseSearchName = searchName.toLowerCase();
+
         Pair<String> diffPair = stringDifference(lowerCaseBaseName, lowerCaseSearchName);
+
         int baseNameDiff = (int)((double) diffPair.first.length() / (double) baseName.length() * 100);
         int searchNameDiff = (int)((double) diffPair.second.length() / (double) searchName.length() * 100);
+
         return baseNameDiff > 50 || searchNameDiff > 50;
     }
 
