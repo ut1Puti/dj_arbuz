@@ -36,7 +36,6 @@ public class TextResponse {
     public static final String UNKNOWN_COMMAND = "Неизвестная команда. Используйте /help, чтобы увидеть доступные";
     /** Поле содерщащее адрес vk */
     public static final String VK_ADDRESS = "https://vk.com/";
-
-    public static final String SUBSCRIBE = "Вы успешно подписаны на группу!";
     /** Поле сообщения подписки на группу*/
+    public static final String SUBSCRIBE = "Вы успешно подписаны на группу!";
 }

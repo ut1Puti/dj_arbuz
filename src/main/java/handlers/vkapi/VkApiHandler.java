@@ -35,6 +35,7 @@ public class VkApiHandler implements CreateUser {
     private final VkApiClient vk = new VkApiClient(transportClient);
     /** Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота */
     private HttpServer httpServer = null;
+    /** Поле хранилища данных о группах и пользователях */
     private Storage dataBase = null;
     /** Поле конфигурации vk приложения */
     private final VkAppConfiguration appConfiguration;
@@ -86,7 +87,7 @@ public class VkApiHandler implements CreateUser {
     /**
      * Метод, который ищет все группы по запросу
      * @param groupName - запрос
-     * @param callingUser - пользователь сделавщий запрос
+     * @param callingUser - пользователь сделавший запрос
      * @return список групп полученных по запросу
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
@@ -104,7 +105,7 @@ public class VkApiHandler implements CreateUser {
     /**
      * Метод, который ищет подтвержденные группы по запросу
      * @param groupName - запрос
-     * @param callingUser - пользователь сделавщий запрос
+     * @param callingUser - пользователь сделавший запрос
      * @return верифицированную группу
      *         если групп оказалось больше одной возвращает с большим числом подписчиков
      *         если верифицированная группа не нашлась, возвращает null
