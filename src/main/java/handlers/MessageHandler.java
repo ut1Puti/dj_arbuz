@@ -174,7 +174,6 @@ public class MessageHandler {
      * @return - возврат текста для сообщения
      */
     private static HandlerResponse subscribeTo(String groupName, User user) {
-        Group group;
         try {
             vk.subscribeTo(groupName, user);
         } catch (ApiTokenExtensionRequiredException e) {
