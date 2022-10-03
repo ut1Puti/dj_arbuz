@@ -1,4 +1,4 @@
-package handlers;
+package handlers.messages;
 
 import handlers.messages.HandlerResponse;
 import org.junit.jupiter.api.Test;
