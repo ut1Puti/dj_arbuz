@@ -43,11 +43,4 @@ public class HandlerResponseTests {
         assertTrue(response.hasUpdateUser());
         assertNull(response.getUpdateUser().createUser());
     }
-
-    @Test
-    public void AppendTest(){
-        HandlerResponse response1 = new HandlerResponse("Test");
-        HandlerResponse response2 = new HandlerResponse("text");
-        assertEquals(response1.appendTextMessage(response2).getTextMessage(), "Test\ntext");
-    }
 }
