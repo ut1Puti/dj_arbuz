@@ -1,4 +1,4 @@
-package handlers;
+package handlers.messages;
 
 import bots.ConsoleBot;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
@@ -174,12 +174,17 @@ public class MessageHandler {
      * @return - возврат текста для сообщения
      */
     private static HandlerResponse subscribeTo(String groupName, User user) {
+        boolean isSubscribed;
         try {
-            vk.subscribeTo(groupName, user);
+            isSubscribed = vk.subscribeTo(groupName, user);
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
         }
-        return new HandlerResponse(TextResponse.SUBSCRIBE);
+        if (isSubscribed) {
+            return new HandlerResponse(TextResponse.SUBSCRIBE);
+        } else {
+            return new HandlerResponse(TextResponse.ALREADY_SUBSCRIBER);
+        }
     }
 
     /**

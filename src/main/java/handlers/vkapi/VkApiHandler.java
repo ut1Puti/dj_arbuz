@@ -156,17 +156,21 @@ public class VkApiHandler implements CreateUser {
 
     /**
      * Метод для подписки пользователя(сохранение в базу данных айди и группы)
-     * @param groupName - Название группы
+     *
+     * @param groupName   - Название группы
      * @param callingUser - пользователя
+     * @return возвращает true - если пользователь только что подписался
+     *                    false - если пользователь уже был подписан
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
-     * dataBase - наше хранилище данных вида группа: лист, содержащий айди пользователя
      */
-    public void subscribeTo(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
+    public boolean subscribeTo(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
         Group userFindGroup = searchGroup(groupName, callingUser);
+
         if(dataBase == null) {
             dataBase = Storage.storageGetInstance();
         }
-        dataBase.addInfoToGroup(userFindGroup.getScreenName(),String.valueOf(callingUser.getId()));
+
+        return dataBase.addInfoToGroup(userFindGroup.getScreenName(),String.valueOf(callingUser.getId()));
     }
 
     /**

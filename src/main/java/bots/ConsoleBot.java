@@ -1,8 +1,8 @@
 package bots;
 
-import handlers.MessageHandler;
-import handlers.HandlerResponse;
-import handlers.TextResponse;
+import handlers.messages.MessageHandler;
+import handlers.messages.HandlerResponse;
+import handlers.messages.TextResponse;
 import user.User;
 
 import java.util.Scanner;

@@ -1,5 +1,6 @@
 package handlers;
 
+import handlers.messages.HandlerResponse;
 import org.junit.jupiter.api.Test;
 import user.CreateUser;
 import user.User;

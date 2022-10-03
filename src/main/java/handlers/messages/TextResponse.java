@@ -1,4 +1,4 @@
-package handlers;
+package handlers.messages;
 
 /**
  * Класс возможных ответов на сообщения пользователя
@@ -39,4 +39,6 @@ public class TextResponse {
     public static final String VK_ADDRESS = "https://vk.com/";
     /** Поле сообщения подписки на группу*/
     public static final String SUBSCRIBE = "Вы успешно подписаны на группу!";
+    /** Поле сообщения о том, что пользователь уже подписан */
+    public static final String ALREADY_SUBSCRIBER = "Вы уже подписаны на эту группу";
 }

@@ -1,5 +1,8 @@
 package handlers;
 
+import handlers.messages.HandlerResponse;
+import handlers.messages.MessageHandler;
+import handlers.messages.TextResponse;
 import org.junit.jupiter.api.Test;
 import user.User;
 
@@ -39,6 +42,8 @@ public class MessageHandlerTests {
         response = MessageHandler.executeMessage("/id lida", user, null);
         assertEquals(response.getTextMessage(), "147725517");
         assertNull(response.getUpdateUser());
+
+        response = MessageHandler.executeMessage("/subscribe triplesixdelete", user, null);
 
         response = MessageHandler.executeMessage("/abrakadabra", user, null);
         assertEquals(response.getTextMessage(), TextResponse.UNKNOWN_COMMAND);
