@@ -58,6 +58,9 @@ public class MessageHandler {
                 case "/subscribe" -> {
                     return subscribeTo(commandAndArg[1], user);
                 }
+                case "/get_last_posts" -> {
+                    return getLastPosts(commandAndArg[1], user);
+                }
                 case "/turn_on_notifications" -> {
                     try {
                         vk.turnNotifications(true, commandAndArg[1], user);
@@ -185,6 +188,21 @@ public class MessageHandler {
         } else {
             return new HandlerResponse(TextResponse.ALREADY_SUBSCRIBER);
         }
+    }
+
+    /**
+     *
+     * @param groupName
+     * @param user
+     * @return
+     */
+    private static HandlerResponse getLastPosts(String groupName, User user) {
+        try {
+            vk.getLastPosts(5, groupName, user);
+        } catch (ApiTokenExtensionRequiredException e) {
+            return new HandlerResponse(TextResponse.UPDATE_TOKEN);
+        }
+        return new HandlerResponse("not done");
     }
 
     /**

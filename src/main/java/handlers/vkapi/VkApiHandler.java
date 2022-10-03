@@ -9,6 +9,10 @@ import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
+import com.vk.api.sdk.objects.photos.Photo;
+import com.vk.api.sdk.objects.wall.WallpostAttachment;
+import com.vk.api.sdk.objects.wall.WallpostAttachmentType;
+import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.Storage;
 import httpserver.HttpServer;
 import user.CreateUser;
@@ -68,9 +72,20 @@ public class VkApiHandler implements CreateUser {
      */
     @Override
     public User createUser() {
+        String httpRequestGetParameters;
         try {
             httpServer = HttpServer.getInstance();
-            String authCode = getAuthCodeFromHttpRequest(httpServer.getHttpRequestGetParametrs());
+            httpRequestGetParameters = httpServer.getHttpRequestGetParametrs();
+        } catch (IOException e) {
+            return null;
+        }
+
+        if (httpRequestGetParameters == null){
+            return null;
+        }
+
+        String authCode = getAuthCodeFromHttpRequest(httpRequestGetParameters);
+        try {
             UserAuthResponse authResponse = vk.oAuth()
                     .userAuthorizationCodeFlow(
                             appConfiguration.APP_ID,
@@ -79,7 +94,7 @@ public class VkApiHandler implements CreateUser {
                             authCode)
                     .execute();
             return new User(authResponse.getUserId(), authResponse.getAccessToken());
-        } catch (ApiException | IOException | ClientException e) {
+        } catch (ApiException | ClientException e) {
             return null;
         }
     }
@@ -171,6 +186,58 @@ public class VkApiHandler implements CreateUser {
         }
 
         return dataBase.addInfoToGroup(userFindGroup.getScreenName(),String.valueOf(callingUser.getId()));
+    }
+
+    /**
+     *
+     * @param amountOfPosts
+     * @param groupName
+     * @param callingUser
+     * @throws ApiTokenExtensionRequiredException
+     */
+    public void getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
+        Group userFindGroup = searchGroup(groupName, callingUser);
+        List<WallpostFull> userFindGroupPosts;
+        try {
+            userFindGroupPosts = vk.wall().get(callingUser)
+                    .domain(userFindGroup.getScreenName())
+                    .offset(0).count(amountOfPosts)
+                    .execute().getItems();
+        } catch (ClientException | ApiException e) {
+            return;
+        }
+        System.out.println(userFindGroupPosts);
+        for (WallpostFull userFindGroupPost : userFindGroupPosts){
+            String wallPostText = userFindGroupPost.getText();
+            List<WallpostAttachment> userFindGroupPostAttachments = userFindGroupPost.getAttachments();
+
+            if (userFindGroupPostAttachments == null){
+                //TODO LATER
+                continue;
+            }
+
+            System.out.println(userFindGroupPostAttachments);
+            for (WallpostAttachment userFindGroupPostAttachment : userFindGroupPostAttachments) {
+                WallpostAttachmentType userFindGroupPostAttachmentType = userFindGroupPostAttachment.getType();
+                String userFindGroupPostAttachmentTypeString = userFindGroupPostAttachmentType.toString();
+                System.out.println(userFindGroupPostAttachmentType);
+                switch (userFindGroupPostAttachmentTypeString) {
+                    case "photo" -> {
+                        System.out.println(userFindGroupPostAttachment.getPhoto().getSizes().get(0).getUrl());
+                    }
+                    case "link" -> {
+                        System.out.println(userFindGroupPostAttachment.getLink().getUrl());
+                    }
+                    case "audio" -> {
+                        System.out.println("нельзя");
+                    }
+                    case "video" -> {
+                        System.out.println(userFindGroupPostAttachment.getVideo().getId());
+                    }
+                }
+            }
+            System.out.println();
+        }
     }
 
     /**

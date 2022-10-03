@@ -48,10 +48,6 @@ public class HttpParser {
         boolean isNextRequestTarget = false;
         StringBuilder nextPartOfRequest = new StringBuilder();
 
-        if (!reader.ready()){
-            throw new HttpParserException("Incorrect request");
-        }
-
         int _byte;
         while ((_byte = reader.read()) >= 0) {
 
@@ -120,10 +116,6 @@ public class HttpParser {
         boolean isKey = true;
         boolean secondIteration = false;
 
-        if (!reader.ready()){
-            throw new HttpParserException("Incorrect request");
-        }
-
         int _byte;
         while ((_byte = reader.read()) >= 0) {
             if (_byte == CR) {
@@ -141,6 +133,7 @@ public class HttpParser {
                     continue;
                 }
             }
+
             secondIteration = false;
 
             if ((char)_byte == SP) {
