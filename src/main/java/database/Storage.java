@@ -43,12 +43,13 @@ public class Storage {
      * @param groupId - Айди группы
      * @param userId  - Айди пользователя
      */
-    private void addOldGroup(String groupId, String userId) {
-
+    private boolean addOldGroup(String groupId, String userId) {
         if (!groupsBase.get(groupId).contains(userId)) {
             groupsBase.get(groupId)
                       .add(userId);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -59,11 +60,12 @@ public class Storage {
      * @see Storage#addNewGroup(String, String)
      * @see Storage#addOldGroup(String, String)
      */
-    public void addInfoToGroup(String groupId, String userID) {
+    public boolean addInfoToGroup(String groupId, String userID) {
         if (groupsBase.get(groupId) == null) {
             addNewGroup(groupId, userID);
+            return true;
         } else {
-            addOldGroup(groupId, userID);
+            return addOldGroup(groupId, userID);
         }
     }
 
