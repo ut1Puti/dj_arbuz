@@ -2,7 +2,6 @@ package database;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.*;
  */
 public class Storage {
     /**
-     * Поле хеш таблицы где ключ - айди группы, значение - список пользователей
+     * Поле хеш таблицы, где ключ - айди группы, значение - список пользователей
      */
     private Map<String, List<String>> groupsBase;
     //private Map<String,List<String>> usersBase; <- в будущем добавим отображение айдишников всех групп
@@ -53,7 +52,7 @@ public class Storage {
     }
 
     /**
-     * метод для добавления информации  где происходит ветвление на методы добавления старой/новой группы
+     * метод для добавления информации где происходит ветвление на методы добавления старой/новой группы
      *
      * @param groupId - айди группы
      * @param userID  - айди пользователя
