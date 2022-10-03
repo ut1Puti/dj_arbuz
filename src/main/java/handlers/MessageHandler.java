@@ -106,7 +106,7 @@ public class MessageHandler {
     /**
      * Метод формирующий ответ на команду /stop
      *
-     * @param callingBot - бот вызвавщий метод
+     * @param callingBot - бот вызвавший метод
      * @return ответ на /stop содержит STOP_INFO
      */
     private static HandlerResponse getStopResponse(ConsoleBot callingBot) {

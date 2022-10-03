@@ -112,41 +112,41 @@ public class VkApiHandler implements CreateUser {
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
     public Group searchGroup(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
-        List<Group> foundGroups = searchGroups(groupName, callingUser);
+        List<Group> userFindGroups = searchGroups(groupName, callingUser);
 
-        if (foundGroups == null || foundGroups.size() == 0) {
+        if (userFindGroups == null || userFindGroups.size() == 0) {
             return null;
         }
 
         int maxMembersCount = Integer.MIN_VALUE;
         Group resultGroup = null;
-        for (Group foundGroup : foundGroups) {
-            List<GetByIdObjectLegacyResponse> foundByIdGroups;
+        for (Group userFindGroup : userFindGroups) {
+            List<GetByIdObjectLegacyResponse> userFindByIdGroups;
             try {
-                foundByIdGroups = vk.groups()
+                userFindByIdGroups = vk.groups()
                         .getByIdObjectLegacy(callingUser)
-                        .groupId(String.valueOf(foundGroup.getId()))
+                        .groupId(String.valueOf(userFindGroup.getId()))
                         .fields(Fields.MEMBERS_COUNT)
                         .execute();
             } catch (ApiException | ClientException e) {
                 continue;
             }
 
-            if (foundByIdGroups.isEmpty()) {
+            if (userFindByIdGroups.isEmpty()) {
                 continue;
             }
 
-            GetByIdObjectLegacyResponse foundByIdGroup = foundByIdGroups.get(0);
-            String[] foundByIdGroupNames = foundByIdGroup.getName().split("[/|]");
+            GetByIdObjectLegacyResponse userFindByIdGroup = userFindByIdGroups.get(0);
+            String[] foundByIdGroupNames = userFindByIdGroup.getName().split("[/|]");
             for (String foundByIdGroupName : foundByIdGroupNames) {
 
                 if (isNameDifferent(groupName, foundByIdGroupName)) {
                     continue;
                 }
 
-                if (foundByIdGroup.getMembersCount() > maxMembersCount) {
-                    maxMembersCount = foundByIdGroup.getMembersCount();
-                    resultGroup = foundByIdGroup;
+                if (userFindByIdGroup.getMembersCount() > maxMembersCount) {
+                    maxMembersCount = userFindByIdGroup.getMembersCount();
+                    resultGroup = userFindByIdGroup;
                 }
 
             }
@@ -162,11 +162,11 @@ public class VkApiHandler implements CreateUser {
      * dataBase - наше хранилище данных вида группа: лист, содержащий айди пользователя
      */
     public void subscribeTo(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
-        Group resultBeforeSearch = searchGroup(groupName, callingUser);
+        Group userFindGroup = searchGroup(groupName, callingUser);
         if(dataBase == null) {
             dataBase = Storage.storageGetInstance();
         }
-        dataBase.addInfoToGroup(resultBeforeSearch.getScreenName(),String.valueOf(callingUser.getId()));
+        dataBase.addInfoToGroup(userFindGroup.getScreenName(),String.valueOf(callingUser.getId()));
     }
 
     /**
