@@ -216,9 +216,9 @@ public class VkApiHandler implements CreateUser {
      */
     private boolean isNameDifferent(String baseName, String userFindName) {
         String lowerCaseBaseName = baseName.toLowerCase();
-        String lowerCaseSearchName = userFindName.toLowerCase();
+        String lowerCaseUserFindName = userFindName.toLowerCase();
 
-        Pair<String> diffPair = stringDifference(lowerCaseBaseName, lowerCaseSearchName);
+        Pair<String> diffPair = stringDifference(lowerCaseBaseName, lowerCaseUserFindName);
 
         int baseNameDiff = (int)((double) diffPair.first.length() / (double) baseName.length() * 100);
         int searchNameDiff = (int)((double) diffPair.second.length() / (double) userFindName.length() * 100);

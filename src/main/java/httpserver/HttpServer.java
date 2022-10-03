@@ -13,7 +13,7 @@ public class HttpServer {
     /** Поле запущенного в программе сервера */
     private static HttpServer server = null;
     /** Поле серверного сокета */
-    private ServerSocket serverSocket;
+    private final ServerSocket serverSocket;
 
     /**
      * Конструктор - создание объекта
@@ -49,7 +49,12 @@ public class HttpServer {
         InputStream inputStream = socket.getInputStream();
         OutputStream outputStream = socket.getOutputStream();
 
-        HttpRequest request = HttpParser.parseRequestLine(inputStream);
+        HttpRequest request;
+        try {
+            request = HttpParser.parseRequestLine(inputStream);
+        } catch (HttpParserException e){
+            return null;
+        }
 
         StringBuilder fileName = new StringBuilder();
         boolean isFileNameGot = false;
@@ -80,7 +85,7 @@ public class HttpServer {
 
     /**
      * Метод останавливающий сервер
-     * @throws IOException
+     * @throws IOException - возникает при ошибке закрытия сокета
      */
     public void stop() throws IOException {
         serverSocket.close();
