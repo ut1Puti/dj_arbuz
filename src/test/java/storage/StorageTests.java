@@ -6,9 +6,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StorageTests {
-
+    /**
+     * Тест для проверки создания новой группы и подписки нового юзера на него
+     */
     @Test
-    public void TestFirst() {
+    public void testCheakAddtoStorageUser() {
         Storage dataBase1 = Storage.storageGetInstance();
         dataBase1.getGroupsBase()
                  .clear();
@@ -18,8 +20,11 @@ public class StorageTests {
                                  .size());
     }
 
+    /**
+     * Тест для добавления одинаковых юзеров к одной и той же группе
+     */
     @Test
-    public void TestSecond() {
+    public void testCheckAddIdenticalUsers() {
         Storage dataBase = Storage.storageGetInstance();
         dataBase.getGroupsBase()
                  .get("123")
@@ -31,12 +36,15 @@ public class StorageTests {
                                  .size());
     }
 
+    /**
+     * Тест для проверки, подключается ли пользователи к одной и той же группе или нет
+     * Используется класс Storage
+     */
     @Test
-    public void TestThird() {
+    public void testCheckAddVariousUsers() {
         Storage dataBase = Storage.storageGetInstance();
         dataBase.getGroupsBase()
-                 .get("123")
-                 .clear();
+                .clear();
         dataBase.addInfoToGroup("12", "1235");
         dataBase.addInfoToGroup("12", "1234");
         assertEquals(2, dataBase.getGroupsBase()
@@ -44,8 +52,13 @@ public class StorageTests {
                                  .size());
     }
 
+    /**
+     * Совокупность предыдущих двух тестов для проверки работы добавления одинаковых юзеров к одной группе
+     * добавление одинаковых юзеров к разным группам
+     * проверяем сумму подписок разных пользователей
+     */
     @Test
-    public void TestFourth() {
+    public void testForAddVariousAndIdenticalUsers() {
         Storage dataBase = Storage.storageGetInstance();
         dataBase.getGroupsBase()
                  .clear();
