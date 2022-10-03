@@ -4,11 +4,20 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+/**
+ * Класс тестирующий VkAppConfiguration
+ * @author Кедровских Олег
+ * @version 1.0
+ */
 public class VkAppConfigurationTests {
+    /** Поле содержащее конфигурацию приложения */
     private VkAppConfiguration appConfiguration;
 
+    /**
+     * Проверяет правильность чтения данных из файла
+     */
     @Test
-    public void CorrectTest(){
+    public void correctPathTest(){
         appConfiguration = new VkAppConfiguration("src/test/resources/testanonsrc/vkconfigcorrect.properties");
         assertEquals(appConfiguration.AUTH_URL, "AUTH_URL");
         assertEquals(appConfiguration.APP_ID, 2000);
@@ -16,8 +25,11 @@ public class VkAppConfigurationTests {
         assertEquals(appConfiguration.REDIRECT_URL, "REDIRECT_URI");
     }
 
+    /**
+     * Проверяет данные при ошибке чтения
+     */
     @Test
-    public void IncorrectPathTest(){
+    public void incorrectPathTest(){
         appConfiguration = new VkAppConfiguration("src/test/resources/testanonsrc/unknownfile.properties");
         assertNull(appConfiguration.AUTH_URL);
         assertNull(appConfiguration.APP_ID);
@@ -25,8 +37,11 @@ public class VkAppConfigurationTests {
         assertNull(appConfiguration.REDIRECT_URL);
     }
 
+    /**
+     * Метод проверяющий appId на ошибки при прочтении данных из файла
+     */
     @Test
-    public void IncorrectAppIdTest(){
+    public void incorrectAppIdTest(){
         appConfiguration = new VkAppConfiguration("src/test/resources/testanonsrc/vkconfigincorrectappidname.properties");
         assertEquals(appConfiguration.AUTH_URL, "AUTH_URL");
         assertNull(appConfiguration.APP_ID);
@@ -34,8 +49,11 @@ public class VkAppConfigurationTests {
         assertEquals(appConfiguration.REDIRECT_URL, "REDIRECT_URI");
     }
 
+    /**
+     * Метод проверяющий AUTH_URL, CLIENT_SECRET, REDIRECT_URL на ошибки при прочтении данных из файла
+     */
     @Test
-    public void IncorrectStringsTest(){
+    public void incorrectStringsTest(){
         appConfiguration = new VkAppConfiguration("src/test/resources/testanonsrc/vkconfigincorrectstringsnames.properties");
         assertNull(appConfiguration.AUTH_URL);
         assertEquals(appConfiguration.APP_ID, 100);

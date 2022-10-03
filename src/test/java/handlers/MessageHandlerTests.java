@@ -5,9 +5,15 @@ import user.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Класс тестирующий работу класса MessageHandler
+ */
 public class MessageHandlerTests {
+    /**
+     * Метод проверяющий корректность работы всех команд бота
+     */
     @Test
-    public void TestAllCommands(){
+    public void testAllCommands(){
         User user = null;
         HandlerResponse response;
 

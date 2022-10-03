@@ -26,7 +26,7 @@ import com.vk.api.sdk.objects.groups.Fields;
  *
  * @author Кедровских Олег
  * @author Щеголев Андрей
- * @version 0.6
+ * @version 1.0
  */
 public class VkApiHandler implements CreateUser {
     /** Поле транспортного клиента */
@@ -177,9 +177,9 @@ public class VkApiHandler implements CreateUser {
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
     public void turnNotifications(boolean turn, String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
-        Group foundGroup = searchGroup(groupName, callingUser);
+        Group userFindGroup = searchGroup(groupName, callingUser);
         try {
-            vk.wall().get(callingUser).domain(foundGroup.getScreenName()).offset(0).count(3).execute();
+            vk.wall().get(callingUser).domain(userFindGroup.getScreenName()).offset(0).count(3).execute();
         } catch (ClientException | ApiException e) {
             return;
         }
@@ -206,18 +206,18 @@ public class VkApiHandler implements CreateUser {
     /**
      * Метод проверяет есть ли разница между двумя строками
      * @param baseName - изначальное имя
-     * @param searchName - имя поиска
+     * @param userFindName - имя поиска
      * @return true - если разница хотя бы в одном слове больше 50%
      *         false - если разница в обоих словах меньше 50%
      */
-    private boolean isNameDifferent(String baseName, String searchName) {
+    private boolean isNameDifferent(String baseName, String userFindName) {
         String lowerCaseBaseName = baseName.toLowerCase();
-        String lowerCaseSearchName = searchName.toLowerCase();
+        String lowerCaseSearchName = userFindName.toLowerCase();
 
         Pair<String> diffPair = stringDifference(lowerCaseBaseName, lowerCaseSearchName);
 
         int baseNameDiff = (int)((double) diffPair.first.length() / (double) baseName.length() * 100);
-        int searchNameDiff = (int)((double) diffPair.second.length() / (double) searchName.length() * 100);
+        int searchNameDiff = (int)((double) diffPair.second.length() / (double) userFindName.length() * 100);
 
         return baseNameDiff > 50 || searchNameDiff > 50;
     }
