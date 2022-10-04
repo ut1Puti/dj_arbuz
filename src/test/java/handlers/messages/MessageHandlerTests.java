@@ -51,7 +51,7 @@ public class MessageHandlerTests {
             }
 
             response = MessageHandler.executeMessage("/link lida", user, null);
-            assertEquals(response.getTextMessage(), TextResponse.VK_ADDRESS + "lidamudota");
+            assertEquals(response.getTextMessage(), "https://vk.com/lidamudota");
             assertNull(response.getUpdateUser());
             try {
                 Thread.sleep(1000);
@@ -89,6 +89,29 @@ public class MessageHandlerTests {
             response = MessageHandler.executeMessage("/abrakadabra", user, null);
             assertEquals(response.getTextMessage(), TextResponse.UNKNOWN_COMMAND);
             assertNull(response.getUpdateUser());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            response = MessageHandler.executeMessage("/subscribe triplesixdelete", user, null);
+            assertEquals(response.getTextMessage(), TextResponse.SUBSCRIBE);
+            assertNull(response.getUpdateUser());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            response = MessageHandler.executeMessage("/subscribe triplesixdelete", user, null);
+            assertEquals(response.getTextMessage(), TextResponse.SUBSCRIBE);
+            assertNull(response.getUpdateUser());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 }

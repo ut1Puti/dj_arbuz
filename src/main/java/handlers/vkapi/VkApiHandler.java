@@ -109,7 +109,7 @@ public class VkApiHandler implements CreateUser {
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
     public String getGroupURL(String groupName, User callingUser) throws NoGroupException, ClientException, ApiException {
-        return appConfiguration.VK_ADDRESS + groups.searchGroup(groupName, callingUser).getScreenName();
+        return VkApiConsts.VK_ADDRESS + groups.searchGroup(groupName, callingUser).getScreenName();
     }
 
     /**
@@ -149,6 +149,7 @@ public class VkApiHandler implements CreateUser {
 
     /**
      * Метод получает последние посты из сообщества
+     *
      * @param amountOfPosts - кол-во постов
      * @param groupName   - Название группы
      * @param callingUser - пользователя
@@ -159,12 +160,11 @@ public class VkApiHandler implements CreateUser {
      */
     public String getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
         Group userFindGroup = groups.searchGroup(groupName, callingUser);
-
         List<WallpostFull> userFindGroupPosts;
         try {
             userFindGroupPosts = vk.wall().get(callingUser)
                     .domain(userFindGroup.getScreenName())
-                    .offset(0).count(amountOfPosts)
+                    .offset(VkApiConsts.DEFAULT_OFFSET).count(amountOfPosts)
                     .execute().getItems();
         } catch (ClientException | ApiException e) {
             return null;
@@ -184,8 +184,9 @@ public class VkApiHandler implements CreateUser {
                     break;
                 }
 
-                userFindGroupPostAttachments = copyUserFindGroupPost.get(0).getAttachments();
-                userFindPostText = copyUserFindGroupPost.get(0).getText();
+                userFindGroupPostAttachments = copyUserFindGroupPost.get(VkApiConsts.FIRST_ELEMENT_INDEX)
+                                               .getAttachments();
+                userFindPostText = copyUserFindGroupPost.get(VkApiConsts.FIRST_ELEMENT_INDEX).getText();
             }
 
             if (deletedOrNotFound) {
@@ -202,6 +203,7 @@ public class VkApiHandler implements CreateUser {
     /**
      * Метод добавляющий к посту ссылки на прикрепленные элементы
      * или сообщающий об их наличии, если добавить их невозможно
+     *
      * @param userFindGroupPostAttachments - доп. материалы прикрепленные к посту
      * @param postsText - текст постов
      */
@@ -210,7 +212,11 @@ public class VkApiHandler implements CreateUser {
             String userFindGroupPostAttachmentTypeString = userFindGroupPostAttachment.getType().toString();
             switch (userFindGroupPostAttachmentTypeString) {
                 case "photo" -> {
-                    postsText.append(userFindGroupPostAttachment.getPhoto().getSizes().get(0).getUrl()).append(" ");
+                    postsText.append(userFindGroupPostAttachment
+                                    .getPhoto().getSizes()
+                                    .get(VkApiConsts.FIRST_ELEMENT_INDEX)
+                                    .getUrl())
+                            .append(" ");
                 }
                 case "link" -> {
                     postsText.append(userFindGroupPostAttachment.getLink().getUrl()).append(" ");
@@ -227,6 +233,7 @@ public class VkApiHandler implements CreateUser {
 
     /**
      * Метод, который получает code из get параметров GET запроса на сервер
+     *
      * @param httpRequestGetParameters - get параметры отправленные на сервер
      * @return code
      */

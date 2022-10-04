@@ -40,7 +40,7 @@ public class VkApiGroups extends Groups {
      */
     public List<Group> searchGroups(String groupName, User callingUser) throws NoGroupException, ApiException, ClientException {
         List<Group> userFindGroups = search(callingUser, groupName)
-                .offset(0).count(5)
+                .offset(VkApiConsts.DEFAULT_OFFSET).count(VkApiConsts.DEFAULT_GROUPS_NUMBER)
                 .execute()
                 .getItems();
 
@@ -83,7 +83,7 @@ public class VkApiGroups extends Groups {
                 continue;
             }
 
-            GetByIdObjectLegacyResponse userFindByIdGroup = userFindByIdGroups.get(0);
+            GetByIdObjectLegacyResponse userFindByIdGroup = userFindByIdGroups.get(VkApiConsts.FIRST_ELEMENT_INDEX);
             String[] foundByIdGroupNames = userFindByIdGroup.getName().split("[/|]");
             for (String foundByIdGroupName : foundByIdGroupNames) {
 
@@ -158,7 +158,8 @@ public class VkApiGroups extends Groups {
                 Pair<String> firstStringDifferences = diffSearcher(firstString.substring(1), secondString, lookup);
                 Pair<String> secondStringDifferences = diffSearcher(firstString, secondString.substring(1), lookup);
 
-                if (firstStringDifferences.first.length() + firstStringDifferences.second.length() < secondStringDifferences.first.length() + secondStringDifferences.second.length()) {
+                if (firstStringDifferences.first.length() + firstStringDifferences.second.length() <
+                        secondStringDifferences.first.length() + secondStringDifferences.second.length()) {
                     value = new Pair<>(firstString.charAt(0) + firstStringDifferences.first, firstStringDifferences.second);
                 } else {
                     value = new Pair<>(secondStringDifferences.first, secondString.charAt(0) + secondStringDifferences.second);

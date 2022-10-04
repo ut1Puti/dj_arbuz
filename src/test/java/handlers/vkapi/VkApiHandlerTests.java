@@ -18,46 +18,59 @@ import static org.junit.jupiter.api.Assertions.*;
 public class VkApiHandlerTests {
     /** Поле объекта обрабатывающего запросы к вк апи */
     private VkApiHandler vk = new VkApiHandler("src/test/resources/anonsrc/vkconfig.properties");
-    /**  */
+    /** Поле тестового пользователя */
     private User testUser;
 
     /**
-     * Метод проверяет корректную аутентификацию пользователя
+     * Метод проверяет работу аутентификации пользователя
      */
     @Test
-    public void correctAuthTest(){
+    public void authTest() {
         assertNotNull(vk.getAuthURL());
         createUser();
         assertNotNull(testUser);
-    }
 
-    /**
-     * Метод проверяет некорректную аутентификацию
-     */
-    @Test
-    public void incorrectAuthTest(){
         VkApiHandler incorrectVk = new VkApiHandler("src/test/resources/testanonsrc/unknownfile.properties");
         assertNull(incorrectVk.getAuthURL());
         System.out.println(vk.getAuthURL());
-        assertThrows(NullPointerException.class, (Executable) incorrectVk.createUser());
     }
 
     /**
-     * Метод проверяет работу метода поиска группы
-     * @throws ApiTokenExtensionRequiredException - возникает при истечении срока действия токена пользователя
+     * Метод проверяющий работу метода getGroupUrl
+     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
     @Test
-    public void searchGroupTest() throws ApiException, NoGroupException, ClientException {
+    public void getGroupUrlTest() throws ClientException, ApiException {
         createUser();
-        Group testGroup = vk.searchGroup("lida", testUser);
-        assertEquals(testGroup.getId(), 147725517);
-        assertEquals(testGroup.getScreenName(), "lidamudota");
+        try {
+            assertEquals(vk.getGroupURL("triplesixdelete", testUser), "https://vk.com/triplesixdelete");
+            vk.getGroupURL("jklfjdksljfkl", testUser);
+        } catch (NoGroupException e) {
+            assertEquals(e.getMessage(), "Группы с названием jklfjdksljfkl не существует");
+        }
+    }
+
+    /**
+     * Метод тестирующий работу метода getGroupId
+     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     */
+    @Test
+    public void getGroupId() throws ClientException, ApiException {
+        createUser();
+        try {
+            assertEquals(vk.getGroupId("lida", testUser), "147725517");
+            vk.getGroupId("fdhjkshgjkdshzfhkldjsz", testUser);
+        } catch (NoGroupException e) {
+            assertEquals(e.getMessage(), "Группы с названием fdhjkshgjkdshzfhkldjsz не существует");
+        }
     }
 
     /**
      * Метод создающий пользователя
      */
-    private void createUser(){
+    private void createUser() {
         System.out.println(vk.getAuthURL());
         testUser = vk.createUser();
     }

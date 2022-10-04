@@ -18,10 +18,14 @@ import java.util.Objects;
  * @version 1.0
  */
 public class MessageHandler {
-    /**
-     * Поле обработчика запросов к Vk API
-     */
+    /** Поле обработчика запросов к Vk API */
     private static VkApiHandler vk = new VkApiHandler("src/main/resources/anonsrc/vkconfig.properties");
+    /** Поле кол-ва запрашиваемых последних постов */
+    private static final int DEFAULT_POST_NUMBER = 5;
+    /** Поле индекса команды */
+    private static final int COMMAND_INDEX = 0;
+    /** Поле индекса аргумента */
+    private static final int ARG_INDEX = 1;
 
     /**
      * Метод определяющий команды в сообщении пользователя и возвращающий ответ
@@ -32,9 +36,9 @@ public class MessageHandler {
      * @return возвращает ответ на сообщение пользователя
      */
     public static HandlerResponse executeMessage(String message, User user, ConsoleBot callingBot) {
-        String[] commandAndArg = message.split(" ", 2);
-        if (commandAndArg.length == 1) {
-            switch (commandAndArg[0]) {
+        String[] commandAndArgs = message.split(" ", 2);
+        if (isItNoArgCommand(commandAndArgs)) {
+            switch (commandAndArgs[COMMAND_INDEX]) {
                 case "/help" -> {
                     return getHelpResponse();
                 }
@@ -51,23 +55,45 @@ public class MessageHandler {
             return getNotAuthedResponse();
         }
 
-        if (commandAndArg.length == 2) {
-            switch (commandAndArg[0]) {
+        if (isItSingleArgCommand(commandAndArgs)) {
+            switch (commandAndArgs[COMMAND_INDEX]) {
                 case "/link" -> {
-                    return getGroupURL(commandAndArg[1], user);
+                    return getGroupURL(commandAndArgs[ARG_INDEX], user);
                 }
                 case "/id" -> {
-                    return getGroupId(commandAndArg[1], user);
+                    return getGroupId(commandAndArgs[ARG_INDEX], user);
                 }
                 case "/subscribe" -> {
-                    return subscribeTo(commandAndArg[1], user);
+                    return subscribeTo(commandAndArgs[ARG_INDEX], user);
                 }
                 case "/get_last_posts" -> {
-                    return getLastPosts(commandAndArg[1], user);
+                    return getLastPosts(commandAndArgs[ARG_INDEX], user);
                 }
             }
         }
         return getUnknownCommandResponse();
+    }
+
+    /**
+     * Метод проверяет есть ли аргументы в полученной команде
+     *
+     * @param commandAndArgs - массив аргументов и комманд
+     * @return true - если нет аргументов
+     *         false - если есть аргументы
+     */
+    private static boolean isItNoArgCommand(String[] commandAndArgs) {
+        return commandAndArgs.length == 1;
+    }
+
+    /**
+     * Метод проверяет есть ли аргументы в полученной команде
+     *
+     * @param commandAndArgs - массив аргументов и комманд
+     * @return true - если есть только один аргумент
+     *         false - если нет аргументов или их больше одного
+     */
+    private static boolean isItSingleArgCommand(String[] commandAndArgs) {
+        return commandAndArgs.length == 2;
     }
 
     /**
@@ -182,7 +208,7 @@ public class MessageHandler {
     private static HandlerResponse getLastPosts(String groupName, User user) {
         try {
             return new HandlerResponse(Objects.requireNonNullElse(
-                    vk.getLastPosts(5, groupName, user), TextResponse.NO_POSTS_IN_GROUP
+                    vk.getLastPosts(DEFAULT_POST_NUMBER, groupName, user), TextResponse.NO_POSTS_IN_GROUP
             ));
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
