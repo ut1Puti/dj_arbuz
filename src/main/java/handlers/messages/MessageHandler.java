@@ -15,7 +15,7 @@ import java.util.Objects;
  *
  * @author Кедровских Олег
  * @author Щеголев Андрей
- * @version 1.0
+ * @version 1.4
  */
 public class MessageHandler {
     /** Поле обработчика запросов к Vk API */

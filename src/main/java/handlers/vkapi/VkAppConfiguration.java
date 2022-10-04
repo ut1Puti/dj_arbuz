@@ -25,7 +25,7 @@ class VkAppConfiguration {
      *                     файл должен содержать поля authUrl,
      *                     appId, clientSecret, redirectUri
      */
-    VkAppConfiguration(String configPath){
+    VkAppConfiguration(String configPath) {
         Properties prop = new Properties();
         try {
             prop.load(new FileInputStream(configPath));

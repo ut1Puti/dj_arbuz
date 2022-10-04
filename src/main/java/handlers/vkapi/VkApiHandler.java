@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author Кедровских Олег
  * @author Щеголев Андрей
- * @version 1.0
+ * @version 1.4
  */
 public class VkApiHandler implements CreateUser {
     /** Поле транспортного клиента */

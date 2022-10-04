@@ -5,7 +5,7 @@ package handlers.messages;
  *
  * @author Кедровских Олег
  * @author Щеголев Андрей
- * @version 1.0
+ * @version 1.4
  */
 public class TextResponse {
     /** Поле сообщения о боте и его возможностях */
