@@ -233,6 +233,7 @@ public class VkApiHandler implements CreateUser {
                     }
                     case "video" -> {
                         System.out.println(userFindGroupPostAttachment.getVideo().getId());
+                        System.out.println(userFindGroupPostAttachment.getVideo().getAccessKey());
                     }
                 }
             }
