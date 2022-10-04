@@ -21,8 +21,8 @@ import java.util.Map;
  */
 public class VkApiGroups extends Groups {
     /**
-     *
-     * @param client
+     * Конструктор унаследованный от родительского класс
+     * @param client - клиент vk
      */
     public VkApiGroups(VkApiClient client) {
         super(client);

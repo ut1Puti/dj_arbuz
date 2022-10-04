@@ -65,8 +65,8 @@ public class VkApiHandler implements CreateUser {
 
     /**
      * Метод интерфейса CreateUser создающий пользователя
-     *
      * Создается с помощью Vk Java SDK, получая код с сервера
+     *
      * @return интерфейс для создания пользователя
      */
     @Override
@@ -194,8 +194,8 @@ public class VkApiHandler implements CreateUser {
             }
 
             postsText.append("Пост ").append(postsCounter++).append(") ").append(userFindPostText).append("\n");
-            addAttachmentsToPost(userFindGroupPostAttachments, postsText);
-            postsText.append("\n\n");
+            addAttachmentsToPost(userFindGroup, userFindGroupPostAttachments, postsText);
+            postsText.append("\n\n\n");
         }
         return postsText.isEmpty() ? null : postsText.toString();
     }
@@ -207,7 +207,9 @@ public class VkApiHandler implements CreateUser {
      * @param userFindGroupPostAttachments - доп. материалы прикрепленные к посту
      * @param postsText - текст постов
      */
-    private void addAttachmentsToPost(List<WallpostAttachment> userFindGroupPostAttachments, StringBuilder postsText) {
+    private void addAttachmentsToPost(Group userFindGroup, List<WallpostAttachment> userFindGroupPostAttachments,
+                                      StringBuilder postsText) {
+        boolean impossibleToLoadAttachment = false;
         for (WallpostAttachment userFindGroupPostAttachment : userFindGroupPostAttachments) {
             String userFindGroupPostAttachmentTypeString = userFindGroupPostAttachment.getType().toString();
             switch (userFindGroupPostAttachmentTypeString) {
@@ -216,19 +218,24 @@ public class VkApiHandler implements CreateUser {
                                     .getPhoto().getSizes()
                                     .get(VkApiConsts.FIRST_ELEMENT_INDEX)
                                     .getUrl())
-                            .append(" ");
+                             .append(" ");
                 }
                 case "link" -> {
                     postsText.append(userFindGroupPostAttachment.getLink().getUrl()).append(" ");
                 }
-                case "audio" -> {
-                    postsText.append("В посте есть трек, но мы не можем его загрузить. ");
-                }
-                case "video" -> {
-                    postsText.append("В посте есть видео, но мы не можем его загрузить. ");
+                case "audio", "video" -> {
+                    impossibleToLoadAttachment = true;
                 }
             }
         }
+
+        if (impossibleToLoadAttachment) {
+            postsText.append("\nЕсть файлы, недоступные для отображения на сторонних ресурсах.\n")
+                     .append("Если хотите посмотреть их, перейдите по ссылке: ")
+                     .append(VkApiConsts.VK_ADDRESS)
+                     .append(userFindGroup.getScreenName());
+        }
+
     }
 
     /**
