@@ -1,6 +1,8 @@
 package handlers.vkapi;
 
+import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
+import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.groups.Group;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -45,7 +47,7 @@ public class VkApiHandlerTests {
      * @throws ApiTokenExtensionRequiredException - возникает при истечении срока действия токена пользователя
      */
     @Test
-    public void searchGroupTest() throws ApiTokenExtensionRequiredException, NoGroupException {
+    public void searchGroupTest() throws ApiException, NoGroupException, ClientException {
         createUser();
         Group testGroup = vk.searchGroup("lida", testUser);
         assertEquals(testGroup.getId(), 147725517);

@@ -76,7 +76,7 @@ public class Storage {
         returnStorageFromDatabase();
     }
 
-    public static Storage storageGetInstance() {
+    public static Storage getInstance() {
         if (storage == null) {
             storage = new Storage();
         }

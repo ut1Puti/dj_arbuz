@@ -10,6 +10,8 @@ import java.util.Properties;
  * @version 1.0
  */
 class VkAppConfiguration {
+    /** Поле содерщащее адрес vk */
+    final String VK_ADDRESS = "https://vk.com/";
     /** Поле ссылки для аутентификации */
     final String AUTH_URL;
     /** Поле id vk приложения */

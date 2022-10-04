@@ -11,7 +11,7 @@ public class StorageTests {
      */
     @Test
     public void testCheakAddtoStorageUser() {
-        Storage dataBase1 = Storage.storageGetInstance();
+        Storage dataBase1 = Storage.getInstance();
         dataBase1.getGroupsBase()
                  .clear();
         dataBase1.addInfoToGroup("123", "123");
@@ -25,7 +25,7 @@ public class StorageTests {
      */
     @Test
     public void testCheckAddIdenticalUsers() {
-        Storage dataBase = Storage.storageGetInstance();
+        Storage dataBase = Storage.getInstance();
         dataBase.getGroupsBase()
                  .get("123")
                  .clear();
@@ -42,7 +42,7 @@ public class StorageTests {
      */
     @Test
     public void testCheckAddVariousUsers() {
-        Storage dataBase = Storage.storageGetInstance();
+        Storage dataBase = Storage.getInstance();
         dataBase.getGroupsBase()
                 .clear();
         dataBase.addInfoToGroup("12", "1235");
@@ -59,7 +59,7 @@ public class StorageTests {
      */
     @Test
     public void testForAddVariousAndIdenticalUsers() {
-        Storage dataBase = Storage.storageGetInstance();
+        Storage dataBase = Storage.getInstance();
         dataBase.getGroupsBase()
                  .clear();
         dataBase.addInfoToGroup("12", "1235");

@@ -1,7 +1,7 @@
 package handlers.vkapi;
 
 public class NoGroupException extends Exception{
-    public NoGroupException(String message) {
-        super(message);
+    public NoGroupException(String groupName) {
+        super("Группы с названием" + groupName + "не существует");
     }
 }

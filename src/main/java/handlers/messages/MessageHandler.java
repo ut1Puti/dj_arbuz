@@ -1,7 +1,9 @@
 package handlers.messages;
 
 import bots.ConsoleBot;
+import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
+import com.vk.api.sdk.exceptions.ClientException;
 import handlers.vkapi.NoGroupException;
 import handlers.vkapi.VkApiHandler;
 import user.User;
@@ -121,11 +123,13 @@ public class MessageHandler {
      */
     private static HandlerResponse getGroupURL(String groupName, User user) {
         try {
-            return new HandlerResponse(TextResponse.VK_ADDRESS + vk.searchGroup(groupName, user).getScreenName());
+            return new HandlerResponse(vk.getGroupURL(groupName, user));
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
             return new HandlerResponse(TextResponse.NO_GROUP);
+        } catch (ApiException | ClientException e) {
+            return new HandlerResponse(TextResponse.VK_API_ERROR);
         }
     }
 
@@ -138,16 +142,19 @@ public class MessageHandler {
      */
     private static HandlerResponse getGroupId(String groupName, User user) {
         try {
-            return new HandlerResponse(String.valueOf(vk.searchGroup(groupName, user).getId()));
+            return new HandlerResponse(String.valueOf(vk.getGroupId(groupName, user)));
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
             return new HandlerResponse(TextResponse.NO_GROUP);
+        } catch (ApiException | ClientException e) {
+            return new HandlerResponse(TextResponse.VK_API_ERROR);
         }
     }
 
     /**
      * Метод для подписки пользователя
+     *
      * @param groupName - Название группы
      * @param user - айди юзера
      * @return - возврат текста для сообщения
@@ -160,14 +167,17 @@ public class MessageHandler {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
             return new HandlerResponse(TextResponse.NO_GROUP);
+        } catch (ApiException | ClientException e) {
+            return new HandlerResponse(TextResponse.VK_API_ERROR);
         }
     }
 
     /**
+     * Метод возвращающий ответ на ответ на /get_last_posts
      *
-     * @param groupName
-     * @param user
-     * @return
+     * @param groupName - имя группы
+     * @param user      - пользователь отправивший сообщение
+     * @return текст постов, ссылки на изображения в них, а также ссылки
      */
     private static HandlerResponse getLastPosts(String groupName, User user) {
         try {
@@ -178,6 +188,8 @@ public class MessageHandler {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
             return new HandlerResponse(TextResponse.NO_GROUP);
+        } catch (ApiException | ClientException e) {
+            return new HandlerResponse(TextResponse.VK_API_ERROR);
         }
     }
 

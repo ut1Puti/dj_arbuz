@@ -2,6 +2,7 @@ package handlers.messages;
 
 /**
  * Класс возможных ответов на сообщения пользователя
+ *
  * @author Кедровских Олег
  * @author Щеголев Андрей
  * @version 1.0
@@ -35,12 +36,14 @@ public class TextResponse {
     public static final String NOT_AUTHED_USER = "Сначала пройдите аутентификацию с помощью вк. Для этого используйте /start";
     /** Поле сообщения неизвестной команды */
     public static final String UNKNOWN_COMMAND = "Неизвестная команда. Используйте /help, чтобы увидеть доступные";
-    /** Поле содерщащее адрес vk */
-    public static final String VK_ADDRESS = "https://vk.com/";
     /** Поле сообщения подписки на группу*/
     public static final String SUBSCRIBE = "Вы успешно подписаны на группу!";
     /** Поле сообщения о том, что пользователь уже подписан */
     public static final String ALREADY_SUBSCRIBER = "Вы уже подписаны на эту группу";
     /** Поле сообщения о том, что в группе отсутствуют посты */
     public static final String NO_POSTS_IN_GROUP = "В этой группе нет постов";
+    /**  */
+    public static final String VK_API_ERROR = """
+            Возникла ошибка при обращении к вк.
+            Попробуйте еще раз, если ошибка возникнет еще раз, попробуйте позже.""";
 }

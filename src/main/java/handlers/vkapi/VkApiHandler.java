@@ -3,17 +3,12 @@ package handlers.vkapi;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.groups.Group;
-import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
-import com.vk.api.sdk.objects.video.VideoFull;
-import com.vk.api.sdk.objects.video.responses.GetResponse;
 import com.vk.api.sdk.objects.wall.Wallpost;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
-import com.vk.api.sdk.objects.wall.WallpostAttachmentType;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.Storage;
 import httpserver.HttpServer;
@@ -21,14 +16,7 @@ import user.CreateUser;
 import user.User;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import com.vk.api.sdk.objects.groups.Fields;
-
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
 
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
@@ -48,17 +36,22 @@ public class VkApiHandler implements CreateUser {
     private Storage dataBase = null;
     /** Поле конфигурации vk приложения */
     private final VkAppConfiguration appConfiguration;
+    /** Поле класса для взаимодействия с группами через vk api */
+    private final VkApiGroups groups;
 
     /**
      * Конструктор по пути до файла с конфигурацией приложения
+     *
      * @param configPath - путь до файла с конфигурацией
      */
     public VkApiHandler(String configPath) {
         appConfiguration = new VkAppConfiguration(configPath);
+        groups = new VkApiGroups(vk);
     }
 
     /**
      * Метод возвращающий ссылку для аутентификации
+     *
      * @return ссылку для аутентификации, если сервер недоступен, то это null
      */
     public String getAuthURL() {
@@ -71,7 +64,8 @@ public class VkApiHandler implements CreateUser {
     }
 
     /**
-     * Метод интерфейса CreateUser создающий пользователя.
+     * Метод интерфейса CreateUser создающий пользователя
+     *
      * Создается с помощью Vk Java SDK, получая код с сервера
      * @return интерфейс для создания пользователя
      */
@@ -105,86 +99,31 @@ public class VkApiHandler implements CreateUser {
     }
 
     /**
-     * Метод, который ищет все группы по запросу
-     * @param groupName - запрос
-     * @param callingUser - пользователь сделавший запрос
-     * @return список групп полученных по запросу
-     * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
+     * Метод получающий ссылку на группу в вк
+     *
+     * @param groupName   - Название группы
+     * @param callingUser - пользователя
+     * @return возвращает ссылку на группу в вк
+     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public List<Group> searchGroups(String groupName, User callingUser) throws ApiTokenExtensionRequiredException,
-                                                                        NoGroupException {
-        try {
-            List<Group> userFindGroups = vk.groups().search(callingUser, groupName)
-                    .offset(0).count(5)
-                    .execute()
-                    .getItems();
-
-            if (userFindGroups.isEmpty()){
-                throw new NoGroupException("Группы с названием" + groupName + "не существует");
-            }
-
-            return userFindGroups;
-        } catch (ApiException | ClientException e){
-            return null;
-        }
+    public String getGroupURL(String groupName, User callingUser) throws NoGroupException, ClientException, ApiException {
+        return appConfiguration.VK_ADDRESS + groups.searchGroup(groupName, callingUser).getScreenName();
     }
 
     /**
-     * Метод, который ищет подтвержденные группы по запросу
-     * @param groupName - запрос
-     * @param callingUser - пользователь сделавший запрос
-     * @return верифицированную группу
-     *         если групп оказалось больше одной возвращает с большим числом подписчиков
-     *         если верифицированная группа не нашлась, возвращает null
-     * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
+     * Метод получающий id группы
+     *
+     * @param groupName   - Название группы
+     * @param callingUser - пользователя
+     * @return возвращает id группы
+     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public Group searchGroup(String groupName, User callingUser) throws ApiTokenExtensionRequiredException,
-                                                                 NoGroupException {
-        List<Group> userFindGroups = searchGroups(groupName, callingUser);
-
-        if (userFindGroups == null) {
-            throw new NoGroupException("Группы с названием" + groupName + "не существует");
-        }
-
-        int maxMembersCount = Integer.MIN_VALUE;
-        Group resultGroup = null;
-        for (Group userFindGroup : userFindGroups) {
-            List<GetByIdObjectLegacyResponse> userFindByIdGroups;
-            try {
-                userFindByIdGroups = vk.groups()
-                        .getByIdObjectLegacy(callingUser)
-                        .groupId(String.valueOf(userFindGroup.getId()))
-                        .fields(Fields.MEMBERS_COUNT)
-                        .execute();
-            } catch (ApiException | ClientException e) {
-                continue;
-            }
-
-            if (userFindByIdGroups.isEmpty()) {
-                continue;
-            }
-
-            GetByIdObjectLegacyResponse userFindByIdGroup = userFindByIdGroups.get(0);
-            String[] foundByIdGroupNames = userFindByIdGroup.getName().split("[/|]");
-            for (String foundByIdGroupName : foundByIdGroupNames) {
-
-                if (isNameDifferent(groupName, foundByIdGroupName)) {
-                    continue;
-                }
-
-                if (userFindByIdGroup.getMembersCount() > maxMembersCount) {
-                    maxMembersCount = userFindByIdGroup.getMembersCount();
-                    resultGroup = userFindByIdGroup;
-                }
-
-            }
-        }
-
-        if (resultGroup == null) {
-            throw new NoGroupException("Группы с названием" + groupName + "не существует");
-        }
-
-        return resultGroup;
+    public String getGroupId(String groupName, User callingUser) throws NoGroupException, ClientException, ApiException {
+        return String.valueOf(groups.searchGroup(groupName, callingUser).getId());
     }
 
     /**
@@ -194,14 +133,15 @@ public class VkApiHandler implements CreateUser {
      * @param callingUser - пользователя
      * @return возвращает true - если пользователь только что подписался
      *                    false - если пользователь уже был подписан
-     * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
+     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public boolean subscribeTo(String groupName, User callingUser) throws ApiTokenExtensionRequiredException,
-                                                                            NoGroupException {
-        Group userFindGroup = searchGroup(groupName, callingUser);
+    public boolean subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
+        Group userFindGroup = groups.searchGroup(groupName, callingUser);
 
-        if(dataBase == null) {
-            dataBase = Storage.storageGetInstance();
+        if (dataBase == null) {
+            dataBase = Storage.getInstance();
         }
 
         return dataBase.addInfoToGroup(userFindGroup.getScreenName(),String.valueOf(callingUser.getId()));
@@ -213,11 +153,12 @@ public class VkApiHandler implements CreateUser {
      * @param groupName   - Название группы
      * @param callingUser - пользователя
      * @return текст указанного кол-ва постов, а также изображения и ссылки, если они есть в посте
-     * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
+     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public String getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiTokenExtensionRequiredException,
-                                                                                      NoGroupException {
-        Group userFindGroup = searchGroup(groupName, callingUser);
+    public String getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
+        Group userFindGroup = groups.searchGroup(groupName, callingUser);
 
         List<WallpostFull> userFindGroupPosts;
         try {
@@ -230,7 +171,7 @@ public class VkApiHandler implements CreateUser {
         }
 
         int postsCounter = 1;
-        StringBuilder result = new StringBuilder();
+        StringBuilder postsText = new StringBuilder();
         for (WallpostFull userFindGroupPost : userFindGroupPosts) {
             List<WallpostAttachment> userFindGroupPostAttachments = userFindGroupPost.getAttachments();
             String userFindPostText = userFindGroupPost.getText();
@@ -251,28 +192,37 @@ public class VkApiHandler implements CreateUser {
                 continue;
             }
 
-            result.append("Пост ").append(postsCounter++).append(") ").append(userFindPostText).append(" ");
+            postsText.append("Пост ").append(postsCounter++).append(") ").append(userFindPostText).append("\n");
+            addAttachmentsToPost(userFindGroupPostAttachments, postsText);
+            postsText.append("\n\n");
+        }
+        return postsText.isEmpty() ? null : postsText.toString();
+    }
 
-            for (WallpostAttachment userFindGroupPostAttachment : userFindGroupPostAttachments) {
-                String userFindGroupPostAttachmentTypeString = userFindGroupPostAttachment.getType().toString();
-                switch (userFindGroupPostAttachmentTypeString) {
-                    case "photo" -> {
-                        result.append(userFindGroupPostAttachment.getPhoto().getSizes().get(0).getUrl()).append(" ");
-                    }
-                    case "link" -> {
-                        result.append(userFindGroupPostAttachment.getLink().getUrl()).append(" ");
-                    }
-                    case "audio" -> {
-                        System.out.println("музыку нельзя");
-                    }
-                    case "video" -> {
-                        System.out.println("ведева тоже нельзя");
-                    }
+    /**
+     * Метод добавляющий к посту ссылки на прикрепленные элементы
+     * или сообщающий об их наличии, если добавить их невозможно
+     * @param userFindGroupPostAttachments - доп. материалы прикрепленные к посту
+     * @param postsText - текст постов
+     */
+    private void addAttachmentsToPost(List<WallpostAttachment> userFindGroupPostAttachments, StringBuilder postsText) {
+        for (WallpostAttachment userFindGroupPostAttachment : userFindGroupPostAttachments) {
+            String userFindGroupPostAttachmentTypeString = userFindGroupPostAttachment.getType().toString();
+            switch (userFindGroupPostAttachmentTypeString) {
+                case "photo" -> {
+                    postsText.append(userFindGroupPostAttachment.getPhoto().getSizes().get(0).getUrl()).append(" ");
+                }
+                case "link" -> {
+                    postsText.append(userFindGroupPostAttachment.getLink().getUrl()).append(" ");
+                }
+                case "audio" -> {
+                    postsText.append("В посте есть трек, но мы не можем его загрузить. ");
+                }
+                case "video" -> {
+                    postsText.append("В посте есть видео, но мы не можем его загрузить. ");
                 }
             }
-            result.append("\n\n");
         }
-        return result.isEmpty() ? null : result.toString();
     }
 
     /**
@@ -292,74 +242,4 @@ public class VkApiHandler implements CreateUser {
         }
         return authCodeBuilder.toString();
     }
-
-    /**
-     * Метод проверяет есть ли разница между двумя строками
-     * @param baseName - изначальное имя
-     * @param userFindName - имя поиска
-     * @return true - если разница хотя бы в одном слове больше 50%
-     *         false - если разница в обоих словах меньше 50%
-     */
-    private boolean isNameDifferent(String baseName, String userFindName) {
-        String lowerCaseBaseName = baseName.toLowerCase();
-        String lowerCaseUserFindName = userFindName.toLowerCase();
-
-        Pair<String> diffPair = stringDifference(lowerCaseBaseName, lowerCaseUserFindName);
-
-        int baseNameDiff = (int)((double) diffPair.first.length() / (double) baseName.length() * 100);
-        int searchNameDiff = (int)((double) diffPair.second.length() / (double) userFindName.length() * 100);
-
-        return baseNameDiff > 50 || searchNameDiff > 50;
-    }
-
-    /**
-     * Метод, который ищет буквы в которых отличаются две строки
-     * @param firstString - первая строка
-     * @param secondString - вторая строка
-     * @return пару, элементы которой это строки состоящие из букв в которых слова различаются
-     */
-    private Pair<String> stringDifference(String firstString, String secondString) {
-        return diffHelper(firstString, secondString, new HashMap<>());
-    }
-
-    /**
-     * Метод рекурсивно ищущий несовпадающие элементы
-     * @param firstString - первая строка
-     * @param secondString - вторая строка
-     * @param lookup - Map хранящий не совпавшие элементы
-     * @return пару строк состоящих из не совпавших символов
-     */
-    private Pair<String> diffHelper(String firstString, String secondString, Map<Long, Pair<String>> lookup) {
-        long key = ((long) firstString.length()) | secondString.length();
-        if (!lookup.containsKey(key)) {
-            Pair<String> value;
-
-            if (firstString.isEmpty() || secondString.isEmpty()) {
-                value = new Pair<>(firstString, secondString);
-            } else if (firstString.charAt(0) == secondString.charAt(0)) {
-                value = diffHelper(firstString.substring(1), secondString.substring(1), lookup);
-            } else {
-                Pair<String> firstStringDifferences = diffHelper(firstString.substring(1), secondString, lookup);
-                Pair<String> secondStringDifferences = diffHelper(firstString, secondString.substring(1), lookup);
-
-                if (firstStringDifferences.first.length() + firstStringDifferences.second.length() < secondStringDifferences.first.length() + secondStringDifferences.second.length()) {
-                    value = new Pair<>(firstString.charAt(0) + firstStringDifferences.first, firstStringDifferences.second);
-                } else {
-                    value = new Pair<>(secondStringDifferences.first, secondString.charAt(0) + secondStringDifferences.second);
-                }
-
-            }
-
-            lookup.put(key, value);
-        }
-        return lookup.get(key);
-    }
-
-    /**
-     * Хранит элементы пары
-     * @param first - первый элемент
-     * @param second - второй элемент
-     * @param <T> - тип хранимых элементов
-     */
-    private record Pair<T>(T first, T second){};
 }
