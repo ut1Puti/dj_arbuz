@@ -41,4 +41,6 @@ public class TextResponse {
     public static final String SUBSCRIBE = "Вы успешно подписаны на группу!";
     /** Поле сообщения о том, что пользователь уже подписан */
     public static final String ALREADY_SUBSCRIBER = "Вы уже подписаны на эту группу";
+    /** Поле сообщения о том, что в группе отсутствуют посты */
+    public static final String NO_POSTS_IN_GROUP = "В этой группе нет постов";
 }

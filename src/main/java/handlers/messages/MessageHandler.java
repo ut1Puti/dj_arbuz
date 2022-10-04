@@ -2,9 +2,11 @@ package handlers.messages;
 
 import bots.ConsoleBot;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
-import com.vk.api.sdk.objects.groups.Group;
+import handlers.vkapi.NoGroupException;
 import handlers.vkapi.VkApiHandler;
 import user.User;
+
+import java.util.Objects;
 
 /**
  * Класс утилитных методов создающий ответы на сообщения пользователя
@@ -60,22 +62,6 @@ public class MessageHandler {
                 }
                 case "/get_last_posts" -> {
                     return getLastPosts(commandAndArg[1], user);
-                }
-                case "/turn_on_notifications" -> {
-                    try {
-                        vk.turnNotifications(true, commandAndArg[1], user);
-                    } catch (ApiTokenExtensionRequiredException e) {
-                        return new HandlerResponse(TextResponse.NO_GROUP);
-                    }
-                    return new HandlerResponse("not done");
-                }
-                case "/turn_off_notifications" -> {
-                    try {
-                        vk.turnNotifications(false, commandAndArg[1], user);
-                    } catch (ApiTokenExtensionRequiredException e) {
-                        return new HandlerResponse(TextResponse.NO_GROUP);
-                    }
-                    return new HandlerResponse("not done");
                 }
             }
         }
@@ -134,18 +120,13 @@ public class MessageHandler {
      * @return ссылку на верефицированную группу если такая нашлась
      */
     private static HandlerResponse getGroupURL(String groupName, User user) {
-        Group group;
         try {
-            group = vk.searchGroup(groupName, user);
+            return new HandlerResponse(TextResponse.VK_ADDRESS + vk.searchGroup(groupName, user).getScreenName());
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
-        }
-
-        if (group == null) {
+        } catch (NoGroupException e) {
             return new HandlerResponse(TextResponse.NO_GROUP);
         }
-
-        return new HandlerResponse(TextResponse.VK_ADDRESS + group.getScreenName());
     }
 
     /**
@@ -156,18 +137,13 @@ public class MessageHandler {
      * @return id верефицированной группы если такая нашлась
      */
     private static HandlerResponse getGroupId(String groupName, User user) {
-        Group group;
         try {
-            group = vk.searchGroup(groupName, user);
+            return new HandlerResponse(String.valueOf(vk.searchGroup(groupName, user).getId()));
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
-        }
-
-        if (group == null) {
+        } catch (NoGroupException e) {
             return new HandlerResponse(TextResponse.NO_GROUP);
         }
-
-        return new HandlerResponse(String.valueOf(group.getId()));
     }
 
     /**
@@ -177,16 +153,13 @@ public class MessageHandler {
      * @return - возврат текста для сообщения
      */
     private static HandlerResponse subscribeTo(String groupName, User user) {
-        boolean isSubscribed;
         try {
-            isSubscribed = vk.subscribeTo(groupName, user);
+            return new HandlerResponse(vk.subscribeTo(groupName, user) ?
+                    TextResponse.SUBSCRIBE : TextResponse.ALREADY_SUBSCRIBER);
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
-        }
-        if (isSubscribed) {
-            return new HandlerResponse(TextResponse.SUBSCRIBE);
-        } else {
-            return new HandlerResponse(TextResponse.ALREADY_SUBSCRIBER);
+        } catch (NoGroupException e) {
+            return new HandlerResponse(TextResponse.NO_GROUP);
         }
     }
 
@@ -198,11 +171,14 @@ public class MessageHandler {
      */
     private static HandlerResponse getLastPosts(String groupName, User user) {
         try {
-            vk.getLastPosts(5, groupName, user);
+            return new HandlerResponse(Objects.requireNonNullElse(
+                    vk.getLastPosts(5, groupName, user), TextResponse.NO_POSTS_IN_GROUP
+            ));
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
+        } catch (NoGroupException e) {
+            return new HandlerResponse(TextResponse.NO_GROUP);
         }
-        return new HandlerResponse("not done");
     }
 
     /**

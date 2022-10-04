@@ -45,7 +45,7 @@ public class VkApiHandlerTests {
      * @throws ApiTokenExtensionRequiredException - возникает при истечении срока действия токена пользователя
      */
     @Test
-    public void searchGroupTest() throws ApiTokenExtensionRequiredException {
+    public void searchGroupTest() throws ApiTokenExtensionRequiredException, NoGroupException {
         createUser();
         Group testGroup = vk.searchGroup("lida", testUser);
         assertEquals(testGroup.getId(), 147725517);

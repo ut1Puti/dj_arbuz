@@ -9,7 +9,9 @@ import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
-import com.vk.api.sdk.objects.photos.Photo;
+import com.vk.api.sdk.objects.video.VideoFull;
+import com.vk.api.sdk.objects.video.responses.GetResponse;
+import com.vk.api.sdk.objects.wall.Wallpost;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostAttachmentType;
 import com.vk.api.sdk.objects.wall.WallpostFull;
@@ -24,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.vk.api.sdk.objects.groups.Fields;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
@@ -106,12 +111,19 @@ public class VkApiHandler implements CreateUser {
      * @return список групп полученных по запросу
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
-    public List<Group> searchGroups(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
+    public List<Group> searchGroups(String groupName, User callingUser) throws ApiTokenExtensionRequiredException,
+                                                                        NoGroupException {
         try {
-            return vk.groups().search(callingUser, groupName)
+            List<Group> userFindGroups = vk.groups().search(callingUser, groupName)
                     .offset(0).count(5)
                     .execute()
                     .getItems();
+
+            if (userFindGroups.isEmpty()){
+                throw new NoGroupException("Группы с названием" + groupName + "не существует");
+            }
+
+            return userFindGroups;
         } catch (ApiException | ClientException e){
             return null;
         }
@@ -126,11 +138,12 @@ public class VkApiHandler implements CreateUser {
      *         если верифицированная группа не нашлась, возвращает null
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
-    public Group searchGroup(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
+    public Group searchGroup(String groupName, User callingUser) throws ApiTokenExtensionRequiredException,
+                                                                 NoGroupException {
         List<Group> userFindGroups = searchGroups(groupName, callingUser);
 
-        if (userFindGroups == null || userFindGroups.size() == 0) {
-            return null;
+        if (userFindGroups == null) {
+            throw new NoGroupException("Группы с названием" + groupName + "не существует");
         }
 
         int maxMembersCount = Integer.MIN_VALUE;
@@ -166,6 +179,11 @@ public class VkApiHandler implements CreateUser {
 
             }
         }
+
+        if (resultGroup == null) {
+            throw new NoGroupException("Группы с названием" + groupName + "не существует");
+        }
+
         return resultGroup;
     }
 
@@ -178,7 +196,8 @@ public class VkApiHandler implements CreateUser {
      *                    false - если пользователь уже был подписан
      * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
-    public boolean subscribeTo(String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
+    public boolean subscribeTo(String groupName, User callingUser) throws ApiTokenExtensionRequiredException,
+                                                                            NoGroupException {
         Group userFindGroup = searchGroup(groupName, callingUser);
 
         if(dataBase == null) {
@@ -189,14 +208,17 @@ public class VkApiHandler implements CreateUser {
     }
 
     /**
-     *
-     * @param amountOfPosts
-     * @param groupName
-     * @param callingUser
-     * @throws ApiTokenExtensionRequiredException
+     * Метод получает последние посты из сообщества
+     * @param amountOfPosts - кол-во постов
+     * @param groupName   - Название группы
+     * @param callingUser - пользователя
+     * @return текст указанного кол-ва постов, а также изображения и ссылки, если они есть в посте
+     * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
      */
-    public void getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
+    public String getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiTokenExtensionRequiredException,
+                                                                                      NoGroupException {
         Group userFindGroup = searchGroup(groupName, callingUser);
+
         List<WallpostFull> userFindGroupPosts;
         try {
             userFindGroupPosts = vk.wall().get(callingUser)
@@ -204,57 +226,53 @@ public class VkApiHandler implements CreateUser {
                     .offset(0).count(amountOfPosts)
                     .execute().getItems();
         } catch (ClientException | ApiException e) {
-            return;
+            return null;
         }
-        System.out.println(userFindGroupPosts);
-        for (WallpostFull userFindGroupPost : userFindGroupPosts){
-            String wallPostText = userFindGroupPost.getText();
-            List<WallpostAttachment> userFindGroupPostAttachments = userFindGroupPost.getAttachments();
 
-            if (userFindGroupPostAttachments == null){
-                //TODO LATER
+        int postsCounter = 1;
+        StringBuilder result = new StringBuilder();
+        for (WallpostFull userFindGroupPost : userFindGroupPosts) {
+            List<WallpostAttachment> userFindGroupPostAttachments = userFindGroupPost.getAttachments();
+            String userFindPostText = userFindGroupPost.getText();
+            boolean deletedOrNotFound = false;
+            while (userFindGroupPostAttachments == null) {
+                List<Wallpost> copyUserFindGroupPost = userFindGroupPost.getCopyHistory();
+
+                if (copyUserFindGroupPost == null) {
+                    deletedOrNotFound = true;
+                    break;
+                }
+
+                userFindGroupPostAttachments = copyUserFindGroupPost.get(0).getAttachments();
+                userFindPostText = copyUserFindGroupPost.get(0).getText();
+            }
+
+            if (deletedOrNotFound) {
                 continue;
             }
 
-            System.out.println(userFindGroupPostAttachments);
+            result.append("Пост ").append(postsCounter++).append(") ").append(userFindPostText).append(" ");
+
             for (WallpostAttachment userFindGroupPostAttachment : userFindGroupPostAttachments) {
-                WallpostAttachmentType userFindGroupPostAttachmentType = userFindGroupPostAttachment.getType();
-                String userFindGroupPostAttachmentTypeString = userFindGroupPostAttachmentType.toString();
-                System.out.println(userFindGroupPostAttachmentType);
+                String userFindGroupPostAttachmentTypeString = userFindGroupPostAttachment.getType().toString();
                 switch (userFindGroupPostAttachmentTypeString) {
                     case "photo" -> {
-                        System.out.println(userFindGroupPostAttachment.getPhoto().getSizes().get(0).getUrl());
+                        result.append(userFindGroupPostAttachment.getPhoto().getSizes().get(0).getUrl()).append(" ");
                     }
                     case "link" -> {
-                        System.out.println(userFindGroupPostAttachment.getLink().getUrl());
+                        result.append(userFindGroupPostAttachment.getLink().getUrl()).append(" ");
                     }
                     case "audio" -> {
-                        System.out.println("нельзя");
+                        System.out.println("музыку нельзя");
                     }
                     case "video" -> {
-                        System.out.println(userFindGroupPostAttachment.getVideo().getId());
-                        System.out.println(userFindGroupPostAttachment.getVideo().getAccessKey());
+                        System.out.println("ведева тоже нельзя");
                     }
                 }
             }
-            System.out.println();
+            result.append("\n\n");
         }
-    }
-
-    /**
-     *
-     * @param turn - показывает надо ли включить или выключить уведомления
-     * @param groupName - запрос
-     * @param callingUser - пользователь сделваший запрос
-     * @throws ApiTokenExtensionRequiredException - возникает если токен пользователя истек
-     */
-    public void turnNotifications(boolean turn, String groupName, User callingUser) throws ApiTokenExtensionRequiredException {
-        Group userFindGroup = searchGroup(groupName, callingUser);
-        try {
-            vk.wall().get(callingUser).domain(userFindGroup.getScreenName()).offset(0).count(3).execute();
-        } catch (ClientException | ApiException e) {
-            return;
-        }
+        return result.isEmpty() ? null : result.toString();
     }
 
     /**
@@ -266,7 +284,7 @@ public class VkApiHandler implements CreateUser {
         StringBuilder authCodeBuilder = new StringBuilder();
         for (int i = httpRequestGetParameters.lastIndexOf("code=") + "code=".length(); i < httpRequestGetParameters.length(); i++){
 
-            if (httpRequestGetParameters.charAt(i) == '&'){
+            if (httpRequestGetParameters.charAt(i) == '&') {
                 break;
             }
 
