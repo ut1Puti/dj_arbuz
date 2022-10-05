@@ -8,6 +8,7 @@ import handlers.vkapi.NoGroupException;
 import handlers.vkapi.VkApiHandler;
 import user.User;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -206,10 +207,9 @@ public class MessageHandler {
      * @return текст постов, ссылки на изображения в них, а также ссылки
      */
     private static HandlerResponse getLastPosts(String groupName, User user) {
+        List<String> userFindGroupPosts;
         try {
-            return new HandlerResponse(Objects.requireNonNullElse(
-                    vk.getLastPosts(DEFAULT_POST_NUMBER, groupName, user), TextResponse.NO_POSTS_IN_GROUP
-            ));
+            userFindGroupPosts = vk.getLastPosts(DEFAULT_POST_NUMBER, groupName, user);
         } catch (ApiTokenExtensionRequiredException e) {
             return new HandlerResponse(TextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
@@ -217,6 +217,16 @@ public class MessageHandler {
         } catch (ApiException | ClientException e) {
             return new HandlerResponse(TextResponse.VK_API_ERROR);
         }
+
+        if (userFindGroupPosts == null) {
+            return new HandlerResponse(TextResponse.NO_POSTS_IN_GROUP);
+        }
+
+        StringBuilder postsString = new StringBuilder();
+        for (String userFindGroupPost : userFindGroupPosts) {
+            postsString.append(userFindGroupPost).append("\n\n");
+        }
+        return new HandlerResponse(postsString.toString());
     }
 
     /**

@@ -16,7 +16,10 @@ import user.CreateUser;
 import user.User;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
@@ -158,7 +161,7 @@ public class VkApiHandler implements CreateUser {
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public String getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
+    public List<String> getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
         Group userFindGroup = groups.searchGroup(groupName, callingUser);
         List<WallpostFull> userFindGroupPosts;
         try {
@@ -171,33 +174,35 @@ public class VkApiHandler implements CreateUser {
         }
 
         int postsCounter = 1;
-        StringBuilder postsText = new StringBuilder();
+        List<String> groupFindPosts = new ArrayList<>();
         for (WallpostFull userFindGroupPost : userFindGroupPosts) {
             List<WallpostAttachment> userFindGroupPostAttachments = userFindGroupPost.getAttachments();
-            String userFindPostText = userFindGroupPost.getText();
-            boolean deletedOrNotFound = false;
+            StringBuilder userFindPostTextBuilder = new StringBuilder(userFindGroupPost.getText());
+            boolean isNoAttachmentsInPost = false;
             while (userFindGroupPostAttachments == null) {
-                List<Wallpost> copyUserFindGroupPost = userFindGroupPost.getCopyHistory();
+                List<Wallpost> userFindGroupPostCopy = userFindGroupPost.getCopyHistory();
 
-                if (copyUserFindGroupPost == null) {
-                    deletedOrNotFound = true;
+                if (userFindGroupPostCopy == null) {
+                    isNoAttachmentsInPost = true;
                     break;
                 }
 
-                userFindGroupPostAttachments = copyUserFindGroupPost.get(VkApiConsts.FIRST_ELEMENT_INDEX)
+                userFindGroupPostAttachments = userFindGroupPostCopy.get(VkApiConsts.FIRST_ELEMENT_INDEX)
                                                .getAttachments();
-                userFindPostText = copyUserFindGroupPost.get(VkApiConsts.FIRST_ELEMENT_INDEX).getText();
+                userFindPostTextBuilder.append("\n").append(userFindGroupPostCopy.get(VkApiConsts.FIRST_ELEMENT_INDEX).getText());
             }
 
-            if (deletedOrNotFound) {
+            String postText = "Пост " + postsCounter++ + ") " + userFindPostTextBuilder + "\n";
+
+            if (isNoAttachmentsInPost) {
+                groupFindPosts.add(postText);
                 continue;
             }
 
-            postsText.append("Пост ").append(postsCounter++).append(") ").append(userFindPostText).append("\n");
-            addAttachmentsToPost(userFindGroup, userFindGroupPostAttachments, postsText);
-            postsText.append("\n\n\n");
+            addAttachmentsToPost(userFindGroup, userFindGroupPostAttachments, userFindPostTextBuilder);
+            groupFindPosts.add(postText);
         }
-        return postsText.isEmpty() ? null : postsText.toString();
+        return groupFindPosts.isEmpty() ? null : groupFindPosts;
     }
 
     /**

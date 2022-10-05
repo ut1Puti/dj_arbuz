@@ -15,6 +15,7 @@ import java.util.Scanner;
 public class ConsoleBot {
     /** Поле показывающее работает ли бот */
     private boolean working;
+    private User user = null;
 
     /**
      * Метод получающий ответы от пользователя и отправляющая ответы.
@@ -23,18 +24,17 @@ public class ConsoleBot {
      */
     public void run(Scanner input){
         working = true;
-        User user = null;
         while(working){
             HandlerResponse response = MessageHandler.executeMessage(input.nextLine(), user, this);
 
-            if (response.hasTextMessage()){
+            if (response.hasTextMessage()) {
                 System.out.println(response.getTextMessage());
             }
 
-            if (response.hasUpdateUser()){
+            if (response.hasUpdateUser()) {
                 user = response.getUpdateUser().createUser();
 
-                if (user == null){
+                if (user == null) {
                     System.out.println(TextResponse.AUTH_ERROR);
                 }
 
