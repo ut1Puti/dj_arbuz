@@ -1,8 +1,6 @@
 package handlers.messages;
 
-import handlers.messages.HandlerResponse;
-import handlers.messages.MessageHandler;
-import handlers.messages.TextResponse;
+import bots.BotTextResponse;
 import org.junit.jupiter.api.Test;
 import user.User;
 
@@ -21,7 +19,7 @@ public class MessageHandlerTests {
             User user = null;
             HandlerResponse response;
             response = MessageHandler.executeMessage("/help", user, null);
-            assertEquals(response.getTextMessage(), TextResponse.HELP_INFO);
+            assertEquals(response.getTextMessage(), BotTextResponse.HELP_INFO);
             assertNull(response.getUpdateUser());
             try {
                 Thread.sleep(1000);
@@ -30,7 +28,7 @@ public class MessageHandlerTests {
             }
 
             response = MessageHandler.executeMessage("/abrakadabra", user, null);
-            assertEquals(response.getTextMessage(), TextResponse.NOT_AUTHED_USER);
+            assertEquals(response.getTextMessage(), BotTextResponse.NOT_AUTHED_USER);
             assertNull(response.getUpdateUser());
             try {
                 Thread.sleep(1000);
@@ -39,7 +37,7 @@ public class MessageHandlerTests {
             }
 
             response = MessageHandler.executeMessage("/start", user, null);
-            assertNotEquals(response.getTextMessage(), TextResponse.AUTH_ERROR);
+            assertNotEquals(response.getTextMessage(), BotTextResponse.AUTH_ERROR);
             System.out.println(response.getTextMessage());
             assertNotNull(response.getUpdateUser());
             user = response.getUpdateUser().createUser();
@@ -69,7 +67,7 @@ public class MessageHandlerTests {
             }
 
             response = MessageHandler.executeMessage("/subscribe triplesixdelete", user, null);
-            assertEquals(response.getTextMessage(), TextResponse.SUBSCRIBE);
+            assertEquals(response.getTextMessage(), BotTextResponse.SUBSCRIBE);
             assertNull(response.getUpdateUser());
             try {
                 Thread.sleep(1000);
@@ -78,7 +76,7 @@ public class MessageHandlerTests {
             }
 
             response = MessageHandler.executeMessage("/subscribe triplesixdelete", user, null);
-            assertEquals(response.getTextMessage(), TextResponse.ALREADY_SUBSCRIBER);
+            assertEquals(response.getTextMessage(), BotTextResponse.ALREADY_SUBSCRIBER);
             assertNull(response.getUpdateUser());
             try {
                 Thread.sleep(1000);
@@ -87,7 +85,7 @@ public class MessageHandlerTests {
             }
 
             response = MessageHandler.executeMessage("/abrakadabra", user, null);
-            assertEquals(response.getTextMessage(), TextResponse.UNKNOWN_COMMAND);
+            assertEquals(response.getTextMessage(), BotTextResponse.UNKNOWN_COMMAND);
             assertNull(response.getUpdateUser());
             try {
                 Thread.sleep(1000);
@@ -96,7 +94,7 @@ public class MessageHandlerTests {
             }
 
             response = MessageHandler.executeMessage("/subscribe triplesixdelete", user, null);
-            assertEquals(response.getTextMessage(), TextResponse.SUBSCRIBE);
+            assertEquals(response.getTextMessage(), BotTextResponse.SUBSCRIBE);
             assertNull(response.getUpdateUser());
             try {
                 Thread.sleep(1000);
@@ -105,7 +103,7 @@ public class MessageHandlerTests {
             }
 
             response = MessageHandler.executeMessage("/subscribe triplesixdelete", user, null);
-            assertEquals(response.getTextMessage(), TextResponse.SUBSCRIBE);
+            assertEquals(response.getTextMessage(), BotTextResponse.SUBSCRIBE);
             assertNull(response.getUpdateUser());
             try {
                 Thread.sleep(1000);

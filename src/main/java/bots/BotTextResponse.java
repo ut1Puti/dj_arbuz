@@ -1,4 +1,4 @@
-package handlers.messages;
+package bots;
 
 /**
  * Класс возможных ответов на сообщения пользователя
@@ -7,7 +7,7 @@ package handlers.messages;
  * @author Щеголев Андрей
  * @version 1.4
  */
-public class TextResponse {
+public class BotTextResponse {
     /** Поле сообщения о боте и его возможностях */
     public static final String HELP_INFO = """
             Привет, я бот помогающий взаимодействовать с музыкальной индустрией.

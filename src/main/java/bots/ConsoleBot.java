@@ -2,7 +2,6 @@ package bots;
 
 import handlers.messages.MessageHandler;
 import handlers.messages.HandlerResponse;
-import handlers.messages.TextResponse;
 import user.User;
 
 import java.util.Scanner;
@@ -35,7 +34,7 @@ public class ConsoleBot {
                 user = response.getUpdateUser().createUser();
 
                 if (user == null) {
-                    System.out.println(TextResponse.AUTH_ERROR);
+                    System.out.println(BotTextResponse.AUTH_ERROR);
                 }
 
             }

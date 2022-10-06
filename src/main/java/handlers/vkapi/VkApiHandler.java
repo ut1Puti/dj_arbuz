@@ -16,10 +16,7 @@ import user.CreateUser;
 import user.User;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
@@ -161,17 +158,12 @@ public class VkApiHandler implements CreateUser {
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public List<String> getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
+    public Optional<List<String>> getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
         Group userFindGroup = groups.searchGroup(groupName, callingUser);
-        List<WallpostFull> userFindGroupPosts;
-        try {
-            userFindGroupPosts = vk.wall().get(callingUser)
-                    .domain(userFindGroup.getScreenName())
-                    .offset(VkApiConsts.DEFAULT_OFFSET).count(amountOfPosts)
-                    .execute().getItems();
-        } catch (ClientException | ApiException e) {
-            return null;
-        }
+        List<WallpostFull> userFindGroupPosts = vk.wall().get(callingUser)
+                .domain(userFindGroup.getScreenName())
+                .offset(VkApiConsts.DEFAULT_OFFSET).count(amountOfPosts)
+                .execute().getItems();
 
         int postsCounter = 1;
         List<String> groupFindPosts = new ArrayList<>();
@@ -202,7 +194,7 @@ public class VkApiHandler implements CreateUser {
             addAttachmentsToPost(userFindGroup, userFindGroupPostAttachments, userFindPostTextBuilder);
             groupFindPosts.add(postText);
         }
-        return groupFindPosts.isEmpty() ? null : groupFindPosts;
+        return groupFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupFindPosts);
     }
 
     /**

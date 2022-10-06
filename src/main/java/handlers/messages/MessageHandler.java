@@ -1,5 +1,6 @@
 package handlers.messages;
 
+import bots.BotTextResponse;
 import bots.ConsoleBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
@@ -9,7 +10,7 @@ import handlers.vkapi.VkApiHandler;
 import user.User;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.NoSuchElementException;
 
 /**
  * Класс утилитных методов создающий ответы на сообщения пользователя
@@ -103,7 +104,7 @@ public class MessageHandler {
      * @return ответ на команду /help содержит HELP_INFO
      */
     private static HandlerResponse getHelpResponse() {
-        return new HandlerResponse(TextResponse.HELP_INFO);
+        return new HandlerResponse(BotTextResponse.HELP_INFO);
     }
 
     /**
@@ -115,10 +116,10 @@ public class MessageHandler {
         String authURL = vk.getAuthURL();
 
         if (authURL == null) {
-            return new HandlerResponse(TextResponse.AUTH_ERROR);
+            return new HandlerResponse(BotTextResponse.AUTH_ERROR);
         }
 
-        return new HandlerResponse(TextResponse.AUTH_GO_VIA_LINK + authURL + ".", vk);
+        return new HandlerResponse(BotTextResponse.AUTH_GO_VIA_LINK + authURL + ".", vk);
     }
 
     /**
@@ -129,7 +130,7 @@ public class MessageHandler {
      */
     private static HandlerResponse getStopResponse(ConsoleBot callingBot) {
         callingBot.stop();
-        return new HandlerResponse(TextResponse.STOP_INFO);
+        return new HandlerResponse(BotTextResponse.STOP_INFO);
     }
 
     /**
@@ -138,7 +139,7 @@ public class MessageHandler {
      * @return ответ содержащий NOT_AUTHED_USER
      */
     private static HandlerResponse getNotAuthedResponse() {
-        return new HandlerResponse(TextResponse.NOT_AUTHED_USER);
+        return new HandlerResponse(BotTextResponse.NOT_AUTHED_USER);
     }
 
     /**
@@ -152,11 +153,11 @@ public class MessageHandler {
         try {
             return new HandlerResponse(vk.getGroupURL(groupName, user));
         } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(TextResponse.UPDATE_TOKEN);
+            return new HandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new HandlerResponse(TextResponse.NO_GROUP);
+            return new HandlerResponse(BotTextResponse.NO_GROUP);
         } catch (ApiException | ClientException e) {
-            return new HandlerResponse(TextResponse.VK_API_ERROR);
+            return new HandlerResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -171,11 +172,11 @@ public class MessageHandler {
         try {
             return new HandlerResponse(String.valueOf(vk.getGroupId(groupName, user)));
         } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(TextResponse.UPDATE_TOKEN);
+            return new HandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new HandlerResponse(TextResponse.NO_GROUP);
+            return new HandlerResponse(BotTextResponse.NO_GROUP);
         } catch (ApiException | ClientException e) {
-            return new HandlerResponse(TextResponse.VK_API_ERROR);
+            return new HandlerResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -189,13 +190,13 @@ public class MessageHandler {
     private static HandlerResponse subscribeTo(String groupName, User user) {
         try {
             return new HandlerResponse(vk.subscribeTo(groupName, user) ?
-                    TextResponse.SUBSCRIBE : TextResponse.ALREADY_SUBSCRIBER);
+                    BotTextResponse.SUBSCRIBE : BotTextResponse.ALREADY_SUBSCRIBER);
         } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(TextResponse.UPDATE_TOKEN);
+            return new HandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new HandlerResponse(TextResponse.NO_GROUP);
+            return new HandlerResponse(BotTextResponse.NO_GROUP);
         } catch (ApiException | ClientException e) {
-            return new HandlerResponse(TextResponse.VK_API_ERROR);
+            return new HandlerResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -209,23 +210,19 @@ public class MessageHandler {
     private static HandlerResponse getLastPosts(String groupName, User user) {
         List<String> userFindGroupPosts;
         try {
-            userFindGroupPosts = vk.getLastPosts(DEFAULT_POST_NUMBER, groupName, user);
+            userFindGroupPosts = vk.getLastPosts(DEFAULT_POST_NUMBER, groupName, user).orElseThrow();
         } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(TextResponse.UPDATE_TOKEN);
+            return new HandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new HandlerResponse(TextResponse.NO_GROUP);
+            return new HandlerResponse(BotTextResponse.NO_GROUP);
         } catch (ApiException | ClientException e) {
-            return new HandlerResponse(TextResponse.VK_API_ERROR);
-        }
-
-        if (userFindGroupPosts == null) {
-            return new HandlerResponse(TextResponse.NO_POSTS_IN_GROUP);
+            return new HandlerResponse(BotTextResponse.VK_API_ERROR);
+        } catch (NoSuchElementException e) {
+            return new HandlerResponse(BotTextResponse.NO_POSTS_IN_GROUP);
         }
 
         StringBuilder postsString = new StringBuilder();
-        for (String userFindGroupPost : userFindGroupPosts) {
-            postsString.append(userFindGroupPost).append("\n\n");
-        }
+        userFindGroupPosts.forEach(userFindGroupPost -> postsString.append(userFindGroupPost).append("\n\n"));
         return new HandlerResponse(postsString.toString());
     }
 
@@ -235,6 +232,6 @@ public class MessageHandler {
      * @return ответ содержащий UNKNOWN_COMMAND
      */
     private static HandlerResponse getUnknownCommandResponse() {
-        return new HandlerResponse(TextResponse.UNKNOWN_COMMAND);
+        return new HandlerResponse(BotTextResponse.UNKNOWN_COMMAND);
     }
 }
