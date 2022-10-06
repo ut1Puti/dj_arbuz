@@ -2,6 +2,7 @@ package bots;
 
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerResponse;
+import handlers.notifcations.Notifications;
 import user.User;
 
 import java.util.Scanner;
@@ -15,6 +16,7 @@ public class ConsoleBot {
     /** Поле показывающее работает ли бот */
     private boolean working;
     private User user = null;
+    private Notifications not = new Notifications();
 
     /**
      * Метод получающий ответы от пользователя и отправляющая ответы.
@@ -23,7 +25,7 @@ public class ConsoleBot {
      */
     public void run(Scanner input){
         working = true;
-        while(working){
+        while (working) {
             MessageHandlerResponse response = MessageHandler.executeMessage(input.nextLine(), user, this);
 
             if (response.hasTextMessage()) {
@@ -39,6 +41,10 @@ public class ConsoleBot {
 
             }
 
+            if (not.haveNew()) {
+                not.getNew().forEach(nl -> nl.forEach(System.out::println));
+            }
+
         }
     }
 
@@ -47,5 +53,6 @@ public class ConsoleBot {
      */
     public void stop(){
         working = false;
+        not.stop();
     }
 }

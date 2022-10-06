@@ -1,5 +1,9 @@
 package handlers.vkapi;
 
+import com.vk.api.sdk.client.TransportClient;
+import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.httpclient.HttpTransportClient;
+
 /**
  * Класс констант используемых в vkapi
  *

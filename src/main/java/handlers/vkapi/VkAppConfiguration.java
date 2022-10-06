@@ -30,15 +30,14 @@ class VkAppConfiguration {
         try {
             prop.load(new FileInputStream(configPath));
         } catch (IOException e){
-            AUTH_URL = null;
-            APP_ID = null;
-            CLIENT_SECRET = null;
-            REDIRECT_URL = null;
-            return;
+            throw new RuntimeException(e);
         }
         AUTH_URL = prop.getProperty("authUrl");
         String appId = prop.getProperty("appId");
-        APP_ID = appId == null ? null : Integer.parseInt(appId);
+        if (appId == null) {
+            throw new RuntimeException("No such element in file");
+        }
+        APP_ID = Integer.parseInt(appId);
         CLIENT_SECRET = prop.getProperty("clientSecret");
         REDIRECT_URL = prop.getProperty("redirectUri");
     }

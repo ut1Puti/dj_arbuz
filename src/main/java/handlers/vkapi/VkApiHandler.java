@@ -2,14 +2,13 @@ package handlers.vkapi;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import com.vk.api.sdk.objects.ServiceClientCredentialsFlowResponse;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.groups.Group;
-import com.vk.api.sdk.objects.wall.Wallpost;
-import com.vk.api.sdk.objects.wall.WallpostAttachment;
-import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.Storage;
 import httpserver.HttpServer;
 import user.CreateUser;
@@ -18,7 +17,6 @@ import user.User;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
@@ -29,9 +27,9 @@ import java.util.ArrayList;
  */
 public class VkApiHandler implements CreateUser {
     /** Поле транспортного клиента */
-    private final TransportClient transportClient = new HttpTransportClient();
+    private static final TransportClient transportClient = new HttpTransportClient();
     /** Поле класс позволяющего работать с Vk SDK Java */
-    private final VkApiClient vk = new VkApiClient(transportClient);
+    static final VkApiClient vk = new VkApiClient(transportClient);
     /** Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота */
     private HttpServer httpServer = null;
     /** Поле хранилища данных о группах и пользователях */
@@ -40,6 +38,10 @@ public class VkApiHandler implements CreateUser {
     private final VkAppConfiguration appConfiguration;
     /** Поле класса для взаимодействия с группами через vk api */
     private final VkApiGroups groups;
+    /** Поле класс для взаимодействия со стеной вк */
+    private final VkApiWall wall;
+    /** Поле пользователя приложения в вк */
+    private final ServiceActor serviceActor;
 
     /**
      * Конструктор по пути до файла с конфигурацией приложения
@@ -49,6 +51,16 @@ public class VkApiHandler implements CreateUser {
     public VkApiHandler(String configPath) {
         appConfiguration = new VkAppConfiguration(configPath);
         groups = new VkApiGroups(vk);
+        wall = new VkApiWall(vk, groups);
+        ServiceClientCredentialsFlowResponse authResponse = null;
+        try {
+            authResponse = vk.oAuth()
+                    .serviceClientCredentialsFlow(appConfiguration.APP_ID, appConfiguration.CLIENT_SECRET)
+                    .execute();
+        } catch (ApiException | ClientException e) {
+            throw new RuntimeException(e);
+        }
+        serviceActor = new ServiceActor(appConfiguration.APP_ID, authResponse.getAccessToken());
     }
 
     /**
@@ -146,95 +158,15 @@ public class VkApiHandler implements CreateUser {
             dataBase = Storage.getInstance();
         }
 
-        return dataBase.addInfoToGroup(userFindGroup.getScreenName(), callingUser);
+        return dataBase.addInfoToGroup(userFindGroup.getScreenName(), String.valueOf(callingUser.getId()));
     }
 
-    /**
-     * Метод получает последние посты из сообщества
-     *
-     * @param amountOfPosts - кол-во постов
-     * @param groupName   - Название группы
-     * @param callingUser - пользователя
-     * @return текст указанного кол-ва постов, а также изображения и ссылки, если они есть в посте
-     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
-     */
-    public Optional<List<String>> getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
-        Group userFindGroup = groups.searchGroup(groupName, callingUser);
-        List<WallpostFull> userFindGroupPosts = vk.wall().get(callingUser)
-                .domain(userFindGroup.getScreenName())
-                .offset(VkApiConsts.DEFAULT_OFFSET).count(amountOfPosts)
-                .execute().getItems();
-
-        int postsCounter = 1;
-        List<String> groupFindPosts = new ArrayList<>();
-        for (WallpostFull userFindGroupPost : userFindGroupPosts) {
-            List<WallpostAttachment> userFindGroupPostAttachments = userFindGroupPost.getAttachments();
-            StringBuilder userFindPostTextBuilder = new StringBuilder(userFindGroupPost.getText());
-            boolean isNoAttachmentsInPost = false;
-            while (userFindGroupPostAttachments == null) {
-                List<Wallpost> userFindGroupPostCopy = userFindGroupPost.getCopyHistory();
-
-                if (userFindGroupPostCopy == null) {
-                    isNoAttachmentsInPost = true;
-                    break;
-                }
-
-                userFindGroupPostAttachments = userFindGroupPostCopy.get(VkApiConsts.FIRST_ELEMENT_INDEX)
-                                               .getAttachments();
-                userFindPostTextBuilder.append("\n").append(userFindGroupPostCopy.get(VkApiConsts.FIRST_ELEMENT_INDEX).getText());
-            }
-
-            String postText = "Пост " + postsCounter++ + ") " + userFindPostTextBuilder + "\n";
-
-            if (isNoAttachmentsInPost) {
-                groupFindPosts.add(postText);
-                continue;
-            }
-
-            addAttachmentsToPost(userFindGroup, userFindGroupPostAttachments, userFindPostTextBuilder);
-            groupFindPosts.add(postText);
-        }
-        return groupFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupFindPosts);
+    public Optional<List<String>> getLastPosts(int amountOfPosts, String groupName, User callingUser) throws NoGroupException, ClientException, ApiException {
+        return wall.getLastPosts(amountOfPosts, groupName, callingUser);
     }
 
-    /**
-     * Метод добавляющий к посту ссылки на прикрепленные элементы
-     * или сообщающий об их наличии, если добавить их невозможно
-     *
-     * @param userFindGroupPostAttachments - доп. материалы прикрепленные к посту
-     * @param postsText - текст постов
-     */
-    private void addAttachmentsToPost(Group userFindGroup, List<WallpostAttachment> userFindGroupPostAttachments,
-                                      StringBuilder postsText) {
-        boolean impossibleToLoadAttachment = false;
-        for (WallpostAttachment userFindGroupPostAttachment : userFindGroupPostAttachments) {
-            String userFindGroupPostAttachmentTypeString = userFindGroupPostAttachment.getType().toString();
-            switch (userFindGroupPostAttachmentTypeString) {
-                case "photo" -> {
-                    postsText.append(userFindGroupPostAttachment
-                                    .getPhoto().getSizes()
-                                    .get(VkApiConsts.FIRST_ELEMENT_INDEX)
-                                    .getUrl())
-                             .append(" ");
-                }
-                case "link" -> {
-                    postsText.append(userFindGroupPostAttachment.getLink().getUrl()).append(" ");
-                }
-                case "audio", "video" -> {
-                    impossibleToLoadAttachment = true;
-                }
-            }
-        }
-
-        if (impossibleToLoadAttachment) {
-            postsText.append("\nЕсть файлы, недоступные для отображения на сторонних ресурсах.\n")
-                     .append("Если хотите посмотреть их, перейдите по ссылке: ")
-                     .append(VkApiConsts.VK_ADDRESS)
-                     .append(userFindGroup.getScreenName());
-        }
-
+    public Optional<List<String>> getNewPosts(String groupName, int dateOfLastPost) throws NoGroupException, ClientException, ApiException {
+        return wall.getNewPosts(groupName, serviceActor, dateOfLastPost);
     }
 
     /**
