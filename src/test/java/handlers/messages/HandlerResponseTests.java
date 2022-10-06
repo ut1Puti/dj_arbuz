@@ -1,6 +1,5 @@
 package handlers.messages;
 
-import handlers.messages.HandlerResponse;
 import org.junit.jupiter.api.Test;
 import user.CreateUser;
 import user.User;
@@ -17,7 +16,7 @@ public class HandlerResponseTests {
      */
     @Test
     public void testFirstConstructorAndSettersAndGetters(){
-        HandlerResponse response = new HandlerResponse("Test text", new CreateUser() {
+        MessageHandlerResponse response = new MessageHandlerResponse("Test text", new CreateUser() {
             @Override
             public User createUser() {
                 return null;
@@ -35,7 +34,7 @@ public class HandlerResponseTests {
      */
     @Test
     public void testSecondConstructorAndSettersAndGetters(){
-        HandlerResponse response = new HandlerResponse("Test text");
+        MessageHandlerResponse response = new MessageHandlerResponse("Test text");
         assertTrue(response.hasTextMessage());
         assertEquals(response.getTextMessage(), "Test text");
         assertFalse(response.hasUpdateUser());
@@ -48,7 +47,7 @@ public class HandlerResponseTests {
      */
     @Test
     public void testThirdConstructorAndSettersAndGetters(){
-        HandlerResponse response = new HandlerResponse(new CreateUser() {
+        MessageHandlerResponse response = new MessageHandlerResponse(new CreateUser() {
             @Override
             public User createUser() {
                 return null;
@@ -66,8 +65,8 @@ public class HandlerResponseTests {
      */
     @Test
     public void appendTest(){
-        HandlerResponse response1 = new HandlerResponse("Test");
-        HandlerResponse response2 = new HandlerResponse("text");
+        MessageHandlerResponse response1 = new MessageHandlerResponse("Test");
+        MessageHandlerResponse response2 = new MessageHandlerResponse("text");
         assertEquals(response1.appendTextMessage(response2).getTextMessage(), "Test\ntext");
     }
 }

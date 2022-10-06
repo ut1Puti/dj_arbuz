@@ -17,7 +17,7 @@ public class MessageHandlerTests {
     public void testAllCommands(){
         Thread testThread = new Thread(() -> {
             User user = null;
-            HandlerResponse response;
+            MessageHandlerResponse response;
             response = MessageHandler.executeMessage("/help", user, null);
             assertEquals(response.getTextMessage(), BotTextResponse.HELP_INFO);
             assertNull(response.getUpdateUser());

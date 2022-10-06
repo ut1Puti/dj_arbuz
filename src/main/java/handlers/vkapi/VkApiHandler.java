@@ -16,7 +16,9 @@ import user.CreateUser;
 import user.User;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.ArrayList;
 
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
@@ -144,7 +146,7 @@ public class VkApiHandler implements CreateUser {
             dataBase = Storage.getInstance();
         }
 
-        return dataBase.addInfoToGroup(userFindGroup.getScreenName(),String.valueOf(callingUser.getId()));
+        return dataBase.addInfoToGroup(userFindGroup.getScreenName(), callingUser);
     }
 
     /**

@@ -1,7 +1,7 @@
 package bots;
 
 import handlers.messages.MessageHandler;
-import handlers.messages.HandlerResponse;
+import handlers.messages.MessageHandlerResponse;
 import user.User;
 
 import java.util.Scanner;
@@ -24,7 +24,7 @@ public class ConsoleBot {
     public void run(Scanner input){
         working = true;
         while(working){
-            HandlerResponse response = MessageHandler.executeMessage(input.nextLine(), user, this);
+            MessageHandlerResponse response = MessageHandler.executeMessage(input.nextLine(), user, this);
 
             if (response.hasTextMessage()) {
                 System.out.println(response.getTextMessage());

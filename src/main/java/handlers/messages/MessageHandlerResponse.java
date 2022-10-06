@@ -7,7 +7,7 @@ import user.CreateUser;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class HandlerResponse {
+public class MessageHandlerResponse {
     /** Поле текстового сообщения */
     private String textMessage = null;
     /** Поле содержащее интерфейс для создания или обновления пользователя */
@@ -18,7 +18,7 @@ public class HandlerResponse {
      * @param textMessage - текстовое сообщение
      * @param updateUser - интерфейс для обновления или создания пользователя
      */
-    public HandlerResponse(String textMessage, CreateUser updateUser){
+    public MessageHandlerResponse(String textMessage, CreateUser updateUser){
         this.textMessage = textMessage;
         this.updateUser = updateUser;
     }
@@ -27,7 +27,7 @@ public class HandlerResponse {
      * Конструктор - создание объекта с определенными параметрами
      * @param textMessage - текстовое сообщение
      */
-    public HandlerResponse(String textMessage){
+    public MessageHandlerResponse(String textMessage){
         this.textMessage = textMessage;
     }
 
@@ -35,7 +35,7 @@ public class HandlerResponse {
      * Конструктор - создание объекта с определенными параметрами
      * @param updateUser - интерфейс для обновления или создания пользователя
      */
-    public HandlerResponse(CreateUser updateUser){
+    public MessageHandlerResponse(CreateUser updateUser){
         this.updateUser = updateUser;
     }
 
@@ -76,7 +76,7 @@ public class HandlerResponse {
      * @param anotherHandlerResponse - другой ответ
      * @return ответ вызвавший этот метод, с добавленным сообщением другого ответа
      */
-    HandlerResponse appendTextMessage(HandlerResponse anotherHandlerResponse) {
+    MessageHandlerResponse appendTextMessage(MessageHandlerResponse anotherHandlerResponse) {
         if (anotherHandlerResponse != null && anotherHandlerResponse.textMessage != null) {
             this.textMessage = this.textMessage + "\n" + anotherHandlerResponse.textMessage;
         }

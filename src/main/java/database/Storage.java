@@ -1,7 +1,10 @@
 package database;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.vk.api.sdk.client.actors.UserActor;
+import user.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +23,7 @@ public class Storage {
     /**
      * Поле хеш таблицы, где ключ - айди группы, значение - список пользователей
      */
-    private Map<String, List<String>> groupsBase;
+    private Map<String, List<User>> groupsBase = new HashMap<>();
     //private Map<String,List<String>> usersBase; <- в будущем добавим отображение айдишников всех групп
     private static Storage storage = null;
 
@@ -30,9 +33,9 @@ public class Storage {
      * @param userId  -айди пользователя
      * @param groupId - айди группы
      */
-    private void addNewGroup(String groupId, String userId) {
-        List<String> newList = new LinkedList<>();
-        newList.add(userId);
+    private void addNewGroup(String groupId, User user) {
+        List<User> newList = new LinkedList<>();
+        newList.add(user);
         groupsBase.put(groupId, newList);
     }
 
@@ -42,10 +45,10 @@ public class Storage {
      * @param groupId - Айди группы
      * @param userId  - Айди пользователя
      */
-    private boolean addOldGroup(String groupId, String userId) {
-        if (!groupsBase.get(groupId).contains(userId)) {
+    private boolean addOldGroup(String groupId, User user) {
+        if (!groupsBase.get(groupId).contains(user)) {
             groupsBase.get(groupId)
-                      .add(userId);
+                      .add(user);
             return true;
         }
         return false;
@@ -59,12 +62,12 @@ public class Storage {
      * @see Storage#addNewGroup(String, String)
      * @see Storage#addOldGroup(String, String)
      */
-    public boolean addInfoToGroup(String groupId, String userID) {
+    public boolean addInfoToGroup(String groupId, User user) {
         if (groupsBase.get(groupId) == null) {
-            addNewGroup(groupId, userID);
+            addNewGroup(groupId, user);
             return true;
         } else {
-            return addOldGroup(groupId, userID);
+            return addOldGroup(groupId, user);
         }
     }
 
@@ -110,8 +113,8 @@ public class Storage {
             try {
                 String json = scanner.nextLine();
                 Gson jsonFile = new Gson();
-                groupsBase = jsonFile.fromJson(json, new TypeToken<Map<String, List<String>>>() {
-                }.getType());
+                groupsBase = jsonFile.fromJson(json, new TypeToken<Map<String, List<User>>>(){}.getType());
+                System.out.println(groupsBase);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -121,7 +124,7 @@ public class Storage {
         }
     }
 
-    public Map<String, List<String>> getGroupsBase() {
+    public Map<String, List<User>> getGroupsBase() {
         return groupsBase;
     }
 }

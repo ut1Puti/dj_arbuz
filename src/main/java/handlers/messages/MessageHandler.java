@@ -37,7 +37,7 @@ public class MessageHandler {
      * @param callingBot - бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
      */
-    public static HandlerResponse executeMessage(String message, User user, ConsoleBot callingBot) {
+    public static MessageHandlerResponse executeMessage(String message, User user, ConsoleBot callingBot) {
         String[] commandAndArgs = message.split(" ", 2);
         if (isItNoArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
@@ -103,8 +103,8 @@ public class MessageHandler {
      *
      * @return ответ на команду /help содержит HELP_INFO
      */
-    private static HandlerResponse getHelpResponse() {
-        return new HandlerResponse(BotTextResponse.HELP_INFO);
+    private static MessageHandlerResponse getHelpResponse() {
+        return new MessageHandlerResponse(BotTextResponse.HELP_INFO);
     }
 
     /**
@@ -112,14 +112,14 @@ public class MessageHandler {
      *
      * @return ответ на команду /start, /relogin
      */
-    private static HandlerResponse getStartReloginResponse() {
+    private static MessageHandlerResponse getStartReloginResponse() {
         String authURL = vk.getAuthURL();
 
         if (authURL == null) {
-            return new HandlerResponse(BotTextResponse.AUTH_ERROR);
+            return new MessageHandlerResponse(BotTextResponse.AUTH_ERROR);
         }
 
-        return new HandlerResponse(BotTextResponse.AUTH_GO_VIA_LINK + authURL + ".", vk);
+        return new MessageHandlerResponse(BotTextResponse.AUTH_GO_VIA_LINK + authURL + ".", vk);
     }
 
     /**
@@ -128,9 +128,9 @@ public class MessageHandler {
      * @param callingBot - бот вызвавший метод
      * @return ответ на /stop содержит STOP_INFO
      */
-    private static HandlerResponse getStopResponse(ConsoleBot callingBot) {
+    private static MessageHandlerResponse getStopResponse(ConsoleBot callingBot) {
         callingBot.stop();
-        return new HandlerResponse(BotTextResponse.STOP_INFO);
+        return new MessageHandlerResponse(BotTextResponse.STOP_INFO);
     }
 
     /**
@@ -138,8 +138,8 @@ public class MessageHandler {
      *
      * @return ответ содержащий NOT_AUTHED_USER
      */
-    private static HandlerResponse getNotAuthedResponse() {
-        return new HandlerResponse(BotTextResponse.NOT_AUTHED_USER);
+    private static MessageHandlerResponse getNotAuthedResponse() {
+        return new MessageHandlerResponse(BotTextResponse.NOT_AUTHED_USER);
     }
 
     /**
@@ -149,15 +149,15 @@ public class MessageHandler {
      * @param user      - пользователь отправивший сообщение
      * @return ссылку на верефицированную группу если такая нашлась
      */
-    private static HandlerResponse getGroupURL(String groupName, User user) {
+    private static MessageHandlerResponse getGroupURL(String groupName, User user) {
         try {
-            return new HandlerResponse(vk.getGroupURL(groupName, user));
+            return new MessageHandlerResponse(vk.getGroupURL(groupName, user));
         } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(BotTextResponse.UPDATE_TOKEN);
+            return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new HandlerResponse(BotTextResponse.NO_GROUP);
+            return new MessageHandlerResponse(BotTextResponse.NO_GROUP);
         } catch (ApiException | ClientException e) {
-            return new HandlerResponse(BotTextResponse.VK_API_ERROR);
+            return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -168,15 +168,15 @@ public class MessageHandler {
      * @param user      - пользователь отправивший сообщение
      * @return id верефицированной группы если такая нашлась
      */
-    private static HandlerResponse getGroupId(String groupName, User user) {
+    private static MessageHandlerResponse getGroupId(String groupName, User user) {
         try {
-            return new HandlerResponse(String.valueOf(vk.getGroupId(groupName, user)));
+            return new MessageHandlerResponse(String.valueOf(vk.getGroupId(groupName, user)));
         } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(BotTextResponse.UPDATE_TOKEN);
+            return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new HandlerResponse(BotTextResponse.NO_GROUP);
+            return new MessageHandlerResponse(BotTextResponse.NO_GROUP);
         } catch (ApiException | ClientException e) {
-            return new HandlerResponse(BotTextResponse.VK_API_ERROR);
+            return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -187,16 +187,16 @@ public class MessageHandler {
      * @param user - айди юзера
      * @return - возврат текста для сообщения
      */
-    private static HandlerResponse subscribeTo(String groupName, User user) {
+    private static MessageHandlerResponse subscribeTo(String groupName, User user) {
         try {
-            return new HandlerResponse(vk.subscribeTo(groupName, user) ?
+            return new MessageHandlerResponse(vk.subscribeTo(groupName, user) ?
                     BotTextResponse.SUBSCRIBE : BotTextResponse.ALREADY_SUBSCRIBER);
         } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(BotTextResponse.UPDATE_TOKEN);
+            return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new HandlerResponse(BotTextResponse.NO_GROUP);
+            return new MessageHandlerResponse(BotTextResponse.NO_GROUP);
         } catch (ApiException | ClientException e) {
-            return new HandlerResponse(BotTextResponse.VK_API_ERROR);
+            return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -207,23 +207,23 @@ public class MessageHandler {
      * @param user      - пользователь отправивший сообщение
      * @return текст постов, ссылки на изображения в них, а также ссылки
      */
-    private static HandlerResponse getLastPosts(String groupName, User user) {
+    private static MessageHandlerResponse getLastPosts(String groupName, User user) {
         List<String> userFindGroupPosts;
         try {
             userFindGroupPosts = vk.getLastPosts(DEFAULT_POST_NUMBER, groupName, user).orElseThrow();
         } catch (ApiTokenExtensionRequiredException e) {
-            return new HandlerResponse(BotTextResponse.UPDATE_TOKEN);
+            return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new HandlerResponse(BotTextResponse.NO_GROUP);
+            return new MessageHandlerResponse(BotTextResponse.NO_GROUP);
         } catch (ApiException | ClientException e) {
-            return new HandlerResponse(BotTextResponse.VK_API_ERROR);
+            return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
         } catch (NoSuchElementException e) {
-            return new HandlerResponse(BotTextResponse.NO_POSTS_IN_GROUP);
+            return new MessageHandlerResponse(BotTextResponse.NO_POSTS_IN_GROUP);
         }
 
         StringBuilder postsString = new StringBuilder();
         userFindGroupPosts.forEach(userFindGroupPost -> postsString.append(userFindGroupPost).append("\n\n"));
-        return new HandlerResponse(postsString.toString());
+        return new MessageHandlerResponse(postsString.toString());
     }
 
     /**
@@ -231,7 +231,7 @@ public class MessageHandler {
      *
      * @return ответ содержащий UNKNOWN_COMMAND
      */
-    private static HandlerResponse getUnknownCommandResponse() {
-        return new HandlerResponse(BotTextResponse.UNKNOWN_COMMAND);
+    private static MessageHandlerResponse getUnknownCommandResponse() {
+        return new MessageHandlerResponse(BotTextResponse.UNKNOWN_COMMAND);
     }
 }
