@@ -119,7 +119,7 @@ public class MessageHandler {
             return new MessageHandlerResponse(BotTextResponse.AUTH_ERROR);
         }
 
-        return new MessageHandlerResponse(BotTextResponse.AUTH_GO_VIA_LINK + authURL + ".", vk);
+        return new MessageHandlerResponse(BotTextResponse.AUTH_GO_VIA_LINK + authURL, vk);
     }
 
     /**

@@ -6,17 +6,15 @@ import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.groups.Group;
 import database.Storage;
+import handlers.vk.api.oAuth.VkApiAuth;
 import handlers.vk.api.groups.NoGroupException;
 import handlers.vk.api.groups.VkApiGroups;
 import handlers.vk.api.wall.VkApiWall;
-import httpserver.HttpServer;
 import user.CreateUser;
 import user.User;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,16 +30,14 @@ public class VkApiHandler implements CreateUser {
     private static final TransportClient transportClient = new HttpTransportClient();
     /** Поле класс позволяющего работать с Vk SDK Java */
     static final VkApiClient vk = new VkApiClient(transportClient);
-    /** Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота */
-    private HttpServer httpServer = null;
     /** Поле хранилища данных о группах и пользователях */
     private Storage dataBase = null;
-    /** Поле конфигурации vk приложения */
-    private final VkAppConfiguration appConfiguration;
     /** Поле класса для взаимодействия с группами через vk api */
     private final VkApiGroups groups;
     /** Поле класс для взаимодействия со стеной вк */
     private final VkApiWall wall;
+    /** Поле для аутентификации через vk */
+    private final VkApiAuth oAuth;
     /** Поле пользователя приложения в вк */
     private final ServiceActor vkApp;
 
@@ -51,61 +47,29 @@ public class VkApiHandler implements CreateUser {
      * @param configPath - путь до файла с конфигурацией
      */
     public VkApiHandler(String configPath) {
-        appConfiguration = new VkAppConfiguration(configPath);
+        oAuth = new VkApiAuth(vk, configPath);
         groups = new VkApiGroups(vk);
         wall = new VkApiWall(vk, groups);
-        vkApp = new ServiceActor(
-                appConfiguration.APP_ID, appConfiguration.CLIENT_SECRET, appConfiguration.SERVICE_CLIENT_SECRET
-        );
+        vkApp = oAuth.createAppActor();
     }
 
     /**
-     * Метод возвращающий ссылку для аутентификации
+     * Метод обертка возвращающий ссылку для аутентификации
      *
      * @return ссылку для аутентификации, если сервер недоступен, то это null
      */
     public String getAuthURL() {
-        try {
-            httpServer = HttpServer.getInstance();
-        } catch (IOException e){
-            return null;
-        }
-        return appConfiguration.AUTH_URL;
+        return oAuth.getAuthURL();
     }
 
     /**
      * Метод интерфейса CreateUser создающий пользователя
-     * Создается с помощью Vk Java SDK, получая код с сервера
      *
-     * @return интерфейс для создания пользователя
+     * @return нового пользователя
      */
     @Override
     public User createUser() {
-        String httpRequestGetParameters;
-        try {
-            httpServer = HttpServer.getInstance();
-            httpRequestGetParameters = httpServer.getHttpRequestGetParametrs();
-        } catch (IOException e) {
-            return null;
-        }
-
-        if (httpRequestGetParameters == null){
-            return null;
-        }
-
-        String authCode = getAuthCodeFromHttpRequest(httpRequestGetParameters);
-        try {
-            UserAuthResponse authResponse = vk.oAuth()
-                    .userAuthorizationCodeFlow(
-                            appConfiguration.APP_ID,
-                            appConfiguration.CLIENT_SECRET,
-                            appConfiguration.REDIRECT_URL,
-                            authCode)
-                    .execute();
-            return new User(authResponse.getUserId(), authResponse.getAccessToken());
-        } catch (ApiException | ClientException e) {
-            return null;
-        }
+        return oAuth.createUser();
     }
 
     /**
@@ -173,7 +137,7 @@ public class VkApiHandler implements CreateUser {
     }
 
     /**
-     * Метод обертка для получения новых постов со стены
+     * Метод для получения новых постов со стены
      *
      * @param groupName - название группы
      * @param dateOfLastGotPost - дата последнего просмотренного поста
@@ -184,24 +148,5 @@ public class VkApiHandler implements CreateUser {
      */
     public Optional<List<String>> getNewPosts(String groupName, int dateOfLastGotPost) throws NoGroupException, ClientException, ApiException {
         return wall.getNewPosts(groupName, dateOfLastGotPost, vkApp);
-    }
-
-    /**
-     * Метод, который получает code из get параметров GET запроса на сервер
-     *
-     * @param httpRequestGetParameters - get параметры отправленные на сервер
-     * @return code
-     */
-    private String getAuthCodeFromHttpRequest(String httpRequestGetParameters) {
-        StringBuilder authCodeBuilder = new StringBuilder();
-        for (int i = httpRequestGetParameters.lastIndexOf("code=") + "code=".length(); i < httpRequestGetParameters.length(); i++){
-
-            if (httpRequestGetParameters.charAt(i) == '&') {
-                break;
-            }
-
-            authCodeBuilder.append(httpRequestGetParameters.charAt(i));
-        }
-        return authCodeBuilder.toString();
     }
 }

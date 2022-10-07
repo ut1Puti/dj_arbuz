@@ -6,6 +6,8 @@ import handlers.vk.api.groups.NoGroupException;
 import org.junit.jupiter.api.Test;
 import user.User;
 
+import java.io.FileNotFoundException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,9 +30,13 @@ public class VkApiHandlerTests {
         createUser();
         assertNotNull(testUser);
 
-        VkApiHandler incorrectVk = new VkApiHandler("src/test/resources/testanonsrc/unknownfile.properties");
-        assertNull(incorrectVk.getAuthURL());
-        System.out.println(vk.getAuthURL());
+        boolean error = false;
+        try {
+            VkApiHandler incorrectVk = new VkApiHandler("src/test/resources/testanonsrc/unknownfile.properties");
+        } catch (RuntimeException e) {
+            error = true;
+        }
+        assertTrue(error);
     }
 
     /**

@@ -1,8 +1,7 @@
-package handlers.vk.api;
+package handlers.vk.api.oAuth;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -10,7 +9,7 @@ import java.util.Properties;
  * @author Кедровских Олег
  * @version 1.0
  */
-class VkAppConfiguration {
+class VkAuthConfiguration {
     /** Поле ссылки для аутентификации */
     final String AUTH_URL;
     /** Поле id vk приложения */
@@ -28,7 +27,7 @@ class VkAppConfiguration {
      *                     файл должен содержать поля authUrl,
      *                     appId, clientSecret, redirectUri
      */
-    VkAppConfiguration(String configPath) {
+    VkAuthConfiguration(String configPath) {
         Properties prop = new Properties();
         try {
             prop.load(new FileInputStream(configPath));
@@ -36,21 +35,21 @@ class VkAppConfiguration {
             throw new RuntimeException(e);
         }
         AUTH_URL = prop.getProperty("authUrl");
-        wasElementFound(AUTH_URL, configPath);
+        wasElementFound(AUTH_URL, "authUrl", configPath);
         String appId = prop.getProperty("appId");
-        wasElementFound(appId, configPath);
+        wasElementFound(appId, "appId", configPath);
         APP_ID = Integer.parseInt(prop.getProperty("appId"));
         CLIENT_SECRET = prop.getProperty("clientSecret");
-        wasElementFound(AUTH_URL, configPath);
+        wasElementFound(AUTH_URL, "clientSecret", configPath);
         SERVICE_CLIENT_SECRET = prop.getProperty("serviceClientSecret");
-        wasElementFound(SERVICE_CLIENT_SECRET, configPath);
+        wasElementFound(SERVICE_CLIENT_SECRET, "serviceClientSecret", configPath);
         REDIRECT_URL = prop.getProperty("redirectUri");
-        wasElementFound(REDIRECT_URL, configPath);
+        wasElementFound(REDIRECT_URL, "redirectUri", configPath);
     }
 
-    private void wasElementFound(String element, String configPath) {
+    private void wasElementFound(String element, String elementName, String configPath) {
         if (element == null) {
-            throw new RuntimeException("No such element in file:" + configPath);
+            throw new RuntimeException("Нет" + elementName + " элемента в файле:" + configPath);
         }
     }
 }
