@@ -23,6 +23,7 @@ import java.util.Map;
 public class VkApiGroups extends Groups {
     /**
      * Конструктор унаследованный от родительского класс
+     * 
      * @param client - клиент vk
      */
     public VkApiGroups(VkApiClient client) {
@@ -66,7 +67,24 @@ public class VkApiGroups extends Groups {
      */
     public Group searchGroup(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
         List<Group> userFindGroups = searchGroups(groupName, callingUser);
+        Group resultGroup = chooseGroup(userFindGroups, groupName, callingUser);
 
+        if (resultGroup == null) {
+            throw new NoGroupException(groupName);
+        }
+
+        return resultGroup;
+    }
+
+    /**
+     * Метод выбирающий группу соответсвующая подстроке
+     *
+     * @param userFindGroups - группы найденые по подстроке
+     * @param groupName - название группы
+     * @param callingUser - пользователь вызвавший метод
+     * @return группу соответсвующую подстроке
+     */
+    private Group chooseGroup(List<Group> userFindGroups, String groupName, User callingUser) {
         int maxMembersCount = Integer.MIN_VALUE;
         Group resultGroup = null;
         for (Group userFindGroup : userFindGroups) {
@@ -99,11 +117,6 @@ public class VkApiGroups extends Groups {
 
             }
         }
-
-        if (resultGroup == null) {
-            throw new NoGroupException(groupName);
-        }
-
         return resultGroup;
     }
 

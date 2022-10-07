@@ -18,13 +18,13 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @author Кедровских Олег
  * @version 0.4
  */
-public class Notifications extends Thread {
+public class NotificationsPullingThread extends Thread {
     /** Поле хранящее новые посты */
     private ArrayBlockingQueue<List<String>> newPosts = new ArrayBlockingQueue<>(10);
     /** Поле синхолнизатора доступа */
-    private Object lock = new Object();
+    private final Object lock = new Object();
     /** Поле хранилища групп */
-    private static Storage storage = Storage.getInstance();
+    private Storage storage = Storage.getInstance();
     /** Поле обработчика обращений к vk api */
     private VkApiHandler vk = new VkApiHandler("src/main/resources/anonsrc/vkconfig.properties");
     /** Поле времени ожидания до следующего получения сообщений */
@@ -33,7 +33,7 @@ public class Notifications extends Thread {
     /**
      * Конструктор - создает экземпляр класса
      */
-    public Notifications() {
+    public NotificationsPullingThread() {
         this.start();
     }
 
@@ -54,8 +54,8 @@ public class Notifications extends Thread {
                             newPosts.put(optional.get());
                         }
                     }
-
-                } catch (ApiException | ClientException | InterruptedException | NoGroupException e) {
+                } catch (NoGroupException ignored) {
+                } catch (ApiException | ClientException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }

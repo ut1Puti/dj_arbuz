@@ -9,6 +9,8 @@ package handlers.vk.api;
 public class VkApiConsts {
     /** Поле содерщащее адрес vk */
     public static final String VK_ADDRESS = "https://vk.com/";
+    /** Поле адреса стены */
+    public static final String WALL_ADDRESS = "/wall";
     /** Поле стандартного offset'а */
     public static final int DEFAULT_OFFSET = 0;
     /** Поле индекса первого элемента */

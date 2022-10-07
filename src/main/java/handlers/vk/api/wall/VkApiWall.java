@@ -150,8 +150,12 @@ public class VkApiWall extends Wall {
                 continue;
             }
 
+            String postURL = VkApiConsts.VK_ADDRESS + VkApiConsts.WALL_ADDRESS +
+                    groupPost.getOwnerId() + "_" + groupPost.getId();
             String postAttachments = getAttachmentsToPost(groupScreenName, groupPostAttachments);
-            groupFindPosts.add(postTextBuilder.append(" ").append(postAttachments).toString());
+            groupFindPosts.add(
+                    postTextBuilder.append(" ").append(postAttachments).append("\n").append(postURL).toString()
+            );
         }
         return groupFindPosts;
     }
@@ -186,9 +190,7 @@ public class VkApiWall extends Wall {
 
         if (impossibleToLoadAttachment) {
             postAttachments.append("\nЕсть файлы, недоступные для отображения на сторонних ресурсах.\n")
-                    .append("Если хотите посмотреть их, перейдите по ссылке: ")
-                    .append(VkApiConsts.VK_ADDRESS)
-                    .append(groupScreenName);
+                    .append("Если хотите посмотреть их, перейдите по ссылке");
         }
         return postAttachments.toString();
     }
