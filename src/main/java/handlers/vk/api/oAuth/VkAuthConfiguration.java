@@ -7,7 +7,7 @@ import java.util.Properties;
 /**
  * Класс хранящий настройки vk приложения
  * @author Кедровских Олег
- * @version 1.0
+ * @version 2.0
  */
 class VkAuthConfiguration {
     /** Поле ссылки для аутентификации */

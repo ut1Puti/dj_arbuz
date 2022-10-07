@@ -14,7 +14,7 @@ import java.util.*;
  * Класс для хранения подписок всех пользователей
  *
  * @author Щёголев Андрей
- * @version 0.1
+ * @version 1.0
  */
 public class Storage {
     /**

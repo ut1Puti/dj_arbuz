@@ -3,7 +3,7 @@ package handlers.vk.api.groups;
 /**
  * Класс ошибки при ненахождении группы
  * @author Кедровских Олег
- * @version 1.0
+ * @version 2.0
  */
 public class NoGroupException extends Exception{
     /**

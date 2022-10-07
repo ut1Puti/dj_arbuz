@@ -12,17 +12,34 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
+/**
+ * Класс получающий обновления постов в группах
+ *
+ * @author Кедровских Олег
+ * @version 0.4
+ */
 public class Notifications extends Thread {
+    /** Поле хранящее новые посты */
     private ArrayBlockingQueue<List<String>> newPosts = new ArrayBlockingQueue<>(10);
+    /** Поле синхолнизатора доступа */
     private Object lock = new Object();
+    /** Поле хранилища групп */
     private static Storage storage = Storage.getInstance();
+    /** Поле обработчика обращений к vk api */
     private VkApiHandler vk = new VkApiHandler("src/main/resources/anonsrc/vkconfig.properties");
+    /** Поле времени ожидания до следующего получения сообщений */
     private final int oneMinute = 60000;
 
+    /**
+     * Конструктор - создает экземпляр класса
+     */
     public Notifications() {
         this.start();
     }
 
+    /**
+     * Метод логики выполняемой внутри потока
+     */
     @Override
     public void run() {
         while (true) {
@@ -50,10 +67,21 @@ public class Notifications extends Thread {
         }
     }
 
+    /**
+     * Метод проверяющий наличие новых постов
+     *
+     * @return true - если есть новые посты
+     *         false - если нет новых постов
+     */
     public boolean haveNewPosts() {
         return !newPosts.isEmpty();
     }
 
+    /**
+     * Метод получающий новые посты
+     *
+     * @return список новых постов
+     */
     public List<List<String>> getNewPosts() {
         List<List<String>> result;
         synchronized (lock) {
@@ -63,6 +91,9 @@ public class Notifications extends Thread {
         return result;
     }
 
+    /**
+     * Останавливает поток
+     */
     public void _stop() {
         this.interrupt();
     }

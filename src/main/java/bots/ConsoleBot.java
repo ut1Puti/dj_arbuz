@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * Класс консольного бота
  * @author Кедровских Олег
- * @version 1.0
+ * @version 1.4
  */
 public class ConsoleBot {
     /** Поле показывающее работает ли бот */

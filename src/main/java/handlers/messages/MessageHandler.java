@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
  *
  * @author Кедровских Олег
  * @author Щеголев Андрей
- * @version 1.4
+ * @version 1.6
  */
 public class MessageHandler {
     /** Поле обработчика запросов к Vk API */
