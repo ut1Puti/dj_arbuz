@@ -4,7 +4,7 @@ package handlers.vk.api;
  * Класс констант используемых в vkapi
  *
  * @author Кедровских Олег
- * @version 1.0
+ * @version 2.0
  */
 public class VkApiConsts {
     /** Поле содерщащее адрес vk */

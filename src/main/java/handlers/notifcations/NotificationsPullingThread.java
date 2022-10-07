@@ -16,33 +16,26 @@ import java.util.concurrent.ArrayBlockingQueue;
  * Класс получающий обновления постов в группах
  *
  * @author Кедровских Олег
- * @version 0.4
+ * @version 0.5
  */
 public class NotificationsPullingThread extends Thread {
+    private boolean working = false;
     /** Поле хранящее новые посты */
-    private ArrayBlockingQueue<List<String>> newPosts = new ArrayBlockingQueue<>(10);
+    private final ArrayBlockingQueue<List<String>> newPosts = new ArrayBlockingQueue<>(10);
     /** Поле синхолнизатора доступа */
-    private final Object lock = new Object();
+    private final Object writeAndReadNewPostsLock = new Object();
     /** Поле хранилища групп */
-    private Storage storage = Storage.getInstance();
+    private final Storage storage = Storage.getInstance();
     /** Поле обработчика обращений к vk api */
     private VkApiHandler vk = new VkApiHandler("src/main/resources/anonsrc/vkconfig.properties");
-    /** Поле времени ожидания до следующего получения сообщений */
-    private final int oneMinute = 60000;
-
-    /**
-     * Конструктор - создает экземпляр класса
-     */
-    public NotificationsPullingThread() {
-        this.start();
-    }
 
     /**
      * Метод логики выполняемой внутри потока
      */
     @Override
     public void run() {
-        while (true) {
+        working = true;
+        while (working) {
             Map<String, List<String>> map = storage.getGroupsBase();
             Set<String> set = map.keySet();
             for (String key : set) {
@@ -50,16 +43,18 @@ public class NotificationsPullingThread extends Thread {
                     Optional<List<String>> optional = vk.getNewPosts(key, 0);
 
                     if (optional.isPresent()) {
-                        synchronized (lock) {
+                        synchronized (writeAndReadNewPostsLock) {
                             newPosts.put(optional.get());
                         }
                     }
+
                 } catch (NoGroupException ignored) {
                 } catch (ApiException | ClientException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
             try {
+                final int oneMinute = 60000;
                 Thread.sleep(oneMinute);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -84,7 +79,7 @@ public class NotificationsPullingThread extends Thread {
      */
     public List<List<String>> getNewPosts() {
         List<List<String>> result;
-        synchronized (lock) {
+        synchronized (writeAndReadNewPostsLock) {
             result = newPosts.stream().toList();
             newPosts.clear();
         }
@@ -95,6 +90,6 @@ public class NotificationsPullingThread extends Thread {
      * Останавливает поток
      */
     public void _stop() {
-        this.interrupt();
+        working = false;
     }
 }

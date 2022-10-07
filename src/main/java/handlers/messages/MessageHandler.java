@@ -1,7 +1,7 @@
 package handlers.messages;
 
 import bots.BotTextResponse;
-import bots.ConsoleBot;
+import bots.consolebot.ConsoleBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.exceptions.ClientException;
@@ -68,7 +68,7 @@ public class MessageHandler {
                 case "/subscribe" -> {
                     return subscribeTo(commandAndArgs[ARG_INDEX], user);
                 }
-                case "/get_last_posts" -> {
+                case "/get_five_posts" -> {
                     return getLastPosts(commandAndArgs[ARG_INDEX], user);
                 }
             }
