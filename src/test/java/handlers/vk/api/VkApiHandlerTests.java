@@ -1,11 +1,9 @@
-package handlers.vkapi;
+package handlers.vk.api;
 
 import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.groups.Group;
+import handlers.vk.api.groups.NoGroupException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import user.User;
 
 import static org.junit.jupiter.api.Assertions.*;

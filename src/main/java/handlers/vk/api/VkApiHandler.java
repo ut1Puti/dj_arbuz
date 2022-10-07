@@ -1,4 +1,4 @@
-package handlers.vkapi;
+package handlers.vk.api;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
@@ -6,10 +6,12 @@ import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import com.vk.api.sdk.objects.ServiceClientCredentialsFlowResponse;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.groups.Group;
 import database.Storage;
+import handlers.vk.api.groups.NoGroupException;
+import handlers.vk.api.groups.VkApiGroups;
+import handlers.vk.api.wall.VkApiWall;
 import httpserver.HttpServer;
 import user.CreateUser;
 import user.User;
@@ -41,7 +43,7 @@ public class VkApiHandler implements CreateUser {
     /** Поле класс для взаимодействия со стеной вк */
     private final VkApiWall wall;
     /** Поле пользователя приложения в вк */
-    private final ServiceActor serviceActor;
+    private final ServiceActor vkApp;
 
     /**
      * Конструктор по пути до файла с конфигурацией приложения
@@ -52,15 +54,9 @@ public class VkApiHandler implements CreateUser {
         appConfiguration = new VkAppConfiguration(configPath);
         groups = new VkApiGroups(vk);
         wall = new VkApiWall(vk, groups);
-        ServiceClientCredentialsFlowResponse authResponse = null;
-        try {
-            authResponse = vk.oAuth()
-                    .serviceClientCredentialsFlow(appConfiguration.APP_ID, appConfiguration.CLIENT_SECRET)
-                    .execute();
-        } catch (ApiException | ClientException e) {
-            throw new RuntimeException(e);
-        }
-        serviceActor = new ServiceActor(appConfiguration.APP_ID, authResponse.getAccessToken());
+        vkApp = new ServiceActor(
+                appConfiguration.APP_ID, appConfiguration.CLIENT_SECRET, appConfiguration.SERVICE_CLIENT_SECRET
+        );
     }
 
     /**
@@ -161,12 +157,33 @@ public class VkApiHandler implements CreateUser {
         return dataBase.addInfoToGroup(userFindGroup.getScreenName(), String.valueOf(callingUser.getId()));
     }
 
-    public Optional<List<String>> getLastPosts(int amountOfPosts, String groupName, User callingUser) throws NoGroupException, ClientException, ApiException {
-        return wall.getLastPosts(amountOfPosts, groupName, callingUser);
+    /**
+     * Метод обертка для получения последних постов со стены
+     *
+     * @param amountOfPosts - кол-во постов
+     * @param groupName - имя группы
+     * @param callingUser - пользователь вызвавший метод
+     * @return возвращает последние amountOfPosts постов
+     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     */
+    public Optional<List<String>> getLastPosts(String groupName, int amountOfPosts, User callingUser) throws NoGroupException, ClientException, ApiException {
+        return wall.getLastPosts(groupName, amountOfPosts, callingUser);
     }
 
-    public Optional<List<String>> getNewPosts(String groupName, int dateOfLastPost) throws NoGroupException, ClientException, ApiException {
-        return wall.getNewPosts(groupName, serviceActor, dateOfLastPost);
+    /**
+     * Метод обертка для получения новых постов со стены
+     *
+     * @param groupName - название группы
+     * @param dateOfLastGotPost - дата последнего просмотренного поста
+     * @return возвращает непросмотренные посты
+     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     */
+    public Optional<List<String>> getNewPosts(String groupName, int dateOfLastGotPost) throws NoGroupException, ClientException, ApiException {
+        return wall.getNewPosts(groupName, dateOfLastGotPost, vkApp);
     }
 
     /**

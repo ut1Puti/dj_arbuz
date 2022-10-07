@@ -15,8 +15,10 @@ import java.util.Scanner;
 public class ConsoleBot {
     /** Поле показывающее работает ли бот */
     private boolean working;
-    private User user = null;
-    private Notifications not = new Notifications();
+    /** Поле хранящее пользователя пользующегося ботом */
+    private User currentUser = null;
+    /** Поле класса получающего новые посты */
+    private Notifications notificationsPuller = new Notifications();
 
     /**
      * Метод получающий ответы от пользователя и отправляющая ответы.
@@ -26,23 +28,23 @@ public class ConsoleBot {
     public void run(Scanner input){
         working = true;
         while (working) {
-            MessageHandlerResponse response = MessageHandler.executeMessage(input.nextLine(), user, this);
+            MessageHandlerResponse response = MessageHandler.executeMessage(input.nextLine(), currentUser, this);
 
             if (response.hasTextMessage()) {
                 System.out.println(response.getTextMessage());
             }
 
             if (response.hasUpdateUser()) {
-                user = response.getUpdateUser().createUser();
+                currentUser = response.getUpdateUser().createUser();
 
-                if (user == null) {
+                if (currentUser == null) {
                     System.out.println(BotTextResponse.AUTH_ERROR);
                 }
 
             }
 
-            if (not.haveNew()) {
-                not.getNew().forEach(nl -> nl.forEach(System.out::println));
+            if (notificationsPuller.haveNewPosts()) {
+                notificationsPuller.getNewPosts().forEach(newPosts -> newPosts.forEach(System.out::println));
             }
 
         }
@@ -53,6 +55,6 @@ public class ConsoleBot {
      */
     public void stop(){
         working = false;
-        not.stop();
+        notificationsPuller._stop();
     }
 }

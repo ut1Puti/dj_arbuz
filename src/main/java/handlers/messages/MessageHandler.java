@@ -5,8 +5,8 @@ import bots.ConsoleBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.exceptions.ClientException;
-import handlers.vkapi.NoGroupException;
-import handlers.vkapi.VkApiHandler;
+import handlers.vk.api.groups.NoGroupException;
+import handlers.vk.api.VkApiHandler;
 import user.User;
 
 import java.util.List;
@@ -155,7 +155,7 @@ public class MessageHandler {
         } catch (ApiTokenExtensionRequiredException e) {
             return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new MessageHandlerResponse(BotTextResponse.NO_GROUP);
+            return new MessageHandlerResponse(e.getMessage());
         } catch (ApiException | ClientException e) {
             return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
         }
@@ -174,7 +174,7 @@ public class MessageHandler {
         } catch (ApiTokenExtensionRequiredException e) {
             return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new MessageHandlerResponse(BotTextResponse.NO_GROUP);
+            return new MessageHandlerResponse(e.getMessage());
         } catch (ApiException | ClientException e) {
             return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
         }
@@ -194,7 +194,7 @@ public class MessageHandler {
         } catch (ApiTokenExtensionRequiredException e) {
             return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new MessageHandlerResponse(BotTextResponse.NO_GROUP);
+            return new MessageHandlerResponse(e.getMessage());
         } catch (ApiException | ClientException e) {
             return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
         }
@@ -210,15 +210,15 @@ public class MessageHandler {
     private static MessageHandlerResponse getLastPosts(String groupName, User user) {
         List<String> userFindGroupPosts;
         try {
-            userFindGroupPosts = vk.getLastPosts(DEFAULT_POST_NUMBER, groupName, user).orElseThrow();
+            userFindGroupPosts = vk.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow();
         } catch (ApiTokenExtensionRequiredException e) {
             return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
-        } catch (NoGroupException e) {
-            return new MessageHandlerResponse(BotTextResponse.NO_GROUP);
-        } catch (ApiException | ClientException e) {
-            return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
         } catch (NoSuchElementException e) {
             return new MessageHandlerResponse(BotTextResponse.NO_POSTS_IN_GROUP);
+        } catch (NoGroupException | IllegalArgumentException e) {
+            return new MessageHandlerResponse(e.getMessage());
+        } catch (ApiException | ClientException e) {
+            return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
         }
 
         StringBuilder postsString = new StringBuilder();

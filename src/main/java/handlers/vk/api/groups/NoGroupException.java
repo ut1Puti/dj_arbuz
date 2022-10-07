@@ -1,4 +1,4 @@
-package handlers.vkapi;
+package handlers.vk.api.groups;
 
 /**
  * Класс ошибки при ненахождении группы

@@ -26,8 +26,6 @@ public class BotTextResponse {
     public static final String AUTH_ERROR = "Ошибка при аутентификации. Повторите позже.";
     /** Поле сооббщения о необходимости обновить токен */
     public static final String UPDATE_TOKEN = "Продлите токен с помощью команды /relogin.";
-    /** Поле сообщения об отсутствии подтвержденной группы */
-    public static final String NO_GROUP = "Я не смог найти группу с таким названием.";
     /** Поле сообщения об остановке бота  */
     public static final String STOP_INFO = "Остановлен.";
     /** Поле сообщения с просьбой перейти по ссылке */

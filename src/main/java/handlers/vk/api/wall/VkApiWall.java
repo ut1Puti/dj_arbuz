@@ -1,4 +1,4 @@
-package handlers.vkapi;
+package handlers.vk.api.wall;
 
 import com.vk.api.sdk.actions.Wall;
 import com.vk.api.sdk.client.VkApiClient;
@@ -9,6 +9,9 @@ import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.wall.Wallpost;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostFull;
+import handlers.vk.api.VkApiConsts;
+import handlers.vk.api.groups.NoGroupException;
+import handlers.vk.api.groups.VkApiGroups;
 import user.User;
 
 import java.util.ArrayList;
@@ -40,30 +43,19 @@ public class VkApiWall extends Wall {
      * Метод получает новые посты в группе
      *
      * @param groupName - имя группы
-     * @param serviceActor - пользователь в виде нашего приложения в вк
-     * @param dateOfLastPost - дата последнего поста полученного из этой группы
+     * @param vkApp - пользователь в виде нашего приложения в вк
+     * @param dateOfLastGotPost - дата последнего поста полученного из этой группы
      * @return список новых постов в группе, max = 100
      * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public Optional<List<String>> getNewPosts(String groupName, ServiceActor serviceActor, int dateOfLastPost) throws ApiException, NoGroupException, ClientException {
-        int amountOfPosts = 5;
-        int latestPostDate = Integer.MAX_VALUE;
-        List<WallpostFull> userFindGroupPosts = new ArrayList<>();
-        while (latestPostDate > dateOfLastPost) {
-            userFindGroupPosts = getPosts(serviceActor, groupName, amountOfPosts);
-            amountOfPosts *= 2;
-            latestPostDate = userFindGroupPosts.get(userFindGroupPosts.size() - 1).getDate();
-
-            if (amountOfPosts > 100) {
-                break;
-            }
-
-        }
-        userFindGroupPosts = userFindGroupPosts.stream()
-                .filter(userFindGroupPost -> userFindGroupPost.getDate() > dateOfLastPost).toList();
-        List<String> groupFindPosts = createGroupPostsStrings(groupName, userFindGroupPosts);
+    public Optional<List<String>> getNewPosts(String groupName, int dateOfLastGotPost, ServiceActor vkApp)
+            throws ApiException, ClientException {
+        final int amountOfPosts = 100;
+        List<WallpostFull> appFindGroupPosts = getPosts(groupName, amountOfPosts, vkApp)
+                .stream()
+                .filter(appFindGroupPost -> appFindGroupPost.getDate() > dateOfLastGotPost).toList();
+        List<String> groupFindPosts = createGroupPostsStrings(groupName, appFindGroupPosts);
         return groupFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupFindPosts);
     }
 
@@ -71,16 +63,22 @@ public class VkApiWall extends Wall {
      * Метод получает последние посты из сообщества
      *
      * @param amountOfPosts - кол-во постов
-     * @param groupName   - Название группы
-     * @param callingUser - пользователя
+     * @param groupName   - имя группы
+     * @param callingUser - пользователь вызвавщий метод
      * @return текст указанного кол-ва постов, а также изображения и ссылки, если они есть в посте
      * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public Optional<List<String>> getLastPosts(int amountOfPosts, String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
+    public Optional<List<String>> getLastPosts(String groupName, int amountOfPosts, User callingUser)
+            throws ApiException, NoGroupException, ClientException, IllegalArgumentException {
+
+        if (amountOfPosts > 100) {
+            throw new IllegalArgumentException("Кол-во запрашиваемых постов превышает кол-во доступных к получению");
+        }
+
         Group userFindGroup = groups.searchGroup(groupName, callingUser);
-        List<WallpostFull> userFindGroupPosts = getPosts(callingUser, userFindGroup, amountOfPosts);
+        List<WallpostFull> userFindGroupPosts = getPosts(userFindGroup.getScreenName(), amountOfPosts, callingUser);
         List<String> groupFindPosts = createGroupPostsStrings(userFindGroup.getScreenName(), userFindGroupPosts);
         return groupFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupFindPosts);
     }
@@ -89,15 +87,16 @@ public class VkApiWall extends Wall {
      * Метод получающий посты из группы в представлении вк
      *
      * @param callingUser - пользователь бота вызвавший метод
-     * @param userFindGroup - группа, в которой ищем
+     * @param groupScreenName - короткое имя группы в которой ищем посты
      * @param amountOfPosts - кол-во постов
      * @return список постов в представлении вк
      * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    private List<WallpostFull> getPosts(User callingUser, Group userFindGroup, int amountOfPosts) throws ClientException, ApiException {
+    public List<WallpostFull> getPosts(String groupScreenName, int amountOfPosts, User callingUser)
+            throws ClientException, ApiException {
         return get(callingUser)
-                .domain(userFindGroup.getScreenName())
+                .domain(groupScreenName)
                 .offset(VkApiConsts.DEFAULT_OFFSET).count(amountOfPosts)
                 .execute().getItems();
     }
@@ -105,16 +104,17 @@ public class VkApiWall extends Wall {
     /**
      * Метод получающий посты из группы в представлении вк
      *
-     * @param serviceActor - пользователь приложения вызвавший метод
-     * @param groupName - имя группы, в которой ищем
+     * @param vkApp - пользователь приложения вызвавший метод
+     * @param groupScreenName - короткое имя группы, в которой ищем
      * @param amountOfPosts - кол-во постов
      * @return список постов в представлении вк
      * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    private List<WallpostFull> getPosts(ServiceActor serviceActor, String groupName, int amountOfPosts) throws ClientException, ApiException {
-        return get(serviceActor)
-                .domain(groupName)
+    public List<WallpostFull> getPosts(String groupScreenName, int amountOfPosts, ServiceActor vkApp)
+            throws ClientException, ApiException {
+        return get(vkApp)
+                .domain(groupScreenName)
                 .offset(VkApiConsts.DEFAULT_OFFSET).count(amountOfPosts)
                 .execute().getItems();
     }
@@ -122,27 +122,27 @@ public class VkApiWall extends Wall {
     /**
      * Метод превращающий данные из поста в текст для отправки пользователю
      *
-     * @param userFindGroupScreenName - имя группы
-     * @param userFindGroupPosts - посты
+     * @param groupScreenName - короткое имя группы
+     * @param groupPosts - посты
      * @return список постов в виде строк
      */
-    private List<String> createGroupPostsStrings(String userFindGroupScreenName, List<WallpostFull> userFindGroupPosts) {
+    private List<String> createGroupPostsStrings(String groupScreenName, List<WallpostFull> groupPosts) {
         List<String> groupFindPosts = new ArrayList<>();
-        for (WallpostFull userFindGroupPost : userFindGroupPosts) {
-            List<WallpostAttachment> userFindGroupPostAttachments = userFindGroupPost.getAttachments();
-            StringBuilder postTextBuilder = new StringBuilder(userFindGroupPost.getText());
+        for (WallpostFull groupPost : groupPosts) {
+            List<WallpostAttachment> groupPostAttachments = groupPost.getAttachments();
+            StringBuilder postTextBuilder = new StringBuilder(groupPost.getText());
             boolean isNoAttachmentsInPost = false;
-            while (userFindGroupPostAttachments == null) {
-                List<Wallpost> userFindGroupPostCopy = userFindGroupPost.getCopyHistory();
+            while (groupPostAttachments == null) {
+                List<Wallpost> groupPostCopy = groupPost.getCopyHistory();
 
-                if (userFindGroupPostCopy == null) {
+                if (groupPostCopy == null) {
                     isNoAttachmentsInPost = true;
                     break;
                 }
 
-                userFindGroupPostAttachments = userFindGroupPostCopy.get(VkApiConsts.FIRST_ELEMENT_INDEX)
+                groupPostAttachments = groupPostCopy.get(VkApiConsts.FIRST_ELEMENT_INDEX)
                         .getAttachments();
-                postTextBuilder.append("\n").append(userFindGroupPostCopy.get(VkApiConsts.FIRST_ELEMENT_INDEX).getText());
+                postTextBuilder.append("\n").append(groupPostCopy.get(VkApiConsts.FIRST_ELEMENT_INDEX).getText());
             }
 
             if (isNoAttachmentsInPost) {
@@ -150,7 +150,7 @@ public class VkApiWall extends Wall {
                 continue;
             }
 
-            String postAttachments = getAttachmentsToPost(userFindGroupScreenName, userFindGroupPostAttachments);
+            String postAttachments = getAttachmentsToPost(groupScreenName, groupPostAttachments);
             groupFindPosts.add(postTextBuilder.append(" ").append(postAttachments).toString());
         }
         return groupFindPosts;
@@ -160,23 +160,23 @@ public class VkApiWall extends Wall {
      * Метод добавляющий к посту ссылки на прикрепленные элементы
      * или сообщающий об их наличии, если добавить их невозможно
      *
-     * @param userFindGroupPostAttachments - доп. материалы прикрепленные к посту
+     * @param groupPostAttachments - доп. материалы прикрепленные к посту
      */
-    private String getAttachmentsToPost(String userFindGroupScreenName, List<WallpostAttachment> userFindGroupPostAttachments) {
+    private String getAttachmentsToPost(String groupScreenName, List<WallpostAttachment> groupPostAttachments) {
         StringBuilder postAttachments = new StringBuilder();
         boolean impossibleToLoadAttachment = false;
-        for (WallpostAttachment userFindGroupPostAttachment : userFindGroupPostAttachments) {
-            String userFindGroupPostAttachmentTypeString = userFindGroupPostAttachment.getType().toString();
-            switch (userFindGroupPostAttachmentTypeString) {
+        for (WallpostAttachment groupPostAttachment : groupPostAttachments) {
+            String groupPostAttachmentTypeString = groupPostAttachment.getType().toString();
+            switch (groupPostAttachmentTypeString) {
                 case "photo" -> {
-                    postAttachments.append(userFindGroupPostAttachment
+                    postAttachments.append(groupPostAttachment
                                     .getPhoto().getSizes()
                                     .get(VkApiConsts.FIRST_ELEMENT_INDEX)
                                     .getUrl())
                             .append(" ");
                 }
                 case "link" -> {
-                    postAttachments.append(userFindGroupPostAttachment.getLink().getUrl()).append(" ");
+                    postAttachments.append(groupPostAttachment.getLink().getUrl()).append(" ");
                 }
                 case "audio", "video" -> {
                     impossibleToLoadAttachment = true;
@@ -188,7 +188,7 @@ public class VkApiWall extends Wall {
             postAttachments.append("\nЕсть файлы, недоступные для отображения на сторонних ресурсах.\n")
                     .append("Если хотите посмотреть их, перейдите по ссылке: ")
                     .append(VkApiConsts.VK_ADDRESS)
-                    .append(userFindGroupScreenName);
+                    .append(groupScreenName);
         }
         return postAttachments.toString();
     }

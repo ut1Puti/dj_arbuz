@@ -1,4 +1,4 @@
-package handlers.vkapi;
+package handlers.vk.api.groups;
 
 import com.vk.api.sdk.actions.Groups;
 import com.vk.api.sdk.client.VkApiClient;
@@ -7,6 +7,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.groups.Fields;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
+import handlers.vk.api.VkApiConsts;
 import user.User;
 
 import java.util.HashMap;
@@ -110,18 +111,18 @@ public class VkApiGroups extends Groups {
      * Метод проверяет есть ли разница между двумя строками
      *
      * @param baseName - изначальное имя
-     * @param userFindName - имя поиска
+     * @param findName - имя поиска
      * @return true - если разница хотя бы в одном слове больше 50%
      *         false - если разница в обоих словах меньше 50%
      */
-    private boolean isNameDifferent(String baseName, String userFindName) {
+    private boolean isNameDifferent(String baseName, String findName) {
         String lowerCaseBaseName = baseName.toLowerCase();
-        String lowerCaseUserFindName = userFindName.toLowerCase();
+        String lowerCaseUserFindName = findName.toLowerCase();
 
         Pair<String> diffPair = stringDifference(lowerCaseBaseName, lowerCaseUserFindName);
 
         int baseNameDiff = (int)((double) diffPair.first.length() / (double) baseName.length() * 100);
-        int searchNameDiff = (int)((double) diffPair.second.length() / (double) userFindName.length() * 100);
+        int searchNameDiff = (int)((double) diffPair.second.length() / (double) findName.length() * 100);
 
         return baseNameDiff > 50 || searchNameDiff > 50;
     }

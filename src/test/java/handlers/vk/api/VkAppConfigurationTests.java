@@ -1,4 +1,4 @@
-package handlers.vkapi;
+package handlers.vk.api;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
