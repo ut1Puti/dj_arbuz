@@ -6,17 +6,23 @@ import java.net.Socket;
 
 /**
  * Класс http сервера
+ *
  * @author Кедровских Олег
  * @version 0.2
  */
 public class HttpServer {
-    /** Поле запущенного в программе сервера */
+    /**
+     * Поле запущенного в программе сервера
+     */
     private static HttpServer server = null;
-    /** Поле серверного сокета */
+    /**
+     * Поле серверного сокета
+     */
     private final ServerSocket serverSocket;
 
     /**
      * Конструктор - создание объекта
+     *
      * @throws IOException - возникает при ошибке открытия серверного сокета
      */
     private HttpServer() throws IOException {
@@ -25,11 +31,12 @@ public class HttpServer {
 
     /**
      * Метод возращающий объект сервер запущенный в программе
+     *
      * @return возвращает объект сервера
      * @throws IOException - возникает при ошибке открытия серверного сокета
      */
     public static HttpServer getInstance() throws IOException {
-        if (server == null){
+        if (server == null) {
             server = new HttpServer();
         }
         return server;
@@ -37,12 +44,13 @@ public class HttpServer {
 
     /**
      * Метод обрабатывающий запрос и возвращающий get параметры запроса на сервер
+     *
      * @return возвращает get параметры запроса на сервер
      * @throws IOException - возникает:
-     *                          при открытии сокета,
-     *                          открытии потока ввода или вывода
+     *                     при открытии сокета,
+     *                     открытии потока ввода или вывода
      */
-    public String getHttpRequestGetParametrs() throws IOException{
+    public String getHttpRequestGetParametrs() throws IOException {
         String requestParameters;
 
         Socket socket = serverSocket.accept();
@@ -52,7 +60,7 @@ public class HttpServer {
         HttpRequest request;
         try {
             request = HttpParser.parseRequestLine(inputStream);
-        } catch (HttpParserException e){
+        } catch (HttpParserException e) {
             return null;
         }
 
@@ -85,6 +93,7 @@ public class HttpServer {
 
     /**
      * Метод останавливающий сервер
+     *
      * @throws IOException - возникает при ошибке закрытия сокета
      */
     public void stop() throws IOException {

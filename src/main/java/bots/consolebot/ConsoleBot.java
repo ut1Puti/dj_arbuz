@@ -15,18 +15,24 @@ import java.util.Scanner;
  * @version 1.6
  */
 public class ConsoleBot {
-    /** Поле показывающее работает ли бот */
+    /**
+     * Поле показывающее работает ли бот
+     */
     private boolean working;
-    /** Поле хранящее пользователя пользующегося ботом */
+    /**
+     * Поле хранящее пользователя пользующегося ботом
+     */
     private User currentUser = null;
-    /** Поле класса получающего новые посты */
+    /**
+     * Поле класса получающего новые посты
+     */
     private final NotificationsPullingThread notificationsPuller = new NotificationsPullingThread();
 
     /**
      * Метод получающий ответы от пользователя и отправляющая ответы.
      * Работает до тех пор пока пользователь не прекратит работу бота.
      */
-    public void run(){
+    public void run() {
         working = true;
         notificationsPuller.start();
         Scanner userInput = new Scanner(System.in);
@@ -66,7 +72,7 @@ public class ConsoleBot {
     /**
      * Метод прекращающая работу бота
      */
-    public void stop(){
+    public void stop() {
         working = false;
     }
 }

@@ -19,15 +19,19 @@ import java.io.IOException;
  * @version 1.0
  */
 public class VkAuth extends OAuth implements CreateUser {
-    /** Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота */
+    /**
+     * Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота
+     */
     private HttpServer httpServer = null;
-    /** Поле с конфигурации данных для аутентификации пользователь и приложения */
+    /**
+     * Поле с конфигурации данных для аутентификации пользователь и приложения
+     */
     private final VkAuthConfiguration authConfiguration;
 
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param client - клиент vk
+     * @param client     - клиент vk
      * @param configPath - путь до файла с конфигурацией
      */
     public VkAuth(VkApiClient client, String configPath) {
@@ -54,7 +58,7 @@ public class VkAuth extends OAuth implements CreateUser {
     public String getAuthURL() {
         try {
             httpServer = HttpServer.getInstance();
-        } catch (IOException e){
+        } catch (IOException e) {
             return null;
         }
         return authConfiguration.AUTH_URL;
@@ -76,17 +80,17 @@ public class VkAuth extends OAuth implements CreateUser {
             return null;
         }
 
-        if (httpRequestGetParameters == null){
+        if (httpRequestGetParameters == null) {
             return null;
         }
 
         String authCode = getAuthCodeFromHttpRequest(httpRequestGetParameters);
         try {
             UserAuthResponse authResponse = userAuthorizationCodeFlow(
-                            authConfiguration.APP_ID,
-                            authConfiguration.CLIENT_SECRET,
-                            authConfiguration.REDIRECT_URL,
-                            authCode)
+                    authConfiguration.APP_ID,
+                    authConfiguration.CLIENT_SECRET,
+                    authConfiguration.REDIRECT_URL,
+                    authCode)
                     .execute();
             return new User(authResponse.getUserId(), authResponse.getAccessToken());
         } catch (ApiException | ClientException e) {

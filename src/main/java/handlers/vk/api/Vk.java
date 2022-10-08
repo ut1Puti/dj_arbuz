@@ -26,19 +26,33 @@ import java.util.Optional;
  * @version 1.6
  */
 public class Vk implements CreateUser {
-    /** Поле транспортного клиента */
+    /**
+     * Поле транспортного клиента
+     */
     private static final TransportClient transportClient = new HttpTransportClient();
-    /** Поле класс позволяющего работать с Vk SDK Java */
+    /**
+     * Поле класс позволяющего работать с Vk SDK Java
+     */
     static final VkApiClient vk = new VkApiClient(transportClient);
-    /** Поле хранилища данных о группах и пользователях */
+    /**
+     * Поле хранилища данных о группах и пользователях
+     */
     private Storage dataBase = null;
-    /** Поле класса для взаимодействия с группами через vk api */
+    /**
+     * Поле класса для взаимодействия с группами через vk api
+     */
     private final VkGroups groups;
-    /** Поле класс для взаимодействия со стеной вк */
+    /**
+     * Поле класс для взаимодействия со стеной вк
+     */
     private final VkWall wall;
-    /** Поле для аутентификации через vk */
+    /**
+     * Поле для аутентификации через vk
+     */
     private final VkAuth oAuth;
-    /** Поле пользователя приложения в вк */
+    /**
+     * Поле пользователя приложения в вк
+     */
     private final ServiceActor vkApp;
 
     /**
@@ -78,9 +92,9 @@ public class Vk implements CreateUser {
      * @param groupName   - Название группы
      * @param callingUser - пользователя
      * @return возвращает ссылку на группу в вк
-     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
     public String getGroupURL(String groupName, User callingUser) throws NoGroupException, ClientException, ApiException {
         return VkConstants.VK_ADDRESS + groups.searchGroup(groupName, callingUser).getScreenName();
@@ -92,9 +106,9 @@ public class Vk implements CreateUser {
      * @param groupName   - Название группы
      * @param callingUser - пользователя
      * @return возвращает id группы
-     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
     public String getGroupId(String groupName, User callingUser) throws NoGroupException, ClientException, ApiException {
         return String.valueOf(groups.searchGroup(groupName, callingUser).getId());
@@ -106,10 +120,10 @@ public class Vk implements CreateUser {
      * @param groupName   - Название группы
      * @param callingUser - пользователя
      * @return возвращает true - если пользователь только что подписался
-     *                    false - если пользователь уже был подписан
-     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * false - если пользователь уже был подписан
+     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
     public boolean subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
         Group userFindGroup = groups.searchGroup(groupName, callingUser);
@@ -125,12 +139,12 @@ public class Vk implements CreateUser {
      * Метод обертка для получения последних постов со стены
      *
      * @param amountOfPosts - кол-во постов
-     * @param groupName - имя группы
-     * @param callingUser - пользователь вызвавший метод
+     * @param groupName     - имя группы
+     * @param callingUser   - пользователь вызвавший метод
      * @return возвращает последние amountOfPosts постов
-     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
     public Optional<List<String>> getLastPosts(String groupName, int amountOfPosts, User callingUser) throws NoGroupException, ClientException, ApiException {
         return wall.getLastPosts(groupName, amountOfPosts, callingUser);
@@ -139,12 +153,12 @@ public class Vk implements CreateUser {
     /**
      * Метод для получения новых постов со стены
      *
-     * @param groupName - название группы
+     * @param groupName         - название группы
      * @param dateOfLastGotPost - дата последнего просмотренного поста
      * @return возвращает непросмотренные посты
-     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
     public Optional<List<String>> getNewPosts(String groupName, int dateOfLastGotPost) throws NoGroupException, ClientException, ApiException {
         return wall.getNewPosts(groupName, dateOfLastGotPost, vkApp);

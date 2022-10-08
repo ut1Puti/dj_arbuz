@@ -6,12 +6,14 @@ import java.io.IOException;
 
 /**
  * Класс создающий ответ http сервера
+ *
  * @author Кедровских Олег
  * @version 0.1
  */
 public class HttpResponse {
     /**
      * Метод возвращающий ответ http сервера
+     *
      * @param getFileName - имя файла из get запроса
      * @return ответ сервера
      * @throws IOException - возникает при проблемах с открытие файла

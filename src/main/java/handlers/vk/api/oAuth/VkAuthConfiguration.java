@@ -6,32 +6,44 @@ import java.util.Properties;
 
 /**
  * Класс хранящий настройки vk приложения
+ *
  * @author Кедровских Олег
  * @version 2.0
  */
 class VkAuthConfiguration {
-    /** Поле ссылки для аутентификации */
+    /**
+     * Поле ссылки для аутентификации
+     */
     final String AUTH_URL;
-    /** Поле id vk приложения */
+    /**
+     * Поле id vk приложения
+     */
     final Integer APP_ID;
-    /** Поле ключа vk приложения */
+    /**
+     * Поле ключа vk приложения
+     */
     final String CLIENT_SECRET;
-    /** Поле кода авторизации приложения */
+    /**
+     * Поле кода авторизации приложения
+     */
     final String SERVICE_CLIENT_SECRET;
-    /** Поле ссылки на которую перекинут пользователя после аутентификации */
+    /**
+     * Поле ссылки на которую перекинут пользователя после аутентификации
+     */
     final String REDIRECT_URL;
 
     /**
      * Конструктор по пути до файла с конфигурацией приложения
+     *
      * @param configPath - путь до файла с конфигурацией
-     *                     файл должен содержать поля authUrl,
-     *                     appId, clientSecret, redirectUri
+     *                   файл должен содержать поля authUrl,
+     *                   appId, clientSecret, redirectUri
      */
     VkAuthConfiguration(String configPath) {
         Properties prop = new Properties();
         try {
             prop.load(new FileInputStream(configPath));
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         AUTH_URL = prop.getProperty("authUrl");

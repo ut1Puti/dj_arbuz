@@ -23,7 +23,7 @@ import java.util.Map;
 public class VkGroups extends Groups {
     /**
      * Конструктор унаследованный от родительского класс
-     * 
+     *
      * @param client - клиент vk
      */
     public VkGroups(VkApiClient client) {
@@ -33,12 +33,12 @@ public class VkGroups extends Groups {
     /**
      * Метод, который ищет все группы по запросу
      *
-     * @param groupName - запрос
+     * @param groupName   - запрос
      * @param callingUser - пользователь сделавший запрос
      * @return список групп полученных по запросу
-     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
     public List<Group> searchGroups(String groupName, User callingUser) throws NoGroupException, ApiException, ClientException {
         List<Group> userFindGroups = search(callingUser, groupName)
@@ -46,7 +46,7 @@ public class VkGroups extends Groups {
                 .execute()
                 .getItems();
 
-        if (userFindGroups.isEmpty()){
+        if (userFindGroups.isEmpty()) {
             throw new NoGroupException(groupName);
         }
 
@@ -56,14 +56,14 @@ public class VkGroups extends Groups {
     /**
      * Метод, который ищет подтвержденные группы по запросу
      *
-     * @param groupName - запрос
+     * @param groupName   - запрос
      * @param callingUser - пользователь сделавший запрос
      * @return верифицированную группу
-     *         если групп оказалось больше одной возвращает с большим числом подписчиков
-     *         если верифицированная группа не нашлась, возвращает null
-     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     * если групп оказалось больше одной возвращает с большим числом подписчиков
+     * если верифицированная группа не нашлась, возвращает null
+     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
     public Group searchGroup(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
         List<Group> userFindGroups = searchGroups(groupName, callingUser);
@@ -80,8 +80,8 @@ public class VkGroups extends Groups {
      * Метод выбирающий группу соответсвующая подстроке
      *
      * @param userFindGroups - группы найденые по подстроке
-     * @param groupName - название группы
-     * @param callingUser - пользователь вызвавший метод
+     * @param groupName      - название группы
+     * @param callingUser    - пользователь вызвавший метод
      * @return группу соответсвующую подстроке
      */
     private Group chooseGroup(List<Group> userFindGroups, String groupName, User callingUser) {
@@ -126,7 +126,7 @@ public class VkGroups extends Groups {
      * @param baseName - изначальное имя
      * @param findName - имя поиска
      * @return true - если разница хотя бы в одном слове больше 50%
-     *         false - если разница в обоих словах меньше 50%
+     * false - если разница в обоих словах меньше 50%
      */
     private boolean isNameDifferent(String baseName, String findName) {
         String lowerCaseBaseName = baseName.toLowerCase();
@@ -134,8 +134,8 @@ public class VkGroups extends Groups {
 
         Pair<String> diffPair = stringDifference(lowerCaseBaseName, lowerCaseUserFindName);
 
-        int baseNameDiff = (int)((double) diffPair.first.length() / (double) baseName.length() * 100);
-        int searchNameDiff = (int)((double) diffPair.second.length() / (double) findName.length() * 100);
+        int baseNameDiff = (int) ((double) diffPair.first.length() / (double) baseName.length() * 100);
+        int searchNameDiff = (int) ((double) diffPair.second.length() / (double) findName.length() * 100);
 
         return baseNameDiff > 50 || searchNameDiff > 50;
     }
@@ -143,7 +143,7 @@ public class VkGroups extends Groups {
     /**
      * Метод, который ищет буквы в которых отличаются две строки
      *
-     * @param firstString - первая строка
+     * @param firstString  - первая строка
      * @param secondString - вторая строка
      * @return пару, элементы которой это строки состоящие из букв в которых слова различаются
      */
@@ -154,9 +154,9 @@ public class VkGroups extends Groups {
     /**
      * Метод рекурсивно ищущий несовпадающие элементы
      *
-     * @param firstString - первая строка
+     * @param firstString  - первая строка
      * @param secondString - вторая строка
-     * @param lookup - Map хранящий не совпавшие элементы
+     * @param lookup       - Map хранящий не совпавшие элементы
      * @return пару строк состоящих из не совпавших символов
      */
     private Pair<String> diffSearcher(String firstString, String secondString, Map<Long, Pair<String>> lookup) {
@@ -189,9 +189,10 @@ public class VkGroups extends Groups {
     /**
      * Хранит элементы пары
      *
-     * @param first - первый элемент
+     * @param first  - первый элемент
      * @param second - второй элемент
-     * @param <T> - тип хранимых элементов
+     * @param <T>    - тип хранимых элементов
      */
-    private record Pair<T>(T first, T second){}
+    private record Pair<T>(T first, T second) {
+    }
 }

@@ -6,21 +6,31 @@ import java.io.InputStreamReader;
 
 /**
  * Класс парсящий запрос поступивший на сервер
+ *
  * @author Кедровских Олег
  * @version 0.3
  */
 public class HttpParser {
-    /** Поле пробела из таблицы ASCII */
+    /**
+     * Поле пробела из таблицы ASCII
+     */
     private static final int SP = 32;
-    /** Поле \r из таблицы ASCII */
+    /**
+     * Поле \r из таблицы ASCII
+     */
     private static final int CR = 13;
-    /** Поле \n из таблицы ASCII */
+    /**
+     * Поле \n из таблицы ASCII
+     */
     private static final int LF = 10;
-    /** поле поддерживаемых методов */
-    private static final String[] supportedMethods = new String[] {"GET", "HEAD"};
+    /**
+     * поле поддерживаемых методов
+     */
+    private static final String[] supportedMethods = new String[]{"GET", "HEAD"};
 
     /**
      * Метод парсящий запрос поступивший на сервер
+     *
      * @param inputStream - запрос
      * @return ?отпаршенный? запрос
      * @throws IOException - возникает при проблемах в InputStream с запросом
@@ -38,9 +48,10 @@ public class HttpParser {
 
     /**
      * Метод парсит request-line http запроса
-     * @param reader - поток из которого читаются данные
+     *
+     * @param reader  - поток из которого читаются данные
      * @param request - ?отпрашенный? запрос
-     * @throws IOException - возникает при ошибке чтения из потока
+     * @throws IOException         - возникает при ошибке чтения из потока
      * @throws HttpParserException - возникает при ошибках в запросе
      */
     public static void parseRequestLine(InputStreamReader reader, HttpRequest request) throws IOException, HttpParserException {
@@ -72,16 +83,16 @@ public class HttpParser {
 
                 if (isNextMethod) {
                     boolean wasMethodFound = false;
-                    for (String method : supportedMethods){
+                    for (String method : supportedMethods) {
 
-                        if (method.equals(nextPartOfRequest.toString())){
+                        if (method.equals(nextPartOfRequest.toString())) {
                             wasMethodFound = true;
                             break;
                         }
 
                     }
 
-                    if (!wasMethodFound){
+                    if (!wasMethodFound) {
                         throw new HttpParserException("Incorrect request");
                     }
 
@@ -91,7 +102,7 @@ public class HttpParser {
                     isNextRequestTarget = true;
                 } else if (isNextRequestTarget) {
 
-                    if (nextPartOfRequest.length() > 2000){
+                    if (nextPartOfRequest.length() > 2000) {
                         throw new HttpParserException("Incorrect request");
                     }
 
@@ -106,7 +117,8 @@ public class HttpParser {
 
     /**
      * Метод парсящий headers http запроса
-     * @param reader - поток из которого читаются данные
+     *
+     * @param reader  - поток из которого читаются данные
      * @param request - ?отпрашенный? запрос
      * @throws IOException - возникает при ошибке чтения из потока
      */
@@ -136,7 +148,7 @@ public class HttpParser {
 
             secondIteration = false;
 
-            if ((char)_byte == SP) {
+            if ((char) _byte == SP) {
                 isKey = false;
                 continue;
             }
@@ -144,7 +156,7 @@ public class HttpParser {
             if (isKey) {
                 key.append((char) _byte);
             } else {
-                value.append((char)_byte);
+                value.append((char) _byte);
             }
 
         }
@@ -152,7 +164,8 @@ public class HttpParser {
 
     /**
      * Метод парсящий body http запроса
-     * @param reader - поток из которого читаются данные
+     *
+     * @param reader  - поток из которого читаются данные
      * @param request - ?отпрашенный? запрос
      * @throws IOException - возникает при ошибке чтения из потока
      */
@@ -165,7 +178,7 @@ public class HttpParser {
         }
 
         while ((_byte = reader.read()) >= 0) {
-            bodyBuilder.append((char)_byte);
+            bodyBuilder.append((char) _byte);
         }
         request.body = bodyBuilder.toString();
     }
