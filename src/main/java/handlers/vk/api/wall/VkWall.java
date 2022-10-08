@@ -9,9 +9,9 @@ import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.wall.Wallpost;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostFull;
-import handlers.vk.api.VkApiConsts;
+import handlers.vk.api.VkConstants;
 import handlers.vk.api.groups.NoGroupException;
-import handlers.vk.api.groups.VkApiGroups;
+import handlers.vk.api.groups.VkGroups;
 import user.User;
 
 import java.util.ArrayList;
@@ -24,9 +24,9 @@ import java.util.Optional;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class VkApiWall extends Wall {
+public class VkWall extends Wall {
     /** Поле для взаимодействия с группами vk */
-    private final VkApiGroups groups;
+    private final VkGroups groups;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -34,7 +34,7 @@ public class VkApiWall extends Wall {
      * @param client - клиент vk
      * @param groups - класс для взаимодействия с группами
      */
-    public VkApiWall(VkApiClient client, VkApiGroups groups) {
+    public VkWall(VkApiClient client, VkGroups groups) {
         super(client);
         this.groups = groups;
     }
@@ -97,7 +97,7 @@ public class VkApiWall extends Wall {
             throws ClientException, ApiException {
         return get(callingUser)
                 .domain(groupScreenName)
-                .offset(VkApiConsts.DEFAULT_OFFSET).count(amountOfPosts)
+                .offset(VkConstants.DEFAULT_OFFSET).count(amountOfPosts)
                 .execute().getItems();
     }
 
@@ -115,7 +115,7 @@ public class VkApiWall extends Wall {
             throws ClientException, ApiException {
         return get(vkApp)
                 .domain(groupScreenName)
-                .offset(VkApiConsts.DEFAULT_OFFSET).count(amountOfPosts)
+                .offset(VkConstants.DEFAULT_OFFSET).count(amountOfPosts)
                 .execute().getItems();
     }
 
@@ -140,9 +140,9 @@ public class VkApiWall extends Wall {
                     break;
                 }
 
-                groupPostAttachments = groupPostCopy.get(VkApiConsts.FIRST_ELEMENT_INDEX)
+                groupPostAttachments = groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX)
                         .getAttachments();
-                postTextBuilder.append("\n").append(groupPostCopy.get(VkApiConsts.FIRST_ELEMENT_INDEX).getText());
+                postTextBuilder.append("\n").append(groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX).getText());
             }
 
             if (isNoAttachmentsInPost) {
@@ -150,9 +150,9 @@ public class VkApiWall extends Wall {
                 continue;
             }
 
-            String postURL = VkApiConsts.VK_ADDRESS + VkApiConsts.WALL_ADDRESS +
+            String postURL = VkConstants.VK_ADDRESS + VkConstants.WALL_ADDRESS +
                     groupPost.getOwnerId() + "_" + groupPost.getId();
-            String postAttachments = getAttachmentsToPost(groupScreenName, groupPostAttachments);
+            String postAttachments = getAttachmentsToPost(groupPostAttachments);
             groupFindPosts.add(
                     postTextBuilder.append(" ").append(postAttachments).append("\n").append(postURL).toString()
             );
@@ -166,7 +166,7 @@ public class VkApiWall extends Wall {
      *
      * @param groupPostAttachments - доп. материалы прикрепленные к посту
      */
-    private String getAttachmentsToPost(String groupScreenName, List<WallpostAttachment> groupPostAttachments) {
+    private String getAttachmentsToPost(List<WallpostAttachment> groupPostAttachments) {
         StringBuilder postAttachments = new StringBuilder();
         boolean impossibleToLoadAttachment = false;
         for (WallpostAttachment groupPostAttachment : groupPostAttachments) {
@@ -175,7 +175,7 @@ public class VkApiWall extends Wall {
                 case "photo" -> {
                     postAttachments.append(groupPostAttachment
                                     .getPhoto().getSizes()
-                                    .get(VkApiConsts.FIRST_ELEMENT_INDEX)
+                                    .get(VkConstants.FIRST_ELEMENT_INDEX)
                                     .getUrl())
                             .append(" ");
                 }

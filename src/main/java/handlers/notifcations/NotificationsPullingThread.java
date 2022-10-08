@@ -4,7 +4,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import database.Storage;
 import handlers.vk.api.groups.NoGroupException;
-import handlers.vk.api.VkApiHandler;
+import handlers.vk.api.Vk;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class NotificationsPullingThread extends Thread {
     /** Поле хранилища групп */
     private final Storage storage = Storage.getInstance();
     /** Поле обработчика обращений к vk api */
-    private VkApiHandler vk = new VkApiHandler("src/main/resources/anonsrc/vkconfig.properties");
+    private Vk vk = new Vk("src/main/resources/anonsrc/vkconfig.properties");
 
     /**
      * Метод логики выполняемой внутри потока

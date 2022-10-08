@@ -6,8 +6,6 @@ import handlers.vk.api.groups.NoGroupException;
 import org.junit.jupiter.api.Test;
 import user.User;
 
-import java.io.FileNotFoundException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class VkApiHandlerTests {
     /** Поле объекта обрабатывающего запросы к вк апи */
-    private VkApiHandler vk = new VkApiHandler("src/test/resources/anonsrc/vkconfig.properties");
+    private Vk vk = new Vk("src/test/resources/anonsrc/vkconfig.properties");
     /** Поле тестового пользователя */
     private User testUser;
 
@@ -32,7 +30,7 @@ public class VkApiHandlerTests {
 
         boolean error = false;
         try {
-            VkApiHandler incorrectVk = new VkApiHandler("src/test/resources/testanonsrc/unknownfile.properties");
+            Vk incorrectVk = new Vk("src/test/resources/testanonsrc/unknownfile.properties");
         } catch (RuntimeException e) {
             error = true;
         }

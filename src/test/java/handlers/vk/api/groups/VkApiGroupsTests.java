@@ -6,7 +6,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.groups.Group;
-import handlers.vk.api.oAuth.VkApiAuth;
+import handlers.vk.api.oAuth.VkAuth;
 import org.junit.jupiter.api.Test;
 import user.User;
 
@@ -20,8 +20,8 @@ public class VkApiGroupsTests {
 
     @Test
     public void searchGroupTest() throws NoGroupException, ClientException, ApiException {
-        VkApiGroups groups = new VkApiGroups(vk);
-        VkApiAuth oAuth = new VkApiAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
+        VkGroups groups = new VkGroups(vk);
+        VkAuth oAuth = new VkAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
         String authUrl = oAuth.getAuthURL();
         System.out.println(authUrl);
         User user = oAuth.createUser();
@@ -31,8 +31,8 @@ public class VkApiGroupsTests {
 
     @Test
     public void searchGroupWithNoGroupStringTest() throws ClientException, ApiException {
-        VkApiGroups groups = new VkApiGroups(vk);
-        VkApiAuth oAuth = new VkApiAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
+        VkGroups groups = new VkGroups(vk);
+        VkAuth oAuth = new VkAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
         String authUrl = oAuth.getAuthURL();
         System.out.println(authUrl);
         User user = oAuth.createUser();

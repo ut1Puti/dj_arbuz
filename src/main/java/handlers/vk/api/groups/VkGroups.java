@@ -7,7 +7,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.groups.Fields;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
-import handlers.vk.api.VkApiConsts;
+import handlers.vk.api.VkConstants;
 import user.User;
 
 import java.util.HashMap;
@@ -20,13 +20,13 @@ import java.util.Map;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class VkApiGroups extends Groups {
+public class VkGroups extends Groups {
     /**
      * Конструктор унаследованный от родительского класс
      * 
      * @param client - клиент vk
      */
-    public VkApiGroups(VkApiClient client) {
+    public VkGroups(VkApiClient client) {
         super(client);
     }
 
@@ -42,7 +42,7 @@ public class VkApiGroups extends Groups {
      */
     public List<Group> searchGroups(String groupName, User callingUser) throws NoGroupException, ApiException, ClientException {
         List<Group> userFindGroups = search(callingUser, groupName)
-                .offset(VkApiConsts.DEFAULT_OFFSET).count(VkApiConsts.DEFAULT_GROUPS_NUMBER)
+                .offset(VkConstants.DEFAULT_OFFSET).count(VkConstants.DEFAULT_GROUPS_NUMBER)
                 .execute()
                 .getItems();
 
@@ -102,7 +102,7 @@ public class VkApiGroups extends Groups {
                 continue;
             }
 
-            GetByIdObjectLegacyResponse userFindByIdGroup = userFindByIdGroups.get(VkApiConsts.FIRST_ELEMENT_INDEX);
+            GetByIdObjectLegacyResponse userFindByIdGroup = userFindByIdGroups.get(VkConstants.FIRST_ELEMENT_INDEX);
             String[] foundByIdGroupNames = userFindByIdGroup.getName().split("[/|]");
             for (String foundByIdGroupName : foundByIdGroupNames) {
 

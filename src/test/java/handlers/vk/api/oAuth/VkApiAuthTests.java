@@ -24,14 +24,14 @@ public class VkApiAuthTests {
 
     @Test
     public void serviceActorAuthTest() {
-        VkApiAuth oAuth = new VkApiAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
+        VkAuth oAuth = new VkAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
         ServiceActor vkApp = oAuth.createAppActor();
         assertEquals(vkApp.getId(), 51434490);
     }
 
     @Test
     public void createUserTest() {
-        VkApiAuth oAuth = new VkApiAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
+        VkAuth oAuth = new VkAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
         String authUrl = oAuth.getAuthURL();
         assertNotNull(authUrl);
         System.out.println(authUrl);

@@ -18,7 +18,7 @@ import java.io.IOException;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class VkApiAuth extends OAuth implements CreateUser {
+public class VkAuth extends OAuth implements CreateUser {
     /** Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота */
     private HttpServer httpServer = null;
     /** Поле с конфигурации данных для аутентификации пользователь и приложения */
@@ -30,7 +30,7 @@ public class VkApiAuth extends OAuth implements CreateUser {
      * @param client - клиент vk
      * @param configPath - путь до файла с конфигурацией
      */
-    public VkApiAuth(VkApiClient client, String configPath) {
+    public VkAuth(VkApiClient client, String configPath) {
         super(client);
         authConfiguration = new VkAuthConfiguration(configPath);
     }

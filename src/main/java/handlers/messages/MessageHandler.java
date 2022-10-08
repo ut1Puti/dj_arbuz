@@ -6,7 +6,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.exceptions.ClientException;
 import handlers.vk.api.groups.NoGroupException;
-import handlers.vk.api.VkApiHandler;
+import handlers.vk.api.Vk;
 import user.User;
 
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
  */
 public class MessageHandler {
     /** Поле обработчика запросов к Vk API */
-    private static VkApiHandler vk = new VkApiHandler("src/main/resources/anonsrc/vkconfig.properties");
+    private static Vk vk = new Vk("src/main/resources/anonsrc/vkconfig.properties");
     /** Поле кол-ва запрашиваемых последних постов */
     private static final int DEFAULT_POST_NUMBER = 5;
     /** Поле индекса команды */

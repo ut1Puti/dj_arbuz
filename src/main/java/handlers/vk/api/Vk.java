@@ -8,10 +8,10 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.groups.Group;
 import database.Storage;
-import handlers.vk.api.oAuth.VkApiAuth;
+import handlers.vk.api.oAuth.VkAuth;
 import handlers.vk.api.groups.NoGroupException;
-import handlers.vk.api.groups.VkApiGroups;
-import handlers.vk.api.wall.VkApiWall;
+import handlers.vk.api.groups.VkGroups;
+import handlers.vk.api.wall.VkWall;
 import user.CreateUser;
 import user.User;
 
@@ -25,7 +25,7 @@ import java.util.Optional;
  * @author Щеголев Андрей
  * @version 1.6
  */
-public class VkApiHandler implements CreateUser {
+public class Vk implements CreateUser {
     /** Поле транспортного клиента */
     private static final TransportClient transportClient = new HttpTransportClient();
     /** Поле класс позволяющего работать с Vk SDK Java */
@@ -33,11 +33,11 @@ public class VkApiHandler implements CreateUser {
     /** Поле хранилища данных о группах и пользователях */
     private Storage dataBase = null;
     /** Поле класса для взаимодействия с группами через vk api */
-    private final VkApiGroups groups;
+    private final VkGroups groups;
     /** Поле класс для взаимодействия со стеной вк */
-    private final VkApiWall wall;
+    private final VkWall wall;
     /** Поле для аутентификации через vk */
-    private final VkApiAuth oAuth;
+    private final VkAuth oAuth;
     /** Поле пользователя приложения в вк */
     private final ServiceActor vkApp;
 
@@ -46,10 +46,10 @@ public class VkApiHandler implements CreateUser {
      *
      * @param configPath - путь до файла с конфигурацией
      */
-    public VkApiHandler(String configPath) {
-        oAuth = new VkApiAuth(vk, configPath);
-        groups = new VkApiGroups(vk);
-        wall = new VkApiWall(vk, groups);
+    public Vk(String configPath) {
+        oAuth = new VkAuth(vk, configPath);
+        groups = new VkGroups(vk);
+        wall = new VkWall(vk, groups);
         vkApp = oAuth.createAppActor();
     }
 
@@ -83,7 +83,7 @@ public class VkApiHandler implements CreateUser {
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
     public String getGroupURL(String groupName, User callingUser) throws NoGroupException, ClientException, ApiException {
-        return VkApiConsts.VK_ADDRESS + groups.searchGroup(groupName, callingUser).getScreenName();
+        return VkConstants.VK_ADDRESS + groups.searchGroup(groupName, callingUser).getScreenName();
     }
 
     /**

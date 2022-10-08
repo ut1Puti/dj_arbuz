@@ -6,7 +6,7 @@ package handlers.vk.api;
  * @author Кедровских Олег
  * @version 2.0
  */
-public class VkApiConsts {
+public class VkConstants {
     /** Поле содерщащее адрес vk */
     public static final String VK_ADDRESS = "https://vk.com/";
     /** Поле адреса стены */
