@@ -9,6 +9,7 @@ import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
+import database.GroupsStorage;
 import database.Storage;
 import httpserver.HttpServer;
 import user.CreateUser;
@@ -67,7 +68,7 @@ public class VkApiHandler implements CreateUser {
      * @return интерфейс для создания пользователя
      */
     @Override
-    public User createUser() {
+    public User createUser(String telegramUserId) {
         try {
             httpServer = HttpServer.getInstance();
             String authCode = getAuthCodeFromHttpRequest(httpServer.getHttpRequestGetParametrs());
@@ -78,7 +79,7 @@ public class VkApiHandler implements CreateUser {
                             appConfiguration.REDIRECT_URL,
                             authCode)
                     .execute();
-            return new User(authResponse.getUserId(), authResponse.getAccessToken());
+            return new User(authResponse.getUserId(), authResponse.getAccessToken(),telegramUserId);
         } catch (ApiException | IOException | ClientException e) {
             return null;
         }
@@ -167,7 +168,7 @@ public class VkApiHandler implements CreateUser {
         Group userFindGroup = searchGroup(groupName, callingUser);
 
         if(dataBase == null) {
-            dataBase = Storage.storageGetInstance();
+            dataBase = GroupsStorage.storageGetInstance();
         }
 
         return dataBase.addInfoToGroup(userFindGroup.getScreenName(),String.valueOf(callingUser.getId()));

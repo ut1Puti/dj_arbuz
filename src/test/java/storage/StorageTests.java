@@ -1,6 +1,6 @@
 package storage;
 
-import database.Storage;
+import database.GroupsStorage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,11 +11,11 @@ public class StorageTests {
      */
     @Test
     public void testCheakAddtoStorageUser() {
-        Storage dataBase1 = Storage.storageGetInstance();
-        dataBase1.getGroupsBase()
+        GroupsStorage dataBase1 = GroupsStorage.storageGetInstance();
+        dataBase1.getBase()
                  .clear();
         dataBase1.addInfoToGroup("123", "123");
-        assertEquals(1, dataBase1.getGroupsBase()
+        assertEquals(1, dataBase1.getBase()
                                  .get("123")
                                  .size());
     }
@@ -25,13 +25,13 @@ public class StorageTests {
      */
     @Test
     public void testCheckAddIdenticalUsers() {
-        Storage dataBase = Storage.storageGetInstance();
-        dataBase.getGroupsBase()
+        GroupsStorage dataBase = GroupsStorage.storageGetInstance();
+        dataBase.getBase()
                  .get("123")
                  .clear();
         dataBase.addInfoToGroup("123", "123");
         dataBase.addInfoToGroup("123", "123");
-        assertEquals(1, dataBase.getGroupsBase()
+        assertEquals(1, dataBase.getBase()
                                  .get("123")
                                  .size());
     }
@@ -42,12 +42,12 @@ public class StorageTests {
      */
     @Test
     public void testCheckAddVariousUsers() {
-        Storage dataBase = Storage.storageGetInstance();
-        dataBase.getGroupsBase()
+        GroupsStorage dataBase = GroupsStorage.storageGetInstance();
+        dataBase.getBase()
                 .clear();
         dataBase.addInfoToGroup("12", "1235");
         dataBase.addInfoToGroup("12", "1234");
-        assertEquals(2, dataBase.getGroupsBase()
+        assertEquals(2, dataBase.getBase()
                                  .get("12")
                                  .size());
     }
@@ -59,17 +59,17 @@ public class StorageTests {
      */
     @Test
     public void testForAddVariousAndIdenticalUsers() {
-        Storage dataBase = Storage.storageGetInstance();
-        dataBase.getGroupsBase()
+        GroupsStorage dataBase = GroupsStorage.storageGetInstance();
+        dataBase.getBase()
                  .clear();
         dataBase.addInfoToGroup("12", "1235");
         dataBase.addInfoToGroup("12", "1234");
         dataBase.addInfoToGroup("12", "1234");
         dataBase.addInfoToGroup("123", "1234");
         dataBase.addInfoToGroup("123", "1234");
-        assertEquals(3, dataBase.getGroupsBase()
+        assertEquals(3, dataBase.getBase()
                                  .get("12")
-                                 .size() + dataBase.getGroupsBase()
+                                 .size() + dataBase.getBase()
                                                     .get("123")
                                                     .size());
     }

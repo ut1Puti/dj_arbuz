@@ -3,8 +3,13 @@ package handlers.messages;
 import bots.ConsoleBot;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.objects.groups.Group;
+import database.GroupsStorage;
+import database.Storage;
+import database.UserStorage;
 import handlers.vkapi.VkApiHandler;
 import user.User;
+
+import java.util.Map;
 
 /**
  * Класс утилитных методов создающий ответы на сообщения пользователя
@@ -18,6 +23,7 @@ public class MessageHandler {
      * Поле обработчика запросов к Vk API
      */
     private static VkApiHandler vk = new VkApiHandler("src/main/resources/anonsrc/vkconfig.properties");
+    private static Storage userBase = null;
 
     /**
      * Метод определяющий команды в сообщении пользователя и возвращающий ответ
@@ -27,7 +33,15 @@ public class MessageHandler {
      * @param callingBot - бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
      */
-    public static HandlerResponse executeMessage(String message, User user, ConsoleBot callingBot) {
+    public static HandlerResponse executeMessage(String message, String telegramUserId, ConsoleBot callingBot) {
+        if (userBase == null) {
+            userBase = UserStorage.storageGetInstance();
+        }
+        Map<String,User> pohuiPoka = userBase.getBase();
+        if (!pohuiPoka.containsKey(telegramUserId)) {
+            return getNotAuthedResponse();
+        }
+        User user = pohuiPoka.get(telegramUserId);
         String[] commandAndArg = message.split(" ", 2);
         if (commandAndArg.length == 1) {
             switch (commandAndArg[0]) {
@@ -43,9 +57,6 @@ public class MessageHandler {
             }
         }
 
-        if (user == null) {
-            return getNotAuthedResponse();
-        }
 
         if (commandAndArg.length == 2) {
             switch (commandAndArg[0]) {
@@ -169,8 +180,9 @@ public class MessageHandler {
 
     /**
      * Метод для подписки пользователя
+     *
      * @param groupName - Название группы
-     * @param user - айди юзера
+     * @param user      - айди юзера
      * @return - возврат текста для сообщения
      */
     private static HandlerResponse subscribeTo(String groupName, User user) {
