@@ -1,4 +1,4 @@
-package handlers.vk.api.groups;
+package handlers.vk.groups;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
@@ -6,7 +6,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.groups.Group;
-import handlers.vk.api.oAuth.VkAuth;
+import handlers.vk.oAuth.VkAuth;
 import org.junit.jupiter.api.Test;
 import user.User;
 

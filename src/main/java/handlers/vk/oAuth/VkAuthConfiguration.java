@@ -1,4 +1,4 @@
-package handlers.vk.api.oAuth;
+package handlers.vk.oAuth;
 
 import java.io.FileInputStream;
 import java.io.IOException;

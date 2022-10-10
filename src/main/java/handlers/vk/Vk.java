@@ -1,4 +1,4 @@
-package handlers.vk.api;
+package handlers.vk;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
@@ -8,10 +8,10 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.groups.Group;
 import database.Storage;
-import handlers.vk.api.oAuth.VkAuth;
-import handlers.vk.api.groups.NoGroupException;
-import handlers.vk.api.groups.VkGroups;
-import handlers.vk.api.wall.VkWall;
+import handlers.vk.oAuth.VkAuth;
+import handlers.vk.groups.NoGroupException;
+import handlers.vk.groups.VkGroups;
+import handlers.vk.wall.VkWall;
 import user.CreateUser;
 import user.User;
 

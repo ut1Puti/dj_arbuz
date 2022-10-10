@@ -1,7 +1,7 @@
-package handlers.vk.api.oAuth;
+package handlers.vk.oAuth;
 
-import com.vk.api.sdk.client.actors.ServiceActor;
 import org.junit.jupiter.api.Test;
+import socialnetworks.vk.oAuth.VkAuthConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 

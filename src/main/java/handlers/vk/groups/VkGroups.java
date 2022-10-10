@@ -1,4 +1,4 @@
-package handlers.vk.api.groups;
+package handlers.vk.groups;
 
 import com.vk.api.sdk.actions.Groups;
 import com.vk.api.sdk.client.VkApiClient;
@@ -7,7 +7,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.groups.Fields;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
-import handlers.vk.api.VkConstants;
+import handlers.vk.VkConstants;
 import user.User;
 
 import java.util.HashMap;

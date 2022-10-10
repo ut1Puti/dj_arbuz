@@ -1,8 +1,8 @@
-package handlers.vk.api;
+package handlers.vk;
 
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
-import handlers.vk.api.groups.NoGroupException;
+import handlers.vk.groups.NoGroupException;
 import org.junit.jupiter.api.Test;
 import user.User;
 

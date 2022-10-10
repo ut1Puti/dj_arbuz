@@ -1,4 +1,4 @@
-package handlers.vk.api;
+package handlers.vk;
 
 /**
  * Класс констант используемых в vkapi

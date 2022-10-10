@@ -1,4 +1,4 @@
-package handlers.vk.api.wall;
+package handlers.vk.wall;
 
 import com.vk.api.sdk.actions.Wall;
 import com.vk.api.sdk.client.VkApiClient;
@@ -9,9 +9,9 @@ import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.wall.Wallpost;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostFull;
-import handlers.vk.api.VkConstants;
-import handlers.vk.api.groups.NoGroupException;
-import handlers.vk.api.groups.VkGroups;
+import handlers.vk.groups.VkGroups;
+import handlers.vk.VkConstants;
+import handlers.vk.groups.NoGroupException;
 import user.User;
 
 import java.util.ArrayList;

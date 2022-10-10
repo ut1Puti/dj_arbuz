@@ -3,8 +3,8 @@ package handlers.notifcations;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import database.Storage;
-import handlers.vk.api.groups.NoGroupException;
-import handlers.vk.api.Vk;
+import handlers.vk.groups.NoGroupException;
+import handlers.vk.Vk;
 
 import java.util.List;
 import java.util.Map;

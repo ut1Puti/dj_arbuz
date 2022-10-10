@@ -1,4 +1,4 @@
-package handlers.vk.api.oAuth;
+package handlers.vk.oAuth;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;

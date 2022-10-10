@@ -5,8 +5,8 @@ import bots.consolebot.ConsoleBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.exceptions.ClientException;
-import handlers.vk.api.groups.NoGroupException;
-import handlers.vk.api.Vk;
+import handlers.vk.groups.NoGroupException;
+import handlers.vk.Vk;
 import user.User;
 
 import java.util.List;
