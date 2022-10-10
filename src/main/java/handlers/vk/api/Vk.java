@@ -51,7 +51,7 @@ public class Vk implements CreateUser {
      */
     private final VkAuth oAuth;
     /**
-     * Поле пользователя приложения в вк
+     * Поле пользователя приложения в vk
      */
     private final ServiceActor vkApp;
 
@@ -87,11 +87,11 @@ public class Vk implements CreateUser {
     }
 
     /**
-     * Метод получающий ссылку на группу в вк
+     * Метод получающий ссылку на группу в vk
      *
      * @param groupName   - Название группы
      * @param callingUser - пользователя
-     * @return возвращает ссылку на группу в вк
+     * @return возвращает ссылку на группу в vk
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
@@ -115,7 +115,7 @@ public class Vk implements CreateUser {
     }
 
     /**
-     * Метод для подписки пользователя(сохранение в базу данных айди и группы)
+     * Метод для подписки пользователя(сохранение в базу данных id пользователя в телеграмме и группы)
      *
      * @param groupName   - Название группы
      * @param callingUser - пользователя
