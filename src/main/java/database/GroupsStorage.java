@@ -16,13 +16,12 @@ import java.util.*;
  * @author Щёголев Андрей
  * @version 0.1
  */
-public class GroupsStorage implements Storage{
+public class GroupsStorage{
     /**
      * Поле хеш таблицы, где ключ - айди группы, значение - список пользователей
      */
     private Map<String, List<String>> groupsBase;
-    //private Map<String,List<String>> usersBase; <- в будущем добавим отображение айдишников всех групп
-    private static Storage groupsStorage = null;
+    private static GroupsStorage groupsStorage = null;
 
     /**
      * Метод для создания нового пользователя в наш класс
@@ -76,7 +75,7 @@ public class GroupsStorage implements Storage{
         returnStorageFromDatabase();
     }
 
-    public static Storage storageGetInstance() {
+    public static GroupsStorage storageGetInstance() {
         if (groupsStorage == null) {
             groupsStorage = new GroupsStorage();
         }

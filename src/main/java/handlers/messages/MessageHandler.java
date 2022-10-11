@@ -4,7 +4,6 @@ import bots.ConsoleBot;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.objects.groups.Group;
 import database.GroupsStorage;
-import database.Storage;
 import database.UserStorage;
 import handlers.vkapi.VkApiHandler;
 import user.User;
@@ -23,25 +22,21 @@ public class MessageHandler {
      * Поле обработчика запросов к Vk API
      */
     private static VkApiHandler vk = new VkApiHandler("src/main/resources/anonsrc/vkconfig.properties");
-    private static Storage userBase = null;
+    private static GroupsStorage groupsBase = GroupsStorage.storageGetInstance();
+
+    private static UserStorage usersBase = UserStorage.storageGetInstance();
 
     /**
      * Метод определяющий команды в сообщении пользователя и возвращающий ответ
      *
      * @param message    - сообщение пользователя
-     * @param user       - пользователь отправивший сообщение
      * @param callingBot - бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
      */
     public static HandlerResponse executeMessage(String message, String telegramUserId, ConsoleBot callingBot) {
-        if (userBase == null) {
-            userBase = UserStorage.storageGetInstance();
+        if (groupsBase == null) {
+            groupsBase = GroupsStorage.storageGetInstance();
         }
-        Map<String,User> pohuiPoka = userBase.getBase();
-        if (!pohuiPoka.containsKey(telegramUserId)) {
-            return getNotAuthedResponse();
-        }
-        User user = pohuiPoka.get(telegramUserId);
         String[] commandAndArg = message.split(" ", 2);
         if (commandAndArg.length == 1) {
             switch (commandAndArg[0]) {
@@ -56,8 +51,10 @@ public class MessageHandler {
                 }
             }
         }
-
-
+        if (!usersBase.contains(telegramUserId)) {
+            return getNotAuthedResponse();
+        }
+        User user = usersBase.getUser(telegramUserId);
         if (commandAndArg.length == 2) {
             switch (commandAndArg[0]) {
                 case "/link" -> {

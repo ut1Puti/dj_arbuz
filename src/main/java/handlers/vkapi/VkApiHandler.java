@@ -1,5 +1,6 @@
 package handlers.vkapi;
 
+import com.vk.api.sdk.actions.Storage;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -10,7 +11,6 @@ import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
 import database.GroupsStorage;
-import database.Storage;
 import httpserver.HttpServer;
 import user.CreateUser;
 import user.User;
@@ -37,7 +37,7 @@ public class VkApiHandler implements CreateUser {
     /** Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота */
     private HttpServer httpServer = null;
     /** Поле хранилища данных о группах и пользователях */
-    private Storage dataBase = null;
+    private GroupsStorage dataBase = null;
     /** Поле конфигурации vk приложения */
     private final VkAppConfiguration appConfiguration;
 
@@ -79,7 +79,7 @@ public class VkApiHandler implements CreateUser {
                             appConfiguration.REDIRECT_URL,
                             authCode)
                     .execute();
-            return new User(authResponse.getUserId(), authResponse.getAccessToken(),telegramUserId);
+            return new User(authResponse.getUserId(), authResponse.getAccessToken());
         } catch (ApiException | IOException | ClientException e) {
             return null;
         }
