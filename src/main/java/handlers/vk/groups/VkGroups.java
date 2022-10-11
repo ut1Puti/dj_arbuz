@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Класс для взаимодействиями с группами через vk api
+ * Класс для взаимодействия с группами через vk api
  *
  * @author Кедровских Олег
  * @version 1.0
@@ -141,11 +141,11 @@ public class VkGroups extends Groups {
     }
 
     /**
-     * Метод, который ищет буквы в которых отличаются две строки
+     * Метод, ищущий буквы, в которых отличаются две строки
      *
      * @param firstString  - первая строка
      * @param secondString - вторая строка
-     * @return пару, элементы которой это строки состоящие из букв в которых слова различаются
+     * @return пару, элементы которой это строки, состоящие из отличных букв
      */
     private Pair<String> stringDifference(String firstString, String secondString) {
         return diffSearcher(firstString, secondString, new HashMap<>());

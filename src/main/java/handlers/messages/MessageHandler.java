@@ -20,13 +20,21 @@ import java.util.NoSuchElementException;
  * @version 1.6
  */
 public class MessageHandler {
-    /** Поле обработчика запросов к Vk API */
+    /**
+     * Поле обработчика запросов к Vk API
+     */
     private static Vk vk = new Vk("src/main/resources/anonsrc/vkconfig.properties");
-    /** Поле кол-ва запрашиваемых последних постов */
+    /**
+     * Поле кол-ва запрашиваемых последних постов
+     */
     private static final int DEFAULT_POST_NUMBER = 5;
-    /** Поле индекса команды */
+    /**
+     * Поле индекса команды
+     */
     private static final int COMMAND_INDEX = 0;
-    /** Поле индекса аргумента */
+    /**
+     * Поле индекса аргумента
+     */
     private static final int ARG_INDEX = 1;
 
     /**
@@ -81,7 +89,7 @@ public class MessageHandler {
      *
      * @param commandAndArgs - массив аргументов и комманд
      * @return true - если нет аргументов
-     *         false - если есть аргументы
+     * false - если есть аргументы
      */
     private static boolean isItNoArgCommand(String[] commandAndArgs) {
         return commandAndArgs.length == 1;
@@ -92,7 +100,7 @@ public class MessageHandler {
      *
      * @param commandAndArgs - массив аргументов и комманд
      * @return true - если есть только один аргумент
-     *         false - если нет аргументов или их больше одного
+     * false - если нет аргументов или их больше одного
      */
     private static boolean isItSingleArgCommand(String[] commandAndArgs) {
         return commandAndArgs.length == 2;
@@ -184,7 +192,7 @@ public class MessageHandler {
      * Метод для подписки пользователя
      *
      * @param groupName - Название группы
-     * @param user - айди юзера
+     * @param user      - айди юзера
      * @return - возврат текста для сообщения
      */
     private static MessageHandlerResponse subscribeTo(String groupName, User user) {

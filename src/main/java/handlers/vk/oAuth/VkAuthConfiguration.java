@@ -59,6 +59,14 @@ class VkAuthConfiguration {
         wasElementFound(REDIRECT_URL, "redirectUri", configPath);
     }
 
+    /**
+     * Метод проверяющий, был ли найден элемент в файле
+     *
+     * @param element     - найденный элемент
+     * @param elementName - ключ, по которому искался элемент
+     * @param configPath  - путь до файла из которого читались данные
+     * @throws RuntimeException - если элемент в данном файле отсутсвовал
+     */
     private void wasElementFound(String element, String elementName, String configPath) {
         if (element == null) {
             throw new RuntimeException("Нет" + elementName + " элемента в файле:" + configPath);

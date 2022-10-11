@@ -44,7 +44,7 @@ public class Storage {
     private boolean addOldGroup(String groupId, String userId) {
         if (!groupsBase.get(groupId).contains(userId)) {
             groupsBase.get(groupId)
-                      .add(userId);
+                    .add(userId);
             return true;
         }
         return false;

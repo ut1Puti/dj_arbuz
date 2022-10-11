@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Класс тестирующий методы класса VkApiHandler
  *
  * @author Кедровских Олег
- * @version 1.0
+ * @version 1.6
  */
 public class VkHandlerTests {
     /**

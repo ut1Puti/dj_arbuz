@@ -20,13 +20,17 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class NotificationsPullingThread extends Thread {
     private boolean working = false;
-    /** Поле хранящее новые посты */
+    /**
+     * Поле хранящее новые посты
+     */
     private final ArrayBlockingQueue<List<String>> newPosts = new ArrayBlockingQueue<>(10);
-    /** Поле синхолнизатора доступа */
-    private final Object writeAndReadNewPostsLock = new Object();
-    /** Поле хранилища групп */
+    /**
+     * Поле хранилища групп
+     */
     private final Storage storage = Storage.getInstance();
-    /** Поле обработчика обращений к vk api */
+    /**
+     * Поле обработчика обращений к vk api
+     */
     private Vk vk = new Vk("src/main/resources/anonsrc/vkconfig.properties");
 
     /**
@@ -43,7 +47,7 @@ public class NotificationsPullingThread extends Thread {
                     Optional<List<String>> optional = vk.getNewPosts(key, 0);
 
                     if (optional.isPresent()) {
-                        synchronized (writeAndReadNewPostsLock) {
+                        synchronized (newPosts) {
                             newPosts.put(optional.get());
                         }
                     }
@@ -54,8 +58,8 @@ public class NotificationsPullingThread extends Thread {
                 }
             }
             try {
-                final int oneMinute = 60000;
-                Thread.sleep(oneMinute);
+                final int oneMinuteInMilliseconds = 60000;
+                Thread.sleep(oneMinuteInMilliseconds);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -66,7 +70,7 @@ public class NotificationsPullingThread extends Thread {
      * Метод проверяющий наличие новых постов
      *
      * @return true - если есть новые посты
-     *         false - если нет новых постов
+     * false - если нет новых постов
      */
     public boolean haveNewPosts() {
         return !newPosts.isEmpty();
@@ -79,7 +83,7 @@ public class NotificationsPullingThread extends Thread {
      */
     public List<List<String>> getNewPosts() {
         List<List<String>> result;
-        synchronized (writeAndReadNewPostsLock) {
+        synchronized (newPosts) {
             result = newPosts.stream().toList();
             newPosts.clear();
         }

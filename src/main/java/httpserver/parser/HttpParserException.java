@@ -1,4 +1,4 @@
-package httpserver;
+package httpserver.parser;
 
 /**
  * Класс ошибки парсинга http запроса

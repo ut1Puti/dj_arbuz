@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Класс тестирующий работу класса MessageHandler
+ *
+ * @author Кедровских Олег
+ * @version 1.5
  */
 public class MessageHandlerTests {
     /**
