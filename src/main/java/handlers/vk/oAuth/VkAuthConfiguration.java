@@ -36,8 +36,7 @@ class VkAuthConfiguration {
      * Конструктор по пути до файла с конфигурацией приложения
      *
      * @param configPath - путь до файла с конфигурацией
-     *                   файл должен содержать поля authUrl,
-     *                   appId, clientSecret, redirectUri
+     *                   файл должен содержать поля authUrl, appId, clientSecret, redirectUri
      */
     VkAuthConfiguration(String configPath) {
         Properties prop = new Properties();

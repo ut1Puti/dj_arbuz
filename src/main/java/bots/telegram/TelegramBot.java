@@ -8,12 +8,15 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import user.User;
 
 public class TelegramBot extends TelegramLongPollingBot {
+    private final DefaultBotSession telegramBotThread;
 
-    public TelegramBot() {
+    public TelegramBot(DefaultBotSession telegramBotThread) {
         super();
+        this.telegramBotThread = telegramBotThread;
     }
 
     @Override
@@ -34,16 +37,18 @@ public class TelegramBot extends TelegramLongPollingBot {
                                          .hasText()) {
             String messageUpdate = update.getMessage()
                                          .getText();
-            MessageHandlerResponse messageTelegramHadnler = MessageHandler.executeMessage(messageUpdate, String.valueOf(update.getMessage().getChatId()), null);
+            MessageHandlerResponse response = MessageHandler.executeMessage(
+                    messageUpdate, String.valueOf(update.getMessage().getChatId()), null
+            );
             message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            message.setText(messageTelegramHadnler.getTextMessage());
+            message.setText(response.getTextMessage());
             try {
                 execute(message);
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }
-            if (messageTelegramHadnler.hasUpdateUser()) {
-                User user = messageTelegramHadnler.getUpdateUser().createUser();
+            if (response.hasUpdateUser()) {
+                User user = response.getUpdateUser().createUser();
                 if (user == null) {
                     System.out.println(BotTextResponse.AUTH_ERROR);
                 }
@@ -54,5 +59,13 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
 
         }
+    }
+
+    public boolean isWorking() {
+        return telegramBotThread.isRunning();
+    }
+
+    public void stop() {
+        telegramBotThread.stop();
     }
 }

@@ -1,7 +1,6 @@
 package handlers.messages;
 
 import bots.BotTextResponse;
-import bots.console.ConsoleBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.exceptions.ClientException;
@@ -11,6 +10,7 @@ import user.User;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import database.GroupsStorage;
 import database.UserStorage;
 
@@ -19,7 +19,7 @@ import database.UserStorage;
  *
  * @author Кедровских Олег
  * @author Щеголев Андрей
- * @version 1.6
+ * @version 1.8
  */
 public class MessageHandler {
     /**
@@ -38,32 +38,39 @@ public class MessageHandler {
      * Поле индекса аргумента
      */
     private static final int ARG_INDEX = 1;
+    /**
+     * Поле хранилища групп
+     */
     private static GroupsStorage groupsBase = GroupsStorage.getInstance();
-
+    /**
+     * Поле хранилища пользователей
+     */
     private static UserStorage usersBase = UserStorage.getInstance();
 
     /**
      * Метод определяющий команды в сообщении пользователя и возвращающий ответ
      *
-     * @param message    - сообщение пользователя
-     * @param callingBot - бот из которого был вызван метод
+     * @param message          - сообщение пользователя
+     * @param callingBotThread - бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
      */
-    public static MessageHandlerResponse executeMessage(String message, String telegramUserId, ConsoleBot callingBot) {
+    public static MessageHandlerResponse executeMessage(String message, String telegramUserId, Thread callingBotThread) {
         String[] commandAndArgs = message.split(" ", 2);
+
         if (groupsBase == null) {
             groupsBase = GroupsStorage.getInstance();
         }
+
         if (isItNoArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
                 case "/help" -> {
                     return getHelpResponse();
                 }
-                case "/start", "/relogin" -> {
-                    return getStartReloginResponse();
+                case "/auth" -> {
+                    return getAuthResponse();
                 }
                 case "/stop" -> {
-                    return getStopResponse(callingBot);
+                    return getStopResponse(callingBotThread);
                 }
             }
         }
@@ -129,7 +136,7 @@ public class MessageHandler {
      *
      * @return ответ на команду /start, /relogin
      */
-    private static MessageHandlerResponse getStartReloginResponse() {
+    private static MessageHandlerResponse getAuthResponse() {
         String authURL = vk.getAuthURL();
 
         if (authURL == null) {
@@ -142,11 +149,11 @@ public class MessageHandler {
     /**
      * Метод формирующий ответ на команду /stop
      *
-     * @param callingBot - бот вызвавший метод
+     * @param callingBotThread - бот вызвавший метод
      * @return ответ на /stop содержит STOP_INFO
      */
-    private static MessageHandlerResponse getStopResponse(ConsoleBot callingBot) {
-        callingBot.stop();
+    private static MessageHandlerResponse getStopResponse(Thread callingBotThread) {
+        callingBotThread.interrupt();
         return new MessageHandlerResponse(BotTextResponse.STOP_INFO);
     }
 

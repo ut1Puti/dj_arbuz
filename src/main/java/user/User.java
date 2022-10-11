@@ -12,11 +12,10 @@ public class User extends UserActor {
     /**
      * Конструктор от унаследованного класса
      *
-     * @param userId      - id пользователя в вк
+     * @param vkId      - id пользователя в вк
      * @param accessToken - токен для доступа к vk api
      */
-
-    public User(Integer userId, String accessToken) {
-        super(userId, accessToken);
+    public User(Integer vkId, String accessToken) {
+        super(vkId, accessToken);
     }
 }
