@@ -31,9 +31,7 @@ public class HttpServer {
      */
     private HttpServer() throws IOException {
         serverSocket = new ServerSocket(HttpServerConfiguration.PORT);
-        listenerThread = new ServerListenerThread(
-                serverSocket, HttpServerConfiguration.AMOUNT_OF_WORKING_THREADS
-        );
+        listenerThread = new ServerListenerThread(serverSocket);
     }
 
     /**
@@ -75,11 +73,7 @@ public class HttpServer {
      */
     public void stop() {
         listenerThread.interrupt();
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        HttpServerUtils.closeServerStream(serverSocket);
         server = null;
     }
 }

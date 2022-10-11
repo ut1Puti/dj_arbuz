@@ -14,10 +14,6 @@ public class HttpServerConfiguration {
      */
     public static final int PORT = 8080;
     /**
-     * Поле кол-ва обрабатывающий сообщения потоков
-     */
-    public static final int AMOUNT_OF_WORKING_THREADS = 1;
-    /**
      * Поле пути до файлов доступных серверу
      */
     public static final String WEB_SRC = "src/main/resources/websrc";

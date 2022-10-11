@@ -1,17 +1,15 @@
 package httpserver.server;
 
-import httpserver.parser.HttpParser;
-import httpserver.parser.HttpParserException;
 import httpserver.HttpRequest;
 import httpserver.HttpResponse;
+import httpserver.parser.HttpParser;
+import httpserver.parser.HttpParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +24,6 @@ public class ServerListenerThread extends Thread {
      * Поле серверного сокета, который слушает текущий поток
      */
     private final ServerSocket serverSocket;
-    private ExecutorService executorService;
     /**
      * Поле для синхронизации получения get параметров вне сервера
      */
@@ -39,12 +36,10 @@ public class ServerListenerThread extends Thread {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param serverSocket           - серверный сокет, который слушает поток
-     * @param amountOfWorkingThreads - кол-во потоков исполняющий полученное сообщение
+     * @param serverSocket - серверный сокет, который слушает поток
      */
-    public ServerListenerThread(ServerSocket serverSocket, int amountOfWorkingThreads) {
+    public ServerListenerThread(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
-        executorService = Executors.newFixedThreadPool(amountOfWorkingThreads);
     }
 
     /**
@@ -52,67 +47,58 @@ public class ServerListenerThread extends Thread {
      */
     @Override
     public void run() {
-        while (serverSocket.isBound()) {
-            Socket socket = null;
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
+        while (serverSocket.isBound() && !Thread.interrupted()) {
             try {
-                socket = serverSocket.accept();
-
+                Socket socket = serverSocket.accept();
                 if (socket.isBound() && socket.isConnected()) {
-                    inputStream = socket.getInputStream();
-                    outputStream = socket.getOutputStream();
-
-                    HttpRequest request;
+                    InputStream inputStream = null;
+                    OutputStream outputStream = null;
                     try {
-                        request = HttpParser.parseRequestLine(inputStream);
-                    } catch (HttpParserException e) {
+
+                        if (socket.isBound() && socket.isConnected()) {
+                            inputStream = socket.getInputStream();
+                            outputStream = socket.getOutputStream();
+
+                            HttpRequest request;
+                            try {
+                                request = HttpParser.parseRequestLine(inputStream);
+                            } catch (HttpParserException e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            StringBuilder fileName = new StringBuilder();
+                            boolean isFileNameGot = false;
+                            StringBuilder requestParametersBuilder = new StringBuilder();
+                            for (char ch : request.requestTarget.toCharArray()) {
+
+                                if (ch == '?') {
+                                    isFileNameGot = true;
+                                }
+
+                                if (isFileNameGot) {
+                                    requestParametersBuilder.append(ch);
+                                } else {
+                                    fileName.append(ch);
+                                }
+
+                            }
+                            String requestParameters = requestParametersBuilder.toString();
+                            boolean isOffered = getParameter.offer(
+                                    requestParameters, fiveMinutesInMilliseconds, TimeUnit.MILLISECONDS
+                            );
+                            sendFileFromServer(isOffered, fileName.toString(), outputStream);
+                        }
+
+                    } catch (IOException e) {
                         throw new RuntimeException(e);
-                    }
-
-                    StringBuilder fileName = new StringBuilder();
-                    boolean isFileNameGot = false;
-                    StringBuilder requestParametersBuilder = new StringBuilder();
-                    for (char ch : request.requestTarget.toCharArray()) {
-
-                        if (ch == '?') {
-                            isFileNameGot = true;
-                        }
-
-                        if (isFileNameGot) {
-                            requestParametersBuilder.append(ch);
-                        } else {
-                            fileName.append(ch);
-                        }
-
-                    }
-                    String requestParameters = requestParametersBuilder.toString();
-                    boolean isOffered;
-
-                    try {
-                        isOffered = getParameter.add(requestParameters);
-                    } catch (IllegalArgumentException e) {
-                        final int tryToGetParameterIfNotFree = 10;
-                        getParameter.poll(tryToGetParameterIfNotFree, TimeUnit.MILLISECONDS);
-                        isOffered = getParameter.offer(
-                                requestParameters, fiveMinutesInMilliseconds, TimeUnit.MILLISECONDS
-                        );
-                    }
-
-                    sendFileFromServer(isOffered, fileName.toString(), outputStream);
+                    } catch (InterruptedException ignored) {}
+                    HttpServerUtils.closeServerStream(outputStream);
+                    HttpServerUtils.closeServerStream(inputStream);
+                    HttpServerUtils.closeServerStream(socket);
                 }
-
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            } catch (InterruptedException e) {
-                HttpServerUtils.closeServerStream(outputStream);
-                HttpServerUtils.closeServerStream(inputStream);
-                HttpServerUtils.closeServerStream(socket);
-                break;
             }
-            HttpServerUtils.closeServerStream(outputStream);
-            HttpServerUtils.closeServerStream(inputStream);
-            HttpServerUtils.closeServerStream(socket);
         }
     }
 

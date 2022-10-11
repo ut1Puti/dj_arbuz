@@ -19,7 +19,6 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @version 0.5
  */
 public class NotificationsPullingThread extends Thread {
-    private boolean working = false;
     /**
      * Поле хранящее новые посты
      */
@@ -38,12 +37,11 @@ public class NotificationsPullingThread extends Thread {
      */
     @Override
     public void run() {
-        working = true;
-        while (working) {
+        while (!Thread.interrupted()) {
             Map<String, List<String>> map = storage.getGroupsBase();
             Set<String> set = map.keySet();
-            for (String key : set) {
-                try {
+            try {
+                for (String key : set) {
                     Optional<List<String>> optional = vk.getNewPosts(key, 0);
 
                     if (optional.isPresent()) {
@@ -52,15 +50,13 @@ public class NotificationsPullingThread extends Thread {
                         }
                     }
 
-                } catch (NoGroupException ignored) {
-                } catch (ApiException | ClientException | InterruptedException e) {
-                    throw new RuntimeException(e);
                 }
-            }
-            try {
                 final int oneMinuteInMilliseconds = 60000;
                 Thread.sleep(oneMinuteInMilliseconds);
+            } catch (NoGroupException ignored) {
             } catch (InterruptedException e) {
+                break;
+            } catch (ApiException | ClientException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -72,7 +68,7 @@ public class NotificationsPullingThread extends Thread {
      * @return true - если есть новые посты
      * false - если нет новых постов
      */
-    public boolean haveNewPosts() {
+    public boolean hasNewPosts() {
         return !newPosts.isEmpty();
     }
 
@@ -90,10 +86,4 @@ public class NotificationsPullingThread extends Thread {
         return result;
     }
 
-    /**
-     * Останавливает поток
-     */
-    public void _stop() {
-        working = false;
-    }
 }

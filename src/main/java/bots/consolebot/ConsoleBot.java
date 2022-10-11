@@ -3,6 +3,7 @@ package bots.consolebot;
 import bots.BotTextResponse;
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerResponse;
+import handlers.notifcations.Notifications;
 import handlers.notifcations.NotificationsPullingThread;
 import user.User;
 
@@ -26,7 +27,7 @@ public class ConsoleBot {
     /**
      * Поле класса получающего новые посты
      */
-    private final NotificationsPullingThread notificationsPuller = new NotificationsPullingThread();
+    private final Notifications notifications = new Notifications();
 
     /**
      * Метод получающий ответы от пользователя и отправляющая ответы.
@@ -34,13 +35,9 @@ public class ConsoleBot {
      */
     public void run() {
         working = true;
-        notificationsPuller.start();
+        notifications.start();
         Scanner userInput = new Scanner(System.in);
         while (working) {
-
-            if (!notificationsPuller.isAlive()) {
-                notificationsPuller.start();
-            }
 
             if (userInput.hasNextLine()) {
                 MessageHandlerResponse response = MessageHandler.executeMessage(userInput.nextLine(), currentUser, this);
@@ -60,13 +57,13 @@ public class ConsoleBot {
 
             }
 
-            if (notificationsPuller.haveNewPosts()) {
-                notificationsPuller.getNewPosts().forEach(newPosts -> newPosts.forEach(System.out::println));
+            if (notifications.hasNewPosts()) {
+                notifications.getNewPosts().forEach(newPosts -> newPosts.forEach(System.out::println));
             }
 
         }
         userInput.close();
-        notificationsPuller._stop();
+        notifications.stop();
     }
 
     /**
