@@ -1,5 +1,7 @@
 package handlers.notifcations;
 
+import bots.telegram.TelegramBot;
+
 import java.util.List;
 
 /**
@@ -12,23 +14,39 @@ public class Notifications {
     /**
      * Поле потока ищущего новые посты
      */
-    private final NotificationsPullingThread notificationsPullingThread = new NotificationsPullingThread();
+    private final AbstractPostsPullingThread postsPullingThread;
+
+    /**
+     * Конструктор - создает экземпляр класса
+     */
+    public Notifications() {
+        postsPullingThread = new ConsolePostsPullingThread();
+    }
+
+    /**
+     * Конструктор - создает экземпляр класса
+     *
+     * @param telegramBot - бот в телеграмме
+     */
+    public Notifications(TelegramBot telegramBot) {
+        postsPullingThread = new TelegramPostsPullingThread(telegramBot);
+    }
 
     /**
      * Метод запускающий поток ищущий новые посты
      */
     public void start() {
-        notificationsPullingThread.start();
+        postsPullingThread.start();
     }
 
     /**
      * Метод проверяющий наличие новых постов в потоке
      *
      * @return true - если поток нашел новые посты
-     *          false - если поток не нашел новых постов
+     * false - если поток не нашел новых постов
      */
     public boolean hasNewPosts() {
-        return notificationsPullingThread.hasNewPosts();
+        return postsPullingThread.hasNewPosts();
     }
 
     /**
@@ -37,13 +55,13 @@ public class Notifications {
      * @return список списков постов в виде строк
      */
     public List<List<String>> getNewPosts() {
-        return notificationsPullingThread.getNewPosts();
+        return postsPullingThread.getNewPosts();
     }
 
     /**
      * Метод останавливающий работу потока
      */
     public void stop() {
-        notificationsPullingThread.interrupt();
+        postsPullingThread.interrupt();
     }
 }

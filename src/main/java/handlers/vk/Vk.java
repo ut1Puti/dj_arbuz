@@ -6,8 +6,7 @@ import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import com.vk.api.sdk.objects.groups.Group;
-import database.GroupsStorage;
+import handlers.vk.groups.SubscribeGroupResult;
 import handlers.vk.oAuth.VkAuth;
 import handlers.vk.groups.NoGroupException;
 import handlers.vk.groups.VkGroups;
@@ -29,15 +28,11 @@ public class Vk implements CreateUser {
     /**
      * Поле транспортного клиента
      */
-    private static final TransportClient transportClient = new HttpTransportClient();
+    private final TransportClient transportClient = new HttpTransportClient();
     /**
      * Поле класс позволяющего работать с Vk SDK Java
      */
-    static final VkApiClient vk = new VkApiClient(transportClient);
-    /**
-     * Поле хранилища данных о группах и пользователях
-     */
-    private GroupsStorage dataBase = null;
+    private final VkApiClient vk = new VkApiClient(transportClient);
     /**
      * Поле класса для взаимодействия с группами через vk api
      */
@@ -82,8 +77,8 @@ public class Vk implements CreateUser {
      * @return нового пользователя
      */
     @Override
-    public User createUser() {
-        return oAuth.createUser();
+    public User createUser(String telegramId) {
+        return oAuth.createUser(telegramId);
     }
 
     /**
@@ -125,14 +120,8 @@ public class Vk implements CreateUser {
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public boolean subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
-        Group userFindGroup = groups.searchGroup(groupName, callingUser);
-
-        if (dataBase == null) {
-            dataBase = GroupsStorage.getInstance();
-        }
-
-        return dataBase.addInfoToGroup(userFindGroup.getScreenName(), String.valueOf(callingUser.getId()));
+    public SubscribeGroupResult subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
+        return groups.subscribeTo(groupName, callingUser);
     }
 
     /**

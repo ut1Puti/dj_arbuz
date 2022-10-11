@@ -10,6 +10,8 @@ import httpserver.server.HttpServer;
 import user.CreateUser;
 import user.User;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Класс для аутентификации пользователей
  *
@@ -70,7 +72,7 @@ public class VkAuth extends OAuth implements CreateUser {
      * @return нового пользователя
      */
     @Override
-    public User createUser() {
+    public User createUser(String telegramId) {
         httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {
@@ -91,7 +93,7 @@ public class VkAuth extends OAuth implements CreateUser {
                     authConfiguration.REDIRECT_URL,
                     authCode)
                     .execute();
-            return new User(authResponse.getUserId(), authResponse.getAccessToken());
+            return new User(authResponse.getUserId(), authResponse.getAccessToken(), telegramId);
         } catch (ApiException | ClientException e) {
             return null;
         }

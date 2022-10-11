@@ -22,10 +22,9 @@ public class Main {
         UserStorage dataUsersBase = UserStorage.getInstance();
 
         ConsoleBot consoleBot = new ConsoleBot();
-        DefaultBotSession defaultBotSession = new DefaultBotSession();
-        TelegramBot telegramBot = new TelegramBot(defaultBotSession);
+        TelegramBot telegramBot = new TelegramBot();
         try {
-            TelegramBotsApi botsApi = new TelegramBotsApi(defaultBotSession.getClass());
+            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(telegramBot);
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -37,7 +36,7 @@ public class Main {
 
         dataBase.saveToJsonFile();
         dataUsersBase.saveToJsonFile();
-        defaultBotSession.stop();
+        telegramBot.stop();
         server.stop();
     }
 }

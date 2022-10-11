@@ -27,7 +27,7 @@ public class ConsoleBotThread extends Thread {
     /**
      * Поле id пользователя консольной версии бота
      */
-    private final String defaultConsoleUserId = "-1;";
+    private final String defaultConsoleUserId = "-10;";
 
     /**
      * Метод с логикой выполняемой внутри потока
@@ -48,12 +48,14 @@ public class ConsoleBotThread extends Thread {
                 }
 
                 if (response.hasUpdateUser()) {
-                    User currentUser = response.getUpdateUser().createUser();
+                    User currentUser = response.getUpdateUser().createUser(defaultConsoleUserId);
 
                     if (currentUser == null) {
                         System.out.println(BotTextResponse.AUTH_ERROR);
                         continue;
                     }
+
+                    System.out.println(BotTextResponse.AUTH_SUCCESS);
 
                     userBase.addInfoUser(defaultConsoleUserId, currentUser);
                 }

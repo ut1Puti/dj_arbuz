@@ -6,7 +6,9 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.groups.Fields;
 import com.vk.api.sdk.objects.groups.Group;
+import com.vk.api.sdk.objects.groups.GroupIsClosed;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
+import database.GroupsStorage;
 import handlers.vk.VkConstants;
 import user.User;
 
@@ -21,6 +23,11 @@ import java.util.Map;
  * @version 1.0
  */
 public class VkGroups extends Groups {
+    /**
+     * Поле хранилища данных о группах и пользователях
+     */
+    private GroupsStorage dataBase = null;
+
     /**
      * Конструктор унаследованный от родительского класс
      *
@@ -74,6 +81,26 @@ public class VkGroups extends Groups {
         }
 
         return resultGroup;
+    }
+
+    public SubscribeGroupResult subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
+        Group userFindGroup = searchGroup(groupName, callingUser);
+
+        if (userFindGroup.getIsClosed() == GroupIsClosed.CLOSED) {
+            return SubscribeGroupResult.GROUP_IS_CLOSED;
+        }
+
+        if (dataBase == null) {
+            dataBase = GroupsStorage.getInstance();
+        }
+
+        boolean isSubscribed = dataBase.addInfoToGroup(userFindGroup.getScreenName(), callingUser.getTelegramId());
+
+        if (isSubscribed) {
+            return SubscribeGroupResult.SUBSCRIBED;
+        }
+
+        return SubscribeGroupResult.ALREADY_SUBSCRIBED;
     }
 
     /**

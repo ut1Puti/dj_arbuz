@@ -29,6 +29,10 @@ public class BotTextResponse {
             Вы можете вызвать это сообщение еще раз использовав
             "/help".""";
     /**
+     * Поле сообщения об успешной авторизации
+     */
+    public static final String AUTH_SUCCESS = "Вы успешно прошли авторизацию";
+    /**
      * Поле сообщения об ошибке при аутентификации
      */
     public static final String AUTH_ERROR = "Ошибка при аутентификации. Повторите позже.";
@@ -61,9 +65,19 @@ public class BotTextResponse {
      */
     public static final String ALREADY_SUBSCRIBER = "Вы уже подписаны на эту группу";
     /**
+     * Поле сообщения, о том что группа закрыта
+     */
+    public static final String GROUP_IS_CLOSED = "Не могу подписать так как группа закрыта";
+    /**
      * Поле сообщения о том, что в группе отсутствуют посты
      */
     public static final String NO_POSTS_IN_GROUP = "В этой группе нет постов";
+    /**
+     * Поле сообщения об ошибке на стороны сервера
+     */
+    public static final String SERVER_ERROR = """
+            Возникла ошибка при полученние данных с сервера.
+            Попробуйте повторить позже""";
     /**
      * Поле сообщения об ошибке при обращении к vk api
      */

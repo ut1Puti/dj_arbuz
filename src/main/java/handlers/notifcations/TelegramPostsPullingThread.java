@@ -1,36 +1,37 @@
 package handlers.notifcations;
 
+import bots.telegram.TelegramBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
-import database.GroupsStorage;
 import handlers.vk.groups.NoGroupException;
-import handlers.vk.Vk;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
- * Класс получающий обновления постов в группах
+ * Класс получающий новые посты для телеграмма
  *
  * @author Кедровских Олег
- * @version 0.5
+ * @version 1.0
  */
-public class NotificationsPullingThread extends Thread {
+public class TelegramPostsPullingThread extends AbstractPostsPullingThread {
     /**
-     * Поле хранящее новые посты
+     * Поле телеграмм бота
      */
-    private final ArrayBlockingQueue<List<String>> newPosts = new ArrayBlockingQueue<>(10);
+    private final TelegramBot telegramBot;
+
     /**
-     * Поле хранилища групп
+     * Конструктор - создает экземпляр класса
+     *
+     * @param telegramBot - телеграмм бот
      */
-    private final GroupsStorage storage = GroupsStorage.getInstance();
-    /**
-     * Поле обработчика обращений к vk api
-     */
-    private Vk vk = new Vk("src/main/resources/anonsrc/vkconfig.properties");
+    public TelegramPostsPullingThread(TelegramBot telegramBot) {
+        this.telegramBot = telegramBot;
+    }
 
     /**
      * Метод логики выполняемой внутри потока
@@ -45,8 +46,12 @@ public class NotificationsPullingThread extends Thread {
                     Optional<List<String>> optional = vk.getNewPosts(key, 0);
 
                     if (optional.isPresent()) {
-                        synchronized (newPosts) {
-                            newPosts.put(optional.get());
+                        for (String postInText : optional.get()) {
+                            List<String> usersId = map.get(key);
+                            for (String userId : usersId) {
+                                SendMessage message = new SendMessage(userId, postInText);
+                                telegramBot.execute(message);
+                            }
                         }
                     }
 
@@ -56,7 +61,7 @@ public class NotificationsPullingThread extends Thread {
             } catch (NoGroupException ignored) {
             } catch (InterruptedException e) {
                 break;
-            } catch (ApiException | ClientException e) {
+            } catch (ApiException | ClientException | TelegramApiException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -65,25 +70,20 @@ public class NotificationsPullingThread extends Thread {
     /**
      * Метод проверяющий наличие новых постов
      *
-     * @return true - если есть новые посты
-     * false - если нет новых постов
+     * @return false, тк все посты сразу отправляются пользователям
      */
+    @Override
     public boolean hasNewPosts() {
-        return !newPosts.isEmpty();
+        return false;
     }
 
     /**
      * Метод получающий новые посты
      *
-     * @return список новых постов
+     * @return null, тк все посты сразу отпраляются пользователям
      */
+    @Override
     public List<List<String>> getNewPosts() {
-        List<List<String>> result;
-        synchronized (newPosts) {
-            result = newPosts.stream().toList();
-            newPosts.clear();
-        }
-        return result;
+        return null;
     }
-
 }

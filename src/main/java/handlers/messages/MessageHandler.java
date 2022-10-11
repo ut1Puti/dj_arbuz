@@ -132,9 +132,9 @@ public class MessageHandler {
     }
 
     /**
-     * Метод формирующий ответ на команды /start, /relogin
+     * Метод формирующий ответ на команду /auth
      *
-     * @return ответ на команду /start, /relogin
+     * @return ответ на команду /auth
      */
     private static MessageHandlerResponse getAuthResponse() {
         String authURL = vk.getAuthURL();
@@ -213,8 +213,7 @@ public class MessageHandler {
      */
     private static MessageHandlerResponse subscribeTo(String groupName, User user) {
         try {
-            return new MessageHandlerResponse(vk.subscribeTo(groupName, user) ?
-                    BotTextResponse.SUBSCRIBE : BotTextResponse.ALREADY_SUBSCRIBER);
+            return new MessageHandlerResponse(vk.subscribeTo(groupName, user).getSubscribeMessage());
         } catch (ApiTokenExtensionRequiredException e) {
             return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
