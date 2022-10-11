@@ -16,12 +16,12 @@ import java.util.*;
  * @author Щёголев Андрей
  * @version 1.0
  */
-public class Storage {
+public class GroupsStorage{
     /**
      * Поле хеш таблицы, где ключ - айди группы, значение - список пользователей
      */
     private Map<String, List<String>> groupsBase;
-    private static Storage storage = null;
+    private static GroupsStorage groupsStorage = null;
 
     /**
      * Метод для создания нового пользователя в наш класс
@@ -55,8 +55,8 @@ public class Storage {
      *
      * @param groupId - айди группы
      * @param userID  - айди пользователя
-     * @see Storage#addNewGroup(String, String)
-     * @see Storage#addOldGroup(String, String)
+     * @see GroupsStorage#addNewGroup(String, String)
+     * @see GroupsStorage#addOldGroup(String, String)
      */
     public boolean addInfoToGroup(String groupId, String userID) {
         if (groupsBase.get(groupId) == null) {
@@ -70,16 +70,16 @@ public class Storage {
     /**
      * Конструктор создания класса
      */
-    private Storage() {
+    private GroupsStorage() {
         groupsBase = new HashMap<>();
         returnStorageFromDatabase();
     }
 
-    public static Storage getInstance() {
-        if (storage == null) {
-            storage = new Storage();
+    public static GroupsStorage getInstance() {
+        if (groupsStorage == null) {
+            groupsStorage = new GroupsStorage();
         }
-        return storage;
+        return groupsStorage;
     }
 
     /**
@@ -100,7 +100,7 @@ public class Storage {
     /**
      * Метод для возврата хеш таблицы с помощью созданнового json файла
      *
-     * @see Storage#saveToJsonFile()
+     * @see GroupsStorage#saveToJsonFile()
      */
     public void returnStorageFromDatabase() {
         try {
@@ -120,7 +120,7 @@ public class Storage {
         }
     }
 
-    public Map<String, List<String>> getGroupsBase() {
+    public Map getBase() {
         return groupsBase;
     }
 }

@@ -2,7 +2,7 @@ package handlers.notifcations;
 
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
-import database.Storage;
+import database.GroupsStorage;
 import handlers.vk.groups.NoGroupException;
 import handlers.vk.Vk;
 
@@ -26,7 +26,7 @@ public class NotificationsPullingThread extends Thread {
     /**
      * Поле хранилища групп
      */
-    private final Storage storage = Storage.getInstance();
+    private final GroupsStorage storage = GroupsStorage.getInstance();
     /**
      * Поле обработчика обращений к vk api
      */
@@ -38,7 +38,7 @@ public class NotificationsPullingThread extends Thread {
     @Override
     public void run() {
         while (!Thread.interrupted()) {
-            Map<String, List<String>> map = storage.getGroupsBase();
+            Map<String, List<String>> map = storage.getBase();
             Set<String> set = map.keySet();
             try {
                 for (String key : set) {

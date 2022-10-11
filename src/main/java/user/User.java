@@ -15,6 +15,7 @@ public class User extends UserActor {
      * @param userId      - id пользователя в вк
      * @param accessToken - токен для доступа к vk api
      */
+
     public User(Integer userId, String accessToken) {
         super(userId, accessToken);
     }

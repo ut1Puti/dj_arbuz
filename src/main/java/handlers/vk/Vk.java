@@ -7,7 +7,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.groups.Group;
-import database.Storage;
+import database.GroupsStorage;
 import handlers.vk.oAuth.VkAuth;
 import handlers.vk.groups.NoGroupException;
 import handlers.vk.groups.VkGroups;
@@ -37,7 +37,7 @@ public class Vk implements CreateUser {
     /**
      * Поле хранилища данных о группах и пользователях
      */
-    private Storage dataBase = null;
+    private GroupsStorage dataBase = null;
     /**
      * Поле класса для взаимодействия с группами через vk api
      */
@@ -129,7 +129,7 @@ public class Vk implements CreateUser {
         Group userFindGroup = groups.searchGroup(groupName, callingUser);
 
         if (dataBase == null) {
-            dataBase = Storage.getInstance();
+            dataBase = GroupsStorage.getInstance();
         }
 
         return dataBase.addInfoToGroup(userFindGroup.getScreenName(), String.valueOf(callingUser.getId()));

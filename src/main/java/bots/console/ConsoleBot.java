@@ -1,10 +1,10 @@
-package bots.consolebot;
+package bots.console;
 
 import bots.BotTextResponse;
+import database.UserStorage;
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerResponse;
 import handlers.notifcations.Notifications;
-import handlers.notifcations.NotificationsPullingThread;
 import user.User;
 
 import java.util.Scanner;
@@ -23,7 +23,7 @@ public class ConsoleBot {
     /**
      * Поле хранящее пользователя пользующегося ботом
      */
-    private User currentUser = null;
+    private UserStorage userBase = UserStorage.getInstance();
     /**
      * Поле класса получающего новые посты
      */
@@ -40,19 +40,21 @@ public class ConsoleBot {
         while (working) {
 
             if (userInput.hasNextLine()) {
-                MessageHandlerResponse response = MessageHandler.executeMessage(userInput.nextLine(), currentUser, this);
+                MessageHandlerResponse response = MessageHandler.executeMessage(userInput.nextLine(), "-1", this);
 
                 if (response.hasTextMessage()) {
                     System.out.println(response.getTextMessage());
                 }
 
                 if (response.hasUpdateUser()) {
-                    currentUser = response.getUpdateUser().createUser();
+                    User currentUser = response.getUpdateUser().createUser();
 
                     if (currentUser == null) {
                         System.out.println(BotTextResponse.AUTH_ERROR);
+                        continue;
                     }
 
+                    userBase.addInfoUser("-1", currentUser);
                 }
 
             }

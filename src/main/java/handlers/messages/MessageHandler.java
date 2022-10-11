@@ -1,7 +1,7 @@
 package handlers.messages;
 
 import bots.BotTextResponse;
-import bots.consolebot.ConsoleBot;
+import bots.console.ConsoleBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.exceptions.ClientException;
@@ -11,6 +11,8 @@ import user.User;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import database.GroupsStorage;
+import database.UserStorage;
 
 /**
  * Класс утилитных методов создающий ответы на сообщения пользователя
@@ -36,17 +38,22 @@ public class MessageHandler {
      * Поле индекса аргумента
      */
     private static final int ARG_INDEX = 1;
+    private static GroupsStorage groupsBase = GroupsStorage.getInstance();
+
+    private static UserStorage usersBase = UserStorage.getInstance();
 
     /**
      * Метод определяющий команды в сообщении пользователя и возвращающий ответ
      *
      * @param message    - сообщение пользователя
-     * @param user       - пользователь отправивший сообщение
      * @param callingBot - бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
      */
-    public static MessageHandlerResponse executeMessage(String message, User user, ConsoleBot callingBot) {
+    public static MessageHandlerResponse executeMessage(String message, String telegramUserId, ConsoleBot callingBot) {
         String[] commandAndArgs = message.split(" ", 2);
+        if (groupsBase == null) {
+            groupsBase = GroupsStorage.getInstance();
+        }
         if (isItNoArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
                 case "/help" -> {
@@ -61,9 +68,11 @@ public class MessageHandler {
             }
         }
 
-        if (user == null) {
+        if (!usersBase.contains(telegramUserId)) {
             return getNotAuthedResponse();
         }
+
+        User user = usersBase.getUser(telegramUserId);
 
         if (isItSingleArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
