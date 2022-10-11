@@ -3,16 +3,19 @@ package storage;
 import database.GroupsStorage;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class StorageTests {
     /**
      * Тест для проверки создания новой группы и подписки нового юзера на него
      */
     @Test
     public void testCheakAddtoStorageUser() {
-        GroupsStorage dataBase1 = GroupsStorage.storageGetInstance();
+<<<<<<< HEAD
+        Storage dataBase1 = Storage.getInstance();
+        dataBase1.getGroupsBase()
+=======
+        GroupsStorage dataBase1 = GroupsStorage.getInstance();
         dataBase1.getBase()
+>>>>>>> 93871f73411302f1ca81c3d7ae2451db1783b69f
                  .clear();
         dataBase1.addInfoToGroup("123", "123");
         assertEquals(1, dataBase1.getBase()
@@ -25,8 +28,13 @@ public class StorageTests {
      */
     @Test
     public void testCheckAddIdenticalUsers() {
-        GroupsStorage dataBase = GroupsStorage.storageGetInstance();
+<<<<<<< HEAD
+        Storage dataBase = Storage.getInstance();
+        dataBase.getGroupsBase()
+=======
+        GroupsStorage dataBase = GroupsStorage.getInstance();
         dataBase.getBase()
+>>>>>>> 93871f73411302f1ca81c3d7ae2451db1783b69f
                  .get("123")
                  .clear();
         dataBase.addInfoToGroup("123", "123");
@@ -42,8 +50,13 @@ public class StorageTests {
      */
     @Test
     public void testCheckAddVariousUsers() {
-        GroupsStorage dataBase = GroupsStorage.storageGetInstance();
+<<<<<<< HEAD
+        Storage dataBase = Storage.getInstance();
+        dataBase.getGroupsBase()
+=======
+        GroupsStorage dataBase = GroupsStorage.getInstance();
         dataBase.getBase()
+>>>>>>> 93871f73411302f1ca81c3d7ae2451db1783b69f
                 .clear();
         dataBase.addInfoToGroup("12", "1235");
         dataBase.addInfoToGroup("12", "1234");
@@ -59,8 +72,13 @@ public class StorageTests {
      */
     @Test
     public void testForAddVariousAndIdenticalUsers() {
-        GroupsStorage dataBase = GroupsStorage.storageGetInstance();
+<<<<<<< HEAD
+        Storage dataBase = Storage.getInstance();
+        dataBase.getGroupsBase()
+=======
+        GroupsStorage dataBase = GroupsStorage.getInstance();
         dataBase.getBase()
+>>>>>>> 93871f73411302f1ca81c3d7ae2451db1783b69f
                  .clear();
         dataBase.addInfoToGroup("12", "1235");
         dataBase.addInfoToGroup("12", "1234");

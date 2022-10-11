@@ -9,8 +9,6 @@ import com.vk.api.sdk.client.actors.UserActor;
  * @version 1.0
  */
 public class User extends UserActor {
-    private String userTelegramId;
-
     /**
      * Конструктор от унаследованного класса
      *
@@ -21,9 +19,4 @@ public class User extends UserActor {
     public User(Integer userId, String accessToken) {
         super(userId, accessToken);
     }
-
-    /*public void setUserTelegramId(String userTelegramId) {
-        this.userTelegramId = userTelegramId;
-    }
-     */
 }

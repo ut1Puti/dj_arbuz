@@ -14,7 +14,7 @@ import java.util.*;
  * Класс для хранения подписок всех пользователей
  *
  * @author Щёголев Андрей
- * @version 0.1
+ * @version 1.0
  */
 public class GroupsStorage{
     /**
@@ -44,7 +44,7 @@ public class GroupsStorage{
     private boolean addOldGroup(String groupId, String userId) {
         if (!groupsBase.get(groupId).contains(userId)) {
             groupsBase.get(groupId)
-                      .add(userId);
+                    .add(userId);
             return true;
         }
         return false;
@@ -75,7 +75,7 @@ public class GroupsStorage{
         returnStorageFromDatabase();
     }
 
-    public static GroupsStorage storageGetInstance() {
+    public static GroupsStorage getInstance() {
         if (groupsStorage == null) {
             groupsStorage = new GroupsStorage();
         }

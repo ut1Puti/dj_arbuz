@@ -52,14 +52,14 @@ public class UserStorage{
         return usersBase;
     }
 
-    public static <String, User> UserStorage storageGetInstance() {
+    public static <String, User> UserStorage getInstance() {
         if (userStorage == null) {
             userStorage = new UserStorage();
         }
         return userStorage;
     }
 
-    public UserStorage() {
+    private UserStorage() {
         usersBase = new HashMap<>();
         returnStorageFromDatabase();
     }

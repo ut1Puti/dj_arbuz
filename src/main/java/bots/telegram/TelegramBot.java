@@ -1,10 +1,9 @@
-package bots;
+package bots.telegram;
 
+import bots.BotTextResponse;
 import database.UserStorage;
-import handlers.messages.HandlerResponse;
 import handlers.messages.MessageHandler;
-import handlers.messages.TextResponse;
-import org.telegram.telegrambots.bots.DefaultBotOptions;
+import handlers.messages.MessageHandlerResponse;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -35,8 +34,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                                          .hasText()) {
             String messageUpdate = update.getMessage()
                                          .getText();
-            HandlerResponse messageTelegramHadnler = MessageHandler.executeMessage(messageUpdate, String.valueOf(update.getMessage().getChatId()), null);
-            message.setChatId(update.getMessage().getChatId());
+            MessageHandlerResponse messageTelegramHadnler = MessageHandler.executeMessage(messageUpdate, String.valueOf(update.getMessage().getChatId()), null);
+            message.setChatId(String.valueOf(update.getMessage().getChatId()));
             message.setText(messageTelegramHadnler.getTextMessage());
             try {
                 execute(message);
@@ -44,13 +43,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 throw new RuntimeException(e);
             }
             if (messageTelegramHadnler.hasUpdateUser()) {
-                User user = messageTelegramHadnler.getUpdateUser()
-                               .createUser(String.valueOf(update.getMessage().getChatId()));
+                User user = messageTelegramHadnler.getUpdateUser().createUser();
                 if (user == null) {
-                    System.out.println(TextResponse.AUTH_ERROR);
+                    System.out.println(BotTextResponse.AUTH_ERROR);
                 }
                 if (user != null) {
-                    UserStorage userBase = UserStorage.storageGetInstance();
+                    UserStorage userBase = UserStorage.getInstance();
                     userBase.addInfoUser(String.valueOf(update.getMessage().getChatId()), user);
                 }
             }

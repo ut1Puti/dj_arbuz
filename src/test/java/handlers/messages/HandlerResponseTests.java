@@ -1,6 +1,5 @@
 package handlers.messages;
 
-import handlers.messages.HandlerResponse;
 import org.junit.jupiter.api.Test;
 import user.CreateUser;
 import user.User;
@@ -12,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class HandlerResponseTests {
     /**
-     * Метод тестирующий первый конструктор, то есть наличие строки с сообщение и интерфейса создающего пользователя
+     * Метод тестирующий первый конструктор, то есть наличие строки с сообщением и интерфейса создающего пользователя
      * Также тестируется работа setter'ов getter'ов
      */
     @Test
-    public void testFirstConstructorAndSettersAndGetters(){
-        HandlerResponse response = new HandlerResponse("Test text", new CreateUser() {
+    public void testFirstConstructorAndSettersAndGetters() {
+        MessageHandlerResponse response = new MessageHandlerResponse("Test text", new CreateUser() {
             @Override
             public User createUser() {
                 return null;
@@ -34,8 +33,8 @@ public class HandlerResponseTests {
      * Также тестируется работа setter'ов getter'ов
      */
     @Test
-    public void testSecondConstructorAndSettersAndGetters(){
-        HandlerResponse response = new HandlerResponse("Test text");
+    public void testSecondConstructorAndSettersAndGetters() {
+        MessageHandlerResponse response = new MessageHandlerResponse("Test text");
         assertTrue(response.hasTextMessage());
         assertEquals(response.getTextMessage(), "Test text");
         assertFalse(response.hasUpdateUser());
@@ -47,8 +46,8 @@ public class HandlerResponseTests {
      * Также тестируется работа setter'ов getter'ов
      */
     @Test
-    public void testThirdConstructorAndSettersAndGetters(){
-        HandlerResponse response = new HandlerResponse(new CreateUser() {
+    public void testThirdConstructorAndSettersAndGetters() {
+        MessageHandlerResponse response = new MessageHandlerResponse(new CreateUser() {
             @Override
             public User createUser() {
                 return null;
@@ -65,9 +64,9 @@ public class HandlerResponseTests {
      * Также тестируется работа setter'ов getter'ов
      */
     @Test
-    public void appendTest(){
-        HandlerResponse response1 = new HandlerResponse("Test");
-        HandlerResponse response2 = new HandlerResponse("text");
+    public void appendTest() {
+        MessageHandlerResponse response1 = new MessageHandlerResponse("Test");
+        MessageHandlerResponse response2 = new MessageHandlerResponse("text");
         assertEquals(response1.appendTextMessage(response2).getTextMessage(), "Test\ntext");
     }
 }
