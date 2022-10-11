@@ -74,11 +74,6 @@ public class VkWall extends Wall {
      */
     public Optional<List<String>> getLastPosts(String groupName, int amountOfPosts, User callingUser)
             throws ApiException, NoGroupException, ClientException, IllegalArgumentException {
-
-        if (amountOfPosts > 100) {
-            throw new IllegalArgumentException("Кол-во запрашиваемых постов превышает кол-во доступных к получению");
-        }
-
         Group userFindGroup = groups.searchGroup(groupName, callingUser);
         List<WallpostFull> userFindGroupPosts = getPosts(userFindGroup.getScreenName(), amountOfPosts, callingUser);
         List<String> groupFindPosts = createGroupPostsStrings(userFindGroupPosts);
@@ -95,8 +90,13 @@ public class VkWall extends Wall {
      * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public List<WallpostFull> getPosts(String groupScreenName, int amountOfPosts, User callingUser)
+    public final List<WallpostFull> getPosts(String groupScreenName, int amountOfPosts, User callingUser)
             throws ClientException, ApiException {
+
+        if (amountOfPosts > 100) {
+            throw new IllegalArgumentException("Кол-во запрашиваемых постов превышает кол-во доступных к получению");
+        }
+
         return get(callingUser)
                 .domain(groupScreenName)
                 .offset(VkConstants.DEFAULT_OFFSET).count(amountOfPosts)
@@ -113,8 +113,13 @@ public class VkWall extends Wall {
      * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public List<WallpostFull> getPosts(String groupScreenName, int amountOfPosts, ServiceActor vkApp)
+    public final List<WallpostFull> getPosts(String groupScreenName, int amountOfPosts, ServiceActor vkApp)
             throws ClientException, ApiException {
+
+        if (amountOfPosts > 100) {
+            throw new IllegalArgumentException("Кол-во запрашиваемых постов превышает кол-во доступных к получению");
+        }
+
         return get(vkApp)
                 .domain(groupScreenName)
                 .offset(VkConstants.DEFAULT_OFFSET).count(amountOfPosts)

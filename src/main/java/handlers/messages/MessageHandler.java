@@ -69,7 +69,7 @@ public class MessageHandler {
                     return subscribeTo(commandAndArgs[ARG_INDEX], user);
                 }
                 case "/get_five_posts" -> {
-                    return getLastPosts(commandAndArgs[ARG_INDEX], user);
+                    return getFiveLastPosts(commandAndArgs[ARG_INDEX], user);
                 }
             }
         }
@@ -207,7 +207,7 @@ public class MessageHandler {
      * @param user      - пользователь отправивший сообщение
      * @return текст постов, ссылки на изображения в них, а также ссылки
      */
-    private static MessageHandlerResponse getLastPosts(String groupName, User user) {
+    private static MessageHandlerResponse getFiveLastPosts(String groupName, User user) {
         List<String> userFindGroupPosts;
         try {
             userFindGroupPosts = vk.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow();

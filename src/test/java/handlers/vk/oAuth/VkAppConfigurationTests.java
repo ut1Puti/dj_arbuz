@@ -1,24 +1,26 @@
 package handlers.vk.oAuth;
 
 import org.junit.jupiter.api.Test;
-import socialnetworks.vk.oAuth.VkAuthConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Класс тестирующий VkAppConfiguration
+ *
  * @author Кедровских Олег
  * @version 1.0
  */
 public class VkAppConfigurationTests {
-    /** Поле содержащее конфигурацию приложения */
+    /**
+     * Поле содержащее конфигурацию приложения
+     */
     private VkAuthConfiguration appConfiguration;
 
     /**
      * Проверяет правильность чтения данных из файла
      */
     @Test
-    public void correctPathTest(){
+    public void correctPathTest() {
         appConfiguration = new VkAuthConfiguration("src/test/resources/testanonsrc/vkconfigcorrect.properties");
         assertEquals(appConfiguration.AUTH_URL, "AUTH_URL");
         assertEquals(appConfiguration.APP_ID, 2000);
@@ -31,7 +33,7 @@ public class VkAppConfigurationTests {
      * Проверяет данные при ошибке чтения
      */
     @Test
-    public void incorrectPathTest(){
+    public void incorrectPathTest() {
         boolean error = false;
         try {
             appConfiguration = new VkAuthConfiguration("src/test/resources/testanonsrc/unknownfile.properties");
@@ -45,7 +47,7 @@ public class VkAppConfigurationTests {
      * Метод проверяющий appId на ошибки при прочтении данных из файла
      */
     @Test
-    public void incorrectAppIdTest(){
+    public void incorrectAppIdTest() {
         boolean error = false;
         try {
             appConfiguration = new VkAuthConfiguration("src/test/resources/testanonsrc/vkconfigincorrectappidname.properties");
@@ -59,7 +61,7 @@ public class VkAppConfigurationTests {
      * Метод проверяющий AUTH_URL, CLIENT_SECRET, REDIRECT_URL на ошибки при прочтении данных из файла
      */
     @Test
-    public void incorrectStringsTest(){
+    public void incorrectStringsTest() {
         boolean error = false;
         try {
             appConfiguration = new VkAuthConfiguration("src/test/resources/testanonsrc/vkconfigincorrectstringsnames.properties");

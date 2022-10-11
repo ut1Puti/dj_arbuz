@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class HandlerResponseTests {
     /**
-     * Метод тестирующий первый конструктор, то есть наличие строки с сообщение и интерфейса создающего пользователя
+     * Метод тестирующий первый конструктор, то есть наличие строки с сообщением и интерфейса создающего пользователя
      * Также тестируется работа setter'ов getter'ов
      */
     @Test
-    public void testFirstConstructorAndSettersAndGetters(){
+    public void testFirstConstructorAndSettersAndGetters() {
         MessageHandlerResponse response = new MessageHandlerResponse("Test text", new CreateUser() {
             @Override
             public User createUser() {
@@ -33,7 +33,7 @@ public class HandlerResponseTests {
      * Также тестируется работа setter'ов getter'ов
      */
     @Test
-    public void testSecondConstructorAndSettersAndGetters(){
+    public void testSecondConstructorAndSettersAndGetters() {
         MessageHandlerResponse response = new MessageHandlerResponse("Test text");
         assertTrue(response.hasTextMessage());
         assertEquals(response.getTextMessage(), "Test text");
@@ -46,7 +46,7 @@ public class HandlerResponseTests {
      * Также тестируется работа setter'ов getter'ов
      */
     @Test
-    public void testThirdConstructorAndSettersAndGetters(){
+    public void testThirdConstructorAndSettersAndGetters() {
         MessageHandlerResponse response = new MessageHandlerResponse(new CreateUser() {
             @Override
             public User createUser() {
@@ -64,7 +64,7 @@ public class HandlerResponseTests {
      * Также тестируется работа setter'ов getter'ов
      */
     @Test
-    public void appendTest(){
+    public void appendTest() {
         MessageHandlerResponse response1 = new MessageHandlerResponse("Test");
         MessageHandlerResponse response2 = new MessageHandlerResponse("text");
         assertEquals(response1.appendTextMessage(response2).getTextMessage(), "Test\ntext");

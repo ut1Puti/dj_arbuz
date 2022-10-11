@@ -10,20 +10,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Класс тестирующий методы класса VkApiHandler
+ *
  * @author Кедровских Олег
  * @version 1.0
  */
-public class VkApiHandlerTests {
-    /** Поле объекта обрабатывающего запросы к вк апи */
+public class VkHandlerTests {
+    /**
+     * Поле объекта обрабатывающего запросы к вк апи
+     */
     private Vk vk = new Vk("src/test/resources/anonsrc/vkconfig.properties");
-    /** Поле тестового пользователя */
+    /**
+     * Поле тестового пользователя
+     */
     private User testUser;
 
     /**
      * Метод проверяет работу аутентификации пользователя
      */
     @Test
-    public void authTest() {
+    public void authTest() throws InterruptedException {
+        Thread.sleep(10000);
         assertNotNull(vk.getAuthURL());
         createUser();
         assertNotNull(testUser);
@@ -39,11 +45,13 @@ public class VkApiHandlerTests {
 
     /**
      * Метод проверяющий работу метода getGroupUrl
-     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     *
+     * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
     @Test
-    public void getGroupUrlTest() throws ClientException, ApiException {
+    public void getGroupUrlTest() throws ClientException, ApiException, InterruptedException {
+        Thread.sleep(10000);
         createUser();
         try {
             assertEquals(vk.getGroupURL("triplesixdelete", testUser), "https://vk.com/triplesixdelete");
@@ -55,11 +63,13 @@ public class VkApiHandlerTests {
 
     /**
      * Метод тестирующий работу метода getGroupId
-     * @throws ApiException - возникает при ошибке обращения к vk api со стороны vk
+     *
+     * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
     @Test
-    public void getGroupId() throws ClientException, ApiException {
+    public void getGroupId() throws ClientException, ApiException, InterruptedException {
+        Thread.sleep(10000);
         createUser();
         try {
             assertEquals(vk.getGroupId("lida", testUser), "147725517");
