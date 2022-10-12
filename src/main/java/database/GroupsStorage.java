@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import java.io.*;
 import java.util.*;
@@ -120,7 +121,23 @@ public class GroupsStorage{
         }
     }
 
-    public Map getBase() {
-        return groupsBase;
+    public List<String> getGroups() {
+        return groupsBase.keySet().stream().toList();
+    }
+
+    public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
+        return groupsBase.get(groupScreenName);
+    }
+
+    public List<String> getUserSubscribedGroups(String userId) {
+        List<String> userSubscribedGroups = new ArrayList<>();
+        for (Entry<String, List<String>> groupNameAndSubscribers : groupsBase.entrySet()) {
+
+            if (groupNameAndSubscribers.getValue().contains(userId)) {
+                userSubscribedGroups.add(groupNameAndSubscribers.getKey());
+            }
+
+        }
+        return userSubscribedGroups;
     }
 }

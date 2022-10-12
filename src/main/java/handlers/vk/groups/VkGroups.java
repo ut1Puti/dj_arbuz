@@ -74,13 +74,13 @@ public class VkGroups extends Groups {
      */
     public Group searchGroup(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
         List<Group> userFindGroups = searchGroups(groupName, callingUser);
-        Group resultGroup = chooseGroup(userFindGroups, groupName, callingUser);
+        Group groupWithSimilarName = chooseGroup(userFindGroups, groupName, callingUser);
 
-        if (resultGroup == null) {
+        if (groupWithSimilarName == null) {
             throw new NoGroupException(groupName);
         }
 
-        return resultGroup;
+        return groupWithSimilarName;
     }
 
     public SubscribeGroupResult subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
@@ -95,12 +95,7 @@ public class VkGroups extends Groups {
         }
 
         boolean isSubscribed = dataBase.addInfoToGroup(userFindGroup.getScreenName(), callingUser.getTelegramId());
-
-        if (isSubscribed) {
-            return SubscribeGroupResult.SUBSCRIBED;
-        }
-
-        return SubscribeGroupResult.ALREADY_SUBSCRIBED;
+        return isSubscribed ? SubscribeGroupResult.SUBSCRIBED : SubscribeGroupResult.ALREADY_SUBSCRIBED;
     }
 
     /**

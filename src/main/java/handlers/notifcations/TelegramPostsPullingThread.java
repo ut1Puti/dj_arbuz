@@ -8,9 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Класс получающий новые посты для телеграмма
@@ -18,7 +16,7 @@ import java.util.Set;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class TelegramPostsPullingThread extends AbstractPostsPullingThread {
+public class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Поле телеграмм бота
      */
@@ -39,25 +37,22 @@ public class TelegramPostsPullingThread extends AbstractPostsPullingThread {
     @Override
     public void run() {
         while (!Thread.interrupted()) {
-            Map<String, List<String>> map = storage.getBase();
-            Set<String> set = map.keySet();
             try {
-                for (String key : set) {
-                    Optional<List<String>> optional = vk.getNewPosts(key, 0);
+                for (String groupScreenName : groupsBase.getGroups()) {
+                    Optional<List<String>> threadFindNewPosts = vk.getNewPosts(groupScreenName, 0);
 
-                    if (optional.isPresent()) {
-                        for (String postInText : optional.get()) {
-                            List<String> usersId = map.get(key);
-                            for (String userId : usersId) {
-                                SendMessage message = new SendMessage(userId, postInText);
+                    if (threadFindNewPosts.isPresent()) {
+                        for (String postsAttachments : threadFindNewPosts.get()) {
+                            for (String userId : groupsBase.getSubscribedToGroupUsersId(groupScreenName)) {
+                                SendMessage message = new SendMessage(userId, postsAttachments);
                                 telegramBot.execute(message);
                             }
                         }
                     }
 
                 }
-                final int oneMinuteInMilliseconds = 60000;
-                Thread.sleep(oneMinuteInMilliseconds);
+                final int oneHourInMilliseconds = 3600000;
+                Thread.sleep(oneHourInMilliseconds);
             } catch (NoGroupException ignored) {
             } catch (InterruptedException e) {
                 break;
@@ -80,10 +75,10 @@ public class TelegramPostsPullingThread extends AbstractPostsPullingThread {
     /**
      * Метод получающий новые посты
      *
-     * @return null, тк все посты сразу отпраляются пользователям
+     * @return null, тк все посты сразу отправляются пользователям
      */
     @Override
-    public List<List<String>> getNewPosts() {
+    public List<String> getNewPosts() {
         return null;
     }
 }

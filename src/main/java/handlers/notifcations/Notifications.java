@@ -14,13 +14,13 @@ public class Notifications {
     /**
      * Поле потока ищущего новые посты
      */
-    private final AbstractPostsPullingThread postsPullingThread;
+    private final PostsPullingThread postsPullingThread;
 
     /**
      * Конструктор - создает экземпляр класса
      */
-    public Notifications() {
-        postsPullingThread = new ConsolePostsPullingThread();
+    public Notifications(String consoleBotUserId) {
+        postsPullingThread = new ConsolePostsPullingThread(consoleBotUserId);
     }
 
     /**
@@ -54,7 +54,7 @@ public class Notifications {
      *
      * @return список списков постов в виде строк
      */
-    public List<List<String>> getNewPosts() {
+    public List<String> getNewPosts() {
         return postsPullingThread.getNewPosts();
     }
 

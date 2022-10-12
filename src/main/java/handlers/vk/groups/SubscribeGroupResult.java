@@ -35,7 +35,7 @@ public enum SubscribeGroupResult {
      *
      * @return сообщение с результатом попытки подписаться
      */
-    public String getSubscribeMessage() {
+    public String getSubscribeStatus() {
         return subscribeMessage;
     }
 }

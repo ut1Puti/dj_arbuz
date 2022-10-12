@@ -5,9 +5,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import handlers.vk.groups.NoGroupException;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -16,11 +14,24 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @author Кедровских Олег
  * @version 0.5
  */
-public class ConsolePostsPullingThread extends AbstractPostsPullingThread {
+public class ConsolePostsPullingThread extends PostsPullingThread {
     /**
      * Поле хранящее новые посты
      */
-    private final ArrayBlockingQueue<List<String>> newPosts = new ArrayBlockingQueue<>(10);
+    private final ArrayBlockingQueue<String> newPostsQueue = new ArrayBlockingQueue<>(10);
+    /**
+     * Поле id консольного пользователя
+     */
+    private final String consoleBotUserId;
+
+    /**
+     * Конструктор - создает экземпляр класса
+     *
+     * @param consoleUserId - id консольного пользователя в database
+     */
+    public ConsolePostsPullingThread(String consoleUserId) {
+        this.consoleBotUserId = consoleUserId;
+    }
 
     /**
      * Метод логики выполняемой внутри потока
@@ -28,21 +39,22 @@ public class ConsolePostsPullingThread extends AbstractPostsPullingThread {
     @Override
     public void run() {
         while (!Thread.interrupted()) {
-            Map<String, List<String>> map = storage.getBase();
-            Set<String> set = map.keySet();
             try {
-                for (String key : set) {
-                    Optional<List<String>> optional = vk.getNewPosts(key, 0);
+                List<String> consoleUserSubscribedGroups = groupsBase.getUserSubscribedGroups(consoleBotUserId);
+                for (String key : consoleUserSubscribedGroups) {
+                    Optional<List<String>> threadFindNewPosts = vk.getNewPosts(key, 0);
 
-                    if (optional.isPresent()) {
-                        synchronized (newPosts) {
-                            newPosts.put(optional.get());
+                    if (threadFindNewPosts.isPresent()) {
+                        for (String threadFindNewPost : threadFindNewPosts.get()) {
+                            synchronized (newPostsQueue) {
+                                newPostsQueue.put(threadFindNewPost);
+                            }
                         }
                     }
 
                 }
-                final int oneMinuteInMilliseconds = 60000;
-                Thread.sleep(oneMinuteInMilliseconds);
+                final int oneHourInMilliseconds = 3600000;
+                Thread.sleep(oneHourInMilliseconds);
             } catch (NoGroupException ignored) {
             } catch (InterruptedException e) {
                 break;
@@ -60,7 +72,7 @@ public class ConsolePostsPullingThread extends AbstractPostsPullingThread {
      */
     @Override
     public boolean hasNewPosts() {
-        return !newPosts.isEmpty();
+        return !newPostsQueue.isEmpty();
     }
 
     /**
@@ -69,11 +81,11 @@ public class ConsolePostsPullingThread extends AbstractPostsPullingThread {
      * @return список новых постов
      */
     @Override
-    public List<List<String>> getNewPosts() {
-        List<List<String>> result;
-        synchronized (newPosts) {
-            result = newPosts.stream().toList();
-            newPosts.clear();
+    public List<String> getNewPosts() {
+        List<String> result;
+        synchronized (newPostsQueue) {
+            result = newPostsQueue.stream().toList();
+            newPostsQueue.clear();
         }
         return result;
     }

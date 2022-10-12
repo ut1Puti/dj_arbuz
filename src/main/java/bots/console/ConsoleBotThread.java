@@ -17,17 +17,17 @@ import java.util.Scanner;
  */
 public class ConsoleBotThread extends Thread {
     /**
+     * Поле id пользователя консольной версии бота
+     */
+    private final String defaultConsoleUserId = "-10;";
+    /**
      * Поле хранящее пользователя пользующегося ботом
      */
     private UserStorage userBase = UserStorage.getInstance();
     /**
      * Поле класса получающего новые посты
      */
-    private final Notifications notifications = new Notifications();
-    /**
-     * Поле id пользователя консольной версии бота
-     */
-    private final String defaultConsoleUserId = "-10;";
+    private final Notifications notifications = new Notifications(defaultConsoleUserId);
 
     /**
      * Метод с логикой выполняемой внутри потока
@@ -63,7 +63,7 @@ public class ConsoleBotThread extends Thread {
             }
 
             if (notifications.hasNewPosts()) {
-                notifications.getNewPosts().forEach(newPosts -> newPosts.forEach(System.out::println));
+                notifications.getNewPosts().forEach(System.out::println);
             }
 
         }

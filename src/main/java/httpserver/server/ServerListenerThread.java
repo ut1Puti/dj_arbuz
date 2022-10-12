@@ -83,9 +83,14 @@ public class ServerListenerThread extends Thread {
 
                             }
                             String requestParameters = requestParametersBuilder.toString();
-                            boolean isOffered = getParameter.offer(
-                                    requestParameters, fiveMinutesInMilliseconds, TimeUnit.MILLISECONDS
-                            );
+                            boolean isOffered = false;
+
+                            if (!requestParameters.isBlank()) {
+                                isOffered = getParameter.offer(
+                                        requestParameters, fiveMinutesInMilliseconds, TimeUnit.MILLISECONDS
+                                );
+                            }
+
                             sendFileFromServer(isOffered, fileName.toString(), outputStream);
                         }
 

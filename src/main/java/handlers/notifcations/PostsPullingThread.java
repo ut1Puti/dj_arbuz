@@ -11,11 +11,11 @@ import java.util.List;
  * @author Кедровских Олег
  * @version 1.0
  */
-public abstract class AbstractPostsPullingThread extends Thread {
+public abstract class PostsPullingThread extends Thread {
     /**
      * Поле хранилища групп
      */
-    protected final GroupsStorage storage = GroupsStorage.getInstance();
+    protected final GroupsStorage groupsBase = GroupsStorage.getInstance();
     /**
      * Поле обработчика обращений к vk api
      */
@@ -33,5 +33,5 @@ public abstract class AbstractPostsPullingThread extends Thread {
      *
      * @return новые посты
      */
-    public abstract List<List<String>> getNewPosts();
+    public abstract List<String> getNewPosts();
 }
