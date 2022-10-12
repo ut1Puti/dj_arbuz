@@ -6,7 +6,7 @@ import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import handlers.vk.groups.SubscribeGroupResult;
+import handlers.vk.groups.SubscribeStatus;
 import handlers.vk.oAuth.VkAuth;
 import handlers.vk.groups.NoGroupException;
 import handlers.vk.groups.VkGroups;
@@ -120,7 +120,7 @@ public class Vk implements CreateUser {
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public SubscribeGroupResult subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
+    public SubscribeStatus subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
         return groups.subscribeTo(groupName, callingUser);
     }
 

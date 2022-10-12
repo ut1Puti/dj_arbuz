@@ -8,7 +8,7 @@ import bots.BotTextResponse;
  * @author Кедровских Олег
  * @version 1.0
  */
-public enum SubscribeGroupResult {
+public enum SubscribeStatus {
     /**
      * Значения енума
      */
@@ -26,7 +26,7 @@ public enum SubscribeGroupResult {
      *
      * @param subscribeMessage - сообщение с результатом попытки подписаться
      */
-    SubscribeGroupResult(String subscribeMessage) {
+    SubscribeStatus(String subscribeMessage) {
         this.subscribeMessage = subscribeMessage;
     }
 
@@ -35,7 +35,7 @@ public enum SubscribeGroupResult {
      *
      * @return сообщение с результатом попытки подписаться
      */
-    public String getSubscribeStatus() {
+    public String getSubscribeMessage() {
         return subscribeMessage;
     }
 }

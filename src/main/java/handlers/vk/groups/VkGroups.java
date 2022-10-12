@@ -83,11 +83,11 @@ public class VkGroups extends Groups {
         return groupWithSimilarName;
     }
 
-    public SubscribeGroupResult subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
+    public SubscribeStatus subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
         Group userFindGroup = searchGroup(groupName, callingUser);
 
         if (userFindGroup.getIsClosed() == GroupIsClosed.CLOSED) {
-            return SubscribeGroupResult.GROUP_IS_CLOSED;
+            return SubscribeStatus.GROUP_IS_CLOSED;
         }
 
         if (dataBase == null) {
@@ -95,7 +95,7 @@ public class VkGroups extends Groups {
         }
 
         boolean isSubscribed = dataBase.addInfoToGroup(userFindGroup.getScreenName(), callingUser.getTelegramId());
-        return isSubscribed ? SubscribeGroupResult.SUBSCRIBED : SubscribeGroupResult.ALREADY_SUBSCRIBED;
+        return isSubscribed ? SubscribeStatus.SUBSCRIBED : SubscribeStatus.ALREADY_SUBSCRIBED;
     }
 
     /**
