@@ -21,14 +21,16 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * Поле телеграмм бота
      */
     private final TelegramBot telegramBot;
+    private String[] usersIgnoredId;
 
     /**
      * Конструктор - создает экземпляр класса
      *
      * @param telegramBot - телеграмм бот
      */
-    public TelegramPostsPullingThread(TelegramBot telegramBot) {
+    public TelegramPostsPullingThread(TelegramBot telegramBot, String... usersIgnoredId) {
         this.telegramBot = telegramBot;
+        this.usersIgnoredId = usersIgnoredId;
     }
 
     /**
@@ -44,7 +46,9 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
 
                     if (threadFindNewPosts.isPresent()) {
                         for (String postsAttachments : threadFindNewPosts.get()) {
-                            for (String userId : groupsBase.getSubscribedToGroupUsersId(groupScreenName)) {
+                            List<String> groupFilteredSubscribersId = groupsBase
+                                    .getSubscribedToGroupUserIdWithFilteredIds(groupScreenName, usersIgnoredId);
+                            for (String userId : groupFilteredSubscribersId) {
                                 SendMessage message = new SendMessage(userId, postsAttachments);
                                 telegramBot.execute(message);
                             }

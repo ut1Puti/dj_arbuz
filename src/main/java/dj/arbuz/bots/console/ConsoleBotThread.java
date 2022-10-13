@@ -20,7 +20,7 @@ public class ConsoleBotThread extends StoppableThread {
     /**
      * Поле id пользователя консольной версии бота
      */
-    private final String defaultConsoleUserId = "-10;";
+    private final String consoleBotUserId;
     /**
      * Поле хранящее пользователя пользующегося ботом
      */
@@ -28,7 +28,17 @@ public class ConsoleBotThread extends StoppableThread {
     /**
      * Поле класса получающего новые посты
      */
-    private final NotificationsPuller notificationsPuller = new NotificationsPuller(defaultConsoleUserId);
+    private final NotificationsPuller notificationsPuller;
+
+    /**
+     * Конструктор - создает экземпляр класса
+     *
+     * @param consoleBotUserId - id консольного пользователя бота
+     */
+    public ConsoleBotThread(String consoleBotUserId) {
+        this.consoleBotUserId = consoleBotUserId;
+        notificationsPuller = new NotificationsPuller(consoleBotUserId);
+    }
 
     /**
      * Метод с логикой выполняемой внутри потока
@@ -42,7 +52,7 @@ public class ConsoleBotThread extends StoppableThread {
 
             if (userInput.hasNextLine()) {
                 MessageHandlerResponse response = MessageHandler.executeMessage(
-                        userInput.nextLine(), defaultConsoleUserId, this
+                        userInput.nextLine(), consoleBotUserId, this
                 );
 
                 if (response.hasTextMessage()) {
@@ -50,7 +60,7 @@ public class ConsoleBotThread extends StoppableThread {
                 }
 
                 if (response.hasUpdateUser()) {
-                    User currentUser = response.getUpdateUser().createUser(defaultConsoleUserId);
+                    User currentUser = response.getUpdateUser().createUser(consoleBotUserId);
 
                     if (currentUser == null) {
                         System.out.println(BotTextResponse.AUTH_ERROR);
@@ -59,7 +69,7 @@ public class ConsoleBotThread extends StoppableThread {
 
                     System.out.println(BotTextResponse.AUTH_SUCCESS);
 
-                    userBase.addInfoUser(defaultConsoleUserId, currentUser);
+                    userBase.addInfoUser(consoleBotUserId, currentUser);
                 }
 
             }

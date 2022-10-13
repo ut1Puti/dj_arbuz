@@ -69,10 +69,19 @@ public class HttpServer {
     }
 
     /**
+     * Метод проверяющий работает ли сервер
+     *
+     * @return true - если поток обработки запросов работает
+     * false - если поток обработки запросов не работает
+     */
+    public boolean isWorking() {
+        return listenerThread.isWorking();
+    }
+    /**
      * Метод останавливающий сервер
      */
     public void stop() {
-        listenerThread.interrupt();
+        listenerThread.stopWithInterrupt();
         HttpServerUtils.closeServerStream(serverSocket);
         server = null;
     }

@@ -1,6 +1,7 @@
 package dj.arbuz.bots.telegram;
 
 import dj.arbuz.bots.BotTextResponse;
+import dj.arbuz.bots.console.ConsoleBot;
 import dj.arbuz.stoppable.Stoppable;
 import dj.arbuz.database.UserStorage;
 import dj.arbuz.handlers.messages.MessageHandler;
@@ -17,7 +18,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
 
     public TelegramBot() {
         super();
-        notificationsPuller = new NotificationsPuller(this);
+        notificationsPuller = new NotificationsPuller(this, ConsoleBot.defaultConsoleUserId);
         notificationsPuller.start();
     }
 
@@ -30,7 +31,6 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
     public String getBotToken() {
         return "5621043600:AAFot_kJRSb2o9oM3l_eezqIvt-KyaSXrbE";
     }
-
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -54,7 +54,12 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
                 User user = response.getUpdateUser().createUser(update.getMessage().getChatId().toString());
 
                 if (user == null) {
-                    System.out.println(BotTextResponse.AUTH_ERROR);
+                    SendMessage authErrorMessage = new SendMessage(update.getMessage().getChatId().toString(), BotTextResponse.AUTH_ERROR);
+                    try {
+                        execute(authErrorMessage);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
                 } else {
                     UserStorage userBase = UserStorage.getInstance();
                     userBase.addInfoUser(String.valueOf(update.getMessage().getChatId()), user);

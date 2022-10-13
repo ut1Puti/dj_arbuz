@@ -35,40 +35,40 @@ class VkAuthConfiguration {
     /**
      * Конструктор по пути до файла с конфигурацией приложения
      *
-     * @param configPath - путь до файла с конфигурацией
-     *                   файл должен содержать поля authUrl, appId, clientSecret, redirectUri
+     * @param vkAppConfigurationFilePath - путь до файла с конфигурацией
+     *                                   файл должен содержать поля authUrl, appId, clientSecret, redirectUri
      */
-    VkAuthConfiguration(String configPath) {
+    VkAuthConfiguration(String vkAppConfigurationFilePath) {
         Properties prop = new Properties();
         try {
-            prop.load(new FileInputStream(configPath));
+            prop.load(new FileInputStream(vkAppConfigurationFilePath));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         AUTH_URL = prop.getProperty("authUrl");
-        wasElementFound(AUTH_URL, "authUrl", configPath);
+        wasElementFound(AUTH_URL, "authUrl", vkAppConfigurationFilePath);
         String appId = prop.getProperty("appId");
-        wasElementFound(appId, "appId", configPath);
+        wasElementFound(appId, "appId", vkAppConfigurationFilePath);
         APP_ID = Integer.parseInt(prop.getProperty("appId"));
         CLIENT_SECRET = prop.getProperty("clientSecret");
-        wasElementFound(AUTH_URL, "clientSecret", configPath);
+        wasElementFound(AUTH_URL, "clientSecret", vkAppConfigurationFilePath);
         SERVICE_CLIENT_SECRET = prop.getProperty("serviceClientSecret");
-        wasElementFound(SERVICE_CLIENT_SECRET, "serviceClientSecret", configPath);
+        wasElementFound(SERVICE_CLIENT_SECRET, "serviceClientSecret", vkAppConfigurationFilePath);
         REDIRECT_URL = prop.getProperty("redirectUri");
-        wasElementFound(REDIRECT_URL, "redirectUri", configPath);
+        wasElementFound(REDIRECT_URL, "redirectUri", vkAppConfigurationFilePath);
     }
 
     /**
      * Метод проверяющий, был ли найден элемент в файле
      *
-     * @param element     - найденный элемент
-     * @param elementName - ключ, по которому искался элемент
-     * @param configPath  - путь до файла из которого читались данные
+     * @param fileFindElement          - найденный элемент
+     * @param fileSearchingElementName - ключ, по которому искался элемент
+     * @param configPath               - путь до файла из которого читались данные
      * @throws RuntimeException - если элемент в данном файле отсутсвовал
      */
-    private void wasElementFound(String element, String elementName, String configPath) {
-        if (element == null) {
-            throw new RuntimeException("Нет" + elementName + " элемента в файле:" + configPath);
+    private void wasElementFound(String fileFindElement, String fileSearchingElementName, String configPath) {
+        if (fileFindElement == null) {
+            throw new RuntimeException("Нет" + fileSearchingElementName + " элемента в файле:" + configPath);
         }
     }
 }

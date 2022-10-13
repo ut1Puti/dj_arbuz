@@ -8,9 +8,13 @@ package dj.arbuz.bots.console;
  */
 public class ConsoleBot {
     /**
+     * Поле id пользователя консольной версии бота
+     */
+    public static final String defaultConsoleUserId = "-10";
+    /**
      * Поле потока обрабатывающего и получающего сообщения пользователей
      */
-    private ConsoleBotThread consoleBotThread = new ConsoleBotThread();
+    private ConsoleBotThread consoleBotThread = new ConsoleBotThread(defaultConsoleUserId);
 
     /**
      * Метод запускающий поток обработки сообщений ботом

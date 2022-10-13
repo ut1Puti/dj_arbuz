@@ -53,10 +53,10 @@ public class Vk implements CreateUser {
     /**
      * Конструктор по пути до файла с конфигурацией приложения
      *
-     * @param configPath - путь до файла с конфигурацией
+     * @param vkAppConfigurationFilePath - путь до файла с конфигурацией
      */
-    public Vk(String configPath) {
-        oAuth = new VkAuth(vk, configPath);
+    public Vk(String vkAppConfigurationFilePath) {
+        oAuth = new VkAuth(vk, vkAppConfigurationFilePath);
         groups = new VkGroups(vk);
         wall = new VkWall(vk, groups);
         vkApp = oAuth.createAppActor();
@@ -77,79 +77,84 @@ public class Vk implements CreateUser {
      * @return нового пользователя
      */
     @Override
-    public User createUser(String telegramId) {
-        return oAuth.createUser(telegramId);
+    public User createUser(String userTelegramId) {
+        return oAuth.createUser(userTelegramId);
     }
 
     /**
      * Метод получающий ссылку на группу в vk
      *
-     * @param groupName   - Название группы
-     * @param callingUser - пользователя
+     * @param userReceivedGroupName - Название группы
+     * @param userCalledMethod      - пользователя
      * @return возвращает ссылку на группу в vk
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public String getGroupURL(String groupName, User callingUser) throws NoGroupException, ClientException, ApiException {
-        return VkConstants.VK_ADDRESS + groups.searchGroup(groupName, callingUser).getScreenName();
+    public String getGroupURL(String userReceivedGroupName, User userCalledMethod)
+            throws NoGroupException, ClientException, ApiException {
+        return VkConstants.VK_ADDRESS + groups.searchGroup(userReceivedGroupName, userCalledMethod).getScreenName();
     }
 
     /**
      * Метод получающий id группы
      *
-     * @param groupName   - Название группы
-     * @param callingUser - пользователя
+     * @param userReceivedGroupName - Название группы
+     * @param userCalledMethod      - пользователя
      * @return возвращает id группы
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public String getGroupId(String groupName, User callingUser) throws NoGroupException, ClientException, ApiException {
-        return String.valueOf(groups.searchGroup(groupName, callingUser).getId());
+    public String getGroupId(String userReceivedGroupName, User userCalledMethod)
+            throws NoGroupException, ClientException, ApiException {
+        return String.valueOf(groups.searchGroup(userReceivedGroupName, userCalledMethod).getId());
     }
 
     /**
      * Метод для подписки пользователя(сохранение в базу данных id пользователя в телеграмме и группы)
      *
-     * @param groupName   - Название группы
-     * @param callingUser - пользователя
+     * @param userReceivedGroupName - Название группы
+     * @param userCalledMethod      - пользователя
      * @return возвращает true - если пользователь только что подписался
      * false - если пользователь уже был подписан
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public SubscribeStatus subscribeTo(String groupName, User callingUser) throws ApiException, NoGroupException, ClientException {
-        return groups.subscribeTo(groupName, callingUser);
+    public SubscribeStatus subscribeTo(String userReceivedGroupName, User userCalledMethod)
+            throws ApiException, NoGroupException, ClientException {
+        return groups.subscribeTo(userReceivedGroupName, userCalledMethod);
     }
 
     /**
      * Метод обертка для получения последних постов со стены
      *
-     * @param amountOfPosts - кол-во постов
-     * @param groupName     - имя группы
-     * @param callingUser   - пользователь вызвавший метод
+     * @param amountOfPosts         - кол-во постов
+     * @param userReceivedGroupName - имя группы
+     * @param userCalledMethod      - пользователь вызвавший метод
      * @return возвращает последние amountOfPosts постов
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public Optional<List<String>> getLastPosts(String groupName, int amountOfPosts, User callingUser) throws NoGroupException, ClientException, ApiException {
-        return wall.getLastPosts(groupName, amountOfPosts, callingUser);
+    public Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCalledMethod)
+            throws NoGroupException, ClientException, ApiException {
+        return wall.getLastPosts(userReceivedGroupName, amountOfPosts, userCalledMethod);
     }
 
     /**
      * Метод для получения новых постов со стены
      *
-     * @param groupName         - название группы
-     * @param dateOfLastGotPost - дата последнего просмотренного поста
+     * @param userReceivedGroupName - название группы
+     * @param dateOfLastGotPost     - дата последнего просмотренного поста
      * @return возвращает непросмотренные посты
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public Optional<List<String>> getNewPosts(String groupName, int dateOfLastGotPost) throws NoGroupException, ClientException, ApiException {
-        return wall.getNewPosts(groupName, dateOfLastGotPost, vkApp);
+    public Optional<List<String>> getNewPosts(String userReceivedGroupName, int dateOfLastGotPost)
+            throws NoGroupException, ClientException, ApiException {
+        return wall.getNewPosts(userReceivedGroupName, dateOfLastGotPost, vkApp);
     }
 }

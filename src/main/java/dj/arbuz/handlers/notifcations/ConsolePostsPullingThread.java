@@ -43,18 +43,23 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
             try {
                 List<String> consoleUserSubscribedGroups = groupsBase.getUserSubscribedGroups(consoleBotUserId);
                 for (String key : consoleUserSubscribedGroups) {
-                    Optional<List<String>> threadFindNewPosts = vk.getNewPosts(key, 0);
+                    Optional<List<String>> threadNewPosts = vk.getNewPosts(key, 0);
 
-                    if (threadFindNewPosts.isPresent()) {
-                        for (String threadFindNewPost : threadFindNewPosts.get()) {
-                            synchronized (newPostsQueue) {
-                                newPostsQueue.put(threadFindNewPost);
+                    if (threadNewPosts.isPresent()) {
+                        List<String> threadFindNewPosts = threadNewPosts.get();
+                        for (int i = 0; i < threadFindNewPosts.size(); i++) {
+                            try {
+                                synchronized (newPostsQueue) {
+                                    newPostsQueue.add(threadFindNewPosts.get(i));
+                                }
+                            } catch (IllegalStateException e) {
+                                i--;
                             }
                         }
                     }
 
                 }
-                final int oneHourInMilliseconds = 3600000;
+                final int oneHourInMilliseconds = 360000;
                 Thread.sleep(oneHourInMilliseconds);
             } catch (NoGroupException ignored) {
             } catch (InterruptedException e) {

@@ -4,6 +4,7 @@ import dj.arbuz.httpserver.HttpRequest;
 import dj.arbuz.httpserver.HttpResponse;
 import dj.arbuz.httpserver.parser.HttpParser;
 import dj.arbuz.httpserver.parser.HttpParserException;
+import dj.arbuz.stoppable.StoppableThread;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author Кедровских Олег
  * @version 0.3
  */
-public class ServerListenerThread extends Thread {
+public class ServerListenerThread extends StoppableThread {
     /**
      * Поле серверного сокета, который слушает текущий поток
      */
@@ -47,7 +48,7 @@ public class ServerListenerThread extends Thread {
      */
     @Override
     public void run() {
-        while (serverSocket.isBound() && !Thread.interrupted()) {
+        while (serverSocket.isBound() && working) {
             try {
                 Socket socket = serverSocket.accept();
                 if (socket.isBound() && socket.isConnected()) {
@@ -105,6 +106,7 @@ public class ServerListenerThread extends Thread {
                 throw new RuntimeException(e);
             }
         }
+        working = false;
     }
 
     /**

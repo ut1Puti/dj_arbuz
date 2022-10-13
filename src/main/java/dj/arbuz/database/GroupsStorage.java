@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Класс для хранения подписок всех пользователей
@@ -17,7 +18,7 @@ import java.util.*;
  * @author Щёголев Андрей
  * @version 1.0
  */
-public class GroupsStorage{
+public class GroupsStorage {
     /**
      * Поле хеш таблицы, где ключ - айди группы, значение - список пользователей
      */
@@ -121,14 +122,47 @@ public class GroupsStorage{
         }
     }
 
+    /**
+     * Метод получающий все группы на которые оформлены подписки
+     *
+     * @return группы на которые оформлены подписки
+     */
     public List<String> getGroups() {
         return groupsBase.keySet().stream().toList();
     }
 
+    /**
+     * Метод получающий всех подписчиков определенной группы
+     *
+     * @param groupScreenName - короткое название группы
+     * @return подписчиков группы
+     */
     public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
         return groupsBase.get(groupScreenName);
     }
 
+    /**
+     * Метод получающий всех подписчиков исключив id некоторых из них
+     *
+     * @param groupScreenName  - короткое имя группы
+     * @param usersFilteringId - id фильтруемых пользователей
+     * @return отфильтрованный список подписчиков группы
+     */
+    public List<String> getSubscribedToGroupUserIdWithFilteredIds(String groupScreenName, String... usersFilteringId) {
+        List<String> groupBaseFiltered = new ArrayList<>();
+        Stream<String> groupsFilteringStream = groupsBase.get(groupScreenName).stream();
+        for (String userFilteringId : usersFilteringId) {
+            groupsFilteringStream = groupsFilteringStream.filter(userId -> !userId.equals(userFilteringId));
+        }
+        return groupsFilteringStream.toList();
+    }
+
+    /**
+     * Метод получающий подписки пользователя
+     *
+     * @param userId - id пользователя, подписки которого нужно получить
+     * @return подписки пользователя
+     */
     public List<String> getUserSubscribedGroups(String userId) {
         List<String> userSubscribedGroups = new ArrayList<>();
         for (Entry<String, List<String>> groupNameAndSubscribers : groupsBase.entrySet()) {

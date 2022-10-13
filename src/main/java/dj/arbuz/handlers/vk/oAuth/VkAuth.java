@@ -29,12 +29,12 @@ public class VkAuth extends OAuth implements CreateUser {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param client     - клиент vk
-     * @param configPath - путь до файла с конфигурацией
+     * @param client                     - клиент vk
+     * @param vkAppConfigurationFilePath - путь до файла с конфигурацией
      */
-    public VkAuth(VkApiClient client, String configPath) {
+    public VkAuth(VkApiClient client, String vkAppConfigurationFilePath) {
         super(client);
-        authConfiguration = new VkAuthConfiguration(configPath);
+        authConfiguration = new VkAuthConfiguration(vkAppConfigurationFilePath);
     }
 
     /**
@@ -70,7 +70,7 @@ public class VkAuth extends OAuth implements CreateUser {
      * @return нового пользователя
      */
     @Override
-    public User createUser(String telegramId) {
+    public User createUser(String userTelegramId) {
         httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {
@@ -91,7 +91,7 @@ public class VkAuth extends OAuth implements CreateUser {
                     authConfiguration.REDIRECT_URL,
                     authCode)
                     .execute();
-            return new User(authResponse.getUserId(), authResponse.getAccessToken(), telegramId);
+            return new User(authResponse.getUserId(), authResponse.getAccessToken(), userTelegramId);
         } catch (ApiException | ClientException e) {
             return null;
         }

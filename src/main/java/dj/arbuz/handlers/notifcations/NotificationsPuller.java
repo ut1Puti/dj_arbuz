@@ -28,8 +28,8 @@ public class NotificationsPuller {
      *
      * @param telegramBot - бот в телеграмме
      */
-    public NotificationsPuller(TelegramBot telegramBot) {
-        postsPullingThread = new TelegramPostsPullingThread(telegramBot);
+    public NotificationsPuller(TelegramBot telegramBot, String... userIgnoredId) {
+        postsPullingThread = new TelegramPostsPullingThread(telegramBot, userIgnoredId);
     }
 
     /**

@@ -6,7 +6,7 @@ package dj.arbuz.stoppable;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class StoppableThread extends Thread implements Stoppable{
+public class StoppableThread extends Thread implements Stoppable {
     /**
      * Поле показывающее находится ли поток в бесконечном цикле
      */

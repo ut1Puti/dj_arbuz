@@ -24,6 +24,7 @@ public class Main {
         UserStorage dataUsersBase = UserStorage.getInstance();
 
         ConsoleBot consoleBot = new ConsoleBot();
+        consoleBot.start();
         TelegramBot telegramBot = new TelegramBot();
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
@@ -31,9 +32,6 @@ public class Main {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-
-        consoleBot.start();
-
         while (consoleBot.isWorking() || telegramBot.isWorking()) Thread.onSpinWait();
 
         dataBase.saveToJsonFile();
