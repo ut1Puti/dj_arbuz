@@ -40,10 +40,13 @@ class VkAuthConfiguration {
      */
     VkAuthConfiguration(String vkAppConfigurationFilePath) {
         Properties prop = new Properties();
+        FileInputStream stream;
         try {
-            prop.load(new FileInputStream(vkAppConfigurationFilePath));
+            stream = new FileInputStream(vkAppConfigurationFilePath);
+            prop.load(stream);
+            stream.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Файла по пути " + vkAppConfigurationFilePath + " не найдено");
         }
         AUTH_URL = prop.getProperty("authUrl");
         wasElementFound(AUTH_URL, "authUrl", vkAppConfigurationFilePath);
@@ -54,8 +57,8 @@ class VkAuthConfiguration {
         wasElementFound(AUTH_URL, "clientSecret", vkAppConfigurationFilePath);
         SERVICE_CLIENT_SECRET = prop.getProperty("serviceClientSecret");
         wasElementFound(SERVICE_CLIENT_SECRET, "serviceClientSecret", vkAppConfigurationFilePath);
-        REDIRECT_URL = prop.getProperty("redirectUri");
-        wasElementFound(REDIRECT_URL, "redirectUri", vkAppConfigurationFilePath);
+        REDIRECT_URL = prop.getProperty("redirectUrl");
+        wasElementFound(REDIRECT_URL, "redirectUrl", vkAppConfigurationFilePath);
     }
 
     /**
@@ -63,12 +66,13 @@ class VkAuthConfiguration {
      *
      * @param fileFindElement          - найденный элемент
      * @param fileSearchingElementName - ключ, по которому искался элемент
-     * @param configPath               - путь до файла из которого читались данные
+     * @param vkAppConfigurationFilePath               - путь до файла из которого читались данные
      * @throws RuntimeException - если элемент в данном файле отсутсвовал
      */
-    private void wasElementFound(String fileFindElement, String fileSearchingElementName, String configPath) {
+    private void wasElementFound(String fileFindElement, String fileSearchingElementName,
+                                 String vkAppConfigurationFilePath) {
         if (fileFindElement == null) {
-            throw new RuntimeException("Нет" + fileSearchingElementName + " элемента в файле:" + configPath);
+            throw new RuntimeException("Нет " + fileSearchingElementName + " элемента в файле: " + vkAppConfigurationFilePath);
         }
     }
 }

@@ -30,7 +30,7 @@ public class Vk implements CreateUser {
      */
     private final TransportClient transportClient = new HttpTransportClient();
     /**
-     * Поле класс позволяющего работать с Vk SDK Java
+     * Поле класс позволяющего работать с vk api
      */
     private final VkApiClient vk = new VkApiClient(transportClient);
     /**
@@ -137,6 +137,8 @@ public class Vk implements CreateUser {
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
+     *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
      */
     public Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCalledMethod)
             throws NoGroupException, ClientException, ApiException {

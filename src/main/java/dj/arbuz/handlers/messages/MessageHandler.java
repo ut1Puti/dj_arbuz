@@ -55,7 +55,8 @@ public class MessageHandler {
      * @param callingBotThread - бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
      */
-    public static MessageHandlerResponse executeMessage(String message, String telegramUserId, Stoppable callingBotThread) {
+    public static MessageHandlerResponse executeMessage(String message, String telegramUserId,
+                                                        Stoppable callingBotThread) {
         String[] commandAndArgs = message.split(" ", 2);
 
         if (groupsBase == null) {

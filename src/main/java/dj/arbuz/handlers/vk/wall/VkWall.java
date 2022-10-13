@@ -52,6 +52,7 @@ public class VkWall extends Wall {
      * @return список новых постов в группе, max = 100
      * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws IllegalArgumentException - возникает при получении кол-ва постов большего, чем можно получить(max 100)
      */
     public Optional<List<String>> getNewPosts(String groupScreenName, int dateOfLastGotPost, ServiceActor vkAppUser)
             throws ApiException, ClientException {
@@ -73,9 +74,11 @@ public class VkWall extends Wall {
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
+     *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
      */
     public Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCalledMethod)
-            throws ApiException, NoGroupException, ClientException, IllegalArgumentException {
+            throws ApiException, NoGroupException, ClientException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCalledMethod);
         List<WallpostFull> userFindGroupPosts = getPosts(userFindGroup.getScreenName(), amountOfPosts, userCalledMethod);
         List<String> groupFindPosts = createGroupPostsStrings(userFindGroupPosts);

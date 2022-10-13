@@ -57,9 +57,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
                     SendMessage authErrorMessage = new SendMessage(update.getMessage().getChatId().toString(), BotTextResponse.AUTH_ERROR);
                     try {
                         execute(authErrorMessage);
-                    } catch (TelegramApiException e) {
-                        throw new RuntimeException(e);
-                    }
+                    } catch (TelegramApiException ignored) {}
                 } else {
                     UserStorage userBase = UserStorage.getInstance();
                     userBase.addInfoUser(String.valueOf(update.getMessage().getChatId()), user);
