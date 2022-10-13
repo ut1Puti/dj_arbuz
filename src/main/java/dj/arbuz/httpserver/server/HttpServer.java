@@ -17,7 +17,7 @@ public class HttpServer {
     /**
      * Поле серверных сокетов
      */
-    private final ServerSocket serverSocket;
+    private ServerSocket serverSocket;
     /**
      * Поле потоков слушающих новые сообщения к сокету
      */
@@ -83,6 +83,7 @@ public class HttpServer {
     public void stop() {
         listenerThread.stopWithInterrupt();
         HttpServerUtils.closeServerStream(serverSocket);
+        serverSocket = null;
         server = null;
     }
 }

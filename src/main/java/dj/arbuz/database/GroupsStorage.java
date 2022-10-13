@@ -142,22 +142,6 @@ public class GroupsStorage {
     }
 
     /**
-     * Метод получающий всех подписчиков исключив id некоторых из них
-     *
-     * @param groupScreenName  - короткое имя группы
-     * @param usersFilteringId - id фильтруемых пользователей
-     * @return отфильтрованный список подписчиков группы
-     */
-    public List<String> getSubscribedToGroupUserIdWithFilteredIds(String groupScreenName, String... usersFilteringId) {
-        List<String> groupBaseFiltered = new ArrayList<>();
-        Stream<String> groupsFilteringStream = groupsBase.get(groupScreenName).stream();
-        for (String userFilteringId : usersFilteringId) {
-            groupsFilteringStream = groupsFilteringStream.filter(userId -> !userId.equals(userFilteringId));
-        }
-        return groupsFilteringStream.toList();
-    }
-
-    /**
      * Метод получающий подписки пользователя
      *
      * @param userId - id пользователя, подписки которого нужно получить

@@ -21,16 +21,14 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * Поле телеграмм бота
      */
     private final TelegramBot telegramBot;
-    private String[] usersIgnoredId;
 
     /**
      * Конструктор - создает экземпляр класса
      *
      * @param telegramBot - телеграмм бот
      */
-    public TelegramPostsPullingThread(TelegramBot telegramBot, String... usersIgnoredId) {
+    public TelegramPostsPullingThread(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
-        this.usersIgnoredId = usersIgnoredId;
     }
 
     /**
@@ -46,9 +44,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
 
                     if (threadFindNewPosts.isPresent()) {
                         for (String postsAttachments : threadFindNewPosts.get()) {
-                            List<String> groupFilteredSubscribersId = groupsBase
-                                    .getSubscribedToGroupUserIdWithFilteredIds(groupScreenName, usersIgnoredId);
-                            for (String userId : groupFilteredSubscribersId) {
+                            for (String userId : groupsBase.getSubscribedToGroupUsersId(groupScreenName)) {
                                 SendMessage message = new SendMessage(userId, postsAttachments);
                                 telegramBot.execute(message);
                             }
@@ -58,10 +54,10 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
                 }
                 final int oneHourInMilliseconds = 3600000;
                 Thread.sleep(oneHourInMilliseconds);
-            } catch (NoGroupException ignored) {
             } catch (InterruptedException e) {
                 break;
-            } catch (ApiException | ClientException | TelegramApiException e) {
+            } catch (NoGroupException | TelegramApiException ignored) {
+            } catch (ApiException | ClientException e) {
                 throw new RuntimeException(e);
             }
         }

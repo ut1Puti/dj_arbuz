@@ -22,8 +22,6 @@ public class HttpServerUtils {
                 serverStream.close();
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignored) {}
     }
 }

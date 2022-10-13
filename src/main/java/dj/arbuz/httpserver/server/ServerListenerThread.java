@@ -48,6 +48,7 @@ public class ServerListenerThread extends StoppableThread {
      */
     @Override
     public void run() {
+        working = true;
         while (serverSocket.isBound() && working) {
             try {
                 Socket socket = serverSocket.accept();
@@ -130,6 +131,27 @@ public class ServerListenerThread extends StoppableThread {
             outputStream.write(response.getBytes());
         }
 
+    }
+
+    /**
+     * Метод проверяющий работает ли поток
+     *
+     * @return true - если поток работает
+     * false - если поток завершил работу
+     */
+    @Override
+    public boolean isWorking() {
+        return working && isAlive() && serverSocket.isBound();
+    }
+
+    /**
+     * Метод останавливающий поток прерывая его
+     */
+    @Override
+    public void stopWithInterrupt() {
+        working = false;
+        interrupt();
+        HttpServerUtils.closeServerStream(serverSocket);
     }
 
     /**
