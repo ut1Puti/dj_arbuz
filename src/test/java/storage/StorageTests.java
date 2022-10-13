@@ -1,6 +1,6 @@
 package storage;
 
-import database.GroupsStorage;
+import dj.arbuz.database.GroupsStorage;
 import org.junit.jupiter.api.Test;
 
 public class StorageTests {

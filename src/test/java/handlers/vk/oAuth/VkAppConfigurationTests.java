@@ -1,5 +1,6 @@
 package handlers.vk.oAuth;
 
+import dj.arbuz.handlers.vk.oAuth.VkAuthConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

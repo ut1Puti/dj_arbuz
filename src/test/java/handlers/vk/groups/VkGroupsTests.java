@@ -6,9 +6,11 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.groups.Group;
-import handlers.vk.oAuth.VkAuth;
+import dj.arbuz.handlers.vk.groups.NoGroupException;
+import dj.arbuz.handlers.vk.groups.VkGroups;
+import dj.arbuz.handlers.vk.oAuth.VkAuth;
 import org.junit.jupiter.api.Test;
-import user.User;
+import dj.arbuz.user.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

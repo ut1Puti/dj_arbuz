@@ -1,0 +1,88 @@
+package dj.arbuz.bots.telegram;
+
+import dj.arbuz.bots.BotTextResponse;
+import dj.arbuz.stoppable.Stoppable;
+import dj.arbuz.database.UserStorage;
+import dj.arbuz.handlers.messages.MessageHandler;
+import dj.arbuz.handlers.messages.MessageHandlerResponse;
+import dj.arbuz.handlers.notifcations.NotificationsPuller;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import dj.arbuz.user.User;
+
+public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
+    private final NotificationsPuller notificationsPuller;
+
+    public TelegramBot() {
+        super();
+        notificationsPuller = new NotificationsPuller(this);
+        notificationsPuller.start();
+    }
+
+    @Override
+    public String getBotUsername() {
+        return "https://t.me/oop_urfu_bot";
+    }
+
+    @Override
+    public String getBotToken() {
+        return "5621043600:AAFot_kJRSb2o9oM3l_eezqIvt-KyaSXrbE";
+    }
+
+
+    @Override
+    public void onUpdateReceived(Update update) {
+        SendMessage message = new SendMessage();
+
+        if (update.hasMessage() && update.getMessage()
+                .hasText()) {
+            String messageUpdate = update.getMessage()
+                    .getText();
+            MessageHandlerResponse response = MessageHandler.executeMessage(
+                    messageUpdate, String.valueOf(update.getMessage().getChatId()), this
+            );
+            message.setChatId(String.valueOf(update.getMessage().getChatId()));
+            message.setText(response.getTextMessage());
+            try {
+                execute(message);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+            if (response.hasUpdateUser()) {
+                User user = response.getUpdateUser().createUser(update.getMessage().getChatId().toString());
+
+                if (user == null) {
+                    System.out.println(BotTextResponse.AUTH_ERROR);
+                } else {
+                    UserStorage userBase = UserStorage.getInstance();
+                    userBase.addInfoUser(String.valueOf(update.getMessage().getChatId()), user);
+                }
+
+            }
+
+        }
+
+    }
+
+    /**
+     * Метод проверяющий работает ли поток
+     *
+     * @return true - если работает
+     * false - если поток завершил работу
+     */
+    @Override
+    public boolean isWorking() {
+        return !exe.isShutdown();
+    }
+
+    /**
+     * Метод останавливающий работу потока путем прерывания
+     */
+    @Override
+    public void stopWithInterrupt() {
+        notificationsPuller.stop();
+        exe.shutdownNow();
+    }
+}

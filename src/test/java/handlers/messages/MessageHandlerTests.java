@@ -1,8 +1,10 @@
 package handlers.messages;
 
-import bots.BotTextResponse;
+import dj.arbuz.bots.BotTextResponse;
+import dj.arbuz.handlers.messages.MessageHandler;
+import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import org.junit.jupiter.api.Test;
-import user.User;
+import dj.arbuz.user.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 

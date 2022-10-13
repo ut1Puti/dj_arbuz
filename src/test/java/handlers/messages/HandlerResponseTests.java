@@ -1,8 +1,9 @@
 package handlers.messages;
 
+import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import org.junit.jupiter.api.Test;
-import user.CreateUser;
-import user.User;
+import dj.arbuz.user.CreateUser;
+import dj.arbuz.user.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 

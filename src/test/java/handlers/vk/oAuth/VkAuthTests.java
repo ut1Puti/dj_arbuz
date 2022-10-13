@@ -4,8 +4,9 @@ import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import dj.arbuz.handlers.vk.oAuth.VkAuth;
 import org.junit.jupiter.api.Test;
-import user.User;
+import dj.arbuz.user.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

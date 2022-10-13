@@ -2,9 +2,10 @@ package handlers.vk;
 
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
-import handlers.vk.groups.NoGroupException;
+import dj.arbuz.handlers.vk.Vk;
+import dj.arbuz.handlers.vk.groups.NoGroupException;
 import org.junit.jupiter.api.Test;
-import user.User;
+import dj.arbuz.user.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 
