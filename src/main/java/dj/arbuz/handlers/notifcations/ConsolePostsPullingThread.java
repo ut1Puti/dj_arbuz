@@ -4,9 +4,9 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import dj.arbuz.handlers.vk.groups.NoGroupException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.stream.Collectors;
 
 /**
  * Класс получающий обновления постов в группах для консольного пользователя
@@ -39,7 +39,7 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
     @Override
     public void run() {
         working = true;
-        while (working) {
+        while (working && !isInterrupted()) {
             try {
                 List<String> consoleUserSubscribedGroups = groupsBase.getUserSubscribedGroups(consoleBotUserId);
                 for (String key : consoleUserSubscribedGroups) {
@@ -51,10 +51,10 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
                             try {
                                 synchronized (newPostsQueue) {
                                     newPostsQueue.add(threadFindNewPosts.get(i));
+                                    continue;
                                 }
-                            } catch (IllegalStateException e) {
-                                i--;
-                            }
+                            } catch (IllegalStateException ignored) {}
+                            i--;
                         }
                     }
 
@@ -68,6 +68,7 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
                 throw new RuntimeException(e);
             }
         }
+        working = false;
     }
 
     /**

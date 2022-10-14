@@ -16,6 +16,11 @@ public class NoGroupException extends Exception {
         super("Группы с названием " + groupName + " не существует");
     }
 
+    /**
+     * Конструктор - унаследованный от родительского класса
+     *
+     * @param groupId - id группы
+     */
     public NoGroupException(int groupId) {
         super("Группы с id " + groupId + " не существует");
     }

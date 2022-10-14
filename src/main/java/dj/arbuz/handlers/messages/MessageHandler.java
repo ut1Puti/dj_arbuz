@@ -9,6 +9,7 @@ import dj.arbuz.handlers.vk.groups.NoGroupException;
 import dj.arbuz.handlers.vk.Vk;
 import dj.arbuz.user.User;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -237,9 +238,8 @@ public class MessageHandler {
      * @return текст постов, ссылки на изображения в них, а также ссылки
      */
     private static MessageHandlerResponse getFiveLastPosts(String groupName, User user) {
-        List<String> userFindGroupPosts;
         try {
-            userFindGroupPosts = vk.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow();
+            return new MessageHandlerResponse(vk.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow());
         } catch (ApiTokenExtensionRequiredException e) {
             return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoSuchElementException e) {
@@ -249,10 +249,6 @@ public class MessageHandler {
         } catch (ApiException | ClientException e) {
             return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
         }
-
-        StringBuilder postsString = new StringBuilder();
-        userFindGroupPosts.forEach(userFindGroupPost -> postsString.append(userFindGroupPost).append("\n\n"));
-        return new MessageHandlerResponse(postsString.toString());
     }
 
     /**

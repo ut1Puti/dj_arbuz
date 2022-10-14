@@ -13,6 +13,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import dj.arbuz.user.User;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
     private final NotificationsPuller notificationsPuller;
 
@@ -34,7 +37,6 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
 
     @Override
     public void onUpdateReceived(Update update) {
-        SendMessage message = new SendMessage();
 
         if (update.hasMessage() && update.getMessage()
                 .hasText()) {
@@ -43,13 +45,26 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
             MessageHandlerResponse response = MessageHandler.executeMessage(
                     messageUpdate, String.valueOf(update.getMessage().getChatId()), this
             );
-            message.setChatId(String.valueOf(update.getMessage().getChatId()));
-            message.setText(response.getTextMessage());
-            try {
-                execute(message);
-            } catch (TelegramApiException e) {
-                throw new RuntimeException(e);
+            if (response.hasTextMessage()) {
+                SendMessage message = new SendMessage();
+                message.setChatId(String.valueOf(update.getMessage().getChatId()));
+                message.setText(response.getTextMessage());
+                try {
+                    execute(message);
+                } catch (TelegramApiException ignored) {}
             }
+
+            if (response.hasPostsMessages()) {
+                for (String post : response.getPostsMessages()) {
+                    SendMessage message = new SendMessage();
+                    message.setText(post);
+                    message.setChatId(String.valueOf(update.getMessage().getChatId()));
+                    try {
+                        execute(message);
+                    } catch (TelegramApiException ignored) {}
+                }
+            }
+
             if (response.hasUpdateUser()) {
                 User user = response.getUpdateUser().createUser(update.getMessage().getChatId().toString());
 

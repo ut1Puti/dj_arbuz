@@ -48,7 +48,7 @@ public class ConsoleBotThread extends StoppableThread {
         working = true;
         notificationsPuller.start();
         Scanner userInput = new Scanner(System.in);
-        while (working) {
+        while (working && !isInterrupted()) {
 
             if (userInput.hasNextLine()) {
                 MessageHandlerResponse response = MessageHandler.executeMessage(
@@ -57,6 +57,10 @@ public class ConsoleBotThread extends StoppableThread {
 
                 if (response.hasTextMessage()) {
                     System.out.println(response.getTextMessage());
+                }
+
+                if (response.hasPostsMessages()) {
+                    response.getPostsMessages().forEach(System.out::println);
                 }
 
                 if (response.hasUpdateUser()) {
@@ -79,6 +83,7 @@ public class ConsoleBotThread extends StoppableThread {
             }
 
         }
+        working = false;
         userInput.close();
         notificationsPuller.stop();
     }

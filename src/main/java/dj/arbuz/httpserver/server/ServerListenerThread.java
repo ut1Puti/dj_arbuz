@@ -49,7 +49,7 @@ public class ServerListenerThread extends StoppableThread {
     @Override
     public void run() {
         working = true;
-        while (serverSocket.isBound() && working) {
+        while (serverSocket.isBound() && working && !isInterrupted()) {
             try {
                 Socket socket = serverSocket.accept();
                 if (socket.isBound() && socket.isConnected()) {
@@ -98,7 +98,9 @@ public class ServerListenerThread extends StoppableThread {
 
                     } catch (IOException e) {
                         throw new RuntimeException(e);
-                    } catch (InterruptedException ignored) {}
+                    } catch (InterruptedException ignored) {
+                        break;
+                    }
                     HttpServerUtils.closeServerStream(outputStream);
                     HttpServerUtils.closeServerStream(inputStream);
                     HttpServerUtils.closeServerStream(socket);
