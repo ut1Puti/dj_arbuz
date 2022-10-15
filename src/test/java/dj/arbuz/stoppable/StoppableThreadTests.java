@@ -3,6 +3,8 @@ package dj.arbuz.stoppable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import stoppable.StoppableThread;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -46,8 +48,6 @@ public class StoppableThreadTests {
     @Test
     public void testIsWorkingWhileThreadIsActive() throws InterruptedException {
         stoppableThread.start();
-        //костыльный метод, в теории может иногда не проходить
-        Thread.sleep(1000);
         assertTrue(stoppableThread.isWorking());
     }
 
@@ -57,10 +57,10 @@ public class StoppableThreadTests {
     @Test
     public void testStopWithInterrupt() throws InterruptedException {
         stoppableThread.start();
-        //костыльный метод, в теории может иногда не проходить
-        Thread.sleep(1000);
         assertTrue(stoppableThread.isWorking());
         stoppableThread.stopWithInterrupt();
+        //костыльный метод, может иногда не проходить
+        Thread.sleep(1000);
         assertFalse(stoppableThread.isWorking());
     }
 }

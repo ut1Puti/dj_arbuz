@@ -3,6 +3,7 @@ package dj.arbuz.handlers.vk.oAuth;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import handlers.vk.oAuth.VkAuth;
 
 /**
  *
