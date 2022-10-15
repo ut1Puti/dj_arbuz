@@ -4,7 +4,6 @@ import com.vk.api.sdk.actions.Groups;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.exceptions.ApiAuthException;
 import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.groups.Fields;
 import com.vk.api.sdk.objects.groups.Group;

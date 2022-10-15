@@ -6,6 +6,7 @@ import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import database.GroupsStorage;
 import handlers.vk.groups.NoGroupException;
 import handlers.vk.groups.VkGroups;
 import handlers.vk.oAuth.VkAuth;
@@ -146,17 +147,29 @@ public class Vk implements CreateUser {
     }
 
     /**
+     *
+     *
+     * @param groupsStorage
+     * @return
+     * @throws ClientException
+     * @throws ApiException
+     */
+    public Optional<List<String>> getNewPosts(GroupsStorage groupsStorage)
+            throws ClientException, ApiException {
+        return wall.getNewPosts(groupsStorage, vkApp);
+    }
+
+    /**
      * Метод для получения новых постов со стены
      *
      * @param userReceivedGroupName - название группы
      * @param dateOfLastGotPost     - дата последнего просмотренного поста
      * @return возвращает непросмотренные посты
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
     public Optional<List<String>> getNewPosts(String userReceivedGroupName, int dateOfLastGotPost)
-            throws NoGroupException, ClientException, ApiException {
+            throws ClientException, ApiException {
         return wall.getNewPosts(userReceivedGroupName, dateOfLastGotPost, vkApp);
     }
 }

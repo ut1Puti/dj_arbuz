@@ -12,14 +12,18 @@ import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.wall.Wallpost;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostFull;
+import database.GroupRelatedData;
+import database.GroupsStorage;
 import handlers.vk.groups.VkGroups;
 import handlers.vk.VkConstants;
 import handlers.vk.groups.NoGroupException;
 import user.User;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Класс для взаимодействия с постами на стене в vk
@@ -45,6 +49,33 @@ public class VkWall extends Wall {
     }
 
     /**
+     *
+     *
+     * @param groupBase
+     * @param vkAppUser
+     * @return
+     * @throws ClientException
+     * @throws ApiException
+     * @throws IllegalArgumentException - возникает при получении кол-ва постов большего, чем можно получить(max 100)
+     */
+    public Optional<List<String>> getNewPosts(GroupsStorage groupBase, ServiceActor vkAppUser)
+            throws ClientException, ApiException {
+        List<String> groupsFromDataBaseFindPosts = new ArrayList<>();
+        final int amountOfPosts = 100;
+        for (String groupScreenNameFromDatabase : groupBase.getGroups()) {
+            int dateOfLastGotPost = groupBase.getGroupLastPostDate(groupScreenNameFromDatabase);
+            Stream<WallpostFull> appFindGroupPostsStream = getPosts(
+                    groupScreenNameFromDatabase, amountOfPosts, vkAppUser
+            ).stream().filter(appFindGroupPost -> appFindGroupPost.getDate() > dateOfLastGotPost);
+            List<WallpostFull> list = appFindGroupPostsStream.toList();
+            list.stream().max(Comparator.comparing(Wallpost::getDate))
+                    .ifPresent(wallpostFull -> groupBase.updateGroupLastPost(groupScreenNameFromDatabase, wallpostFull.getDate()));
+            groupsFromDataBaseFindPosts.addAll(createGroupPostsStrings(list));
+        }
+        return groupsFromDataBaseFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupsFromDataBaseFindPosts);
+    }
+
+    /**
      * Метод получает новые посты в группе по названию группы и дате последнего поста
      *
      * @param groupScreenName   - имя группы
@@ -61,7 +92,8 @@ public class VkWall extends Wall {
         final int amountOfPosts = 100;
         List<WallpostFull> appFindGroupPosts = getPosts(groupScreenName, amountOfPosts, vkAppUser)
                 .stream()
-                .filter(appFindGroupPost -> appFindGroupPost.getDate() > dateOfLastGotPost).toList();
+                .filter(appFindGroupPost -> appFindGroupPost.getDate() > dateOfLastGotPost)
+                .toList();
         List<String> groupFindPosts = createGroupPostsStrings(appFindGroupPosts);
         return groupFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupFindPosts);
     }

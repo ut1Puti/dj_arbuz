@@ -12,15 +12,6 @@ import httpserver.server.HttpServer;
  */
 public class BotUtils {
     /**
-     * Поле для данных групп
-     */
-    private static GroupsStorage dataBase;
-    /**
-     * Поле для данных пользователей
-     */
-    private static UserStorage dataUsersBase;
-
-    /**
      * Метод запускающий все сущности
      */
     public static void initInstances() {
@@ -32,14 +23,16 @@ public class BotUtils {
 
         server.start();
 
-        dataBase = GroupsStorage.getInstance();
-        dataUsersBase = UserStorage.getInstance();
+        GroupsStorage dataBase = GroupsStorage.getInstance();
+        UserStorage dataUsersBase = UserStorage.getInstance();
     }
 
     /**
      * Метод останавливающий все сущности
      */
     public static void stopInstances() {
+        GroupsStorage dataBase = GroupsStorage.getInstance();
+        UserStorage dataUsersBase = UserStorage.getInstance();
         dataBase.saveToJsonFile();
         dataUsersBase.saveToJsonFile();
         HttpServer server = HttpServer.getInstance();

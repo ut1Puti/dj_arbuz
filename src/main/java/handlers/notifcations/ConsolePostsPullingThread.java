@@ -40,27 +40,23 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
         working = true;
         while (working && !isInterrupted()) {
             try {
-                Set<String> consoleUserSubscribedGroups = groupsBase.getUserSubscribedGroups(consoleBotUserId);
-                for (String key : consoleUserSubscribedGroups) {
-                    Optional<List<String>> threadNewPosts = vk.getNewPosts(key, 0);
+                Optional<List<String>> threadNewPosts = vk.getNewPosts(groupsBase);
 
-                    if (threadNewPosts.isPresent()) {
-                        List<String> threadFindNewPosts = threadNewPosts.get();
-                        for (int i = 0; i < threadFindNewPosts.size(); i++) {
-                            try {
-                                synchronized (newPostsQueue) {
-                                    newPostsQueue.add(threadFindNewPosts.get(i));
-                                    continue;
-                                }
-                            } catch (IllegalStateException ignored) {}
-                            i--;
-                        }
+                if (threadNewPosts.isPresent()) {
+                    List<String> threadFindNewPosts = threadNewPosts.get();
+                    for (int i = 0; i < threadFindNewPosts.size(); i++) {
+                        try {
+                            synchronized (newPostsQueue) {
+                                newPostsQueue.add(threadFindNewPosts.get(i));
+                                continue;
+                            }
+                        } catch (IllegalStateException ignored) {}
+                        i--;
                     }
-
                 }
+
                 final int oneHourInMilliseconds = 360000;
-                sleep(oneHourInMilliseconds);
-            } catch (NoGroupException ignored) {
+                Thread.sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
             } catch (ApiException | ClientException e) {

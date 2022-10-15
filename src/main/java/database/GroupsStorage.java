@@ -21,7 +21,7 @@ public class GroupsStorage {
     /**
      * Поле хеш таблицы, где ключ - айди группы, значение - список пользователей
      */
-    private Map<String, List<String>> groupsBase;
+    private Map<String, GroupRelatedData> groupsBase;
     private static GroupsStorage groupsStorage = null;
 
     /**
@@ -33,7 +33,7 @@ public class GroupsStorage {
     private void addNewGroup(String groupId, String userId) {
         List<String> newList = new LinkedList<>();
         newList.add(userId);
-        groupsBase.put(groupId, newList);
+        groupsBase.put(groupId, new GroupRelatedData(newList));
     }
 
     /**
@@ -43,8 +43,8 @@ public class GroupsStorage {
      * @param userId  - Айди пользователя
      */
     private boolean addOldGroup(String groupId, String userId) {
-        if (!groupsBase.get(groupId).contains(userId)) {
-            groupsBase.get(groupId).add(userId);
+        if (!groupsBase.get(groupId).getSubscribedUsersId().contains(userId)) {
+            groupsBase.get(groupId).getSubscribedUsersId().add(userId);
             return true;
         }
         return false;
@@ -109,7 +109,7 @@ public class GroupsStorage {
             try {
                 String json = scanner.nextLine();
                 Gson jsonFile = new Gson();
-                groupsBase = jsonFile.fromJson(json, new TypeToken<Map<String, List<String>>>() {
+                groupsBase = jsonFile.fromJson(json, new TypeToken<Map<String, GroupRelatedData>>() {
                 }.getType());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -136,7 +136,7 @@ public class GroupsStorage {
      * @return подписчиков группы
      */
     public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
-        return groupsBase.get(groupScreenName);
+        return groupsBase.get(groupScreenName).getSubscribedUsersId();
     }
 
     /**
@@ -147,13 +147,31 @@ public class GroupsStorage {
      */
     public Set<String> getUserSubscribedGroups(String userId) {
         Set<String> userSubscribedGroups = new HashSet<>();
-        for (Entry<String, List<String>> groupNameAndSubscribers : groupsBase.entrySet()) {
+        for (Entry<String, GroupRelatedData> groupNameAndSubscribers : groupsBase.entrySet()) {
 
-            if (groupNameAndSubscribers.getValue().contains(userId)) {
+            if (groupNameAndSubscribers.getValue().getSubscribedUsersId().contains(userId)) {
                 userSubscribedGroups.add(groupNameAndSubscribers.getKey());
             }
 
         }
         return userSubscribedGroups;
+    }
+
+    public int getGroupLastPostDate(String groupScreenName) {
+
+        if (!groupsBase.containsKey(groupScreenName)) {
+            throw new IllegalArgumentException("Группы с названием" + groupScreenName + "нет в базе данных");
+        }
+
+        return groupsBase.get(groupScreenName).getLastPostDate();
+    }
+
+    public void updateGroupLastPost(String groupScreenName, int newLastPostDate) {
+
+        if (!groupsBase.containsKey(groupScreenName)) {
+            throw new IllegalArgumentException("Группы с названием" + groupScreenName + "нет в базе данных");
+        }
+
+        groupsBase.get(groupScreenName).updateLastPostDate(newLastPostDate);
     }
 }

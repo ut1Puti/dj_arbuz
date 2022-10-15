@@ -58,7 +58,6 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
                 sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
-            } catch (NoGroupException ignored) {
             } catch (ApiException | ClientException e) {
                 throw new RuntimeException(e);
             }
