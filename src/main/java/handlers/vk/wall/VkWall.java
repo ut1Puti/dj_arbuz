@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -49,26 +50,36 @@ public class VkWall extends Wall {
     }
 
     /**
+     * Метод получающий новые посты из групп в базе данных
      *
-     *
-     * @param groupBase
-     * @param groupScreenName
-     * @param vkAppUser
-     * @return
-     * @throws ClientException
-     * @throws ApiException
+     * @param groupBase - база данных
+     * @param groupScreenName - название группы в базе данных
+     * @param vkAppUser - пользователь вызвавший метод
+     * @return список постов в группе в виде строк
+     * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
      */
     public Optional<List<String>> getNewPosts(GroupsStorage groupBase, String groupScreenName, ServiceActor vkAppUser)
             throws ClientException, ApiException {
         final int amountOfPosts = 100;
-        int dateOfLastGotPost = groupBase.getGroupLastPostDate(groupScreenName);
-        Stream<WallpostFull> appFindGroupPostsStream = getPosts(
-                groupScreenName, amountOfPosts, vkAppUser
-        ).stream().filter(appFindGroupPost -> appFindGroupPost.getDate() > dateOfLastGotPost);
-        List<WallpostFull> list = appFindGroupPostsStream.toList();
-        list.stream().max(Comparator.comparing(Wallpost::getDate))
-                .ifPresent(wallpostFull -> groupBase.updateGroupLastPost(groupScreenName, wallpostFull.getDate()));
-        List<String> groupsFromDataBaseFindPosts = new ArrayList<>(createGroupPostsStrings(list));
+        int lastPostDate = groupBase.getGroupLastPostDate(groupScreenName);
+        List<WallpostFull> appFindPosts = new ArrayList<>();
+        int newLastPostDate = lastPostDate;
+        for (WallpostFull appFindPost : getPosts(groupScreenName, amountOfPosts, vkAppUser)) {
+            int appFindPostDate = appFindPost.getDate();
+
+            if (appFindPostDate > lastPostDate) {
+                appFindPosts.add(appFindPost);
+
+                if (appFindPostDate > newLastPostDate) {
+                    newLastPostDate = appFindPostDate;
+                }
+
+            }
+
+        }
+        groupBase.updateGroupLastPost(groupScreenName, newLastPostDate);
+        List<String> groupsFromDataBaseFindPosts = createGroupPostsStrings(appFindPosts);
         return groupsFromDataBaseFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupsFromDataBaseFindPosts);
     }
 

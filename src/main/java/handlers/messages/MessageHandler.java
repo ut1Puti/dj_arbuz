@@ -52,11 +52,10 @@ public class MessageHandler {
      * Метод определяющий команды в сообщении пользователя и возвращающий ответ
      *
      * @param message          - сообщение пользователя
-     * @param callingBotThread - бот из которого был вызван метод
+     * @param botThread - бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
      */
-    public static MessageHandlerResponse executeMessage(String message, String telegramUserId,
-                                                        Stoppable callingBotThread) {
+    public static MessageHandlerResponse executeMessage(String message, String telegramUserId, Stoppable botThread) {
         String[] commandAndArgs = message.split(" ", 2);
 
         if (groupsBase == null) {
@@ -72,7 +71,7 @@ public class MessageHandler {
                     return getAuthResponse();
                 }
                 case "/stop" -> {
-                    return getStopResponse(callingBotThread);
+                    return getStopResponse(botThread);
                 }
             }
         }
@@ -151,13 +150,13 @@ public class MessageHandler {
     /**
      * Метод формирующий ответ на команду /stop
      *
-     * @param callingBotThread - бот вызвавший метод
+     * @param botThread - бот вызвавший метод
      * @return ответ на /stop содержит STOP_INFO
      */
-    private static MessageHandlerResponse getStopResponse(Stoppable callingBotThread) {
+    private static MessageHandlerResponse getStopResponse(Stoppable botThread) {
 
-        if (callingBotThread.isWorking()) {
-            callingBotThread.stopWithInterrupt();
+        if (botThread.isWorking()) {
+            botThread.stopWithInterrupt();
         }
 
         return new MessageHandlerResponse(BotTextResponse.STOP_INFO);

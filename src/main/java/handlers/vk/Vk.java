@@ -147,13 +147,13 @@ public class Vk implements CreateUser {
     }
 
     /**
+     * Метод обертка для получения новых постов из группы в базе данных
      *
-     *
-     * @param groupsStorage
-     * @param groupScreenName
-     * @return
-     * @throws ClientException
-     * @throws ApiException
+     * @param groupsStorage - база данных
+     * @param groupScreenName - название группы в базе данных
+     * @return список постов в группе в виде строк
+     * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
      */
     public Optional<List<String>> getNewPosts(GroupsStorage groupsStorage, String groupScreenName)
             throws ClientException, ApiException {

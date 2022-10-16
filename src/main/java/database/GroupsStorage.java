@@ -43,8 +43,8 @@ public class GroupsStorage {
      * @param userId  - Айди пользователя
      */
     private boolean addOldGroup(String groupId, String userId) {
-        if (!groupsBase.get(groupId).getSubscribedUsersId().contains(userId)) {
-            groupsBase.get(groupId).getSubscribedUsersId().add(userId);
+        if (!groupsBase.get(groupId).contains(userId)) {
+            groupsBase.get(groupId).addSubscriber(userId);
             return true;
         }
         return false;
@@ -149,7 +149,7 @@ public class GroupsStorage {
         Set<String> userSubscribedGroups = new HashSet<>();
         for (Entry<String, GroupRelatedData> groupNameAndSubscribers : groupsBase.entrySet()) {
 
-            if (groupNameAndSubscribers.getValue().getSubscribedUsersId().contains(userId)) {
+            if (groupNameAndSubscribers.getValue().contains(userId)) {
                 userSubscribedGroups.add(groupNameAndSubscribers.getKey());
             }
 
@@ -157,6 +157,13 @@ public class GroupsStorage {
         return userSubscribedGroups;
     }
 
+    /**
+     * Метод получающий дату последнего поста для группы по названию
+     *
+     * @param groupScreenName - название группы
+     * @return дату последнего поста
+     * @throws IllegalArgumentException - возникает при отсутствии группы по аргументу
+     */
     public int getGroupLastPostDate(String groupScreenName) {
 
         if (!groupsBase.containsKey(groupScreenName)) {
@@ -166,6 +173,13 @@ public class GroupsStorage {
         return groupsBase.get(groupScreenName).getLastPostDate();
     }
 
+    /**
+     * Метод обновляющий дату последнего поста для группы по названию
+     *
+     * @param groupScreenName - название группы
+     * @param newLastPostDate - новая дата последнего поста для группы
+     * @throws IllegalArgumentException - возникает при отсутствии группы по аргументу
+     */
     public void updateGroupLastPost(String groupScreenName, int newLastPostDate) {
 
         if (!groupsBase.containsKey(groupScreenName)) {
