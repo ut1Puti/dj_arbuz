@@ -219,7 +219,7 @@ public class MessageHandler {
      */
     private static MessageHandlerResponse subscribeTo(String groupName, User user) {
         try {
-            return new MessageHandlerResponse(vk.subscribeTo(groupName, user).getSubscribeMessage());
+            return new MessageHandlerResponse(vk.subscribeTo(groupsBase, groupName, user).getSubscribeMessage());
         } catch (ApiAuthException e) {
             return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {

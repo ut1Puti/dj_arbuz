@@ -40,18 +40,21 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
         working = true;
         while (working && !isInterrupted()) {
             try {
-                Optional<List<String>> threadNewPosts = vk.getNewPosts(groupsBase);
+                for (String groupScreenName : groupsBase.getUserSubscribedGroups(consoleBotUserId)) {
+                    Optional<List<String>> threadNewPosts = vk.getNewPosts(groupsBase, groupScreenName);
 
-                if (threadNewPosts.isPresent()) {
-                    List<String> threadFindNewPosts = threadNewPosts.get();
-                    for (int i = 0; i < threadFindNewPosts.size(); i++) {
-                        try {
-                            synchronized (newPostsQueue) {
-                                newPostsQueue.add(threadFindNewPosts.get(i));
-                                continue;
+                    if (threadNewPosts.isPresent()) {
+                        List<String> threadFindNewPosts = threadNewPosts.get();
+                        for (int i = 0; i < threadFindNewPosts.size(); i++) {
+                            try {
+                                synchronized (newPostsQueue) {
+                                    newPostsQueue.add(threadFindNewPosts.get(i));
+                                    continue;
+                                }
+                            } catch (IllegalStateException ignored) {
                             }
-                        } catch (IllegalStateException ignored) {}
-                        i--;
+                            i--;
+                        }
                     }
                 }
 

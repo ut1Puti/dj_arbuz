@@ -123,9 +123,9 @@ public class Vk implements CreateUser {
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public SubscribeStatus subscribeTo(String userReceivedGroupName, User userCalledMethod)
+    public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, User userCalledMethod)
             throws ApiException, NoGroupException, ClientException {
-        return groups.subscribeTo(userReceivedGroupName, userCalledMethod);
+        return groups.subscribeTo(groupBase, userReceivedGroupName, userCalledMethod);
     }
 
     /**
@@ -135,9 +135,9 @@ public class Vk implements CreateUser {
      * @param userReceivedGroupName - имя группы
      * @param userCalledMethod      - пользователь вызвавший метод
      * @return возвращает последние amountOfPosts постов
-     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
+     * @throws NoGroupException         - возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
      * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
      */
@@ -150,26 +150,13 @@ public class Vk implements CreateUser {
      *
      *
      * @param groupsStorage
+     * @param groupScreenName
      * @return
      * @throws ClientException
      * @throws ApiException
      */
-    public Optional<List<String>> getNewPosts(GroupsStorage groupsStorage)
+    public Optional<List<String>> getNewPosts(GroupsStorage groupsStorage, String groupScreenName)
             throws ClientException, ApiException {
-        return wall.getNewPosts(groupsStorage, vkApp);
-    }
-
-    /**
-     * Метод для получения новых постов со стены
-     *
-     * @param userReceivedGroupName - название группы
-     * @param dateOfLastGotPost     - дата последнего просмотренного поста
-     * @return возвращает непросмотренные посты
-     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
-     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
-     */
-    public Optional<List<String>> getNewPosts(String userReceivedGroupName, int dateOfLastGotPost)
-            throws ClientException, ApiException {
-        return wall.getNewPosts(userReceivedGroupName, dateOfLastGotPost, vkApp);
+        return wall.getNewPosts(groupsStorage, groupScreenName, vkApp);
     }
 }

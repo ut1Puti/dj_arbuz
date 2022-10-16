@@ -25,11 +25,6 @@ import java.util.Map;
  */
 public class VkGroups extends Groups {
     /**
-     * Поле хранилища данных о группах и пользователях
-     */
-    private GroupsStorage dataBase = null;
-
-    /**
      * Конструктор унаследованный от родительского класс
      *
      * @param client - клиент vk
@@ -101,7 +96,7 @@ public class VkGroups extends Groups {
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public SubscribeStatus subscribeTo(String groupName, User userCalledMethod)
+    public SubscribeStatus subscribeTo(GroupsStorage dataBase, String groupName, User userCalledMethod)
             throws ApiException, NoGroupException, ClientException {
         Group userFindGroup = searchGroup(groupName, userCalledMethod);
 

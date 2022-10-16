@@ -52,50 +52,24 @@ public class VkWall extends Wall {
      *
      *
      * @param groupBase
+     * @param groupScreenName
      * @param vkAppUser
      * @return
      * @throws ClientException
      * @throws ApiException
-     * @throws IllegalArgumentException - возникает при получении кол-ва постов большего, чем можно получить(max 100)
      */
-    public Optional<List<String>> getNewPosts(GroupsStorage groupBase, ServiceActor vkAppUser)
+    public Optional<List<String>> getNewPosts(GroupsStorage groupBase, String groupScreenName, ServiceActor vkAppUser)
             throws ClientException, ApiException {
-        List<String> groupsFromDataBaseFindPosts = new ArrayList<>();
         final int amountOfPosts = 100;
-        for (String groupScreenNameFromDatabase : groupBase.getGroups()) {
-            int dateOfLastGotPost = groupBase.getGroupLastPostDate(groupScreenNameFromDatabase);
-            Stream<WallpostFull> appFindGroupPostsStream = getPosts(
-                    groupScreenNameFromDatabase, amountOfPosts, vkAppUser
-            ).stream().filter(appFindGroupPost -> appFindGroupPost.getDate() > dateOfLastGotPost);
-            List<WallpostFull> list = appFindGroupPostsStream.toList();
-            list.stream().max(Comparator.comparing(Wallpost::getDate))
-                    .ifPresent(wallpostFull -> groupBase.updateGroupLastPost(groupScreenNameFromDatabase, wallpostFull.getDate()));
-            groupsFromDataBaseFindPosts.addAll(createGroupPostsStrings(list));
-        }
+        int dateOfLastGotPost = groupBase.getGroupLastPostDate(groupScreenName);
+        Stream<WallpostFull> appFindGroupPostsStream = getPosts(
+                groupScreenName, amountOfPosts, vkAppUser
+        ).stream().filter(appFindGroupPost -> appFindGroupPost.getDate() > dateOfLastGotPost);
+        List<WallpostFull> list = appFindGroupPostsStream.toList();
+        list.stream().max(Comparator.comparing(Wallpost::getDate))
+                .ifPresent(wallpostFull -> groupBase.updateGroupLastPost(groupScreenName, wallpostFull.getDate()));
+        List<String> groupsFromDataBaseFindPosts = new ArrayList<>(createGroupPostsStrings(list));
         return groupsFromDataBaseFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupsFromDataBaseFindPosts);
-    }
-
-    /**
-     * Метод получает новые посты в группе по названию группы и дате последнего поста
-     *
-     * @param groupScreenName   - имя группы
-     * @param vkAppUser         - пользователь в виде нашего приложения в vk
-     * @param dateOfLastGotPost - дата последнего поста полученного из этой группы
-     * @return список новых постов в группе, max = 100
-     * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
-     * @throws ApiAuthException - возникает при необходимости продлить токен путем повторной авторизации
-     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
-     * @throws IllegalArgumentException - возникает при получении кол-ва постов большего, чем можно получить(max 100)
-     */
-    public Optional<List<String>> getNewPosts(String groupScreenName, int dateOfLastGotPost, ServiceActor vkAppUser)
-            throws ApiException, ClientException {
-        final int amountOfPosts = 100;
-        List<WallpostFull> appFindGroupPosts = getPosts(groupScreenName, amountOfPosts, vkAppUser)
-                .stream()
-                .filter(appFindGroupPost -> appFindGroupPost.getDate() > dateOfLastGotPost)
-                .toList();
-        List<String> groupFindPosts = createGroupPostsStrings(appFindGroupPosts);
-        return groupFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupFindPosts);
     }
 
     /**
@@ -105,10 +79,10 @@ public class VkWall extends Wall {
      * @param userReceivedGroupName - имя группы
      * @param userCalledMethod      - пользователь вызвавший метод
      * @return текст указанного кол-ва постов, а также изображения и ссылки, если они есть в посте
-     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
-     * @throws ApiAuthException - возникает при необходимости продлить токен путем повторной авторизации
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ApiAuthException         - возникает при необходимости продлить токен путем повторной авторизации
+     * @throws NoGroupException         - возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
      * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
      */
@@ -128,7 +102,7 @@ public class VkWall extends Wall {
      * @param amountOfPosts    - кол-во постов
      * @return список постов в представлении вк
      * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
-     * @throws ApiAuthException - возникает при необходимости продлить токен путем повторной авторизации
+     * @throws ApiAuthException         - возникает при необходимости продлить токен путем повторной авторизации
      * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
      * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
