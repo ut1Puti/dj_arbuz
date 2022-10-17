@@ -3,6 +3,7 @@ package handlers.notifcations;
 import bots.telegram.TelegramBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
+import handlers.vk.groups.NoGroupException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 

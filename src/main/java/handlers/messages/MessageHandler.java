@@ -2,6 +2,7 @@ package handlers.messages;
 
 import bots.BotTextResponse;
 import stoppable.Stoppable;
+import bots.console.ConsoleBot;
 import handlers.vk.groups.NoGroupException;
 import handlers.vk.Vk;
 import user.User;
@@ -12,6 +13,10 @@ import com.vk.api.sdk.exceptions.ApiAuthException;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import java.util.NoSuchElementException;
+import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
+import com.vk.api.sdk.exceptions.ClientException;
+import java.util.NoSuchElementException;
+import java.util.List;
 
 /**
  * Класс утилитных методов создающий ответы на сообщения пользователя

@@ -163,7 +163,6 @@ public class GroupsStorage {
      *
      * @param groupScreenName - название группы
      * @return дату последнего поста
-     * @throws IllegalArgumentException - возникает при отсутствии группы по аргументу
      */
     public Optional<Integer> getGroupLastPostDate(String groupScreenName) {
 
@@ -179,7 +178,6 @@ public class GroupsStorage {
      *
      * @param groupScreenName - название группы
      * @param newLastPostDate - новая дата последнего поста для группы
-     * @throws IllegalArgumentException - возникает при отсутствии группы по аргументу
      */
     public void updateGroupLastPost(String groupScreenName, int newLastPostDate) {
 

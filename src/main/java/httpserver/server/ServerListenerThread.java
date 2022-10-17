@@ -91,8 +91,6 @@ public class ServerListenerThread extends StoppableThread {
                             if (!requestParameters.isBlank()) {
                                 isOffered = getParameter.offer(
                                         requestParameters, oneMinutesInMilliseconds, TimeUnit.MILLISECONDS
-                                );
-                            }
 
                             sendFileFromServer(isOffered, fileName.toString(), outputStream);
                         }

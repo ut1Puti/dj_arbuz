@@ -19,6 +19,7 @@ public class User extends UserActor {
      *
      * @param vkId      - id пользователя в vk
      * @param accessToken - токен для доступа к vk api
+     * @param telegramId - id пользователя в телеграме
      */
     public User(Integer vkId, String accessToken, String telegramId) {
         super(vkId, accessToken);

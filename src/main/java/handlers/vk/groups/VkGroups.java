@@ -37,6 +37,7 @@ public class VkGroups extends Groups {
      * Метод, который ищет все группы по запросу
      *
      * @param groupName         - запрос
+     * @param groupName        - запрос
      * @param userCallingMethod - пользователь сделавший запрос
      * @return список групп полученных по запросу
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
@@ -62,6 +63,7 @@ public class VkGroups extends Groups {
      * Метод, который ищет подтвержденные группы по запросу
      *
      * @param groupName         - запрос
+     * @param groupName        - запрос
      * @param userCallingMethod - пользователь сделавший запрос
      * @return верифицированную группу
      * если групп оказалось больше одной возвращает с большим числом подписчиков
@@ -87,6 +89,7 @@ public class VkGroups extends Groups {
      * Метод подписывающий пользователя на группу по переданной строке
      *
      * @param groupName         - название группы
+     * @param groupName        - название группы
      * @param userCallingMethod - пользователь вызвавший метод
      * @return статус подписки на группу, SUBSCRIBED - означает что пользователь успешно подписан,
      * ALREADY_SUBSCRIBED - сообщает, что пользователь уже подписан на эту группу,
@@ -120,6 +123,7 @@ public class VkGroups extends Groups {
      * @param userFindGroups        - группы найденые по подстроке
      * @param userReceivedGroupName - название группы
      * @param userCallingMethod     - пользователь вызвавший метод
+     * @param userCallingMethod      - пользователь вызвавший метод
      * @return группу соответсвующую подстроке
      */
     private Group chooseGroup(List<Group> userFindGroups, String userReceivedGroupName, User userCallingMethod) {
