@@ -85,6 +85,7 @@ public class ServerListenerThread extends StoppableThread {
 
                             }
                             String requestParameters = requestParametersBuilder.toString();
+
                             boolean isOffered = false;
 
                             if (!requestParameters.isBlank()) {

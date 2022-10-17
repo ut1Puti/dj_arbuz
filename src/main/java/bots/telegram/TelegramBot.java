@@ -7,12 +7,13 @@ import database.UserStorage;
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerResponse;
 import handlers.notifcations.NotificationsPuller;
+import user.User;
+
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import user.User;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 public class TelegramBot extends TelegramLongPollingBot implements Stoppable {

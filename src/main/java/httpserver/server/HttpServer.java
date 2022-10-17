@@ -7,7 +7,7 @@ import java.net.ServerSocket;
  * Класс http сервера
  *
  * @author Кедровских Олег
- * @version 0.2
+ * @version 1.0
  */
 public class HttpServer {
     /**

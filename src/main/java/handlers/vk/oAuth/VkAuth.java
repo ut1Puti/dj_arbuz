@@ -29,6 +29,7 @@ public class VkAuth extends OAuth implements CreateUser {
     /**
      * Конструктор - создает экземпляр класса
      *
+<<<<<<< HEAD
      * @param client                     - клиент vk
      * @param vkAppConfigurationFilePath - путь до файла с конфигурацией
      */

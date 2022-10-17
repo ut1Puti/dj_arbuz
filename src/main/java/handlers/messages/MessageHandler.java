@@ -1,26 +1,27 @@
 package handlers.messages;
 
 import bots.BotTextResponse;
-import com.vk.api.sdk.exceptions.ApiAuthException;
 import stoppable.Stoppable;
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
-import com.vk.api.sdk.exceptions.ClientException;
+import bots.console.ConsoleBot;
 import handlers.vk.groups.NoGroupException;
 import handlers.vk.Vk;
 import user.User;
-
-import java.util.NoSuchElementException;
-
 import database.GroupsStorage;
 import database.UserStorage;
+
+import com.vk.api.sdk.exceptions.ApiAuthException;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
+import com.vk.api.sdk.exceptions.ClientException;
+import java.util.NoSuchElementException;
+import java.util.List;
 
 /**
  * Класс утилитных методов создающий ответы на сообщения пользователя
  *
  * @author Кедровских Олег
  * @author Щеголев Андрей
- * @version 1.8
+ * @version 2.0
  */
 public class MessageHandler {
     /**

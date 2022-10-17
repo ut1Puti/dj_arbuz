@@ -21,6 +21,7 @@ public class NoGroupException extends Exception {
      *
      * @param groupId - id группы
      */
+
     public NoGroupException(int groupId) {
         super("Группы с id " + groupId + " не существует");
     }

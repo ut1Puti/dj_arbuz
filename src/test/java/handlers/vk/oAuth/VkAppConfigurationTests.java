@@ -1,6 +1,5 @@
 package handlers.vk.oAuth;
 
-import handlers.vk.oAuth.VkAuthConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -36,7 +35,7 @@ public class VkAppConfigurationTests {
     }
 
     /**
-     * Метод проверяет обработку конструктором некоректного пути до файла
+     * Метод проверяет обработку конструктором некорректного пути до файла
      */
     @Test
     public void testConstructorWithIncorrectFilePath() {
@@ -50,12 +49,12 @@ public class VkAppConfigurationTests {
     }
 
     /**
-     * Метод проверяющий обработку в конструкторе, неправильно записаных в файле ключей
+     * Метод проверяющий обработку в конструкторе, неправильно записанных в файле ключей
      *
      * @param incorrectKeyName         - неправильный ключ
      * @param incorrectDataKeyFilePath - путь до файла с неправильным ключом
      */
-    @ParameterizedTest(name = "Некоректный ключ {0}, путь до файла {1}")
+    @ParameterizedTest(name = "Некорректный ключ {0}, путь до файла {1}")
     @MethodSource("incorrectDataKeyNameData")
     public void testConstructorWithIncorrectDataKeyName(String incorrectKeyName, String incorrectDataKeyFilePath) {
         String expectedExceptionMessage = "Нет " + incorrectKeyName + " элемента в файле: " + incorrectDataKeyFilePath;
@@ -69,7 +68,7 @@ public class VkAppConfigurationTests {
     /**
      * Метод создающий данные для тестов чтения данных по неправильному ключу
      *
-     * @return stream некоректно записаных в файле ключей и путь до этих файлов
+     * @return stream некорректно записанных в файле ключей и путь до этих файлов
      */
     private static Stream<Arguments> incorrectDataKeyNameData() {
         return Stream.of(

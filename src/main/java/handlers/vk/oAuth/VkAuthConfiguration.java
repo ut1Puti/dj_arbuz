@@ -74,5 +74,6 @@ class VkAuthConfiguration {
         if (fileFindElement == null) {
             throw new RuntimeException("Нет " + fileSearchingElementName + " элемента в файле: " + vkAppConfigurationFilePath);
         }
+
     }
 }

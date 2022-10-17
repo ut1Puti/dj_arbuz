@@ -12,7 +12,6 @@ import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.wall.Wallpost;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostFull;
-import database.GroupRelatedData;
 import database.GroupsStorage;
 import handlers.vk.groups.VkGroups;
 import handlers.vk.VkConstants;
@@ -20,11 +19,8 @@ import handlers.vk.groups.NoGroupException;
 import user.User;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Класс для взаимодействия с постами на стене в vk

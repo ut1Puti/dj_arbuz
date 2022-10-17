@@ -12,6 +12,7 @@ import handlers.vk.groups.VkGroups;
 import handlers.vk.oAuth.VkAuth;
 import handlers.vk.wall.VkWall;
 import handlers.vk.groups.SubscribeStatus;
+import com.vk.api.sdk.objects.groups.Group;
 import user.CreateUser;
 import user.User;
 
@@ -34,6 +35,10 @@ public class Vk implements CreateUser {
      * Поле класс позволяющего работать с vk api
      */
     private final VkApiClient vk = new VkApiClient(transportClient);
+    /**
+     * Поле хранилища данных о группах и пользователях
+     */
+    private GroupsStorage dataBase = null;
     /**
      * Поле класса для взаимодействия с группами через vk api
      */
@@ -94,8 +99,8 @@ public class Vk implements CreateUser {
      */
     public String getGroupURL(String userReceivedGroupName, User userCallingMethod)
             throws NoGroupException, ClientException, ApiException {
-        return VkConstants.VK_ADDRESS + groups.searchGroup(userReceivedGroupName, userCallingMethod).getScreenName();
-    }
+                return VkConstants.VK_ADDRESS + groups.searchGroup(userReceivedGroupName, userCallingMethod).getScreenName();
+            }
 
     /**
      * Метод получающий id группы
