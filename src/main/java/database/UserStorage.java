@@ -48,10 +48,6 @@ public class UserStorage{
 
     }
 
-    public Map getBase() {
-        return usersBase;
-    }
-
     public static <String, User> UserStorage getInstance() {
         if (userStorage == null) {
             userStorage = new UserStorage();

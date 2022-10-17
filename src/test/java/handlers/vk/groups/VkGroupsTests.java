@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
  * Класс для тестирования класса для взаимодействия с группами через vk api
  *
  * @author
+ * @version
  */
 public class VkGroupsTests {
     /**

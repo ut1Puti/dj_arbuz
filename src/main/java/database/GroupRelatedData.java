@@ -36,6 +36,26 @@ public class GroupRelatedData {
     }
 
     /**
+     * Констуктор - создает экземпляр класса
+     *
+     * @param lastPostDate - дата последнего поста полученного в группе
+     */
+    public GroupRelatedData(int lastPostDate) {
+        this.lastPostDate = lastPostDate;
+    }
+
+    /**
+     * Констуктор - создает экземпляр класса
+     *
+     * @param subscribedUsersId - подписанные пользователи
+     * @param lastPostDate      - дата последнего поста полученного в группе
+     */
+    public GroupRelatedData(List<String> subscribedUsersId, int lastPostDate) {
+        this.subscribedUsersId = subscribedUsersId;
+        this.lastPostDate = lastPostDate;
+    }
+
+    /**
      * Метод возвращающий подписанных на группу пользователей
      *
      * @return список подписанных пользователей
@@ -58,7 +78,7 @@ public class GroupRelatedData {
      *
      * @param newSubscriberId - id нового подписчика
      */
-    public void addSubscriber(String newSubscriberId) {
+    public void addNewSubscriber(String newSubscriberId) {
         subscribedUsersId.add(newSubscriberId);
     }
 

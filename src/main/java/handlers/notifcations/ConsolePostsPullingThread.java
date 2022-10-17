@@ -55,14 +55,13 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
                             i--;
                         }
                     }
-                }
 
+                }
                 final int oneHourInMilliseconds = 360000;
                 Thread.sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
-            } catch (ApiException | ClientException e) {
-                throw new RuntimeException(e);
+            } catch (ApiException | ClientException ignored) {
             }
         }
         working = false;

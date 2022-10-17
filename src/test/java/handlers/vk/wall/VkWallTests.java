@@ -3,11 +3,17 @@ package handlers.vk.wall;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.Actor;
+import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import database.GroupsStorage;
 import handlers.vk.groups.VkGroups;
+import handlers.vk.oAuth.VkAuth;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -126,5 +132,20 @@ public class VkWallTests {
             return;
         }
         throw new RuntimeException("Тест не пройден, тк не было получено и обработано исключение");
+    }
+
+    /**
+     * Метод тестирующий попытку получить уведомления из группы, которой нет в вк
+     *
+     * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     */
+    @Test
+    public void testNoGroupInDataBase() throws ClientException, ApiException {
+        VkAuth vkAuth = new VkAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
+        ServiceActor appUser = vkAuth.createAppActor();
+        GroupsStorage groupBase = GroupsStorage.getInstance();
+        Optional<List<String>> noPosts = vkWall.getNewPosts(groupBase, "some unknown group", appUser);
+        assertEquals(Optional.empty(), noPosts);
     }
 }

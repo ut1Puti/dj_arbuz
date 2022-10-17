@@ -58,7 +58,13 @@ public class VkWall extends Wall {
     public Optional<List<String>> getNewPosts(GroupsStorage groupBase, String groupScreenName, ServiceActor vkAppUser)
             throws ClientException, ApiException {
         final int amountOfPosts = 100;
-        int lastPostDate = groupBase.getGroupLastPostDate(groupScreenName);
+        Optional<Integer> optionalLastPostDate = groupBase.getGroupLastPostDate(groupScreenName);
+
+        if (optionalLastPostDate.isEmpty()) {
+            return Optional.empty();
+        }
+
+        int lastPostDate = optionalLastPostDate.get();
         List<WallpostFull> appFindPosts = new ArrayList<>();
         int newLastPostDate = lastPostDate;
         for (WallpostFull appFindPost : getPosts(groupScreenName, amountOfPosts, vkAppUser)) {

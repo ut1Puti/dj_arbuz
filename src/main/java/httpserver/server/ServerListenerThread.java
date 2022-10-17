@@ -32,7 +32,7 @@ public class ServerListenerThread extends StoppableThread {
     /**
      * Поле времени ожидания получения get параметров
      */
-    private final int fiveMinutesInMilliseconds = 30000;
+    private final int oneMinutesInMilliseconds = 6000;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -65,7 +65,7 @@ public class ServerListenerThread extends StoppableThread {
                             try {
                                 request = HttpParser.parseRequestLine(inputStream);
                             } catch (HttpParserException e) {
-                                throw new RuntimeException(e);
+                                continue;
                             }
 
                             StringBuilder fileName = new StringBuilder();
@@ -86,11 +86,11 @@ public class ServerListenerThread extends StoppableThread {
                             }
                             String requestParameters = requestParametersBuilder.toString();
 
-                            boolean isOffered = false;
+                            boolean isOffered = true;
 
                             if (!requestParameters.isBlank()) {
                                 isOffered = getParameter.offer(
-                                        requestParameters, fiveMinutesInMilliseconds, TimeUnit.MILLISECONDS
+                                        requestParameters, oneMinutesInMilliseconds, TimeUnit.MILLISECONDS
                                 );
                             }
 
@@ -98,7 +98,7 @@ public class ServerListenerThread extends StoppableThread {
                         }
 
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        continue;
                     } catch (InterruptedException ignored) {
                         break;
                     }
@@ -107,7 +107,7 @@ public class ServerListenerThread extends StoppableThread {
                     HttpServerUtils.closeServerStream(socket);
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                break;
             }
         }
         working = false;
@@ -165,7 +165,7 @@ public class ServerListenerThread extends StoppableThread {
      */
     public String getHttpRequestParameters() {
         try {
-            return getParameter.poll(fiveMinutesInMilliseconds, TimeUnit.MILLISECONDS);
+            return getParameter.poll(oneMinutesInMilliseconds, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             return null;
         }
