@@ -170,40 +170,10 @@ public class VkWall extends Wall {
 
             String postURL = VkConstants.VK_ADDRESS + VkConstants.WALL_ADDRESS +
                     groupPost.getOwnerId() + "_" + groupPost.getId();
-            String postAttachments = getAttachmentsToPost(groupPostAttachments);
             groupFindPosts.add(
-                    postTextBuilder.append(" ").append(postAttachments).append("\n").append(postURL).toString()
+                    postTextBuilder.append("\n").append(postURL).toString()
             );
         }
         return groupFindPosts;
-    }
-
-    /**
-     * Метод добавляющий к посту ссылки на прикрепленные элементы
-     * или сообщающий об их наличии, если добавить их невозможно
-     *
-     * @param groupPostAttachments - доп. материалы прикрепленные к посту
-     */
-    private String getAttachmentsToPost(List<WallpostAttachment> groupPostAttachments) {
-        StringBuilder postAttachments = new StringBuilder();
-        boolean impossibleToLoadAttachment = false;
-        for (WallpostAttachment groupPostAttachment : groupPostAttachments) {
-            String groupPostAttachmentTypeString = groupPostAttachment.getType().toString();
-            switch (groupPostAttachmentTypeString) {
-                case "photo" -> postAttachments.append(groupPostAttachment
-                                .getPhoto().getSizes()
-                                .get(VkConstants.FIRST_ELEMENT_INDEX)
-                                .getUrl())
-                        .append(" ");
-                case "link" -> postAttachments.append(groupPostAttachment.getLink().getUrl()).append(" ");
-                case "audio", "video" -> impossibleToLoadAttachment = true;
-            }
-        }
-
-        if (impossibleToLoadAttachment) {
-            postAttachments.append("\nЕсть файлы, недоступные для отображения на сторонних ресурсах.\n")
-                    .append("Если хотите посмотреть их, перейдите по ссылке");
-        }
-        return postAttachments.toString();
     }
 }
