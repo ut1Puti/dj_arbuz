@@ -48,7 +48,8 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
                                 SendMessage message = new SendMessage(userId, postsAttachments);
                                 try {
                                     telegramBot.execute(message);
-                                } catch (TelegramApiException ignored){}
+                                } catch (TelegramApiException ignored) {
+                                }
                             }
                         }
                     }
@@ -58,8 +59,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
                 sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
-            } catch (ApiException | ClientException e) {
-                throw new RuntimeException(e);
+            } catch (ApiException | ClientException ignored) {
             }
         }
         working = false;

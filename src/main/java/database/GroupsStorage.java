@@ -3,6 +3,7 @@ package database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class GroupsStorage {
     private void addNewGroup(String groupId, String userId) {
         List<String> newList = new LinkedList<>();
         newList.add(userId);
-        groupsBase.put(groupId, new GroupRelatedData(newList));
+        groupsBase.put(groupId, new GroupRelatedData(newList, (int)Instant.now().getEpochSecond()));
     }
 
     /**
@@ -44,7 +45,7 @@ public class GroupsStorage {
      */
     private boolean addOldGroup(String groupId, String userId) {
         if (!groupsBase.get(groupId).contains(userId)) {
-            groupsBase.get(groupId).addSubscriber(userId);
+            groupsBase.get(groupId).addNewSubscriber(userId);
             return true;
         }
         return false;
@@ -162,15 +163,14 @@ public class GroupsStorage {
      *
      * @param groupScreenName - название группы
      * @return дату последнего поста
-     * @throws IllegalArgumentException - возникает при отсутствии группы по аргументу
      */
-    public int getGroupLastPostDate(String groupScreenName) {
+    public Optional<Integer> getGroupLastPostDate(String groupScreenName) {
 
         if (!groupsBase.containsKey(groupScreenName)) {
-            throw new IllegalArgumentException("Группы с названием" + groupScreenName + "нет в базе данных");
+            return Optional.empty();
         }
 
-        return groupsBase.get(groupScreenName).getLastPostDate();
+        return Optional.of(groupsBase.get(groupScreenName).getLastPostDate());
     }
 
     /**
@@ -178,14 +178,24 @@ public class GroupsStorage {
      *
      * @param groupScreenName - название группы
      * @param newLastPostDate - новая дата последнего поста для группы
-     * @throws IllegalArgumentException - возникает при отсутствии группы по аргументу
      */
     public void updateGroupLastPost(String groupScreenName, int newLastPostDate) {
 
         if (!groupsBase.containsKey(groupScreenName)) {
-            throw new IllegalArgumentException("Группы с названием" + groupScreenName + "нет в базе данных");
+            return;
         }
 
         groupsBase.get(groupScreenName).updateLastPostDate(newLastPostDate);
+    }
+
+    /**
+     * Метод проверяющий есть группа в базе данных
+     *
+     * @param groupScreenName - имя группы
+     * @return true - если группа есть
+     * false - если группы нет
+     */
+    public boolean containsGroup(String groupScreenName) {
+        return groupsBase.containsKey(groupScreenName);
     }
 }

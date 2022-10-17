@@ -56,7 +56,7 @@ public class HttpParser {
      * @throws IOException         - возникает при ошибке чтения из потока
      * @throws HttpParserException - возникает при ошибках в запросе
      */
-    public static void parseRequestLine(InputStreamReader reader, HttpRequest request) throws IOException, HttpParserException {
+    private static void parseRequestLine(InputStreamReader reader, HttpRequest request) throws IOException, HttpParserException {
         boolean isNextMethod = true;
         boolean isNextRequestTarget = false;
         StringBuilder nextPartOfRequest = new StringBuilder();
@@ -132,7 +132,9 @@ public class HttpParser {
 
         int _byte;
         while ((_byte = reader.read()) >= 0) {
+
             if (_byte == CR) {
+
                 if ((_byte = reader.read()) == LF) {
 
                     if (secondIteration) {
@@ -146,6 +148,7 @@ public class HttpParser {
                     isKey = true;
                     continue;
                 }
+
             }
 
             secondIteration = false;

@@ -48,17 +48,23 @@ public class VkWall extends Wall {
     /**
      * Метод получающий новые посты из групп в базе данных
      *
-     * @param groupBase - база данных
+     * @param groupBase       - база данных
      * @param groupScreenName - название группы в базе данных
-     * @param vkAppUser - пользователь вызвавший метод
+     * @param vkAppUser       - пользователь вызвавший метод
      * @return список постов в группе в виде строк
-     * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
-     * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
     public Optional<List<String>> getNewPosts(GroupsStorage groupBase, String groupScreenName, ServiceActor vkAppUser)
             throws ClientException, ApiException {
         final int amountOfPosts = 100;
-        int lastPostDate = groupBase.getGroupLastPostDate(groupScreenName);
+        Optional<Integer> optionalLastPostDate = groupBase.getGroupLastPostDate(groupScreenName);
+
+        if (optionalLastPostDate.isEmpty()) {
+            return Optional.empty();
+        }
+
+        int lastPostDate = optionalLastPostDate.get();
         List<WallpostFull> appFindPosts = new ArrayList<>();
         int newLastPostDate = lastPostDate;
         for (WallpostFull appFindPost : getPosts(groupScreenName, amountOfPosts, vkAppUser)) {
@@ -84,7 +90,7 @@ public class VkWall extends Wall {
      *
      * @param amountOfPosts         - кол-во постов
      * @param userReceivedGroupName - имя группы
-     * @param userCallingMethod      - пользователь вызвавший метод
+     * @param userCallingMethod     - пользователь вызвавший метод
      * @return текст указанного кол-ва постов, а также изображения и ссылки, если они есть в посте
      * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
      * @throws ApiAuthException         - возникает при необходимости продлить токен путем повторной авторизации
@@ -170,40 +176,10 @@ public class VkWall extends Wall {
 
             String postURL = VkConstants.VK_ADDRESS + VkConstants.WALL_ADDRESS +
                     groupPost.getOwnerId() + "_" + groupPost.getId();
-            String postAttachments = getAttachmentsToPost(groupPostAttachments);
             groupFindPosts.add(
-                    postTextBuilder.append(" ").append(postAttachments).append("\n").append(postURL).toString()
+                    postTextBuilder.append("\n").append(postURL).toString()
             );
         }
         return groupFindPosts;
-    }
-
-    /**
-     * Метод добавляющий к посту ссылки на прикрепленные элементы
-     * или сообщающий об их наличии, если добавить их невозможно
-     *
-     * @param groupPostAttachments - доп. материалы прикрепленные к посту
-     */
-    private String getAttachmentsToPost(List<WallpostAttachment> groupPostAttachments) {
-        StringBuilder postAttachments = new StringBuilder();
-        boolean impossibleToLoadAttachment = false;
-        for (WallpostAttachment groupPostAttachment : groupPostAttachments) {
-            String groupPostAttachmentTypeString = groupPostAttachment.getType().toString();
-            switch (groupPostAttachmentTypeString) {
-                case "photo" -> postAttachments.append(groupPostAttachment
-                                .getPhoto().getSizes()
-                                .get(VkConstants.FIRST_ELEMENT_INDEX)
-                                .getUrl())
-                        .append(" ");
-                case "link" -> postAttachments.append(groupPostAttachment.getLink().getUrl()).append(" ");
-                case "audio", "video" -> impossibleToLoadAttachment = true;
-            }
-        }
-
-        if (impossibleToLoadAttachment) {
-            postAttachments.append("\nЕсть файлы, недоступные для отображения на сторонних ресурсах.\n")
-                    .append("Если хотите посмотреть их, перейдите по ссылке");
-        }
-        return postAttachments.toString();
     }
 }

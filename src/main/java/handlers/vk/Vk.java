@@ -91,6 +91,7 @@ public class Vk implements CreateUser {
      * Метод получающий ссылку на группу в vk
      *
      * @param userReceivedGroupName - Название группы
+     * @param userCallingMethod     - пользователя
      * @param userCallingMethod      - пользователя
      * @return возвращает ссылку на группу в vk
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
@@ -99,13 +100,14 @@ public class Vk implements CreateUser {
      */
     public String getGroupURL(String userReceivedGroupName, User userCallingMethod)
             throws NoGroupException, ClientException, ApiException {
-                return VkConstants.VK_ADDRESS + groups.searchGroup(userReceivedGroupName, userCallingMethod).getScreenName();
-            }
+        return VkConstants.VK_ADDRESS + groups.searchGroup(userReceivedGroupName, userCallingMethod).getScreenName();
+    }
 
     /**
      * Метод получающий id группы
      *
      * @param userReceivedGroupName - Название группы
+     * @param userCallingMethod     - пользователя
      * @param userCallingMethod      - пользователя
      * @return возвращает id группы
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
@@ -121,6 +123,7 @@ public class Vk implements CreateUser {
      * Метод для подписки пользователя(сохранение в базу данных id пользователя в телеграмме и группы)
      *
      * @param userReceivedGroupName - Название группы
+     * @param userCallingMethod     - пользователя
      * @param userCallingMethod      - пользователя
      * @return возвращает true - если пользователь только что подписался
      * false - если пользователь уже был подписан
@@ -138,6 +141,7 @@ public class Vk implements CreateUser {
      *
      * @param amountOfPosts         - кол-во постов
      * @param userReceivedGroupName - имя группы
+     * @param userCallingMethod     - пользователь вызвавший метод
      * @param userCallingMethod      - пользователь вызвавший метод
      * @return возвращает последние amountOfPosts постов
      * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
@@ -154,6 +158,11 @@ public class Vk implements CreateUser {
     /**
      * Метод обертка для получения новых постов из группы в базе данных
      *
+     * @param groupsStorage   - база данных
+     * @param groupScreenName - название группы в базе данных
+     * @return список постов в группе в виде строк
+     * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      * @param groupsStorage - база данных
      * @param groupScreenName - название группы в базе данных
      * @return список постов в группе в виде строк

@@ -36,6 +36,7 @@ public class VkGroups extends Groups {
     /**
      * Метод, который ищет все группы по запросу
      *
+     * @param groupName         - запрос
      * @param groupName        - запрос
      * @param userCallingMethod - пользователь сделавший запрос
      * @return список групп полученных по запросу
@@ -61,6 +62,7 @@ public class VkGroups extends Groups {
     /**
      * Метод, который ищет подтвержденные группы по запросу
      *
+     * @param groupName         - запрос
      * @param groupName        - запрос
      * @param userCallingMethod - пользователь сделавший запрос
      * @return верифицированную группу
@@ -86,6 +88,7 @@ public class VkGroups extends Groups {
     /**
      * Метод подписывающий пользователя на группу по переданной строке
      *
+     * @param groupName         - название группы
      * @param groupName        - название группы
      * @param userCallingMethod - пользователь вызвавший метод
      * @return статус подписки на группу, SUBSCRIBED - означает что пользователь успешно подписан,
@@ -119,6 +122,7 @@ public class VkGroups extends Groups {
      *
      * @param userFindGroups        - группы найденые по подстроке
      * @param userReceivedGroupName - название группы
+     * @param userCallingMethod     - пользователь вызвавший метод
      * @param userCallingMethod      - пользователь вызвавший метод
      * @return группу соответсвующую подстроке
      */
