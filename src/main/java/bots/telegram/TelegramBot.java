@@ -19,6 +19,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
     private final NotificationsPuller notificationsPuller;
 
     public TelegramBot() {
+        //TODO кнопки
         super();
         notificationsPuller = new NotificationsPuller(this);
         notificationsPuller.start();

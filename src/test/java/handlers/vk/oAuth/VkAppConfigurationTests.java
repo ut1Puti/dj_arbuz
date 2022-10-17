@@ -1,4 +1,4 @@
-package dj.arbuz.handlers.vk.oAuth;
+package handlers.vk.oAuth;
 
 import handlers.vk.oAuth.VkAuthConfiguration;
 import org.junit.jupiter.api.Test;

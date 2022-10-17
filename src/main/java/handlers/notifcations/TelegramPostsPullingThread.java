@@ -37,7 +37,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
     @Override
     public void run() {
         working = true;
-        while (working && !isInterrupted()) {
+        while (working) {
             try {
                 for (String groupScreenName : groupsBase.getGroups()) {
                     Optional<List<String>> threadFindNewPosts = vk.getNewPosts(groupsBase, groupScreenName);

@@ -48,7 +48,7 @@ public class ConsoleBotThread extends StoppableThread {
         working = true;
         notificationsPuller.start();
         Scanner userInput = new Scanner(System.in);
-        while (working && !isInterrupted()) {
+        while (working) {
 
             if (userInput.hasNextLine()) {
                 MessageHandlerResponse response = MessageHandler.executeMessage(

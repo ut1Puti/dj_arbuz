@@ -73,6 +73,9 @@ public class MessageHandler {
                 case "/stop" -> {
                     return getStopResponse(botThread);
                 }
+                default -> {
+                    return getUnknownCommandResponse();
+                }
             }
         }
 
@@ -176,7 +179,7 @@ public class MessageHandler {
      *
      * @param groupName - имя группы
      * @param user      - пользователь отправивший сообщение
-     * @return ссылку на верефицированную группу если такая нашлась
+     * @return ссылку на верифицированную группу если такая нашлась
      */
     private static MessageHandlerResponse getGroupURL(String groupName, User user) {
         try {

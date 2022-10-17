@@ -36,6 +36,7 @@ public class NotificationsPuller {
      * Метод запускающий поток ищущий новые посты
      */
     public void start() {
+        //TODO ограничить кол-во уведомлений получаемых пользователей за первый запрос
         postsPullingThread.start();
     }
 

@@ -1,4 +1,4 @@
-package dj.arbuz.handlers.vk.oAuth;
+package handlers.vk.oAuth;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
@@ -21,7 +21,7 @@ public class VkAuthTests {
      */
     private final VkApiClient vk = new VkApiClient(transportClient);
     /**
-     * Плде класса аутентификации пользователя в vk
+     * Поле класса аутентификации пользователя в vk
      */
     private final VkAuth vkAuth = new VkAuth(
             vk, "src/test/java/dj/arbuz/resources/anonsrc/vkconfig.properties"

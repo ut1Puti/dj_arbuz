@@ -86,46 +86,46 @@ public class Vk implements CreateUser {
      * Метод получающий ссылку на группу в vk
      *
      * @param userReceivedGroupName - Название группы
-     * @param userCalledMethod      - пользователя
+     * @param userCallingMethod      - пользователя
      * @return возвращает ссылку на группу в vk
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public String getGroupURL(String userReceivedGroupName, User userCalledMethod)
+    public String getGroupURL(String userReceivedGroupName, User userCallingMethod)
             throws NoGroupException, ClientException, ApiException {
-        return VkConstants.VK_ADDRESS + groups.searchGroup(userReceivedGroupName, userCalledMethod).getScreenName();
+        return VkConstants.VK_ADDRESS + groups.searchGroup(userReceivedGroupName, userCallingMethod).getScreenName();
     }
 
     /**
      * Метод получающий id группы
      *
      * @param userReceivedGroupName - Название группы
-     * @param userCalledMethod      - пользователя
+     * @param userCallingMethod      - пользователя
      * @return возвращает id группы
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public String getGroupId(String userReceivedGroupName, User userCalledMethod)
+    public String getGroupId(String userReceivedGroupName, User userCallingMethod)
             throws NoGroupException, ClientException, ApiException {
-        return String.valueOf(groups.searchGroup(userReceivedGroupName, userCalledMethod).getId());
+        return String.valueOf(groups.searchGroup(userReceivedGroupName, userCallingMethod).getId());
     }
 
     /**
      * Метод для подписки пользователя(сохранение в базу данных id пользователя в телеграмме и группы)
      *
      * @param userReceivedGroupName - Название группы
-     * @param userCalledMethod      - пользователя
+     * @param userCallingMethod      - пользователя
      * @return возвращает true - если пользователь только что подписался
      * false - если пользователь уже был подписан
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, User userCalledMethod)
+    public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, User userCallingMethod)
             throws ApiException, NoGroupException, ClientException {
-        return groups.subscribeTo(groupBase, userReceivedGroupName, userCalledMethod);
+        return groups.subscribeTo(groupBase, userReceivedGroupName, userCallingMethod);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Vk implements CreateUser {
      *
      * @param amountOfPosts         - кол-во постов
      * @param userReceivedGroupName - имя группы
-     * @param userCalledMethod      - пользователь вызвавший метод
+     * @param userCallingMethod      - пользователь вызвавший метод
      * @return возвращает последние amountOfPosts постов
      * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException         - возникает если не нашлась группа по заданной подстроке
@@ -141,9 +141,9 @@ public class Vk implements CreateUser {
      * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
      */
-    public Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCalledMethod)
+    public Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCallingMethod)
             throws NoGroupException, ClientException, ApiException {
-        return wall.getLastPosts(userReceivedGroupName, amountOfPosts, userCalledMethod);
+        return wall.getLastPosts(userReceivedGroupName, amountOfPosts, userCallingMethod);
     }
 
     /**

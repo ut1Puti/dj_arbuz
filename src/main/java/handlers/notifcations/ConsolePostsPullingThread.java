@@ -38,7 +38,7 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
     @Override
     public void run() {
         working = true;
-        while (working && !isInterrupted()) {
+        while (working) {
             try {
                 for (String groupScreenName : groupsBase.getUserSubscribedGroups(consoleBotUserId)) {
                     Optional<List<String>> threadNewPosts = vk.getNewPosts(groupsBase, groupScreenName);

@@ -88,7 +88,7 @@ public class VkWall extends Wall {
      *
      * @param amountOfPosts         - кол-во постов
      * @param userReceivedGroupName - имя группы
-     * @param userCalledMethod      - пользователь вызвавший метод
+     * @param userCallingMethod      - пользователь вызвавший метод
      * @return текст указанного кол-ва постов, а также изображения и ссылки, если они есть в посте
      * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
      * @throws ApiAuthException         - возникает при необходимости продлить токен путем повторной авторизации
@@ -97,10 +97,10 @@ public class VkWall extends Wall {
      * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
      */
-    public Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCalledMethod)
+    public Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCallingMethod)
             throws ApiException, NoGroupException, ClientException {
-        Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCalledMethod);
-        List<WallpostFull> userFindGroupPosts = getPosts(userFindGroup.getScreenName(), amountOfPosts, userCalledMethod);
+        Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
+        List<WallpostFull> userFindGroupPosts = getPosts(userFindGroup.getScreenName(), amountOfPosts, userCallingMethod);
         List<String> groupFindPosts = createGroupPostsStrings(userFindGroupPosts);
         return groupFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupFindPosts);
     }

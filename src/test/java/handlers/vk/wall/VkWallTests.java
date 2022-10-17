@@ -1,4 +1,4 @@
-package dj.arbuz.handlers.vk.wall;
+package handlers.vk.wall;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;

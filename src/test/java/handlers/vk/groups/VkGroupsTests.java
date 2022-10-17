@@ -1,4 +1,4 @@
-package dj.arbuz.handlers.vk.groups;
+package handlers.vk.groups;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
