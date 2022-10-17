@@ -2,14 +2,10 @@ package handlers.vk.oAuth;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.httpclient.HttpTransportClient;
-import org.junit.jupiter.api.Test;
+import com.vk.api.sdk.httpclient.HttpTransportClient;l
 
 /**
- *
- *
  * @author
- * @version
  */
 public class VkAuthTests {
     /**

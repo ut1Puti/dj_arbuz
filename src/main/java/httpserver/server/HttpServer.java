@@ -79,6 +79,7 @@ public class HttpServer {
     public boolean isWorking() {
         return listenerThread.isWorking();
     }
+
     /**
      * Метод останавливающий сервер
      */

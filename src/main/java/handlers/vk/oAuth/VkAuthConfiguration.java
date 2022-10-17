@@ -64,9 +64,9 @@ class VkAuthConfiguration {
     /**
      * Метод проверяющий, был ли найден элемент в файле
      *
-     * @param fileFindElement          - найденный элемент
-     * @param fileSearchingElementName - ключ, по которому искался элемент
-     * @param vkAppConfigurationFilePath               - путь до файла из которого читались данные
+     * @param fileFindElement            - найденный элемент
+     * @param fileSearchingElementName   - ключ, по которому искался элемент
+     * @param vkAppConfigurationFilePath - путь до файла из которого читались данные
      * @throws RuntimeException - если элемент в данном файле отсутсвовал
      */
     private void wasElementFound(String fileFindElement, String fileSearchingElementName,

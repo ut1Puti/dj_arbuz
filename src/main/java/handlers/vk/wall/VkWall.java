@@ -48,12 +48,12 @@ public class VkWall extends Wall {
     /**
      * Метод получающий новые посты из групп в базе данных
      *
-     * @param groupBase - база данных
+     * @param groupBase       - база данных
      * @param groupScreenName - название группы в базе данных
-     * @param vkAppUser - пользователь вызвавший метод
+     * @param vkAppUser       - пользователь вызвавший метод
      * @return список постов в группе в виде строк
-     * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
-     * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
+     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
      */
     public Optional<List<String>> getNewPosts(GroupsStorage groupBase, String groupScreenName, ServiceActor vkAppUser)
             throws ClientException, ApiException {
@@ -84,7 +84,7 @@ public class VkWall extends Wall {
      *
      * @param amountOfPosts         - кол-во постов
      * @param userReceivedGroupName - имя группы
-     * @param userCallingMethod      - пользователь вызвавший метод
+     * @param userCallingMethod     - пользователь вызвавший метод
      * @return текст указанного кол-ва постов, а также изображения и ссылки, если они есть в посте
      * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
      * @throws ApiAuthException         - возникает при необходимости продлить токен путем повторной авторизации
