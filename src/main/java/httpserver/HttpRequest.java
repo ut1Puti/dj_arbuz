@@ -13,15 +13,15 @@ public class HttpRequest {
     /**
      * Поле запрошенного метода
      */
-    public String method;
+    public String method = null;
     /**
      * Поле запрошенной цели
      */
-    public String requestTarget;
+    public String requestTarget = null;
     /**
      * Поле версии http
      */
-    public String httpVersion;
+    public String httpVersion = null;
     /**
      * Поле headers
      */

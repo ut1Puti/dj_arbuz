@@ -4,6 +4,7 @@ import httpserver.HttpRequest;
 import httpserver.HttpResponse;
 import httpserver.parser.HttpParser;
 import httpserver.parser.HttpParserException;
+import stoppable.StoppableThread;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author Кедровских Олег
  * @version 0.3
  */
-public class ServerListenerThread extends Thread {
+public class ServerListenerThread extends StoppableThread {
     /**
      * Поле серверного сокета, который слушает текущий поток
      */
@@ -47,7 +48,8 @@ public class ServerListenerThread extends Thread {
      */
     @Override
     public void run() {
-        while (serverSocket.isBound() && !Thread.interrupted()) {
+        working = true;
+        while (serverSocket.isBound() && working && !isInterrupted()) {
             try {
                 Socket socket = serverSocket.accept();
                 if (socket.isBound() && socket.isConnected()) {
@@ -83,15 +85,23 @@ public class ServerListenerThread extends Thread {
 
                             }
                             String requestParameters = requestParametersBuilder.toString();
-                            boolean isOffered = getParameter.offer(
-                                    requestParameters, fiveMinutesInMilliseconds, TimeUnit.MILLISECONDS
-                            );
+
+                            boolean isOffered = false;
+
+                            if (!requestParameters.isBlank()) {
+                                isOffered = getParameter.offer(
+                                        requestParameters, fiveMinutesInMilliseconds, TimeUnit.MILLISECONDS
+                                );
+                            }
+
                             sendFileFromServer(isOffered, fileName.toString(), outputStream);
                         }
 
                     } catch (IOException e) {
                         throw new RuntimeException(e);
-                    } catch (InterruptedException ignored) {}
+                    } catch (InterruptedException ignored) {
+                        break;
+                    }
                     HttpServerUtils.closeServerStream(outputStream);
                     HttpServerUtils.closeServerStream(inputStream);
                     HttpServerUtils.closeServerStream(socket);
@@ -100,6 +110,7 @@ public class ServerListenerThread extends Thread {
                 throw new RuntimeException(e);
             }
         }
+        working = false;
     }
 
     /**
@@ -123,6 +134,27 @@ public class ServerListenerThread extends Thread {
             outputStream.write(response.getBytes());
         }
 
+    }
+
+    /**
+     * Метод проверяющий работает ли поток
+     *
+     * @return true - если поток работает
+     * false - если поток завершил работу
+     */
+    @Override
+    public boolean isWorking() {
+        return isAlive() || (working && serverSocket.isBound());
+    }
+
+    /**
+     * Метод останавливающий поток прерывая его
+     */
+    @Override
+    public void stopWithInterrupt() {
+        working = false;
+        interrupt();
+        HttpServerUtils.closeServerStream(serverSocket);
     }
 
     /**

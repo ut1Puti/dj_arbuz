@@ -1,77 +1,53 @@
 package bots.console;
 
-import bots.BotTextResponse;
-import database.UserStorage;
-import handlers.messages.MessageHandler;
-import handlers.messages.MessageHandlerResponse;
-import handlers.notifcations.Notifications;
-import user.User;
-
-import java.util.Scanner;
+import bots.BotUtils;
 
 /**
  * Класс консольного бота
  *
  * @author Кедровских Олег
- * @version 1.6
+ * @version 2.0
  */
 public class ConsoleBot {
     /**
-     * Поле показывающее работает ли бот
+     * Поле id пользователя консольной версии бота
      */
-    private boolean working;
+    private final String defaultConsoleUserId = "-10";
     /**
-     * Поле хранящее пользователя пользующегося ботом
+     * Поле потока обрабатывающего и получающего сообщения пользователей
      */
-    private UserStorage userBase = UserStorage.getInstance();
+    private final ConsoleBotThread consoleBotThread = new ConsoleBotThread(defaultConsoleUserId);
+
+    public static void main(String[] args) {
+        BotUtils.initInstances();
+        ConsoleBot consoleBot = new ConsoleBot();
+        consoleBot.start();
+        while (consoleBot.isWorking()) Thread.onSpinWait();
+        consoleBot.stop();
+        BotUtils.stopInstances();
+    }
+
     /**
-     * Поле класса получающего новые посты
+     * Метод запускающий поток обработки сообщений ботом
      */
-    private final Notifications notifications = new Notifications();
+    public void start() {
+        consoleBotThread.start();
+    }
 
     /**
-     * Метод получающий ответы от пользователя и отправляющая ответы.
-     * Работает до тех пор, пока пользователь не прекратит работу бота.
+     * Метод проверяющий работает ли консольный бот
+     *
+     * @return true - если поток обрабатывающий сообщения пользователя работает
+     * false - если поток обрабатывающий сообщения завершил свою работу
      */
-    public void run() {
-        working = true;
-        notifications.start();
-        Scanner userInput = new Scanner(System.in);
-        while (working) {
-
-            if (userInput.hasNextLine()) {
-                MessageHandlerResponse response = MessageHandler.executeMessage(userInput.nextLine(), "-1", this);
-
-                if (response.hasTextMessage()) {
-                    System.out.println(response.getTextMessage());
-                }
-
-                if (response.hasUpdateUser()) {
-                    User currentUser = response.getUpdateUser().createUser();
-
-                    if (currentUser == null) {
-                        System.out.println(BotTextResponse.AUTH_ERROR);
-                        continue;
-                    }
-
-                    userBase.addInfoUser("-1", currentUser);
-                }
-
-            }
-
-            if (notifications.hasNewPosts()) {
-                notifications.getNewPosts().forEach(newPosts -> newPosts.forEach(System.out::println));
-            }
-
-        }
-        userInput.close();
-        notifications.stop();
+    public boolean isWorking() {
+        return consoleBotThread.isWorking();
     }
 
     /**
      * Метод прекращающая работу бота
      */
     public void stop() {
-        working = false;
+        consoleBotThread.stopWithInterrupt();
     }
 }

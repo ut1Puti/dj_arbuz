@@ -1,6 +1,11 @@
 package handlers.vk.oAuth;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Класс тестирующий VkAppConfiguration
  *
  * @author Кедровских Олег
- * @version 1.0
+ * @version 2.0
  */
 public class VkAppConfigurationTests {
     /**
@@ -17,57 +22,61 @@ public class VkAppConfigurationTests {
     private VkAuthConfiguration appConfiguration;
 
     /**
-     * Проверяет правильность чтения данных из файла
+     * Метод проверяет правильность обработки данных конструктором при правильном пути и правильных ключах
      */
     @Test
-    public void correctPathTest() {
-        appConfiguration = new VkAuthConfiguration("src/test/resources/testanonsrc/vkconfigcorrect.properties");
-        assertEquals(appConfiguration.AUTH_URL, "AUTH_URL");
-        assertEquals(appConfiguration.APP_ID, 2000);
-        assertEquals(appConfiguration.CLIENT_SECRET, "CLIENT_SECRET");
-        assertEquals(appConfiguration.SERVICE_CLIENT_SECRET, "SERVICE_CLIENT_SECRET");
-        assertEquals(appConfiguration.REDIRECT_URL, "REDIRECT_URI");
+    public void testConstructorWithCorrectConfigurationFilePathAndDataKeys() {
+        appConfiguration = new VkAuthConfiguration("src/test/resources/testanonsrc/vkconfig.properties");
+        assertEquals("AUTH_URL", appConfiguration.AUTH_URL);
+        assertEquals(2000, appConfiguration.APP_ID);
+        assertEquals("CLIENT_SECRET", appConfiguration.CLIENT_SECRET);
+        assertEquals("SERVICE_CLIENT_SECRET", appConfiguration.SERVICE_CLIENT_SECRET);
+        assertEquals("REDIRECT_URL", appConfiguration.REDIRECT_URL);
     }
 
     /**
-     * Проверяет данные при ошибке чтения
+     * Метод проверяет обработку конструктором некорректного пути до файла
      */
     @Test
-    public void incorrectPathTest() {
-        boolean error = false;
+    public void testConstructorWithIncorrectFilePath() {
+        String incorrectVkAppConfigurationPath = "src/test/resources/testanonsrc/unknownfile.properties";
+        String expectedExceptionMessage = "Файла по пути " + incorrectVkAppConfigurationPath + " не найдено";
         try {
-            appConfiguration = new VkAuthConfiguration("src/test/resources/testanonsrc/unknownfile.properties");
+            appConfiguration = new VkAuthConfiguration(incorrectVkAppConfigurationPath);
         } catch (RuntimeException e) {
-            error = true;
+            assertEquals(expectedExceptionMessage, e.getMessage());
         }
-        assertTrue(error);
     }
 
     /**
-     * Метод проверяющий appId на ошибки при прочтении данных из файла
+     * Метод проверяющий обработку в конструкторе, неправильно записанных в файле ключей
+     *
+     * @param incorrectKeyName         - неправильный ключ
+     * @param incorrectDataKeyFilePath - путь до файла с неправильным ключом
      */
-    @Test
-    public void incorrectAppIdTest() {
-        boolean error = false;
+    @ParameterizedTest(name = "Некорректный ключ {0}, путь до файла {1}")
+    @MethodSource("incorrectDataKeyNameData")
+    public void testConstructorWithIncorrectDataKeyName(String incorrectKeyName, String incorrectDataKeyFilePath) {
+        String expectedExceptionMessage = "Нет " + incorrectKeyName + " элемента в файле: " + incorrectDataKeyFilePath;
         try {
-            appConfiguration = new VkAuthConfiguration("src/test/resources/testanonsrc/vkconfigincorrectappidname.properties");
+            appConfiguration = new VkAuthConfiguration(incorrectDataKeyFilePath);
         } catch (RuntimeException e) {
-            error = true;
+            assertEquals(expectedExceptionMessage, e.getMessage());
         }
-        assertTrue(error);
     }
 
     /**
-     * Метод проверяющий AUTH_URL, CLIENT_SECRET, REDIRECT_URL на ошибки при прочтении данных из файла
+     * Метод создающий данные для тестов чтения данных по неправильному ключу
+     *
+     * @return stream некорректно записанных в файле ключей и путь до этих файлов
      */
-    @Test
-    public void incorrectStringsTest() {
-        boolean error = false;
-        try {
-            appConfiguration = new VkAuthConfiguration("src/test/resources/testanonsrc/vkconfigincorrectstringsnames.properties");
-        } catch (RuntimeException e) {
-            error = true;
-        }
-        assertTrue(error);
+    private static Stream<Arguments> incorrectDataKeyNameData() {
+        return Stream.of(
+                Arguments.of("authUrl", "src/test/resources/testanonsrc/incorrectAuthUrl.properties"),
+                Arguments.of("appId", "src/test/resources/testanonsrc/incorrectAppId.properties"),
+                Arguments.of("clientSecret", "src/test/resources/testanonsrc/incorrectClientSecret.properties"),
+                Arguments.of("serviceClientSecret", "src/test/resources/testanonsrc/incorrectServiceClientSecret.properties"),
+                Arguments.of("redirectUrl", "src/test/resources/testanonsrc/incorrectRedirectUrl.properties")
+        );
     }
 }

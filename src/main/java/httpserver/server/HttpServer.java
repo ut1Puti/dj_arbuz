@@ -7,7 +7,7 @@ import java.net.ServerSocket;
  * Класс http сервера
  *
  * @author Кедровских Олег
- * @version 0.2
+ * @version 1.0
  */
 public class HttpServer {
     /**
@@ -17,7 +17,7 @@ public class HttpServer {
     /**
      * Поле серверных сокетов
      */
-    private final ServerSocket serverSocket;
+    private ServerSocket serverSocket;
     /**
      * Поле потоков слушающих новые сообщения к сокету
      */
@@ -41,6 +41,7 @@ public class HttpServer {
      * null если экземпляр сервера не был создан
      */
     public static HttpServer getInstance() {
+
         if (server == null) {
             try {
                 server = new HttpServer();
@@ -48,6 +49,7 @@ public class HttpServer {
                 server = null;
             }
         }
+
         return server;
     }
 
@@ -69,11 +71,21 @@ public class HttpServer {
     }
 
     /**
+     * Метод проверяющий работает ли сервер
+     *
+     * @return true - если поток обработки запросов работает
+     * false - если поток обработки запросов не работает
+     */
+    public boolean isWorking() {
+        return listenerThread.isWorking();
+    }
+    /**
      * Метод останавливающий сервер
      */
     public void stop() {
-        listenerThread.interrupt();
+        listenerThread.stopWithInterrupt();
         HttpServerUtils.closeServerStream(serverSocket);
+        serverSocket = null;
         server = null;
     }
 }

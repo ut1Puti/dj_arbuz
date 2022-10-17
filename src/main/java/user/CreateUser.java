@@ -8,5 +8,5 @@ package user;
  */
 @FunctionalInterface
 public interface CreateUser {
-    User createUser();
+    User createUser(String telegramId);
 }
