@@ -39,7 +39,6 @@ public class StoppableThreadTests {
     @AfterEach
     public void stopThreadAfterTest() throws InterruptedException {
         stoppableThread.stopWithInterrupt();
-        stoppableThread.join();
     }
 
     /**

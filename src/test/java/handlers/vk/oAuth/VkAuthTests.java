@@ -2,7 +2,7 @@ package handlers.vk.oAuth;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.httpclient.HttpTransportClient;l
+import com.vk.api.sdk.httpclient.HttpTransportClient;
 
 /**
  * @author
