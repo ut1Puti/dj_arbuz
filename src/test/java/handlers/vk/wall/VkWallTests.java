@@ -8,10 +8,8 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import database.GroupsStorage;
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.httpclient.HttpTransportClient;
 import handlers.vk.groups.VkGroups;
+import handlers.vk.oAuth.VkAuth;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -98,37 +96,6 @@ public class VkWallTests {
         String expectedExceptionMessage = "Кол-во запрашиваемых постов превышает кол-во доступных к получению";
         try {
             vkWall.getPosts(groupScreenName, amountOfPostsMoreThanOneHundred, actor);
-        } catch (IllegalArgumentException e) {
-            assertEquals(expectedExceptionMessage, e.getMessage());
-            return;
-        }
-        throw new RuntimeException("Тест не пройден, тк не было получено и обработано исключение");
-    }
-
-    /**
-     * Метод проверяющий обработку обращения к getLastPosts пользователя не имеющего к этому методу доступу
-     *
-     * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
-     * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
-     */
-    @Test
-    public void testIllegalActorInGetPostsMethod() throws ClientException, ApiException {
-        int amountOfPostsLessOrEqualsOneHundred = 100;
-        String groupScreenName = "some not really interesting in this test name";
-        Actor actor = new Actor() {
-            @Override
-            public String getAccessToken() {
-                return null;
-            }
-
-            @Override
-            public Integer getId() {
-                return null;
-            }
-        };
-        String expectedExceptionMessage = "Этот пользователь не имеет доступа к этому методу";
-        try {
-            vkWall.getPosts(groupScreenName, amountOfPostsLessOrEqualsOneHundred, actor);
         } catch (IllegalArgumentException e) {
             assertEquals(expectedExceptionMessage, e.getMessage());
             return;

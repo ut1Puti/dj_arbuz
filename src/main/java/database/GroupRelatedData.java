@@ -79,6 +79,11 @@ public class GroupRelatedData {
      * @param newSubscriberId - id нового подписчика
      */
     public void addNewSubscriber(String newSubscriberId) {
+
+        if (subscribedUsersId.contains(newSubscriberId)) {
+            return;
+        }
+
         subscribedUsersId.add(newSubscriberId);
     }
 
@@ -88,7 +93,9 @@ public class GroupRelatedData {
      * @param newSubscribersId - список id новых подписчиков
      */
     public void addNewSubscribers(List<String> newSubscribersId) {
-        subscribedUsersId.addAll(newSubscribersId);
+        for (String newSubscriberId : newSubscribersId) {
+            addNewSubscriber(newSubscriberId);
+        }
     }
 
     /**

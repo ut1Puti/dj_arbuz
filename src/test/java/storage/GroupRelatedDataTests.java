@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Класс тестирующий класс данных связаных с группой
@@ -67,5 +68,26 @@ public class GroupRelatedDataTests {
         int lastPostDate = random.nextInt();
         groupRelatedData.updateLastPostDate(lastPostDate);
         assertEquals(lastPostDate, groupRelatedData.getLastPostDate());
+    }
+
+    /**
+     * Метод тестирующий корректность добавления пользователей с одинаковым id
+     */
+    @Test
+    public void testAddUsersWithSameId() {
+        String newUserId1 = "user1";
+        String newUserId2 = "user1";
+        groupRelatedData.addNewSubscribers(Arrays.asList(newUserId1, newUserId2));
+        assertEquals(1, groupRelatedData.getSubscribedUsersId().size());
+    }
+
+    /**
+     * Метод тестирующий метод проверяющий является ли пользователь подписчиком группы
+     */
+    @Test
+    public void testContainsUserId() {
+        String newUserId = "100";
+        groupRelatedData.addNewSubscriber(newUserId);
+        assertTrue(groupRelatedData.contains(newUserId));
     }
 }

@@ -1,8 +1,7 @@
 package handlers.notifcations;
 
 import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
-import handlers.vk.groups.NoGroupException;
+import com.vk.api.sdk.exceptions.ClientException;;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;

@@ -12,7 +12,6 @@ import handlers.vk.groups.VkGroups;
 import handlers.vk.oAuth.VkAuth;
 import handlers.vk.wall.VkWall;
 import handlers.vk.groups.SubscribeStatus;
-import com.vk.api.sdk.objects.groups.Group;
 import user.CreateUser;
 import user.User;
 

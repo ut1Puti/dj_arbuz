@@ -33,13 +33,10 @@ public class StoppableThreadTests {
 
     /**
      * Метод завершающий работу потока после каждого теста
-     *
-     * @throws InterruptedException - возникает при прерывании потока во время ожидания заверщения его работы
      */
     @AfterEach
-    public void stopThreadAfterTest() throws InterruptedException {
+    public void stopThreadAfterTest() {
         stoppableThread.stopWithInterrupt();
-        stoppableThread.join();
     }
 
     /**
