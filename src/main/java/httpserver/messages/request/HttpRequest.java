@@ -17,19 +17,19 @@ public class HttpRequest extends HttpMessage {
     /**
      * Поле запрошенного метода
      */
-    private HttpMethod method = null;
+    private HttpMethod method;
     /**
      * Поле запрошенной цели
      */
-    private HttpRequestTarget requestTarget = null;
+    private HttpRequestTarget requestTarget;
     /**
      * Поле версии в http запросе
      */
-    private String originalHttpVersion = null;
+    private String originalHttpVersion;
     /**
      * Поле лучшей совместимой версии, с этой версией будет отправлен ответ
      */
-    private HttpVersion bestCompatibleHttpVersion = null;
+    private HttpVersion bestCompatibleHttpVersion;
     /**
      * Поле headers
      */

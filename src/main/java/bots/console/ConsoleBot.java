@@ -2,6 +2,8 @@ package bots.console;
 
 import bots.BotUtils;
 
+import java.util.Objects;
+
 /**
  * Класс консольного бота
  *

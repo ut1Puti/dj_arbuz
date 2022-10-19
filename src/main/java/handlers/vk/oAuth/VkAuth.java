@@ -23,7 +23,7 @@ public class VkAuth implements CreateUser {
     /**
      * Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота
      */
-    private HttpServer httpServer = null;
+    private HttpServer httpServer;
     /**
      * Поле с конфигурации данных для аутентификации пользователь и приложения
      */

@@ -13,7 +13,7 @@ public class HttpServer {
     /**
      * Поле запущенного в программе сервера
      */
-    private static HttpServer server = null;
+    private static HttpServer server;
     /**
      * Поле серверных сокетов
      */
