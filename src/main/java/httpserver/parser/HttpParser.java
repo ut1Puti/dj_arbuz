@@ -1,190 +1,106 @@
 package httpserver.parser;
 
-import httpserver.HttpRequest;
+import httpserver.messages.request.HttpRequest;
+import httpserver.server.HttpServerConfiguration;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.Scanner;
 
 /**
  * Класс парсящий запрос поступивший на сервер
  *
  * @author Кедровских Олег
- * @version 0.3
+ * @version 1.0
  */
 public class HttpParser {
     /**
-     * Поле пробела из таблицы ASCII
-     */
-    private static final int SP = 32;
-    /**
-     * Поле \r из таблицы ASCII
-     */
-    private static final int CR = 13;
-    /**
-     * Поле \n из таблицы ASCII
-     */
-    private static final int LF = 10;
-    /**
-     * поле поддерживаемых методов
-     */
-    private static final String[] supportedMethods = new String[]{"GET", "HEAD"};
-
-    /**
      * Метод парсящий запрос поступивший на сервер
      *
-     * @param inputStream - запрос
+     * @param socketInputStream - поток данных с сокета
      * @return ?отпаршенный? запрос
      * @throws IOException - возникает при проблемах в InputStream с запросом
+     * @throws HttpParserException - возникает при ошибках в полученном http запросе
      */
-    public static HttpRequest parseRequestLine(InputStream inputStream) throws IOException, HttpParserException {
-        InputStreamReader reader = new InputStreamReader(inputStream);
-
-        HttpRequest request = new HttpRequest();
-        parseRequestLine(reader, request);
-        parseHeaders(reader, request);
-        parseBody(reader, request);
-
-        return request;
+    public static HttpRequest parseRequestLine(InputStream socketInputStream) throws IOException, HttpParserException {
+        HttpRequest httpRequestParsed = new HttpRequest();
+        Scanner httpRequestScanner = new Scanner(socketInputStream);
+        httpRequestScanner.useDelimiter(HttpServerConfiguration.CRLF);
+        parseRequestLine(httpRequestScanner, httpRequestParsed);
+        parseHeaders(httpRequestScanner, httpRequestParsed);
+        httpRequestScanner.reset();
+        parseBody(httpRequestScanner, httpRequestParsed);
+        return httpRequestParsed;
     }
 
     /**
      * Метод парсит request-line http запроса
      *
-     * @param reader  - поток из которого читаются данные
-     * @param request - ?отпрашенный? запрос
-     * @throws IOException         - возникает при ошибке чтения из потока
-     * @throws HttpParserException - возникает при ошибках в запросе
+     * @param httpRequestScanner - сканер с потоком из которого читаются данные
+     * @param httpRequest        - ?отпрашенный? запрос
+     * @throws HttpParserException - возникает при ошибках в request-line http запроса
      */
-    private static void parseRequestLine(InputStreamReader reader, HttpRequest request) throws IOException, HttpParserException {
-        boolean isNextMethod = true;
-        boolean isNextRequestTarget = false;
-        StringBuilder nextPartOfRequest = new StringBuilder();
+    private static void parseRequestLine(Scanner httpRequestScanner, HttpRequest httpRequest)
+            throws HttpParserException {
 
-        int _byte;
-        while ((_byte = reader.read()) >= 0) {
+        if (httpRequestScanner.hasNext()) {
+            //TODO ignore if request starts with some CRLF
+            String[] requestLine = httpRequestScanner.next().split(" ");
 
-            if (_byte == CR) {
-
-                if ((_byte = reader.read()) == LF) {
-
-                    if (isNextMethod || isNextRequestTarget) {
-                        throw new HttpParserException("Incorrect request");
-                    }
-
-                    request.httpVersion = nextPartOfRequest.toString();
-                    nextPartOfRequest.delete(0, nextPartOfRequest.length());
-                    return;
-                }
-
+            if (requestLine.length != 3) {
+                throw new HttpParserException(HttpStatusCode.SERVER_ERROR_500_INTERNAL_SERVER_ERROR);
             }
 
-            if (_byte != SP) {
-                nextPartOfRequest.append((char) _byte);
-            } else {
-
-                if (isNextMethod) {
-                    boolean wasMethodFound = false;
-                    for (String method : supportedMethods) {
-
-                        if (method.equals(nextPartOfRequest.toString())) {
-                            wasMethodFound = true;
-                            break;
-                        }
-
-                    }
-
-                    if (!wasMethodFound) {
-                        throw new HttpParserException("Incorrect request");
-                    }
-
-                    request.method = nextPartOfRequest.toString();
-                    nextPartOfRequest.delete(0, nextPartOfRequest.length());
-                    isNextMethod = false;
-                    isNextRequestTarget = true;
-                } else if (isNextRequestTarget) {
-
-                    if (nextPartOfRequest.length() > 2000) {
-                        throw new HttpParserException("Incorrect request");
-                    }
-
-                    request.requestTarget = nextPartOfRequest.toString();
-                    nextPartOfRequest.delete(0, nextPartOfRequest.length());
-                    isNextRequestTarget = false;
-                }
-
-            }
+            httpRequest.setMethod(requestLine[0]);
+            httpRequest.setRequestTarget(requestLine[1]);
+            httpRequest.setHttpVersion(requestLine[2]);
+        } else {
+            throw new HttpParserException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
         }
+
     }
 
     /**
      * Метод парсящий headers http запроса
      *
-     * @param reader  - поток из которого читаются данные
-     * @param request - ?отпрашенный? запрос
-     * @throws IOException - возникает при ошибке чтения из потока
+     * @param httpRequestScanner - сканер с потоком из которого читаются данные
+     * @param httpRequest        - ?отпрашенный? запрос
      */
-    private static void parseHeaders(InputStreamReader reader, HttpRequest request) throws IOException, HttpParserException {
-        StringBuilder key = new StringBuilder();
-        StringBuilder value = new StringBuilder();
-        boolean isKey = true;
-        boolean secondIteration = false;
+    private static void parseHeaders(Scanner httpRequestScanner, HttpRequest httpRequest) {
+        while (httpRequestScanner.hasNext()) {
+            String read = httpRequestScanner.next();
 
-        int _byte;
-        while ((_byte = reader.read()) >= 0) {
-
-            if (_byte == CR) {
-
-                if ((_byte = reader.read()) == LF) {
-
-                    if (secondIteration) {
-                        return;
-                    }
-
-                    request.headers.put(key.toString(), value.toString());
-                    key.delete(0, key.length());
-                    value.delete(0, value.length());
-                    secondIteration = true;
-                    isKey = true;
-                    continue;
-                }
-
+            if (read.equals(HttpServerConfiguration.CRLF)) {
+                break;
             }
 
-            secondIteration = false;
-
-            if ((char) _byte == SP) {
-                isKey = false;
-                continue;
+            if (read.isBlank()) {
+                break;
             }
 
-            if (isKey) {
-                key.append((char) _byte);
-            } else {
-                value.append((char) _byte);
-            }
-
+            String[] header = read.split(": ", 2);
+            httpRequest.headers.put(header[0], header[1]);
         }
     }
 
     /**
      * Метод парсящий body http запроса
      *
-     * @param reader  - поток из которого читаются данные
-     * @param request - ?отпрашенный? запрос
-     * @throws IOException - возникает при ошибке чтения из потока
+     * @param httpRequestScanner - сканер с потоком из которого читаются данные
+     * @param httpRequest        - ?отпрашенный? запрос
      */
-    private static void parseBody(InputStreamReader reader, HttpRequest request) throws IOException {
-        StringBuilder bodyBuilder = new StringBuilder();
-        int _byte;
+    private static void parseBody(Scanner httpRequestScanner, HttpRequest httpRequest) {
+        StringBuilder httpRequestBody = new StringBuilder();
 
-        if (!reader.ready()) {
-            return;
+        if (httpRequest.headers.containsKey("Content-Length")) {
+            int contentLength = Integer.parseInt(httpRequest.headers.get("Content-Length"));
+            int readLength = 0;
+            while (httpRequestScanner.hasNext() && readLength <= contentLength) {
+                String read = httpRequestScanner.next();
+                httpRequestBody.append(read);
+                readLength += read.length();
+            }
         }
 
-        while ((_byte = reader.read()) >= 0) {
-            bodyBuilder.append((char) _byte);
-        }
-        request.body = bodyBuilder.toString();
+        httpRequest.body = httpRequestBody.toString();
     }
 }

@@ -3,13 +3,12 @@ package stoppable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import stoppable.StoppableThread;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Класс тестрирующий работу останавливаемого потока
+ * Класс тестирующий работу останавливаемого потока
  *
  * @author Кедровских Олег
  * @version 1.0
@@ -21,7 +20,7 @@ public class StoppableThreadTests {
     private StoppableThread stoppableThread;
 
     /**
-     * Метод создающий новый поток перед каждым тестом
+     * Метод создающий новый поток, перед каждым тестом
      */
     @BeforeEach
     public void setUpStoppableThread() {
@@ -32,7 +31,7 @@ public class StoppableThreadTests {
     }
 
     /**
-     * Метод завершающий работу потока после каждого теста
+     * Метод завершающий работу потока, после каждого теста
      */
     @AfterEach
     public void stopThreadAfterTest() {
@@ -43,7 +42,7 @@ public class StoppableThreadTests {
      * Метод тестирующий работу метода, проверяющего работает ли поток
      */
     @Test
-    public void testIsWorkingWhileThreadIsActive() throws InterruptedException {
+    public void testIsWorkingWhileThreadIsActive() {
         stoppableThread.start();
         assertTrue(stoppableThread.isWorking());
     }
@@ -52,12 +51,10 @@ public class StoppableThreadTests {
      * Метод тестирующий работу метода, останавливающего работу потока
      */
     @Test
-    public void testStopWithInterrupt() throws InterruptedException {
+    public void testStopWithInterrupt() {
         stoppableThread.start();
         assertTrue(stoppableThread.isWorking());
         stoppableThread.stopWithInterrupt();
-        //костыльный метод, может иногда не проходить
-        Thread.sleep(1000);
         assertFalse(stoppableThread.isWorking());
     }
 }

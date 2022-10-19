@@ -1,6 +1,5 @@
 package handlers.vk.oAuth;
 
-import com.vk.api.sdk.actions.OAuth;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -16,7 +15,11 @@ import user.User;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class VkAuth extends OAuth implements CreateUser {
+public class VkAuth implements CreateUser {
+    /**
+     * Поле класс позволяющего работать с vk api
+     */
+    private final VkApiClient vkApiClient;
     /**
      * Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота
      */
@@ -29,11 +32,11 @@ public class VkAuth extends OAuth implements CreateUser {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param client                     - клиент vk
+     * @param vkApiClient                - клиент vk
      * @param vkAppConfigurationFilePath - путь до файла с конфигурацией
      */
-    public VkAuth(VkApiClient client, String vkAppConfigurationFilePath) {
-        super(client);
+    public VkAuth(VkApiClient vkApiClient, String vkAppConfigurationFilePath) {
+        this.vkApiClient = vkApiClient;
         authConfiguration = new VkAuthConfiguration(vkAppConfigurationFilePath);
     }
 
@@ -85,11 +88,11 @@ public class VkAuth extends OAuth implements CreateUser {
 
         String authCode = getAuthCodeFromHttpRequest(httpRequestGetParameters);
         try {
-            UserAuthResponse authResponse = userAuthorizationCodeFlow(
-                    authConfiguration.APP_ID,
-                    authConfiguration.CLIENT_SECRET,
-                    authConfiguration.REDIRECT_URL,
-                    authCode)
+            UserAuthResponse authResponse = vkApiClient.oAuth().userAuthorizationCodeFlow(
+                            authConfiguration.APP_ID,
+                            authConfiguration.CLIENT_SECRET,
+                            authConfiguration.REDIRECT_URL,
+                            authCode)
                     .execute();
             return new User(authResponse.getUserId(), authResponse.getAccessToken(), userTelegramId);
         } catch (ApiException | ClientException e) {

@@ -5,6 +5,7 @@ import database.UserStorage;
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerResponse;
 import handlers.notifcations.NotificationsPuller;
+import bots.StoppableByUser;
 import stoppable.StoppableThread;
 import user.User;
 
@@ -16,7 +17,7 @@ import java.util.Scanner;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class ConsoleBotThread extends StoppableThread {
+public class ConsoleBotThread extends StoppableThread implements StoppableByUser {
     /**
      * Поле id пользователя консольной версии бота
      */
@@ -86,5 +87,13 @@ public class ConsoleBotThread extends StoppableThread {
         working = false;
         userInput.close();
         notificationsPuller.stop();
+    }
+
+    /**
+     * Реализация интерфейса позволяющая останавливать поток по запросу пользователя
+     */
+    @Override
+    public void stopByUser() {
+        stopWithInterrupt();
     }
 }

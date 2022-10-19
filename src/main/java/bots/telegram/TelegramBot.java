@@ -7,6 +7,7 @@ import database.UserStorage;
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerResponse;
 import handlers.notifcations.NotificationsPuller;
+import bots.StoppableByUser;
 import user.User;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -16,7 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
+public class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser {
     private final NotificationsPuller notificationsPuller;
 
     public TelegramBot() {
@@ -43,7 +44,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
 
     @Override
     public String getBotUsername() {
-        return "https://t.me/oop_urfu_bot";
+        return "DjArbuzBot";
     }
 
     @Override
@@ -118,5 +119,13 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable {
     public void stopWithInterrupt() {
         notificationsPuller.stop();
         exe.shutdownNow();
+    }
+
+    /**
+     * Реализация интерфейса позволяющая останавливать поток по запросу пользователя
+     */
+    @Override
+    public void stopByUser() {
+        stopWithInterrupt();
     }
 }

@@ -8,30 +8,26 @@ package httpserver.parser;
  */
 public class HttpParserException extends Exception {
     /**
-     * Конструктор - создает экземпляр класса с сообщением
-     *
-     * @param message - сообщение ошибки
+     * Поле кода ошибки
      */
-    public HttpParserException(String message) {
-        super(message);
+    private final HttpStatusCode errorCode;
+
+    /**
+     * Конструктор - создает экземпляр класса
+     *
+     * @param errorCode - код ошибки
+     */
+    public HttpParserException(HttpStatusCode errorCode) {
+        super(errorCode.getCodeMessage());
+        this.errorCode = errorCode;
     }
 
     /**
-     * Конструктор - создает экземпляр класса с сообщением об ошибкой и самой ошибкой
+     * Метод получающий информацию об ошибке
      *
-     * @param errorMessage - сообщение ошибки
-     * @param err          - ошибка
+     * @return информацию об ошибке
      */
-    public HttpParserException(String errorMessage, Throwable err) {
-        super(errorMessage, err);
-    }
-
-    /**
-     * Конструктор - создает экземлер класаа с ошибкой
-     *
-     * @param err - ошибка
-     */
-    public HttpParserException(Throwable err) {
-        super(err);
+    public HttpStatusCode getErrorCode() {
+        return errorCode;
     }
 }

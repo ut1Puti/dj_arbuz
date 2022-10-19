@@ -1,6 +1,5 @@
 package handlers.vk.groups;
 
-import com.vk.api.sdk.actions.Groups;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.exceptions.ApiAuthException;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -23,37 +22,41 @@ import java.util.Map;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class VkGroups extends Groups {
+public class VkGroups {
     /**
-     * Конструктор унаследованный от родительского класс
-     *
-     * @param client - клиент vk
+     * Поле класс позволяющего работать с vk api
      */
-    public VkGroups(VkApiClient client) {
-        super(client);
+    private VkApiClient vkApiClient;
+
+    /**
+     * Конструктор - создает экземпляр класса
+     *
+     * @param vkApiClient - клиент vk
+     */
+    public VkGroups(VkApiClient vkApiClient) {
+        this.vkApiClient = vkApiClient;
     }
 
     /**
      * Метод, который ищет все группы по запросу
      *
-     * @param groupName         - запрос
-     * @param groupName        - запрос
-     * @param userCallingMethod - пользователь сделавший запрос
+     * @param userReceivedGroupName - запрос
+     * @param userCallingMethod     - пользователь сделавший запрос
      * @return список групп полученных по запросу
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws ApiAuthException - возникает при необходимости продлить токен путем повторной авторизации
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public List<Group> searchGroups(String groupName, User userCallingMethod)
+    public List<Group> searchGroups(String userReceivedGroupName, User userCallingMethod)
             throws NoGroupException, ApiException, ClientException {
-        List<Group> userFindGroups = search(userCallingMethod, groupName)
+        List<Group> userFindGroups = vkApiClient.groups().search(userCallingMethod, userReceivedGroupName)
                 .offset(VkConstants.DEFAULT_OFFSET).count(VkConstants.DEFAULT_GROUPS_NUMBER)
                 .execute()
                 .getItems();
 
         if (userFindGroups.isEmpty()) {
-            throw new NoGroupException(groupName);
+            throw new NoGroupException(userReceivedGroupName);
         }
 
         return userFindGroups;
@@ -62,9 +65,8 @@ public class VkGroups extends Groups {
     /**
      * Метод, который ищет подтвержденные группы по запросу
      *
-     * @param groupName         - запрос
-     * @param groupName        - запрос
-     * @param userCallingMethod - пользователь сделавший запрос
+     * @param userReceivedGroupName - запрос
+     * @param userCallingMethod     - пользователь сделавший запрос
      * @return верифицированную группу
      * если групп оказалось больше одной возвращает с большим числом подписчиков
      * если верифицированная группа не нашлась, возвращает null
@@ -73,13 +75,13 @@ public class VkGroups extends Groups {
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public Group searchGroup(String groupName, User userCallingMethod)
+    public Group searchGroup(String userReceivedGroupName, User userCallingMethod)
             throws ApiException, NoGroupException, ClientException {
-        List<Group> userFindGroups = searchGroups(groupName, userCallingMethod);
-        Group groupWithSimilarName = chooseGroup(userFindGroups, groupName, userCallingMethod);
+        List<Group> userFindGroups = searchGroups(userReceivedGroupName, userCallingMethod);
+        Group groupWithSimilarName = chooseGroup(userFindGroups, userReceivedGroupName, userCallingMethod);
 
         if (groupWithSimilarName == null) {
-            throw new NoGroupException(groupName);
+            throw new NoGroupException(userReceivedGroupName);
         }
 
         return groupWithSimilarName;
@@ -88,9 +90,8 @@ public class VkGroups extends Groups {
     /**
      * Метод подписывающий пользователя на группу по переданной строке
      *
-     * @param groupName         - название группы
-     * @param groupName        - название группы
-     * @param userCallingMethod - пользователь вызвавший метод
+     * @param userReceivedGroupName - название группы
+     * @param userCallingMethod     - пользователь вызвавший метод
      * @return статус подписки на группу, SUBSCRIBED - означает что пользователь успешно подписан,
      * ALREADY_SUBSCRIBED - сообщает, что пользователь уже подписан на эту группу,
      * GROUP_IS_CLOSED - сообщает, что невозможно подписаться, тк группа закрыта
@@ -99,9 +100,9 @@ public class VkGroups extends Groups {
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public SubscribeStatus subscribeTo(GroupsStorage dataBase, String groupName, User userCallingMethod)
+    public SubscribeStatus subscribeTo(GroupsStorage dataBase, String userReceivedGroupName, User userCallingMethod)
             throws ApiException, NoGroupException, ClientException {
-        Group userFindGroup = searchGroup(groupName, userCallingMethod);
+        Group userFindGroup = searchGroup(userReceivedGroupName, userCallingMethod);
 
         if (userFindGroup.getIsClosed() == GroupIsClosed.CLOSED) {
             return SubscribeStatus.GROUP_IS_CLOSED;
@@ -120,10 +121,9 @@ public class VkGroups extends Groups {
     /**
      * Метод выбирающий группу соответсвующая подстроке
      *
-     * @param userFindGroups        - группы найденые по подстроке
+     * @param userFindGroups        - группы найденные по подстроке
      * @param userReceivedGroupName - название группы
      * @param userCallingMethod     - пользователь вызвавший метод
-     * @param userCallingMethod      - пользователь вызвавший метод
      * @return группу соответсвующую подстроке
      */
     private Group chooseGroup(List<Group> userFindGroups, String userReceivedGroupName, User userCallingMethod) {
@@ -132,7 +132,7 @@ public class VkGroups extends Groups {
         for (Group userFindGroup : userFindGroups) {
             List<GetByIdObjectLegacyResponse> userFindByIdGroups;
             try {
-                userFindByIdGroups = getByIdObjectLegacy(userCallingMethod)
+                userFindByIdGroups = vkApiClient.groups().getByIdObjectLegacy(userCallingMethod)
                         .groupId(String.valueOf(userFindGroup.getId()))
                         .fields(Fields.MEMBERS_COUNT)
                         .execute();

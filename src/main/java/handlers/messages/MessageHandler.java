@@ -1,10 +1,9 @@
 package handlers.messages;
 
 import bots.BotTextResponse;
-import stoppable.Stoppable;
-import bots.console.ConsoleBot;
 import handlers.vk.groups.NoGroupException;
 import handlers.vk.Vk;
+import bots.StoppableByUser;
 import user.User;
 import database.GroupsStorage;
 import database.UserStorage;
@@ -13,10 +12,6 @@ import com.vk.api.sdk.exceptions.ApiAuthException;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import java.util.NoSuchElementException;
-import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
-import com.vk.api.sdk.exceptions.ClientException;
-import java.util.NoSuchElementException;
-import java.util.List;
 
 /**
  * Класс утилитных методов создающий ответы на сообщения пользователя
@@ -58,7 +53,8 @@ public class MessageHandler {
      * @param botThread - бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
      */
-    public static MessageHandlerResponse executeMessage(String message, String telegramUserId, Stoppable botThread) {
+    public static MessageHandlerResponse executeMessage(String message, String telegramUserId,
+                                                        StoppableByUser botThread) {
         String[] commandAndArgs = message.split(" ", 2);
 
         if (groupsBase == null) {
@@ -159,12 +155,8 @@ public class MessageHandler {
      * @param botThread - бот вызвавший метод
      * @return ответ на /stop содержит STOP_INFO
      */
-    private static MessageHandlerResponse getStopResponse(Stoppable botThread) {
-
-        if (botThread.isWorking()) {
-            botThread.stopWithInterrupt();
-        }
-
+    private static MessageHandlerResponse getStopResponse(StoppableByUser botThread) {
+        botThread.stopByUser();
         return new MessageHandlerResponse(BotTextResponse.STOP_INFO);
     }
 

@@ -8,7 +8,6 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import database.GroupsStorage;
-import handlers.vk.groups.VkGroups;
 import handlers.vk.oAuth.VkAuth;
 import org.junit.jupiter.api.Test;
 
@@ -33,13 +32,9 @@ public class VkWallTests {
      */
     private final VkApiClient vk = new VkApiClient(transportClient);
     /**
-     * Поле класса взаимодействующего с группами через vk api
-     */
-    private final VkGroups vkGroups = new VkGroups(vk);
-    /**
      * Поле класса взаимодействующего со стеной vk через vk api
      */
-    private final VkWall vkWall = new VkWall(vk, vkGroups);
+    private final VkWall vkWall = new VkWall(vk);
 
     /**
      * Метод обработку случая при котором кол-во запрашиваемых постов в getLastPosts больше чем можно получить из vk api

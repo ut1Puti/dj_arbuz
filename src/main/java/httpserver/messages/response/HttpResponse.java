@@ -1,10 +1,8 @@
-package httpserver;
+package httpserver.messages.response;
 
 import httpserver.server.HttpServerConfiguration;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Класс создающий ответ http сервера
@@ -23,21 +21,25 @@ public class HttpResponse {
     public static String createResponse(String getFileName) throws IOException {
         File file = new File(HttpServerConfiguration.WEB_SRC + getFileName);
         if (!file.exists()) {
-            return null;
+            return loadResponse(new File(HttpServerConfiguration.WEB_SRC + "/404.html"));
         }
         return loadResponse(file);
     }
 
+    /**
+     * Метод загружающий данные из файла в строку
+     *
+     * @param srcLoadingFile - файл из которого загружаем
+     * @return строку с данными из файла
+     * @throws IOException - возникает при ошибке чтения из файла
+     */
     private static String loadResponse(File srcLoadingFile) throws IOException {
         StringBuilder html = new StringBuilder();
-        FileInputStream fileInputStream = new FileInputStream(srcLoadingFile);
-        int _byte;
-        while ((_byte = fileInputStream.read()) != -1) {
-            html.append((char) _byte);
-        }
-        fileInputStream.close();
+        BufferedReader fileReader = new BufferedReader(new FileReader(srcLoadingFile));
+        fileReader.lines().forEach(html::append);
+        fileReader.close();
         return "HTTP/1.1 200 OK" + HttpServerConfiguration.CRLF +
                 "Content-Length:" + html.toString().getBytes().length + HttpServerConfiguration.CRLF +
-                HttpServerConfiguration.CRLF + html + HttpServerConfiguration.CRLF + HttpServerConfiguration.CRLF;
+                HttpServerConfiguration.CRLF + html;
     }
 }

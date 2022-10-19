@@ -1,7 +1,7 @@
 package httpserver.server;
 
-import httpserver.HttpRequest;
-import httpserver.HttpResponse;
+import httpserver.messages.request.HttpRequest;
+import httpserver.messages.response.HttpResponse;
 import httpserver.parser.HttpParser;
 import httpserver.parser.HttpParserException;
 import stoppable.StoppableThread;
@@ -32,7 +32,7 @@ public class ServerListenerThread extends StoppableThread {
     /**
      * Поле времени ожидания получения get параметров
      */
-    private final int oneMinutesInMilliseconds = 6000;
+    private final int oneMinute = 1;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -48,7 +48,6 @@ public class ServerListenerThread extends StoppableThread {
      */
     @Override
     public void run() {
-        working = true;
         while (serverSocket.isBound() && working && !isInterrupted()) {
             try {
                 Socket socket = serverSocket.accept();
@@ -61,42 +60,20 @@ public class ServerListenerThread extends StoppableThread {
                             inputStream = socket.getInputStream();
                             outputStream = socket.getOutputStream();
 
-                            HttpRequest request;
-                            try {
-                                request = HttpParser.parseRequestLine(inputStream);
-                            } catch (HttpParserException e) {
-                                continue;
-                            }
+                            HttpRequest request = HttpParser.parseRequestLine(inputStream);
 
-                            StringBuilder fileName = new StringBuilder();
-                            boolean isFileNameGot = false;
-                            StringBuilder requestParametersBuilder = new StringBuilder();
-                            for (char ch : request.requestTarget.toCharArray()) {
-
-                                if (ch == '?') {
-                                    isFileNameGot = true;
-                                }
-
-                                if (isFileNameGot) {
-                                    requestParametersBuilder.append(ch);
-                                } else {
-                                    fileName.append(ch);
-                                }
-
-                            }
-                            String requestParameters = requestParametersBuilder.toString();
-
-                            boolean isOffered = true;
-
-                            if (!requestParameters.isBlank()) {
-                                isOffered = getParameter.offer(
-                                        requestParameters, oneMinutesInMilliseconds, TimeUnit.MILLISECONDS
+                            if (!request.getRequestTarget().getRequestTargetFile().isBlank()) {
+                                boolean isOffered = getParameter.offer(
+                                        request.getRequestTarget().getParameters(), oneMinute, TimeUnit.MINUTES
                                 );
-
-                                sendFileFromServer(isOffered, fileName.toString(), outputStream);
+                                sendFileFromServer(isOffered ? request.getRequestTarget().getParameters() :
+                                        "/timeexpired.html", outputStream);
+                            } else {
+                                sendFileFromServer("/timeexpired.html", outputStream);
                             }
+
                         }
-                    } catch (IOException e) {
+                    } catch (IOException | HttpParserException e) {
                         continue;
                     } catch (InterruptedException ignored) {
                         break;
@@ -115,24 +92,13 @@ public class ServerListenerThread extends StoppableThread {
     /**
      * Отправляет файл с сервера
      *
-     * @param isOffered    - был ли получен код авторизации от пользователя
      * @param filePath     - путь до запрошенного файла
      * @param outputStream - выходной поток(не тот что исполнения), куда будут записаны данные
      * @throws IOException - возникает при отсутствии файла или при ошибке записи в поток
      */
-    private void sendFileFromServer(boolean isOffered, String filePath, OutputStream outputStream) throws IOException {
-        String response;
-
-        if (isOffered) {
-            response = HttpResponse.createResponse(filePath);
-        } else {
-            response = HttpResponse.createResponse(HttpServerConfiguration.AUTH_TIME_EXPIRED_FILE);
-        }
-
-        if (response != null) {
-            outputStream.write(response.getBytes());
-        }
-
+    private void sendFileFromServer(String filePath, OutputStream outputStream) throws IOException {
+        String response = HttpResponse.createResponse(filePath);
+        outputStream.write(response.getBytes());
     }
 
     /**
@@ -143,7 +109,7 @@ public class ServerListenerThread extends StoppableThread {
      */
     @Override
     public boolean isWorking() {
-        return isAlive() || (working && serverSocket.isBound());
+        return isAlive() && (working && serverSocket.isBound());
     }
 
     /**
@@ -160,11 +126,11 @@ public class ServerListenerThread extends StoppableThread {
      * Метод получающий get параметры последнего запроса
      *
      * @return полученные get параметры последнего запроса,
-     * null если в течение 5 минут параметры не пришли, или поток был прерван
+     * null если в течение 1 минуты параметры не пришли, или поток был прерван
      */
     public String getHttpRequestParameters() {
         try {
-            return getParameter.poll(oneMinutesInMilliseconds, TimeUnit.MILLISECONDS);
+            return getParameter.poll(oneMinute, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             return null;
         }

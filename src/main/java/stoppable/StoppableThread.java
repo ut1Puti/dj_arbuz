@@ -32,7 +32,7 @@ public class StoppableThread extends Thread implements Stoppable {
      * Конструктор - создает экземпляр класса
      *
      * @param threadRelatingGroup - группа потоков к которой будет относиться новый поток
-     * @param threadTask - логика выполняемая внутри потока
+     * @param threadTask          - логика выполняемая внутри потока
      */
     public StoppableThread(ThreadGroup threadRelatingGroup, Runnable threadTask) {
         super(threadRelatingGroup, threadTask);
@@ -51,7 +51,7 @@ public class StoppableThread extends Thread implements Stoppable {
      * Конструктор - создает экземпляр класса
      *
      * @param threadRelatingGroup - группа потоков к которой будет относиться новый поток
-     * @param name - имя потока
+     * @param name                - имя потока
      */
     public StoppableThread(ThreadGroup threadRelatingGroup, String name) {
         super(threadRelatingGroup, name);
@@ -61,7 +61,7 @@ public class StoppableThread extends Thread implements Stoppable {
      * Конструктор - создает экземпляр класса
      *
      * @param threadTask - логика выполняемая внутри потока
-     * @param name - имя потока
+     * @param name       - имя потока
      */
     public StoppableThread(Runnable threadTask, String name) {
         super(threadTask, name);
@@ -71,8 +71,8 @@ public class StoppableThread extends Thread implements Stoppable {
      * Конструктор - создает экземпляр класса
      *
      * @param threadRelatingGroup - группа потоков к которой будет относиться новый поток
-     * @param threadTask - логика выполняемая внутри потока
-     * @param name - имя потока
+     * @param threadTask          - логика выполняемая внутри потока
+     * @param name                - имя потока
      */
     public StoppableThread(ThreadGroup threadRelatingGroup, Runnable threadTask, String name) {
         super(threadRelatingGroup, threadTask, name);
@@ -82,9 +82,9 @@ public class StoppableThread extends Thread implements Stoppable {
      * Конструктор - создает экземпляр класса
      *
      * @param threadRelatingGroup - группа потоков к которой будет относиться новый поток
-     * @param threadTask - логика выполняемая внутри потока
-     * @param name - имя потока
-     * @param stackSize - максимальный размер стека
+     * @param threadTask          - логика выполняемая внутри потока
+     * @param name                - имя потока
+     * @param stackSize           - максимальный размер стека
      */
     public StoppableThread(ThreadGroup threadRelatingGroup, Runnable threadTask, String name, long stackSize) {
         super(threadRelatingGroup, threadTask, name, stackSize);
@@ -94,9 +94,9 @@ public class StoppableThread extends Thread implements Stoppable {
      * Конструктор - создает экземпляр класса
      *
      * @param threadRelatingGroup - группа потоков к которой будет относиться новый поток
-     * @param threadTask - логика выполняемая внутри потока
-     * @param name - имя потока
-     * @param stackSize - максимальный размер стека
+     * @param threadTask          - логика выполняемая внутри потока
+     * @param name                - имя потока
+     * @param stackSize           - максимальный размер стека
      * @param inheritThreadLocals - true, если наследуем начальные значения
      *                            для наследуемых локальных переменных потока из потока кнструктора,
      *                            в противном случае начальные значения не наследуются
@@ -104,6 +104,12 @@ public class StoppableThread extends Thread implements Stoppable {
     public StoppableThread(ThreadGroup threadRelatingGroup, Runnable threadTask, String name,
                            long stackSize, boolean inheritThreadLocals) {
         super(threadRelatingGroup, threadTask, name, stackSize, inheritThreadLocals);
+    }
+
+    @Override
+    public final void start() {
+        working = true;
+        super.start();
     }
 
     /**
@@ -114,7 +120,7 @@ public class StoppableThread extends Thread implements Stoppable {
      */
     @Override
     public boolean isWorking() {
-        return isAlive() || working;
+        return isAlive() && working;
     }
 
     /**

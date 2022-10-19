@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import javax.ws.rs.client.ClientBuilder;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +23,7 @@ public class ServerListeningThreadTests {
     private ServerListenerThread serverListenerThread;
 
     /**
-     * Метод создающий поток пере каждым тестом
+     * Метод создающий поток, перед каждым тестом
      *
      * @throws IOException - возникает при ошибке открытия сокета
      */
@@ -44,7 +43,7 @@ public class ServerListeningThreadTests {
     }
 
     /**
-     * Метод тестирующий метод, который проверяет работает ли поток
+     * Метод тестирующий метод, который проверяет, работает ли поток
      */
     @Test
     public void testIsWorking() {
@@ -53,14 +52,11 @@ public class ServerListeningThreadTests {
 
     /**
      * Метод тестирующий метод, останавливающий поток
-     *
-     * @throws InterruptedException - возникает при прерывании потока
      */
     @Test
-    public void testStopWithInterrupt() throws InterruptedException {
+    public void testStopWithInterrupt() {
         assertTrue(serverListenerThread.isWorking());
         serverListenerThread.stopWithInterrupt();
-        Thread.sleep(1000);
         assertFalse(serverListenerThread.isWorking());
     }
 
@@ -68,11 +64,11 @@ public class ServerListeningThreadTests {
      * Метод тестирующий метод, получающий параметры get запроса отправленного на сервер
      */
     @Test
-    public void testGetHttpRequestParameters() throws ExecutionException, InterruptedException {
+    public void testGetHttpRequestParameters() {
         String expectedHttpParameters = "code";
         ClientBuilder.newClient().target("http://localhost:8080/redirect.html?{parameters}")
                 .resolveTemplate("parameters", expectedHttpParameters).request().async().get();
         String httpParameters = serverListenerThread.getHttpRequestParameters();
-        assertEquals("?" + expectedHttpParameters, httpParameters);
+        assertEquals(expectedHttpParameters, httpParameters);
     }
 }

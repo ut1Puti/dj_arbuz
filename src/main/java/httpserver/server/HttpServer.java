@@ -46,7 +46,7 @@ public class HttpServer {
             try {
                 server = new HttpServer();
             } catch (IOException e) {
-                server = null;
+                server.stop();
             }
         }
 
