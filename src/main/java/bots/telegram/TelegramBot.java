@@ -2,6 +2,9 @@ package bots.telegram;
 
 import bots.BotTextResponse;
 import bots.BotUtils;
+import org.glassfish.grizzly.http.server.Response;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import stoppable.Stoppable;
 import database.UserStorage;
 import handlers.messages.MessageHandler;
@@ -17,12 +20,17 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser {
     private final NotificationsPuller notificationsPuller;
-
+    private List<KeyboardRow> keyBoardRows;
     public TelegramBot() {
         //TODO кнопки
         super();
+        keyBoardRows = new ArrayList<>();
+
         notificationsPuller = new NotificationsPuller(this);
         notificationsPuller.start();
     }
@@ -56,49 +64,76 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
     public void onUpdateReceived(Update update) {
 
         if (update.hasMessage() && update.getMessage()
-                .hasText()) {
+                                         .hasText()) {
             String messageUpdate = update.getMessage()
-                    .getText();
+                                         .getText();
             MessageHandlerResponse response = MessageHandler.executeMessage(
-                    messageUpdate, String.valueOf(update.getMessage().getChatId()), this
+                    messageUpdate, String.valueOf(update.getMessage()
+                                                        .getChatId()), this
             );
             if (response.hasTextMessage()) {
-                SendMessage message = new SendMessage();
+                sendMessage(update, response);
+                /*SendMessage message = new SendMessage();
                 message.setChatId(String.valueOf(update.getMessage().getChatId()));
                 message.setText(response.getTextMessage());
                 try {
                     execute(message);
                 } catch (TelegramApiException ignored) {}
+
+                 */
             }
 
             if (response.hasPostsMessages()) {
                 for (String post : response.getPostsMessages()) {
                     SendMessage message = new SendMessage();
                     message.setText(post);
-                    message.setChatId(String.valueOf(update.getMessage().getChatId()));
+                    message.setChatId(String.valueOf(update.getMessage()
+                                                           .getChatId()));
                     try {
                         execute(message);
-                    } catch (TelegramApiException ignored) {}
+                    } catch (TelegramApiException ignored) {
+                    }
                 }
             }
 
             if (response.hasUpdateUser()) {
-                User user = response.getUpdateUser().createUser(update.getMessage().getChatId().toString());
+                User user = response.getUpdateUser()
+                                    .createUser(update.getMessage()
+                                                      .getChatId()
+                                                      .toString());
 
                 if (user == null) {
-                    SendMessage authErrorMessage = new SendMessage(update.getMessage().getChatId().toString(), BotTextResponse.AUTH_ERROR);
+                    SendMessage authErrorMessage = new SendMessage(update.getMessage()
+                                                                         .getChatId()
+                                                                         .toString(), BotTextResponse.AUTH_ERROR);
                     try {
                         execute(authErrorMessage);
-                    } catch (TelegramApiException ignored) {}
+                    } catch (TelegramApiException ignored) {
+                    }
                 } else {
                     UserStorage userBase = UserStorage.getInstance();
-                    userBase.addInfoUser(String.valueOf(update.getMessage().getChatId()), user);
+                    userBase.addInfoUser(String.valueOf(update.getMessage()
+                                                              .getChatId()), user);
                 }
 
             }
 
         }
 
+    }
+
+    private void sendMessage(Update update, MessageHandlerResponse response) {
+        SendMessage message = new SendMessage();
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+
+        message.setChatId(String.valueOf(update.getMessage()
+                                               .getChatId()));
+        message.setText(response.getTextMessage());
+        try {
+            execute(message);
+        } catch (TelegramApiException ignored) {
+        }
     }
 
     /**
