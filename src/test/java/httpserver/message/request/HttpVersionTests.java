@@ -59,7 +59,7 @@ public class HttpVersionTests {
         try {
             HttpVersion.getBestCompatibleVersion(httpVersion);
         } catch (HttpParserException e) {
-            assertEquals(HttpStatusCode.SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED.getCodeMessage(), e.getMessage());
+            assertEquals(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST.getCodeMessage(), e.getMessage());
             return;
         }
         fail();

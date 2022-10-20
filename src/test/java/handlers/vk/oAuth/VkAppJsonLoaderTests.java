@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Кедровских Олег
  * @version 2.0
  */
-public class VkAppConfigurationTests {
+public class VkAppJsonLoaderTests {
     /**
      * Поле содержащее конфигурацию приложения
      */

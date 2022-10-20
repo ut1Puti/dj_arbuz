@@ -90,31 +90,19 @@ public class VkGroups {
     /**
      * Метод подписывающий пользователя на группу по переданной строке
      *
-     * @param userReceivedGroupName - название группы
+     * @param groupScreenName - короткое название группы
      * @param userCallingMethod     - пользователь вызвавший метод
      * @return статус подписки на группу, SUBSCRIBED - означает что пользователь успешно подписан,
      * ALREADY_SUBSCRIBED - сообщает, что пользователь уже подписан на эту группу,
      * GROUP_IS_CLOSED - сообщает, что невозможно подписаться, тк группа закрыта
-     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
-     * @throws ApiAuthException - возникает при необходимости продлить токен путем повторной авторизации
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      */
-    public SubscribeStatus subscribeTo(GroupsStorage dataBase, String userReceivedGroupName, User userCallingMethod)
-            throws ApiException, NoGroupException, ClientException {
-        Group userFindGroup = searchGroup(userReceivedGroupName, userCallingMethod);
-
-        if (userFindGroup.getIsClosed() == GroupIsClosed.CLOSED) {
-            return SubscribeStatus.GROUP_IS_CLOSED;
-        }
+    public SubscribeStatus subscribeTo(GroupsStorage dataBase, String groupScreenName, User userCallingMethod) {
 
         if (dataBase == null) {
             dataBase = GroupsStorage.getInstance();
         }
 
-        boolean isSubscribed = dataBase.addInfoToGroup(
-                userFindGroup.getScreenName(), userCallingMethod.getTelegramId()
-        );
+        boolean isSubscribed = dataBase.addInfoToGroup(groupScreenName, userCallingMethod.getTelegramId());
         return isSubscribed ? SubscribeStatus.SUBSCRIBED : SubscribeStatus.ALREADY_SUBSCRIBED;
     }
 

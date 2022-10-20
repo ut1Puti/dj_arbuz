@@ -66,8 +66,12 @@ public class ServerListenerThread extends StoppableThread {
                                 boolean isOffered = getParameter.offer(
                                         request.getRequestTarget().getParameters(), oneMinute, TimeUnit.MINUTES
                                 );
-                                sendFileFromServer(isOffered ? request.getRequestTarget().getParameters() :
-                                        "/timeexpired.html", outputStream);
+
+                                if (isOffered) {
+                                    sendFileFromServer(request.getRequestTarget().getRequestTargetFile(), outputStream);
+                                } else {
+                                    sendFileFromServer("/timeexpired.html", outputStream);
+                                }
                             } else {
                                 sendFileFromServer("/timeexpired.html", outputStream);
                             }

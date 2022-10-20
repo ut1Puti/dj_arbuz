@@ -7,6 +7,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.groups.Group;
+import com.vk.api.sdk.objects.groups.GroupIsClosed;
 import database.GroupsStorage;
 import handlers.vk.groups.NoGroupException;
 import handlers.vk.groups.VkGroups;
@@ -120,6 +121,12 @@ public class Vk implements CreateUser {
      */
     public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, User userCallingMethod)
             throws ApiException, NoGroupException, ClientException {
+        Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
+
+        if (userFindGroup.getIsClosed() == GroupIsClosed.CLOSED) {
+            return SubscribeStatus.GROUP_IS_CLOSED;
+        }
+
         return groups.subscribeTo(groupBase, userReceivedGroupName, userCallingMethod);
     }
 

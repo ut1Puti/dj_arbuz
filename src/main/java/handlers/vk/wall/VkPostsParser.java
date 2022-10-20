@@ -13,14 +13,14 @@ import java.util.List;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class VkPostsParser {
+class VkPostsParser {
     /**
      * Метод парясщий пост из vk в строку
      *
      * @param groupPost - пост из группы в vk
      * @return строку с текстом поста, а также из постов репостов и ссылку на него
      */
-    public static String parsePost(WallpostFull groupPost) {
+    static String parsePost(WallpostFull groupPost) {
         List<WallpostAttachment> groupPostAttachments = groupPost.getAttachments();
         StringBuilder postTextBuilder = new StringBuilder(groupPost.getText());
         while (groupPostAttachments == null) {
