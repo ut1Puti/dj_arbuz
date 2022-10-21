@@ -6,6 +6,7 @@ import com.vk.api.sdk.objects.wall.WallpostFull;
 import handlers.vk.VkConstants;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Класс для парсинга постов vk
@@ -31,12 +32,15 @@ class VkPostsParser {
             }
 
             groupPostAttachments = groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX)
-                    .getAttachments();
-            postTextBuilder.append("\n").append(groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX).getText());
+                                                .getAttachments();
+            postTextBuilder.append("\n")
+                           .append(groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX)
+                                                .getText());
         }
-
         String postURL = VkConstants.VK_ADDRESS + VkConstants.WALL_ADDRESS +
                 groupPost.getOwnerId() + "_" + groupPost.getId();
-        return postTextBuilder.append("\n").append(postURL).toString();
+        return postTextBuilder.append("\n")
+                              .append(postURL)
+                              .toString();
     }
 }

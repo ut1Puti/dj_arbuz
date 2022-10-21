@@ -2,6 +2,7 @@ package bots.telegram;
 
 import bots.BotTextResponse;
 import bots.BotUtils;
+import javassist.compiler.ast.ASTList;
 import org.glassfish.grizzly.http.server.Response;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -21,16 +22,20 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser {
     private final NotificationsPuller notificationsPuller;
-    private List<KeyboardRow> keyBoardRows;
+    private final List<KeyboardRow> keyBoardRows;
     public TelegramBot() {
         //TODO кнопки
         super();
         keyBoardRows = new ArrayList<>();
-
+        KeyboardRow rowFirst = new KeyboardRow();
+        rowFirst.add("/auth");
+        rowFirst.add("/help");
+        keyBoardRows.add(rowFirst);
         notificationsPuller = new NotificationsPuller(this);
         notificationsPuller.start();
     }
@@ -124,9 +129,9 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
 
     private void sendMessage(Update update, MessageHandlerResponse response) {
         SendMessage message = new SendMessage();
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-
+        ReplyKeyboardMarkup keyBoardMarkup = new ReplyKeyboardMarkup();
+        keyBoardMarkup.setKeyboard(keyBoardRows);
+        message.setReplyMarkup(keyBoardMarkup);
         message.setChatId(String.valueOf(update.getMessage()
                                                .getChatId()));
         message.setText(response.getTextMessage());
