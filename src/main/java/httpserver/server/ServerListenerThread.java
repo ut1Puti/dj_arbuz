@@ -78,6 +78,11 @@ public class ServerListenerThread extends StoppableThread {
 
                         }
                     } catch (IOException | HttpParserException e) {
+
+                        if (outputStream != null) {
+                            sendFileFromServer("/404.html", outputStream);
+                        }
+
                         continue;
                     } catch (InterruptedException ignored) {
                         break;
@@ -103,6 +108,7 @@ public class ServerListenerThread extends StoppableThread {
     private void sendFileFromServer(String filePath, OutputStream outputStream) throws IOException {
         String response = HttpResponse.createResponse(filePath);
         outputStream.write(response.getBytes());
+        outputStream.flush();
     }
 
     /**
