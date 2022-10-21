@@ -2,8 +2,6 @@ package bots.console;
 
 import bots.BotUtils;
 
-import java.util.Objects;
-
 /**
  * Класс консольного бота
  *
@@ -17,6 +15,8 @@ public class ConsoleBot {
     private final String defaultConsoleUserId = "-10";
     /**
      * Поле потока обрабатывающего и получающего сообщения пользователей
+     *
+     * @see ConsoleBotThread
      */
     private final ConsoleBotThread consoleBotThread = new ConsoleBotThread(defaultConsoleUserId);
 
@@ -31,6 +31,8 @@ public class ConsoleBot {
 
     /**
      * Метод запускающий поток обработки сообщений ботом
+     *
+     * @see ConsoleBotThread#start()
      */
     public void start() {
         consoleBotThread.start();
@@ -39,8 +41,9 @@ public class ConsoleBot {
     /**
      * Метод проверяющий работает ли консольный бот
      *
-     * @return true - если поток обрабатывающий сообщения пользователя работает
+     * @return true - если поток обрабатывающий сообщения пользователя работает,
      * false - если поток обрабатывающий сообщения завершил свою работу
+     * @see ConsoleBotThread#isWorking()
      */
     public boolean isWorking() {
         return consoleBotThread.isWorking();
@@ -48,6 +51,8 @@ public class ConsoleBot {
 
     /**
      * Метод прекращающая работу бота
+     *
+     * @see ConsoleBotThread#stopWithInterrupt()
      */
     public void stop() {
         consoleBotThread.stopWithInterrupt();

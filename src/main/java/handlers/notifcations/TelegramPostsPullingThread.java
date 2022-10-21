@@ -3,6 +3,7 @@ package handlers.notifcations;
 import bots.telegram.TelegramBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
+import database.GroupsStorage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -14,10 +15,13 @@ import java.util.Optional;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see PostsPullingThread
  */
 public class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Поле телеграмм бота
+     *
+     * @see TelegramBot
      */
     private final TelegramBot telegramBot;
 
@@ -32,10 +36,13 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
 
     /**
      * Метод логики выполняемой внутри потока
+     *
+     * @see GroupsStorage#getGroups()
+     * @see handlers.vk.Vk#getNewPosts(GroupsStorage, String)
+     * @see GroupsStorage#getSubscribedToGroupUsersId(String)
      */
     @Override
     public void run() {
-        working = true;
         while (working) {
             try {
                 for (String groupScreenName : groupsBase.getGroups()) {

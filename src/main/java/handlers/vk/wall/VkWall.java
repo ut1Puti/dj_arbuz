@@ -46,19 +46,24 @@ public class VkWall {
      * @return список постов в группе в виде строк
      * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     * @see GroupsStorage#getGroupLastPostDate(String)
+     * @see GroupsStorage#updateGroupLastPost(String, long)
+     * @see VkWall#getPosts(String, int, Actor)
+     * @see VkWall#createGroupPostsStrings(List)
      */
     public Optional<List<String>> getNewPosts(GroupsStorage groupBase, String groupScreenName, ServiceActor vkAppUser)
             throws ClientException, ApiException {
         final int amountOfPosts = 100;
-        Optional<Integer> optionalLastPostDate = groupBase.getGroupLastPostDate(groupScreenName);
+        //TODO synchronize working with lastPostDate
+        Optional<Long> optionalLastPostDate = groupBase.getGroupLastPostDate(groupScreenName);
 
         if (optionalLastPostDate.isEmpty()) {
             return Optional.empty();
         }
 
-        int lastPostDate = optionalLastPostDate.get();
+        long lastPostDate = optionalLastPostDate.get();
         List<WallpostFull> appFindPosts = new ArrayList<>();
-        int newLastPostDate = lastPostDate;
+        long newLastPostDate = lastPostDate;
         for (WallpostFull appFindPost : getPosts(groupScreenName, amountOfPosts, vkAppUser)) {
             int appFindPostDate = appFindPost.getDate();
 
@@ -89,6 +94,8 @@ public class VkWall {
      * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
      * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
+     * @see VkWall#getPosts(String, int, Actor)
+     * @see VkWall#createGroupPostsStrings(List)
      */
     public Optional<List<String>> getLastPosts(String groupScreenName, int amountOfPosts, User userCallingMethod)
             throws ApiException, ClientException {
@@ -109,6 +116,8 @@ public class VkWall {
      * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
      * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
+     * @see com.vk.api.sdk.actions.Wall#get(ServiceActor)
+     * @see com.vk.api.sdk.actions.Wall#get(UserActor)
      */
     public List<WallpostFull> getPosts(String groupScreenName, int amountOfPosts, Actor userCalledMethod)
             throws ClientException, ApiException {
@@ -139,6 +148,7 @@ public class VkWall {
      *
      * @param groupPosts - посты
      * @return список постов в виде строк
+     * @see VkPostsParser#parsePost(WallpostFull) 
      */
     private List<String> createGroupPostsStrings(List<WallpostFull> groupPosts) {
         List<String> groupFindPosts = new ArrayList<>();

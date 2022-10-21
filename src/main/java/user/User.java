@@ -7,6 +7,7 @@ import com.vk.api.sdk.client.actors.UserActor;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see UserActor
  */
 public class User extends UserActor {
     /**

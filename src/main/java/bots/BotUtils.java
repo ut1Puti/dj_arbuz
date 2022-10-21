@@ -13,6 +13,10 @@ import httpserver.server.HttpServer;
 public class BotUtils {
     /**
      * Метод запускающий все сущности
+     *
+     * @see HttpServer#getInstance()
+     * @see GroupsStorage#getInstance()
+     * @see UserStorage#getInstance()
      */
     public static void initInstances() {
         HttpServer server = HttpServer.getInstance();
@@ -29,6 +33,13 @@ public class BotUtils {
 
     /**
      * Метод останавливающий все сущности
+     *
+     * @see HttpServer#getInstance()
+     * @see HttpServer#stop()
+     * @see GroupsStorage#getInstance()
+     * @see GroupsStorage#saveToJsonFile()
+     * @see UserStorage#getInstance()
+     * @see UserStorage#saveToJsonFile()
      */
     public static void stopInstances() {
         GroupsStorage dataBase = GroupsStorage.getInstance();

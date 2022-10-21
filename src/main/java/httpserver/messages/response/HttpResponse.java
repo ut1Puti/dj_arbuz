@@ -17,6 +17,8 @@ public class HttpResponse {
      * @param getFileName - имя файла из get запроса
      * @return ответ сервера
      * @throws IOException - возникает при проблемах с открытием файла
+     * @see HttpServerConfiguration#WEB_SRC
+     * @see HttpResponse#loadResponse(File)
      */
     public static String createResponse(String getFileName) throws IOException {
         File file = new File(HttpServerConfiguration.WEB_SRC + getFileName);
@@ -32,6 +34,7 @@ public class HttpResponse {
      * @param srcLoadingFile - файл из которого загружаем
      * @return строку с данными из файла
      * @throws IOException - возникает при ошибке чтения из файла
+     * @see HttpServerConfiguration#CRLF
      */
     private static String loadResponse(File srcLoadingFile) throws IOException {
         StringBuilder html = new StringBuilder();

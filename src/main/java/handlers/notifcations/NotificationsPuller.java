@@ -13,6 +13,8 @@ import java.util.List;
 public class NotificationsPuller {
     /**
      * Поле потока ищущего новые посты
+     *
+     * @see PostsPullingThread
      */
     private final PostsPullingThread postsPullingThread;
 
@@ -34,6 +36,8 @@ public class NotificationsPuller {
 
     /**
      * Метод запускающий поток ищущий новые посты
+     *
+     * @see PostsPullingThread#start()
      */
     public void start() {
         postsPullingThread.start();
@@ -42,8 +46,8 @@ public class NotificationsPuller {
     /**
      * Метод проверяющий наличие новых постов в потоке
      *
-     * @return true - если поток нашел новые посты
-     * false - если поток не нашел новых постов
+     * @return true - если поток нашел новые посты, false - если поток не нашел новых постов
+     * @see PostsPullingThread#hasNewPosts()
      */
     public boolean hasNewPosts() {
         return postsPullingThread.hasNewPosts();
@@ -53,6 +57,7 @@ public class NotificationsPuller {
      * Метод получающий новые посты найденные в потоке
      *
      * @return список списков постов в виде строк
+     * @see PostsPullingThread#getNewPosts()
      */
     public List<String> getNewPosts() {
         return postsPullingThread.getNewPosts();
@@ -61,8 +66,8 @@ public class NotificationsPuller {
     /**
      * Метод проверяющий работает ли поток для получения новых постов
      *
-     * @return true - если поток работает
-     * false - если поток завершил работу
+     * @return true - если поток работает, false - если поток завершил работу
+     * @see PostsPullingThread#isWorking()
      */
     public boolean isWorking() {
         return postsPullingThread.isWorking();
@@ -70,6 +75,8 @@ public class NotificationsPuller {
 
     /**
      * Метод останавливающий работу потока
+     *
+     * @see PostsPullingThread#stopWithInterrupt()
      */
     public void stop() {
         postsPullingThread.stopWithInterrupt();

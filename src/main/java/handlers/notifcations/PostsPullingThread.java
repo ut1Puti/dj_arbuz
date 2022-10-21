@@ -11,14 +11,19 @@ import java.util.List;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see StoppableThread
  */
 public abstract class PostsPullingThread extends StoppableThread {
     /**
      * Поле хранилища групп
+     *
+     * @see GroupsStorage
      */
     protected final GroupsStorage groupsBase = GroupsStorage.getInstance();
     /**
      * Поле обработчика обращений к vk api
+     *
+     * @see Vk
      */
     protected Vk vk = new Vk("src/main/resources/anonsrc/vkconfig.properties");
 

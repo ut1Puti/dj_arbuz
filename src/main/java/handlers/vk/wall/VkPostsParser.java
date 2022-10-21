@@ -19,13 +19,16 @@ class VkPostsParser {
     /**
      * Поле регулярного выражения для преобразования краткого описания характеристик группы в ссылку на нее
      */
-    private static final Pattern groupStatsRegex = Pattern.compile("\\[(?<id>\\w+)[|]\\w+.\\w+\\]");
+    private static final Pattern groupStatsRegex = Pattern.compile("\\[(?<id>\\w+)[|][а-яА-Я\\w\\s]+]");
 
     /**
      * Метод парясщий пост из vk в строку
      *
      * @param groupPost - пост из группы в vk
-     * @return строку с текстом поста, а также из постов репостов и ссылку на него
+     * @return строку с текстом поста, а также из постов репостов, и ссылку на него
+     * @see WallpostFull#getAttachments()
+     * @see WallpostFull#getText()
+     * @see WallpostFull#getCopyHistory()
      */
     static String parsePost(WallpostFull groupPost) {
         List<WallpostAttachment> groupPostAttachments = groupPost.getAttachments();

@@ -41,7 +41,7 @@ public class HttpParserTests {
                 \r
                 """;
         InputStream inputStream = new ByteArrayInputStream(httpRequest.getBytes());
-        HttpRequest request = HttpParser.parseRequestLine(inputStream);
+        HttpRequest request = HttpParser.parseRequest(inputStream);
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "text/html,image/gif,image/jpeg,*;q=.2,*/*;q=.2");
         headers.put("User-Agent", "Jersey/2.35(HttpUrlConnection18.0.2.1)");
@@ -72,7 +72,7 @@ public class HttpParserTests {
                 """;
         InputStream inputStream = new ByteArrayInputStream(httpRequest.getBytes());
         try {
-            HttpParser.parseRequestLine(inputStream);
+            HttpParser.parseRequest(inputStream);
         } catch (HttpParserException e) {
             assertEquals(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST.getCodeMessage(), e.getMessage());
             return;
@@ -95,7 +95,7 @@ public class HttpParserTests {
                 """;
         InputStream inputStream = new ByteArrayInputStream(httpRequest.getBytes());
         try {
-            HttpParser.parseRequestLine(inputStream);
+            HttpParser.parseRequest(inputStream);
         } catch (IOException ignored) {
         } catch (HttpParserException e) {
             assertEquals(HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED.getCodeMessage(), e.getMessage());
@@ -119,7 +119,7 @@ public class HttpParserTests {
                 """;
         InputStream inputStream = new ByteArrayInputStream(httpRequest.getBytes());
         try {
-            HttpParser.parseRequestLine(inputStream);
+            HttpParser.parseRequest(inputStream);
         } catch (IOException ignored) {
         } catch (HttpParserException e) {
             assertEquals(HttpStatusCode.SERVER_ERROR_500_INTERNAL_SERVER_ERROR.getCodeMessage(), e.getMessage());
@@ -143,7 +143,7 @@ public class HttpParserTests {
                 """;
         InputStream inputStream = new ByteArrayInputStream(httpRequest.getBytes());
         try {
-            HttpParser.parseRequestLine(inputStream);
+            HttpParser.parseRequest(inputStream);
         } catch (IOException ignored) {
         } catch (HttpParserException e) {
             assertEquals(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST.getCodeMessage(), e.getMessage());
@@ -168,7 +168,7 @@ public class HttpParserTests {
                 \r
                 """.replace("{version}", httpVersion);
         InputStream inputStream = new ByteArrayInputStream(httpRequest.getBytes());
-        HttpRequest request = HttpParser.parseRequestLine(inputStream);
+        HttpRequest request = HttpParser.parseRequest(inputStream);
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "text/html,image/gif,image/jpeg,*;q=.2,*/*;q=.2");
         headers.put("User-Agent", "Jersey/2.35(HttpUrlConnection18.0.2.1)");

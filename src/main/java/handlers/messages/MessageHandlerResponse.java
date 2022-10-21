@@ -14,7 +14,7 @@ public class MessageHandlerResponse {
     /**
      * Поле текстового сообщения
      */
-    private String textMessage = null;
+    private String textMessage;
     /**
      * Поле содержащее интерфейс для создания или обновления пользователя
      */
@@ -22,7 +22,7 @@ public class MessageHandlerResponse {
     /**
      * Поле со списком постов в виде строк
      */
-    private List<String> postsMessages = null;
+    private List<String> postsMessages;
 
     /**
      * Конструктор - создание объекта с определенными параметрами
@@ -31,7 +31,7 @@ public class MessageHandlerResponse {
      * @param updateUser  - интерфейс для обновления или создания пользователя
      * @param postsMessages - посты в виде строки
      */
-    public MessageHandlerResponse(String textMessage, CreateUser updateUser, List<String> postsMessages) {
+    MessageHandlerResponse(String textMessage, CreateUser updateUser, List<String> postsMessages) {
         this.textMessage = textMessage;
         this.updateUser = updateUser;
         this.postsMessages = postsMessages;
@@ -43,7 +43,7 @@ public class MessageHandlerResponse {
      * @param textMessage - текстовое сообщение
      * @param updateUser  - интерфейс для обновления или создания пользователя
      */
-    public MessageHandlerResponse(String textMessage, CreateUser updateUser) {
+    MessageHandlerResponse(String textMessage, CreateUser updateUser) {
         this.textMessage = textMessage;
         this.updateUser = updateUser;
     }
@@ -54,7 +54,7 @@ public class MessageHandlerResponse {
      * @param textMessage - текстовое сообщение
      * @param postsMessages - посты в виде строки
      */
-    public MessageHandlerResponse (String textMessage, List<String> postsMessages) {
+    MessageHandlerResponse (String textMessage, List<String> postsMessages) {
         this.textMessage = textMessage;
         this.postsMessages = postsMessages;
     }
@@ -65,7 +65,7 @@ public class MessageHandlerResponse {
      * @param updateUser - интерфейс для обновления или создания пользователя
      * @param postsMessages - посты в виде строки
      */
-    public MessageHandlerResponse(CreateUser updateUser, List<String> postsMessages) {
+    MessageHandlerResponse(CreateUser updateUser, List<String> postsMessages) {
         this.updateUser = updateUser;
         this.postsMessages = postsMessages;
     }
@@ -75,7 +75,7 @@ public class MessageHandlerResponse {
      *
      * @param textMessage - текстовое сообщение
      */
-    public MessageHandlerResponse(String textMessage) {
+    MessageHandlerResponse(String textMessage) {
         this.textMessage = textMessage;
     }
 
@@ -84,7 +84,7 @@ public class MessageHandlerResponse {
      *
      * @param updateUser - интерфейс для обновления или создания пользователя
      */
-    public MessageHandlerResponse(CreateUser updateUser) {
+    MessageHandlerResponse(CreateUser updateUser) {
         this.updateUser = updateUser;
     }
 
@@ -93,7 +93,7 @@ public class MessageHandlerResponse {
      *
      * @param postsMessages - посты в виде строки
      */
-    public MessageHandlerResponse(List<String> postsMessages) {
+    MessageHandlerResponse(List<String> postsMessages) {
         this.postsMessages = postsMessages;
     }
 

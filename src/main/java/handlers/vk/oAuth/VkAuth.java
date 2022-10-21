@@ -14,18 +14,22 @@ import user.User;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see CreateUser
  */
 public class VkAuth implements CreateUser {
     /**
      * Поле класс позволяющего работать с vk api
+     * @see VkApiClient
      */
     private final VkApiClient vkApiClient;
     /**
      * Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота
+     * @see HttpServer
      */
     private HttpServer httpServer;
     /**
      * Поле с конфигурации данных для аутентификации пользователь и приложения
+     * @see VkAuthConfiguration
      */
     private final VkAuthConfiguration authConfiguration;
 
@@ -44,6 +48,10 @@ public class VkAuth implements CreateUser {
      * Метод создающий пользователя приложения
      *
      * @return пользователя приложения
+     * @see ServiceActor#ServiceActor(Integer, String, String)
+     * @see VkAuthConfiguration#APP_ID
+     * @see VkAuthConfiguration#CLIENT_SECRET
+     * @see VkAuthConfiguration#SERVICE_CLIENT_SECRET
      */
     public ServiceActor createAppActor() {
         return new ServiceActor(
@@ -55,6 +63,8 @@ public class VkAuth implements CreateUser {
      * Метод возвращающий ссылку для аутентификации
      *
      * @return ссылку для аутентификации, если сервер недоступен, то это null
+     * @see HttpServer#getInstance()
+     * @see VkAuthConfiguration#AUTH_URL
      */
     public String getAuthURL() {
         httpServer = HttpServer.getInstance();
@@ -70,10 +80,18 @@ public class VkAuth implements CreateUser {
      * Метод интерфейса CreateUser создающий пользователя.
      * Создается с помощью Vk Java SDK, получая код с сервера
      *
-     * @return нового пользователя
+     * @param systemUserId - id пользователя в системе
+     * @return нового пользователя, null если возникли проблемы при обращении к серверу, при ошибках на сервере
+     * или при ошибке обращения к vk api
+     * @see HttpServer#getInstance()
+     * @see HttpServer#getHttpRequestParameters()
+     * @see VkAuth#getAuthCodeFromHttpRequest(String)
+     * @see VkAuthConfiguration#APP_ID
+     * @see VkAuthConfiguration#CLIENT_SECRET
+     * @see VkAuthConfiguration#REDIRECT_URL
      */
     @Override
-    public User createUser(String userTelegramId) {
+    public User createUser(String systemUserId) {
         httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {
@@ -94,7 +112,7 @@ public class VkAuth implements CreateUser {
                             authConfiguration.REDIRECT_URL,
                             authCode)
                     .execute();
-            return new User(authResponse.getUserId(), authResponse.getAccessToken(), userTelegramId);
+            return new User(authResponse.getUserId(), authResponse.getAccessToken(), systemUserId);
         } catch (ApiException | ClientException e) {
             return null;
         }

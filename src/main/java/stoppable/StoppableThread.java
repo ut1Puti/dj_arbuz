@@ -5,6 +5,8 @@ package stoppable;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see Thread
+ * @see Stoppable
  */
 public class StoppableThread extends Thread implements Stoppable {
     /**
@@ -14,6 +16,7 @@ public class StoppableThread extends Thread implements Stoppable {
 
     /**
      * Конструктор - создает экземпляр класса
+     * @see Thread#Thread()
      */
     public StoppableThread() {
 
@@ -23,6 +26,7 @@ public class StoppableThread extends Thread implements Stoppable {
      * Конструктор - создает экземпляр класса
      *
      * @param threadTask - логика выполняемая внутри потока
+     * @see Thread#Thread(Runnable)
      */
     public StoppableThread(Runnable threadTask) {
         super(threadTask);
@@ -106,6 +110,11 @@ public class StoppableThread extends Thread implements Stoppable {
         super(threadRelatingGroup, threadTask, name, stackSize, inheritThreadLocals);
     }
 
+    /**
+     * Метод запускающий поток
+     *
+     * @see Thread#start()
+     */
     @Override
     public final void start() {
         working = true;
@@ -115,20 +124,21 @@ public class StoppableThread extends Thread implements Stoppable {
     /**
      * Метод проверяющий работает ли поток
      *
-     * @return true - если поток работает
-     * false - если поток завершил работу
+     * @return true - если поток работает, false - если поток завершил работу
+     * @see Thread#isAlive()
      */
     @Override
     public boolean isWorking() {
-        return isAlive() && working;
+        return this.isAlive() && working;
     }
 
     /**
      * Метод останавливающий работу потока
+     * @see Thread#interrupt()
      */
     @Override
     public void stopWithInterrupt() {
         working = false;
-        interrupt();
+        this.interrupt();
     }
 }

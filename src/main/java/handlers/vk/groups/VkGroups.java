@@ -1,12 +1,12 @@
 package handlers.vk.groups;
 
 import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiAuthException;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.groups.Fields;
 import com.vk.api.sdk.objects.groups.Group;
-import com.vk.api.sdk.objects.groups.GroupIsClosed;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
 import database.GroupsStorage;
 import handlers.vk.VkConstants;
@@ -26,7 +26,7 @@ public class VkGroups {
     /**
      * Поле класс позволяющего работать с vk api
      */
-    private VkApiClient vkApiClient;
+    private final VkApiClient vkApiClient;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -47,6 +47,7 @@ public class VkGroups {
      * @throws ApiAuthException - возникает при необходимости продлить токен путем повторной авторизации
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @see com.vk.api.sdk.actions.Groups#search(UserActor, String)
      */
     public List<Group> searchGroups(String userReceivedGroupName, User userCallingMethod)
             throws NoGroupException, ApiException, ClientException {
@@ -63,17 +64,18 @@ public class VkGroups {
     }
 
     /**
-     * Метод, который ищет подтвержденные группы по запросу
+     * Метод, который возвращает группу с наибольшим числом подписчиков и с похожим хотя бы на 50% названием
      *
      * @param userReceivedGroupName - запрос
      * @param userCallingMethod     - пользователь сделавший запрос
-     * @return верифицированную группу
-     * если групп оказалось больше одной возвращает с большим числом подписчиков
-     * если верифицированная группа не нашлась, возвращает null
+     * @return группу с наибольшим числом подписчиков, среди группс название совпадающим хотя бы на 50%, относительно
+     * заданной пользователем строки, если таких групп не нашлось кидает NoGroupException
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws ApiAuthException - возникает при необходимости продлить токен путем повторной авторизации
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @see VkGroups#searchGroups(String, User)
+     * @see VkGroups#chooseGroup(List, String, User)
      */
     public Group searchGroup(String userReceivedGroupName, User userCallingMethod)
             throws ApiException, NoGroupException, ClientException {
@@ -90,11 +92,16 @@ public class VkGroups {
     /**
      * Метод подписывающий пользователя на группу по переданной строке
      *
-     * @param groupScreenName - короткое название группы
-     * @param userCallingMethod     - пользователь вызвавший метод
+     * @param groupScreenName   - короткое название группы
+     * @param userCallingMethod - пользователь вызвавший метод
      * @return статус подписки на группу, SUBSCRIBED - означает что пользователь успешно подписан,
      * ALREADY_SUBSCRIBED - сообщает, что пользователь уже подписан на эту группу,
      * GROUP_IS_CLOSED - сообщает, что невозможно подписаться, тк группа закрыта
+     * @see GroupsStorage#getInstance()
+     * @see GroupsStorage#addInfoToGroup(String, String)
+     * @see SubscribeStatus#SUBSCRIBED
+     * @see SubscribeStatus#ALREADY_SUBSCRIBED
+     * @see SubscribeStatus#GROUP_IS_CLOSED
      */
     public SubscribeStatus subscribeTo(GroupsStorage dataBase, String groupScreenName, User userCallingMethod) {
 
@@ -102,6 +109,7 @@ public class VkGroups {
             dataBase = GroupsStorage.getInstance();
         }
 
+        //TODO synchronize working with subscribers
         boolean isSubscribed = dataBase.addInfoToGroup(groupScreenName, userCallingMethod.getTelegramId());
         return isSubscribed ? SubscribeStatus.SUBSCRIBED : SubscribeStatus.ALREADY_SUBSCRIBED;
     }
@@ -113,6 +121,8 @@ public class VkGroups {
      * @param userReceivedGroupName - название группы
      * @param userCallingMethod     - пользователь вызвавший метод
      * @return группу соответсвующую подстроке
+     * @see com.vk.api.sdk.actions.Groups#getByIdObjectLegacy(UserActor)
+     * @see VkGroups#isNameDifferent(String, String)
      */
     private Group chooseGroup(List<Group> userFindGroups, String userReceivedGroupName, User userCallingMethod) {
         int maxMembersCount = Integer.MIN_VALUE;
@@ -155,8 +165,8 @@ public class VkGroups {
      *
      * @param baseName - изначальное имя
      * @param findName - имя поиска
-     * @return true - если разница хотя бы в одном слове больше 50%
-     * false - если разница в обоих словах меньше 50%
+     * @return true - если разница хотя бы в одном слове больше 50%, false - если разница в обоих словах меньше 50%
+     * @see VkGroups#stringDifference(String, String)
      */
     private boolean isNameDifferent(String baseName, String findName) {
         String lowerCaseBaseName = baseName.toLowerCase();
@@ -176,6 +186,7 @@ public class VkGroups {
      * @param firstString  - первая строка
      * @param secondString - вторая строка
      * @return пару, элементы которой это строки, состоящие из отличных букв
+     * @see VkGroups#diffSearcher(String, String, Map)
      */
     private Pair<String> stringDifference(String firstString, String secondString) {
         return diffSearcher(firstString, secondString, new HashMap<>());

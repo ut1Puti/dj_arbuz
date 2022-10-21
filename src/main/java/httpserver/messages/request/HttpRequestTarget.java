@@ -24,6 +24,8 @@ public class HttpRequestTarget {
      *
      * @param requestTargetReceiverFromRequest - таргет отправленный на сервер
      * @throws HttpParserException - возникает при ошибке формирования таргета из запроса
+     * @see HttpStatusCode#SERVER_ERROR_500_INTERNAL_SERVER_ERROR
+     * @see HttpStatusCode#CLIENT_ERROR_400_BAD_REQUEST
      */
     public HttpRequestTarget(String requestTargetReceiverFromRequest) throws HttpParserException {
         if (requestTargetReceiverFromRequest == null) {
@@ -67,8 +69,7 @@ public class HttpRequestTarget {
      * Метод проверяющий равен ли экземпляр класса некоторому объекту
      *
      * @param obj - некоторый объект
-     * @return true - если равны
-     * false - если не равны
+     * @return true - если равны, false - если не равны
      */
     @Override
     public boolean equals(Object obj) {

@@ -48,7 +48,7 @@ public class UserStorage{
 
     }
 
-    public static <String, User> UserStorage getInstance() {
+    public static UserStorage getInstance() {
         if (userStorage == null) {
             userStorage = new UserStorage();
         }

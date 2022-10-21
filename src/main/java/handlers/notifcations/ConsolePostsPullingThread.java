@@ -11,6 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see PostsPullingThread
  */
 public class ConsolePostsPullingThread extends PostsPullingThread {
     /**

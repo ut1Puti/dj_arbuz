@@ -10,8 +10,7 @@ public interface Stoppable {
     /**
      * Метод проверяющий работает ли класс
      *
-     * @return true - если работает
-     * false - если не работает
+     * @return true - если работает, false - если не работает
      */
     boolean isWorking();
 

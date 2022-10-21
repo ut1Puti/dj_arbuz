@@ -16,10 +16,12 @@ import java.util.Map;
 public class HttpRequest extends HttpMessage {
     /**
      * Поле запрошенного метода
+     * @see HttpMethod
      */
     private HttpMethod method;
     /**
      * Поле запрошенной цели
+     * @see HttpRequestTarget
      */
     private HttpRequestTarget requestTarget;
     /**
@@ -28,6 +30,7 @@ public class HttpRequest extends HttpMessage {
     private String originalHttpVersion;
     /**
      * Поле лучшей совместимой версии, с этой версией будет отправлен ответ
+     * @see HttpVersion
      */
     private HttpVersion bestCompatibleHttpVersion;
     /**
@@ -53,6 +56,7 @@ public class HttpRequest extends HttpMessage {
      *
      * @param methodName - название метода в виде строки
      * @throws HttpParserException - возникает при отсутствии реализации полученного метода
+     * @see HttpStatusCode#SERVER_ERROR_501_NOT_IMPLEMENTED
      */
     public void setMethod(String methodName) throws HttpParserException {
         for (HttpMethod method : HttpMethod.values()) {
@@ -108,6 +112,8 @@ public class HttpRequest extends HttpMessage {
      *
      * @param requestHttpVersion - полученная версия http
      * @throws HttpParserException - ошибка парсера, возникает если версия в полученном запросе некорректна
+     * @see HttpVersion#getBestCompatibleVersion(String)
+     * @see HttpStatusCode#SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED
      */
     public void setHttpVersion(String requestHttpVersion) throws HttpParserException {
         originalHttpVersion = requestHttpVersion;

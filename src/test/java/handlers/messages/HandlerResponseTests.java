@@ -38,7 +38,7 @@ public class HandlerResponseTests {
     public void testUpdateUserConstructorsAndSettersAndGetters() {
         CreateUser createUser = new CreateUser() {
             @Override
-            public User createUser(String telegramId) {
+            public User createUser(String systemUserId) {
                 return null;
             }
         };
