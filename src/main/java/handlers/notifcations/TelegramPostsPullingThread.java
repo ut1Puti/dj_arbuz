@@ -62,7 +62,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
 
                 }
                 final int oneHourInMilliseconds = 3600000;
-                sleep(oneHourInMilliseconds);
+                Thread.sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
             } catch (ApiException | ClientException ignored) {
@@ -74,20 +74,26 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Метод проверяющий наличие новых постов
      *
-     * @return false, тк все посты сразу отправляются пользователям
+     * @throws UnsupportedOperationException - возникает тк эта операция не нужна в этой реализации класса,
+     * поэтому он не реализован
      */
     @Override
     public boolean hasNewPosts() {
-        return false;
+        throw new UnsupportedOperationException(
+                "Метод не реализован, тк эта реализации сразу отправляет сообщения пользователям"
+        );
     }
 
     /**
      * Метод получающий новые посты
      *
-     * @return null, тк все посты сразу отправляются пользователям
+     * @throws UnsupportedOperationException - возникает тк эта операция не нужна в этой реализации класса,
+     * поэтому он не реализован
      */
     @Override
     public List<String> getNewPosts() {
-        return null;
+        throw new UnsupportedOperationException(
+                "Метод не реализован, тк реализация сразу отправляет сообщения пользователям сразу"
+        );
     }
 }

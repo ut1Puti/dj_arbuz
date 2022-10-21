@@ -107,7 +107,7 @@ public class VkWall {
     /**
      * Метод получающий последние n постов из группы в представлении вк
      *
-     * @param userCalledMethod - пользователь бота вызвавший метод
+     * @param userCalledMethod - пользователь бота вызвавший метод(User, ServiceActor)
      * @param groupScreenName  - короткое имя группы в которой ищем посты
      * @param amountOfPosts    - кол-во постов
      * @return список постов в представлении вк
@@ -116,6 +116,8 @@ public class VkWall {
      * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
      * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
+     * @see User
+     * @see ServiceActor
      * @see com.vk.api.sdk.actions.Wall#get(ServiceActor)
      * @see com.vk.api.sdk.actions.Wall#get(UserActor)
      */

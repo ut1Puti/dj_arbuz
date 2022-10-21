@@ -12,7 +12,7 @@ public class ConsoleBot {
     /**
      * Поле id пользователя консольной версии бота
      */
-    private final String defaultConsoleUserId = "-10";
+    private final String defaultConsoleUserId = "consoleUser";
     /**
      * Поле потока обрабатывающего и получающего сообщения пользователей
      *

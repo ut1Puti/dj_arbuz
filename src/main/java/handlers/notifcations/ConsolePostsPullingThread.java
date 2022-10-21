@@ -71,8 +71,7 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
     /**
      * Метод проверяющий наличие новых постов
      *
-     * @return true - если есть новые посты
-     * false - если нет новых постов
+     * @return true - если есть новые посты, false - если нет новых постов
      */
     @Override
     public boolean hasNewPosts() {
