@@ -50,6 +50,7 @@ public enum HttpVersion {
      * @param requestVersion - версия протокола из полученного запроса
      * @return лучшую совместимую версию протокола
      * @throws HttpParserException - ошибка возникает если протокол не поддерживает сервером или некорректно составлен
+     * @see HttpStatusCode#CLIENT_ERROR_400_BAD_REQUEST
      */
     public static HttpVersion getBestCompatibleVersion(String requestVersion) throws HttpParserException {
         Matcher matcher = Pattern.compile("^HTTP/(?<major>\\d+).(?<minor>\\d+)").matcher(requestVersion);

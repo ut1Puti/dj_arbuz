@@ -14,7 +14,7 @@ public class VkConstants {
     /**
      * Поле адреса стены
      */
-    public static final String WALL_ADDRESS = "/wall";
+    public static final String VK_WALL_ADDRESS = VK_ADDRESS + "wall";
     /**
      * Поле стандартного offset'а
      */

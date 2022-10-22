@@ -3,6 +3,7 @@ package handlers.notifcations;
 import bots.telegram.TelegramBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
+import database.GroupsStorage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -14,10 +15,13 @@ import java.util.Optional;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see PostsPullingThread
  */
 public class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Поле телеграмм бота
+     *
+     * @see TelegramBot
      */
     private final TelegramBot telegramBot;
 
@@ -31,11 +35,14 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
     }
 
     /**
-     * Метод логики выполняемой внутри потока
+     * Метод логики выполняемой внутри {@code TelegramPostsPullingThread}
+     *
+     * @see GroupsStorage#getGroups()
+     * @see handlers.vk.Vk#getNewPosts(GroupsStorage, String)
+     * @see GroupsStorage#getSubscribedToGroupUsersId(String)
      */
     @Override
     public void run() {
-        working = true;
         while (working) {
             try {
                 for (String groupScreenName : groupsBase.getGroups()) {
@@ -55,7 +62,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
 
                 }
                 final int oneHourInMilliseconds = 3600000;
-                sleep(oneHourInMilliseconds);
+                Thread.sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
             } catch (ApiException | ClientException ignored) {
@@ -67,20 +74,26 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Метод проверяющий наличие новых постов
      *
-     * @return false, тк все посты сразу отправляются пользователям
+     * @throws UnsupportedOperationException - возникает тк эта операция не нужна в этой реализации класса,
+     * поэтому он не реализован
      */
     @Override
     public boolean hasNewPosts() {
-        return false;
+        throw new UnsupportedOperationException(
+                "Метод не реализован, тк эта реализации сразу отправляет сообщения пользователям"
+        );
     }
 
     /**
      * Метод получающий новые посты
      *
-     * @return null, тк все посты сразу отправляются пользователям
+     * @throws UnsupportedOperationException - возникает тк эта операция не нужна в этой реализации класса,
+     * поэтому он не реализован
      */
     @Override
     public List<String> getNewPosts() {
-        return null;
+        throw new UnsupportedOperationException(
+                "Метод не реализован, тк реализация сразу отправляет сообщения пользователям сразу"
+        );
     }
 }

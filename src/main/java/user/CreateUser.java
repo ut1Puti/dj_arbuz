@@ -8,5 +8,12 @@ package user;
  */
 @FunctionalInterface
 public interface CreateUser {
-    User createUser(String telegramId);
+    /**
+     * Метод создающий пользователя, имеющего id в системе
+     *
+     * @param systemUserId - id пользователя в системе
+     * @return пользователя содержащего id в vk и в системе,
+     * token - ключ доступа к vk api с использованием аккаунта пользоватлеля
+     */
+    User createUser(String systemUserId);
 }

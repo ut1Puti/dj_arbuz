@@ -12,6 +12,8 @@ import java.net.ServerSocket;
 public class HttpServer {
     /**
      * Поле запущенного в программе сервера
+     *
+     * @see HttpServer
      */
     private static HttpServer server;
     /**
@@ -20,6 +22,8 @@ public class HttpServer {
     private ServerSocket serverSocket;
     /**
      * Поле потоков слушающих новые сообщения к сокету
+     *
+     * @see ServerListenerThread
      */
     private final ServerListenerThread listenerThread;
 
@@ -28,6 +32,7 @@ public class HttpServer {
      * Конструктор - создание объекта
      *
      * @throws IOException - возникает при ошибке открытия серверного сокета
+     * @see HttpServerConfiguration#PORT
      */
     private HttpServer() throws IOException {
         serverSocket = new ServerSocket(HttpServerConfiguration.PORT);
@@ -55,6 +60,8 @@ public class HttpServer {
 
     /**
      * Метод запускающий сервер
+     *
+     * @see ServerListenerThread#start()
      */
     public void start() {
         listenerThread.start();
@@ -65,6 +72,7 @@ public class HttpServer {
      *
      * @return полученные get параметры последнего запроса,
      * null если в течение 5 минут параметры не пришли, или поток был прерван
+     * @see ServerListenerThread#getHttpRequestParameters()
      */
     public String getHttpRequestParameters() {
         return listenerThread.getHttpRequestParameters();
@@ -73,8 +81,9 @@ public class HttpServer {
     /**
      * Метод проверяющий работает ли сервер
      *
-     * @return true - если поток обработки запросов работает
+     * @return true - если поток обработки запросов работает,
      * false - если поток обработки запросов не работает
+     * @see ServerListenerThread#isWorking()
      */
     public boolean isWorking() {
         return listenerThread.isWorking();
@@ -82,6 +91,9 @@ public class HttpServer {
 
     /**
      * Метод останавливающий сервер
+     *
+     * @see ServerListenerThread#stopWithInterrupt()
+     * @see HttpServerUtils#closeServerStream(Closeable)
      */
     public void stop() {
         listenerThread.stopWithInterrupt();

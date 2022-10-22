@@ -25,7 +25,8 @@ import java.util.Optional;
  *
  * @author Кедровских Олег
  * @author Щеголев Андрей
- * @version 1.6
+ * @version 2.0
+ * @see CreateUser
  */
 public class Vk implements CreateUser {
     /**
@@ -63,23 +64,25 @@ public class Vk implements CreateUser {
      * Метод обертка возвращающий ссылку для аутентификации
      *
      * @return ссылку для аутентификации, если сервер недоступен, то это null
+     * @see VkAuth#getAuthURL() 
      */
     public String getAuthURL() {
         return oAuth.getAuthURL();
     }
 
     /**
-     * Метод интерфейса CreateUser создающий пользователя
+     * Метод интерфейса {@link CreateUser} создающий пользователя
      *
      * @return нового пользователя
+     * @see VkAuth#createUser(String) 
      */
     @Override
-    public User createUser(String userTelegramId) {
-        return oAuth.createUser(userTelegramId);
+    public User createUser(String systemUserId) {
+        return oAuth.createUser(systemUserId);
     }
 
     /**
-     * Метод получающий ссылку на группу в vk
+     * Метод получающий ссылку на группу в vk найденную по {@code userReceivedGroupName}
      *
      * @param userReceivedGroupName - Название группы
      * @param userCallingMethod     - пользователь вызвавший метод
@@ -87,6 +90,7 @@ public class Vk implements CreateUser {
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @see VkGroups#searchGroup(String, User)
      */
     public String getGroupURL(String userReceivedGroupName, User userCallingMethod)
             throws NoGroupException, ClientException, ApiException {
@@ -94,7 +98,7 @@ public class Vk implements CreateUser {
     }
 
     /**
-     * Метод получающий id группы
+     * Метод получающий id группы найденную по {@code userReceivedGroupName}
      *
      * @param userReceivedGroupName - Название группы
      * @param userCallingMethod     - пользователь вызвавший метод
@@ -102,6 +106,7 @@ public class Vk implements CreateUser {
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @see VkGroups#searchGroup(String, User) 
      */
     public String getGroupId(String userReceivedGroupName, User userCallingMethod)
             throws NoGroupException, ClientException, ApiException {
@@ -113,11 +118,13 @@ public class Vk implements CreateUser {
      *
      * @param userReceivedGroupName - Название группы
      * @param userCallingMethod     - пользователь вызвавший метод
-     * @return возвращает true - если пользователь только что подписался
-     * false - если пользователь уже был подписан
+     * @return возвращает {@code true} если пользователь только что подписался
+     * {@code false} - если пользователь уже был подписан
      * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @see VkGroups#searchGroup(String, User) 
+     * @see VkGroups#subscribeTo(GroupsStorage, String, User) 
      */
     public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, User userCallingMethod)
             throws ApiException, NoGroupException, ClientException {
@@ -131,7 +138,7 @@ public class Vk implements CreateUser {
     }
 
     /**
-     * Метод для получения последних постов со стены по подстроке пользователя
+     * Метод для получения последних {@code amountOfPosts} постов со стены по {@code userReceivedGroupName}
      *
      * @param amountOfPosts         - кол-во постов
      * @param userReceivedGroupName - имя группы
@@ -142,11 +149,13 @@ public class Vk implements CreateUser {
      * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
      * @throws IllegalArgumentException - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
+     * @see VkGroups#searchGroup(String, User) 
+     * @see VkWall#getLastPostsStrings(String, int, User)
      */
     public Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCallingMethod)
             throws NoGroupException, ClientException, ApiException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
-        return wall.getLastPosts(userFindGroup.getScreenName(), amountOfPosts, userCallingMethod);
+        return wall.getLastPostsStrings(userFindGroup.getScreenName(), amountOfPosts, userCallingMethod);
     }
 
     /**
@@ -157,9 +166,10 @@ public class Vk implements CreateUser {
      * @return список постов в группе в виде строк
      * @throws ApiException    - возникает при ошибке обращения к vk api со стороны vk
      * @throws ClientException - возникает при ошибке обращения к vk api со стороны клиента
+     * @see VkWall#getLastPostsStrings(String, int, User)
      */
     public Optional<List<String>> getNewPosts(GroupsStorage groupsStorage, String groupScreenName)
             throws ClientException, ApiException {
-        return wall.getNewPosts(groupsStorage, groupScreenName, vkApp);
+        return wall.getNewPostsStrings(groupsStorage, groupScreenName, vkApp);
     }
 }

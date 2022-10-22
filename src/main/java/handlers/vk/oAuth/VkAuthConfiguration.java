@@ -2,6 +2,7 @@ package handlers.vk.oAuth;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Properties;
  * @author Кедровских Олег
  * @version 2.0
  */
-class VkAuthConfiguration {
+public class VkAuthConfiguration {
     /**
      * Поле ссылки для аутентификации
      */
@@ -74,5 +75,39 @@ class VkAuthConfiguration {
             throw new RuntimeException("Нет " + fileSearchingElementName + " элемента в файле: " + vkAppConfigurationFilePath);
         }
 
+    }
+
+    /**
+     * Метод вычисляющий хэш экземляра класса
+     *
+     * @return хэш экземпляра
+     */
+    @Override
+    public int hashCode() {
+        return (APP_ID + AUTH_URL + CLIENT_SECRET + SERVICE_CLIENT_SECRET + REDIRECT_URL).hashCode();
+    }
+
+    /**
+     * Метод проверяющий равенство {@code obj} и {@code VkAuthConfiguration}
+     *
+     * @param obj - сравниваемый объект
+     * @return true если объекты равны по полям, false если объекты не равны по полям
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof VkAuthConfiguration anotherVkAuthConfiguration)) {
+            return false;
+        }
+
+        return AUTH_URL.equals(anotherVkAuthConfiguration.AUTH_URL) &&
+                Objects.equals(APP_ID, anotherVkAuthConfiguration.APP_ID) &&
+                CLIENT_SECRET.equals(anotherVkAuthConfiguration.CLIENT_SECRET) &&
+                SERVICE_CLIENT_SECRET.equals(anotherVkAuthConfiguration.SERVICE_CLIENT_SECRET) &&
+                REDIRECT_URL.equals(anotherVkAuthConfiguration.REDIRECT_URL);
     }
 }

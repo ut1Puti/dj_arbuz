@@ -15,6 +15,7 @@ public class UserStorage{
 
     /**
      * Метод для добавления информации в базу данных
+     *
      * @param user - айди юзера в телеграмме
      * @param userData - данные юзера
      * @return
@@ -23,6 +24,7 @@ public class UserStorage{
         usersBase.put(user, userData);
         return true;
     }
+    
     /**
      * Метод для сохранения базы данных в json файл
      */
@@ -61,9 +63,10 @@ public class UserStorage{
 
     /**
      * Инициализация бота
+     *
      * @return Базу с юзерами
      */
-    public static <String, User> UserStorage getInstance() {
+    public static UserStorage getInstance() {
         if (userStorage == null) {
             userStorage = new UserStorage();
         }
@@ -86,6 +89,7 @@ public class UserStorage{
 
     /**
      * Метод для оплучения значения по ключу
+     *
      * @param user - ключ с айди юзера в телеграмме
      * @return подписки на группы
      */

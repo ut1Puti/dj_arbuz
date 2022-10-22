@@ -140,7 +140,7 @@ public class VkWallTests {
         VkAuth vkAuth = new VkAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
         ServiceActor appUser = vkAuth.createAppActor();
         GroupsStorage groupBase = GroupsStorage.getInstance();
-        Optional<List<String>> noPosts = vkWall.getNewPosts(groupBase, "some unknown group", appUser);
+        Optional<List<String>> noPosts = vkWall.getNewPostsStrings(groupBase, "some unknown group", appUser);
         assertEquals(Optional.empty(), noPosts);
     }
 }

@@ -11,6 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see PostsPullingThread
  */
 public class ConsolePostsPullingThread extends PostsPullingThread {
     /**
@@ -32,7 +33,7 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
     }
 
     /**
-     * Метод логики выполняемой внутри потока
+     * Метод логики выполняемой внутри {@code ConsoleBotPullingThread}
      */
     @Override
     public void run() {
@@ -70,8 +71,7 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
     /**
      * Метод проверяющий наличие новых постов
      *
-     * @return true - если есть новые посты
-     * false - если нет новых постов
+     * @return {@code true} - если есть новые посты, {@code false} - если нет новых постов
      */
     @Override
     public boolean hasNewPosts() {
@@ -81,7 +81,7 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
     /**
      * Метод получающий новые посты
      *
-     * @return список новых постов
+     * @return список новых постов в виде списка строк
      */
     @Override
     public List<String> getNewPosts() {

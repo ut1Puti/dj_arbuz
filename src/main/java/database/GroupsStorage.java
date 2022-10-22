@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Класс для хранения подписок всех пользователей
@@ -127,7 +128,7 @@ public class GroupsStorage {
      * @return группы на которые оформлены подписки
      */
     public Set<String> getGroups() {
-        return new HashSet<>(groupsBase.keySet());
+        return Set.copyOf(groupsBase.keySet());
     }
 
     /**
@@ -137,7 +138,7 @@ public class GroupsStorage {
      * @return подписчиков группы
      */
     public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
-        return groupsBase.get(groupScreenName).getSubscribedUsersId();
+        return groupsBase.get(groupScreenName).getSubscribedUsersId().stream().toList();
     }
 
     /**
@@ -147,15 +148,9 @@ public class GroupsStorage {
      * @return подписки пользователя
      */
     public Set<String> getUserSubscribedGroups(String userId) {
-        Set<String> userSubscribedGroups = new HashSet<>();
-        for (Entry<String, GroupRelatedData> groupNameAndSubscribers : groupsBase.entrySet()) {
-
-            if (groupNameAndSubscribers.getValue().contains(userId)) {
-                userSubscribedGroups.add(groupNameAndSubscribers.getKey());
-            }
-
-        }
-        return userSubscribedGroups;
+        return groupsBase.entrySet().stream()
+                .filter(groupNameAndInformation -> groupNameAndInformation.getValue().contains(userId))
+                .map(Entry::getKey).collect(Collectors.toSet());
     }
 
     /**
@@ -164,7 +159,7 @@ public class GroupsStorage {
      * @param groupScreenName - название группы
      * @return дату последнего поста
      */
-    public Optional<Integer> getGroupLastPostDate(String groupScreenName) {
+    public Optional<Long> getGroupLastPostDate(String groupScreenName) {
 
         if (!groupsBase.containsKey(groupScreenName)) {
             return Optional.empty();
@@ -179,7 +174,7 @@ public class GroupsStorage {
      * @param groupScreenName - название группы
      * @param newLastPostDate - новая дата последнего поста для группы
      */
-    public void updateGroupLastPost(String groupScreenName, int newLastPostDate) {
+    public void updateGroupLastPost(String groupScreenName, long newLastPostDate) {
 
         if (!groupsBase.containsKey(groupScreenName)) {
             return;

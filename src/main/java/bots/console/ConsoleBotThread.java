@@ -16,6 +16,8 @@ import java.util.Scanner;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see StoppableThread
+ * @see StoppableByUser
  */
 public class ConsoleBotThread extends StoppableThread implements StoppableByUser {
     /**
@@ -24,10 +26,14 @@ public class ConsoleBotThread extends StoppableThread implements StoppableByUser
     private final String consoleBotUserId;
     /**
      * Поле хранящее пользователя пользующегося ботом
+     *
+     * @see UserStorage
      */
     private UserStorage userBase = UserStorage.getInstance();
     /**
      * Поле класса получающего новые посты
+     *
+     * @see NotificationsPuller
      */
     private final NotificationsPuller notificationsPuller;
 
@@ -43,10 +49,20 @@ public class ConsoleBotThread extends StoppableThread implements StoppableByUser
 
     /**
      * Метод с логикой выполняемой внутри потока
+     *
+     * @see StoppableThread#run()
+     * @see MessageHandler#executeMessage(String, String, StoppableByUser)
+     * @see NotificationsPuller#start()
+     * @see MessageHandlerResponse#hasTextMessage()
+     * @see MessageHandlerResponse#getTextMessage()
+     * @see MessageHandlerResponse#hasPostsMessages()
+     * @see MessageHandlerResponse#getPostsMessages()
+     * @see MessageHandlerResponse#hasUpdateUser()
+     * @see MessageHandlerResponse#getUpdateUser()
+     * @see NotificationsPuller#stop()
      */
     @Override
     public void run() {
-        working = true;
         notificationsPuller.start();
         Scanner userInput = new Scanner(System.in);
         while (working) {
@@ -91,9 +107,11 @@ public class ConsoleBotThread extends StoppableThread implements StoppableByUser
 
     /**
      * Реализация интерфейса позволяющая останавливать поток по запросу пользователя
+     *
+     * @see StoppableThread#stopWithInterrupt()
      */
     @Override
     public void stopByUser() {
-        stopWithInterrupt();
+        this.stopWithInterrupt();
     }
 }

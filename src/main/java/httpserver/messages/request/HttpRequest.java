@@ -16,10 +16,14 @@ import java.util.Map;
 public class HttpRequest extends HttpMessage {
     /**
      * Поле запрошенного метода
+     *
+     * @see HttpMethod
      */
     private HttpMethod method;
     /**
      * Поле запрошенной цели
+     *
+     * @see HttpRequestTarget
      */
     private HttpRequestTarget requestTarget;
     /**
@@ -28,6 +32,8 @@ public class HttpRequest extends HttpMessage {
     private String originalHttpVersion;
     /**
      * Поле лучшей совместимой версии, с этой версией будет отправлен ответ
+     *
+     * @see HttpVersion
      */
     private HttpVersion bestCompatibleHttpVersion;
     /**
@@ -53,6 +59,7 @@ public class HttpRequest extends HttpMessage {
      *
      * @param methodName - название метода в виде строки
      * @throws HttpParserException - возникает при отсутствии реализации полученного метода
+     * @see HttpStatusCode#SERVER_ERROR_501_NOT_IMPLEMENTED
      */
     public void setMethod(String methodName) throws HttpParserException {
         for (HttpMethod method : HttpMethod.values()) {
@@ -108,6 +115,8 @@ public class HttpRequest extends HttpMessage {
      *
      * @param requestHttpVersion - полученная версия http
      * @throws HttpParserException - ошибка парсера, возникает если версия в полученном запросе некорректна
+     * @see HttpVersion#getBestCompatibleVersion(String)
+     * @see HttpStatusCode#SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED
      */
     public void setHttpVersion(String requestHttpVersion) throws HttpParserException {
         originalHttpVersion = requestHttpVersion;
@@ -117,5 +126,42 @@ public class HttpRequest extends HttpMessage {
             throw new HttpParserException(HttpStatusCode.SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED);
         }
 
+    }
+
+    /**
+     * Метод вычисляющий хэш экземляра класса
+     *
+     * @return хэш экземпляра
+     */
+    @Override
+    public int hashCode() {
+        return method.hashCode() + requestTarget.hashCode()
+                + originalHttpVersion.hashCode() + bestCompatibleHttpVersion.hashCode()
+                + headers.hashCode() + body.hashCode();
+    }
+
+    /**
+     * Метод проверяющий равенство {@code obj} и {@code HttpRequest}
+     *
+     * @param obj - сравниваемый объект
+     * @return true если объекты равны по полям, false если объекты не равны по полям
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof HttpRequest anotherHttpRequest)) {
+            return false;
+        }
+
+        return method.equals(anotherHttpRequest.method) &&
+                requestTarget.equals(anotherHttpRequest.requestTarget) &&
+                originalHttpVersion.equals(anotherHttpRequest.originalHttpVersion) &&
+                bestCompatibleHttpVersion.equals(anotherHttpRequest.bestCompatibleHttpVersion) &&
+                headers.equals(anotherHttpRequest.headers) &&
+                body.equals(anotherHttpRequest.body);
     }
 }

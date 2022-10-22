@@ -6,6 +6,7 @@ import com.vk.api.sdk.objects.wall.WallpostFull;
 import handlers.vk.VkConstants;
 
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -16,10 +17,18 @@ import java.util.regex.Pattern;
  */
 class VkPostsParser {
     /**
-     * Метод парясщий пост из vk в строку
+     * Поле регулярного выражения для нахождения характеристик группы и вытягивание из найденной подстроки id группы
+     */
+    private static final Pattern groupStatsRegex = Pattern.compile("\\[(?<id>\\w+)[|][а-яА-Я\\w\\s]+]");
+
+    /**
+     * Метод парясщий {@link WallpostFull} в строку
      *
      * @param groupPost - пост из группы в vk
-     * @return строку с текстом поста, а также из постов репостов и ссылку на него
+     * @return строку с текстом поста, а также из постов репостов, и ссылку на него
+     * @see WallpostFull#getAttachments()
+     * @see WallpostFull#getText()
+     * @see WallpostFull#getCopyHistory()
      */
     static String parsePost(WallpostFull groupPost) {
         List<WallpostAttachment> groupPostAttachments = groupPost.getAttachments();
@@ -30,17 +39,17 @@ class VkPostsParser {
             if (groupPostCopy == null) {
                 break;
             }
-
-            groupPostAttachments = groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX)
-                                                .getAttachments();
-            postTextBuilder.append("\n")
-                           .append(groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX)
-                                                .getText());
+            
+            groupPostAttachments = groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX).getAttachments();
+            postTextBuilder.append("\n").append(groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX).getText());
         }
-        String postURL = VkConstants.VK_ADDRESS + VkConstants.WALL_ADDRESS +
-                groupPost.getOwnerId() + "_" + groupPost.getId();
-        return postTextBuilder.append("\n")
-                              .append(postURL)
-                              .toString();
+        Matcher groupStatsMatcher = groupStatsRegex.matcher(postTextBuilder);
+        while (groupStatsMatcher.find() && groupStatsMatcher.groupCount() == 1) {
+            String groupLink = VkConstants.VK_ADDRESS + groupStatsMatcher.group("id");
+            postTextBuilder.replace(0, postTextBuilder.length(), groupStatsMatcher.replaceFirst(groupLink));
+            groupStatsMatcher = groupStatsRegex.matcher(postTextBuilder);
+        }
+        String postURL = VkConstants.VK_WALL_ADDRESS + groupPost.getOwnerId() + "_" + groupPost.getId();
+        return postTextBuilder.append("\n").append(postURL).toString();
     }
 }

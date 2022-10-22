@@ -13,6 +13,8 @@ import java.util.List;
 public class NotificationsPuller {
     /**
      * Поле потока ищущего новые посты
+     *
+     * @see PostsPullingThread
      */
     private final PostsPullingThread postsPullingThread;
 
@@ -33,7 +35,9 @@ public class NotificationsPuller {
     }
 
     /**
-     * Метод запускающий поток ищущий новые посты
+     * Метод запускающий {@code postsPullingThread}
+     *
+     * @see PostsPullingThread#start()
      */
     public void start() {
         postsPullingThread.start();
@@ -42,8 +46,8 @@ public class NotificationsPuller {
     /**
      * Метод проверяющий наличие новых постов в потоке
      *
-     * @return true - если поток нашел новые посты
-     * false - если поток не нашел новых постов
+     * @return {@code true} - если поток нашел новые посты, {@code false} - если поток не нашел новых постов
+     * @see PostsPullingThread#hasNewPosts()
      */
     public boolean hasNewPosts() {
         return postsPullingThread.hasNewPosts();
@@ -53,23 +57,26 @@ public class NotificationsPuller {
      * Метод получающий новые посты найденные в потоке
      *
      * @return список списков постов в виде строк
+     * @see PostsPullingThread#getNewPosts()
      */
     public List<String> getNewPosts() {
         return postsPullingThread.getNewPosts();
     }
 
     /**
-     * Метод проверяющий работает ли поток для получения новых постов
+     * Метод проверяющий работает ли {@code postsPullingThread}
      *
-     * @return true - если поток работает
-     * false - если поток завершил работу
+     * @return true - если {@code postsPullingThread} работает, false - если {@code postsPullingThread} завершил работу
+     * @see PostsPullingThread#isWorking()
      */
     public boolean isWorking() {
         return postsPullingThread.isWorking();
     }
 
     /**
-     * Метод останавливающий работу потока
+     * Метод останавливающий {@code postsPullingThread}
+     *
+     * @see PostsPullingThread#stopWithInterrupt()
      */
     public void stop() {
         postsPullingThread.stopWithInterrupt();

@@ -9,20 +9,20 @@ import java.util.List;
  * @author Кедровсикх Олег
  * @version 1.0
  */
-public class GroupRelatedData {
+class GroupRelatedData {
     /**
      * Поле хранящее подписанных пользователей
      */
-    private List<String> subscribedUsersId = new ArrayList<>();
+    private List<String> subscribedUsersId;
     /**
      * Поле хранящее дату последнего поста
      */
-    private int lastPostDate = 0;
+    private long lastPostDate = 0;
 
     /**
      * Констуктор - создает экземпляр класса
      */
-    public GroupRelatedData() {
+    GroupRelatedData() {
 
     }
 
@@ -31,7 +31,7 @@ public class GroupRelatedData {
      *
      * @param subscribedUsersId - подписанные пользователи
      */
-    public GroupRelatedData(List<String> subscribedUsersId) {
+    GroupRelatedData(List<String> subscribedUsersId) {
         this.subscribedUsersId = subscribedUsersId;
     }
 
@@ -40,7 +40,8 @@ public class GroupRelatedData {
      *
      * @param lastPostDate - дата последнего поста полученного в группе
      */
-    public GroupRelatedData(int lastPostDate) {
+    GroupRelatedData(long lastPostDate) {
+        this.subscribedUsersId = new ArrayList<>();
         this.lastPostDate = lastPostDate;
     }
 
@@ -50,7 +51,7 @@ public class GroupRelatedData {
      * @param subscribedUsersId - подписанные пользователи
      * @param lastPostDate      - дата последнего поста полученного в группе
      */
-    public GroupRelatedData(List<String> subscribedUsersId, int lastPostDate) {
+    GroupRelatedData(List<String> subscribedUsersId, long lastPostDate) {
         this.subscribedUsersId = subscribedUsersId;
         this.lastPostDate = lastPostDate;
     }
@@ -60,7 +61,7 @@ public class GroupRelatedData {
      *
      * @return список подписанных пользователей
      */
-    public List<String> getSubscribedUsersId() {
+    List<String> getSubscribedUsersId() {
         return subscribedUsersId;
     }
 
@@ -69,7 +70,7 @@ public class GroupRelatedData {
      *
      * @return дату последнего поста
      */
-    public int getLastPostDate() {
+    long getLastPostDate() {
         return lastPostDate;
     }
 
@@ -78,8 +79,7 @@ public class GroupRelatedData {
      *
      * @param newSubscriberId - id нового подписчика
      */
-    public void addNewSubscriber(String newSubscriberId) {
-
+    void addNewSubscriber(String newSubscriberId) {
         if (subscribedUsersId.contains(newSubscriberId)) {
             return;
         }
@@ -91,11 +91,10 @@ public class GroupRelatedData {
      * Метод добавляющий новых подписчиков
      *
      * @param newSubscribersId - список id новых подписчиков
+     * @see GroupRelatedData#addNewSubscriber(String)
      */
-    public void addNewSubscribers(List<String> newSubscribersId) {
-        for (String newSubscriberId : newSubscribersId) {
-            addNewSubscriber(newSubscriberId);
-        }
+    void addNewSubscribers(List<String> newSubscribersId) {
+        newSubscribersId.forEach(this::addNewSubscriber);
     }
 
     /**
@@ -103,8 +102,8 @@ public class GroupRelatedData {
      *
      * @param newLastPostDate - новая дата последнего поста
      */
-    public void updateLastPostDate(int newLastPostDate) {
-        lastPostDate = newLastPostDate;
+    void updateLastPostDate(long newLastPostDate) {
+        this.lastPostDate = newLastPostDate;
     }
 
     /**
@@ -114,7 +113,37 @@ public class GroupRelatedData {
      * @return true - если пользователь подписан
      * false - если пользователь не подписан
      */
-    public boolean contains(String subscriberId) {
+    boolean contains(String subscriberId) {
         return subscribedUsersId.contains(subscriberId);
+    }
+
+    /**
+     * Метод вычисляющий хэш экземляра класса
+     *
+     * @return хэш экземпляра
+     */
+    @Override
+    public int hashCode() {
+        return subscribedUsersId.hashCode();
+    }
+
+    /**
+     * Метод проверяющий равенство {@code obj} и {@code GroupRelatedData}
+     *
+     * @param obj - сравниваемый объект
+     * @return true если объекты равны по полям, false если объекты не равны по полям
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof GroupRelatedData anotherGroupRelatedData)) {
+            return false;
+        }
+
+        return subscribedUsersId.equals(anotherGroupRelatedData.subscribedUsersId);
     }
 }

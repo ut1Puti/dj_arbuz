@@ -20,8 +20,12 @@ public class HttpParser {
      * @return ?отпаршенный? запрос
      * @throws IOException - возникает при проблемах в InputStream с запросом
      * @throws HttpParserException - возникает при ошибках в полученном http запросе
+     * @see HttpServerConfiguration#CRLF
+     * @see HttpParser#parseRequestLine(Scanner, HttpRequest)
+     * @see HttpParser#parseHeaders(Scanner, HttpRequest)
+     * @see HttpParser#parseBody(Scanner, HttpRequest)
      */
-    public static HttpRequest parseRequestLine(InputStream socketInputStream) throws IOException, HttpParserException {
+    public static HttpRequest parseRequest(InputStream socketInputStream) throws IOException, HttpParserException {
         HttpRequest httpRequestParsed = new HttpRequest();
         Scanner httpRequestScanner = new Scanner(socketInputStream);
         httpRequestScanner.useDelimiter(HttpServerConfiguration.CRLF);
@@ -38,6 +42,11 @@ public class HttpParser {
      * @param httpRequestScanner - сканер с потоком из которого читаются данные
      * @param httpRequest        - ?отпрашенный? запрос
      * @throws HttpParserException - возникает при ошибках в request-line http запроса
+     * @see HttpRequest#setMethod(String)
+     * @see HttpRequest#setRequestTarget(String)
+     * @see HttpRequest#setHttpVersion(String)
+     * @see HttpStatusCode#SERVER_ERROR_500_INTERNAL_SERVER_ERROR
+     * @see HttpStatusCode#CLIENT_ERROR_400_BAD_REQUEST
      */
     private static void parseRequestLine(Scanner httpRequestScanner, HttpRequest httpRequest)
             throws HttpParserException {
@@ -64,6 +73,8 @@ public class HttpParser {
      *
      * @param httpRequestScanner - сканер с потоком из которого читаются данные
      * @param httpRequest        - ?отпрашенный? запрос
+     * @see HttpRequest#headers
+     * @see HttpServerConfiguration#CRLF
      */
     private static void parseHeaders(Scanner httpRequestScanner, HttpRequest httpRequest) {
         while (httpRequestScanner.hasNext()) {
@@ -87,6 +98,7 @@ public class HttpParser {
      *
      * @param httpRequestScanner - сканер с потоком из которого читаются данные
      * @param httpRequest        - ?отпрашенный? запрос
+     * @see HttpRequest#body
      */
     private static void parseBody(Scanner httpRequestScanner, HttpRequest httpRequest) {
         StringBuilder httpRequestBody = new StringBuilder();
