@@ -94,14 +94,11 @@ public class VkGroups {
      *
      * @param groupScreenName   - короткое название группы
      * @param userCallingMethod - пользователь вызвавший метод
-     * @return статус подписки на группу, SUBSCRIBED - означает что пользователь успешно подписан,
-     * ALREADY_SUBSCRIBED - сообщает, что пользователь уже подписан на эту группу,
-     * GROUP_IS_CLOSED - сообщает, что невозможно подписаться, тк группа закрыта
+     * @return статус подписки на группу, {@link SubscribeStatus#SUBSCRIBED} - означает что пользователь успешно подписан,
+     * {@link SubscribeStatus#ALREADY_SUBSCRIBED} - сообщает, что пользователь уже подписан на эту группу,
+     * {@link SubscribeStatus#GROUP_IS_CLOSED} - сообщает, что невозможно подписаться, тк группа закрыта
      * @see GroupsStorage#getInstance()
      * @see GroupsStorage#addInfoToGroup(String, String)
-     * @see SubscribeStatus#SUBSCRIBED
-     * @see SubscribeStatus#ALREADY_SUBSCRIBED
-     * @see SubscribeStatus#GROUP_IS_CLOSED
      */
     public SubscribeStatus subscribeTo(GroupsStorage dataBase, String groupScreenName, User userCallingMethod) {
 

@@ -116,4 +116,34 @@ class GroupRelatedData {
     boolean contains(String subscriberId) {
         return subscribedUsersId.contains(subscriberId);
     }
+
+    /**
+     * Метод вычисляющий хэш экземляра класса
+     *
+     * @return хэш экземпляра
+     */
+    @Override
+    public int hashCode() {
+        return subscribedUsersId.hashCode();
+    }
+
+    /**
+     * Метод проверяющий равенство {@code obj} и {@code GroupRelatedData}
+     *
+     * @param obj - сравниваемый объект
+     * @return true если объекты равны по полям, false если объекты не равны по полям
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof GroupRelatedData anotherGroupRelatedData)) {
+            return false;
+        }
+
+        return subscribedUsersId.equals(anotherGroupRelatedData.subscribedUsersId);
+    }
 }

@@ -35,7 +35,7 @@ public class NotificationsPuller {
     }
 
     /**
-     * Метод запускающий поток ищущий новые посты
+     * Метод запускающий {@code postsPullingThread}
      *
      * @see PostsPullingThread#start()
      */
@@ -46,7 +46,7 @@ public class NotificationsPuller {
     /**
      * Метод проверяющий наличие новых постов в потоке
      *
-     * @return true - если поток нашел новые посты, false - если поток не нашел новых постов
+     * @return {@code true} - если поток нашел новые посты, {@code false} - если поток не нашел новых постов
      * @see PostsPullingThread#hasNewPosts()
      */
     public boolean hasNewPosts() {
@@ -64,9 +64,9 @@ public class NotificationsPuller {
     }
 
     /**
-     * Метод проверяющий работает ли поток для получения новых постов
+     * Метод проверяющий работает ли {@code postsPullingThread}
      *
-     * @return true - если поток работает, false - если поток завершил работу
+     * @return true - если {@code postsPullingThread} работает, false - если {@code postsPullingThread} завершил работу
      * @see PostsPullingThread#isWorking()
      */
     public boolean isWorking() {
@@ -74,7 +74,7 @@ public class NotificationsPuller {
     }
 
     /**
-     * Метод останавливающий работу потока
+     * Метод останавливающий {@code postsPullingThread}
      *
      * @see PostsPullingThread#stopWithInterrupt()
      */

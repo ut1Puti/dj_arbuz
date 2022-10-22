@@ -30,7 +30,7 @@ public class ConsoleBot {
     }
 
     /**
-     * Метод запускающий поток обработки сообщений ботом
+     * Метод запускающий {@code consoleBotThread}, обрабатывающий сообщения пользователя
      *
      * @see ConsoleBotThread#start()
      */
@@ -39,10 +39,10 @@ public class ConsoleBot {
     }
 
     /**
-     * Метод проверяющий работает ли консольный бот
+     * Метод проверяющий работает ли {@code consoleBotThread}
      *
-     * @return true - если поток обрабатывающий сообщения пользователя работает,
-     * false - если поток обрабатывающий сообщения завершил свою работу
+     * @return {@code true} если поток обрабатывающий сообщения пользователя работает,
+     * {@code false} если поток обрабатывающий сообщения завершил свою работу
      * @see ConsoleBotThread#isWorking()
      */
     public boolean isWorking() {
@@ -50,7 +50,7 @@ public class ConsoleBot {
     }
 
     /**
-     * Метод прекращающая работу бота
+     * Метод прекращающая работу {@code consoleBotThread}
      *
      * @see ConsoleBotThread#stopWithInterrupt()
      */

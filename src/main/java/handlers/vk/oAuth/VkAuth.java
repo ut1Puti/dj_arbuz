@@ -19,16 +19,19 @@ import user.User;
 public class VkAuth implements CreateUser {
     /**
      * Поле класс позволяющего работать с vk api
+     *
      * @see VkApiClient
      */
     private final VkApiClient vkApiClient;
     /**
      * Поле сервера получающего токены пользователя и переправляющего пользователей на tg бота
+     *
      * @see HttpServer
      */
     private HttpServer httpServer;
     /**
      * Поле с конфигурации данных для аутентификации пользователь и приложения
+     *
      * @see VkAuthConfiguration
      */
     private final VkAuthConfiguration authConfiguration;
@@ -122,7 +125,7 @@ public class VkAuth implements CreateUser {
      * Метод, который получает code из get параметров GET запроса на сервер
      *
      * @param httpRequestGetParameters - get параметры отправленные на сервер
-     * @return code
+     * @return {@code code}
      */
     private String getAuthCodeFromHttpRequest(String httpRequestGetParameters) {
         final char newParameterStartSymbol = '&';

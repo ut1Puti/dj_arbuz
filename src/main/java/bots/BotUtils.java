@@ -5,14 +5,17 @@ import database.UserStorage;
 import httpserver.server.HttpServer;
 
 /**
- * Класс для управления данными и сервером необходимым при запуске бота
+ * Класс для управления сущностями необходимым при запуске бота
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see HttpServer
+ * @see GroupsStorage
+ * @see UserStorage
  */
 public class BotUtils {
     /**
-     * Метод запускающий все сущности
+     * Метод запускающий все сущности, необходимые для запуска бота
      *
      * @see HttpServer#getInstance()
      * @see GroupsStorage#getInstance()

@@ -48,7 +48,7 @@ public class HttpRequestTarget {
     }
 
     /**
-     * Метод получающий цель запроса
+     * Метод получающий {@code requestTargetFile}
      *
      * @return цель запроса в виде имени файла
      */
@@ -57,7 +57,7 @@ public class HttpRequestTarget {
     }
 
     /**
-     * Метод получающий параметры отправленные с файлом
+     * Метод получающий {@code parameters}
      *
      * @return параметры отправленные с файлом
      */
@@ -66,7 +66,17 @@ public class HttpRequestTarget {
     }
 
     /**
-     * Метод проверяющий равен ли экземпляр класса некоторому объекту
+     * Метод вычисляющий хэш экземляра класса
+     *
+     * @return хэш экземпляра
+     */
+    @Override
+    public int hashCode() {
+        return (requestTargetFile + parameters).hashCode();
+    }
+
+    /**
+     * Метод проверяющий равен ли {@code HttpRequestTarget} {@code obj}
      *
      * @param obj - некоторый объект
      * @return true - если равны, false - если не равны

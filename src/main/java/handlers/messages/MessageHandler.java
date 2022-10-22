@@ -43,11 +43,13 @@ public class MessageHandler {
     private static final int ARG_INDEX = 1;
     /**
      * Поле хранилища групп
+     *
      * @see GroupsStorage
      */
     private static GroupsStorage groupsBase = GroupsStorage.getInstance();
     /**
      * Поле хранилища пользователей
+     *
      * @see UserStorage
      */
     private static UserStorage usersBase = UserStorage.getInstance();
@@ -55,7 +57,7 @@ public class MessageHandler {
     /**
      * Метод определяющий команды в сообщении пользователя и возвращающий ответ
      *
-     * @param message          - сообщение пользователя
+     * @param message   - сообщение пользователя
      * @param botThread - бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
      * @see MessageHandlerResponse
@@ -158,7 +160,7 @@ public class MessageHandler {
      *
      * @return ответ на команду /auth
      * @see Vk#getAuthURL()
-     * @see Vk#createUser(String) 
+     * @see Vk#createUser(String)
      * @see BotTextResponse#AUTH_ERROR
      * @see BotTextResponse#AUTH_GO_VIA_LINK
      * @see MessageHandlerResponse#MessageHandlerResponse(String)

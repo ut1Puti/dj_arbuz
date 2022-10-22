@@ -35,7 +35,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
     }
 
     /**
-     * Метод логики выполняемой внутри потока
+     * Метод логики выполняемой внутри {@code TelegramPostsPullingThread}
      *
      * @see GroupsStorage#getGroups()
      * @see handlers.vk.Vk#getNewPosts(GroupsStorage, String)

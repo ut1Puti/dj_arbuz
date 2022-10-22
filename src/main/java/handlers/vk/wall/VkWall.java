@@ -51,7 +51,7 @@ public class VkWall {
      * @see VkWall#getPosts(String, int, Actor)
      * @see VkWall#createGroupPostsStrings(List)
      */
-    public Optional<List<String>> getNewPosts(GroupsStorage groupBase, String groupScreenName, ServiceActor vkAppUser)
+    public Optional<List<String>> getNewPostsStrings(GroupsStorage groupBase, String groupScreenName, ServiceActor vkAppUser)
             throws ClientException, ApiException {
         final int amountOfPosts = 100;
         //TODO synchronize working with lastPostDate
@@ -83,12 +83,12 @@ public class VkWall {
     }
 
     /**
-     * Метод получает последние n посты из сообщества
+     * Метод получает последние {@code amountOfPosts} посты из сообщества
      *
-     * @param amountOfPosts         - кол-во постов
-     * @param groupScreenName - имя группы
-     * @param userCallingMethod     - пользователь вызвавший метод
-     * @return текст указанного кол-ва постов, а также изображения и ссылки, если они есть в посте
+     * @param amountOfPosts     - кол-во постов
+     * @param groupScreenName   - имя группы
+     * @param userCallingMethod - пользователь вызвавший метод
+     * @return текст указанного кол-ва постов, а также ссылки на другие группы, указанные в посте, и ссылки на посты
      * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
      * @throws ApiAuthException         - возникает при необходимости продлить токен путем повторной авторизации
      * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
@@ -97,7 +97,7 @@ public class VkWall {
      * @see VkWall#getPosts(String, int, Actor)
      * @see VkWall#createGroupPostsStrings(List)
      */
-    public Optional<List<String>> getLastPosts(String groupScreenName, int amountOfPosts, User userCallingMethod)
+    public Optional<List<String>> getLastPostsStrings(String groupScreenName, int amountOfPosts, User userCallingMethod)
             throws ApiException, ClientException {
         List<WallpostFull> userFindGroupPosts = getPosts(groupScreenName, amountOfPosts, userCallingMethod);
         List<String> groupFindPosts = createGroupPostsStrings(userFindGroupPosts);
@@ -105,12 +105,12 @@ public class VkWall {
     }
 
     /**
-     * Метод получающий последние n постов из группы в представлении вк
+     * Метод получающий последние {@code amountOfPosts} постов из группы в представлении вк
      *
      * @param userCalledMethod - пользователь бота вызвавший метод(User, ServiceActor)
      * @param groupScreenName  - короткое имя группы в которой ищем посты
      * @param amountOfPosts    - кол-во постов
-     * @return список постов в представлении вк
+     * @return список постов в виде {@link WallpostFull}
      * @throws ApiException             - возникает при ошибке обращения к vk api со стороны vk
      * @throws ApiAuthException         - возникает при необходимости продлить токен путем повторной авторизации
      * @throws ClientException          - возникает при ошибке обращения к vk api со стороны клиента
@@ -146,11 +146,11 @@ public class VkWall {
     }
 
     /**
-     * Метод превращающий данные из поста в текст для отправки пользователю
+     * Метод превращающий {@link WallpostFull} в строки
      *
      * @param groupPosts - посты
      * @return список постов в виде строк
-     * @see VkPostsParser#parsePost(WallpostFull) 
+     * @see VkPostsParser#parsePost(WallpostFull)
      */
     private List<String> createGroupPostsStrings(List<WallpostFull> groupPosts) {
         List<String> groupFindPosts = new ArrayList<>();
