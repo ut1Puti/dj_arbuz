@@ -2,18 +2,38 @@ package loaders.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import handlers.vk.oAuth.VkAuthConfiguration;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.Scanner;
 
 /**
+ * Класс для преобразования объектов классов в json строки
  *
- *
- * @author
- * @version
+ * @author Кедровских Олег
+ * @version 1.0
+ * @param <T>
  */
-public class GenericsGsonLoader<T extends JsonLoadable> {
+public class GenericsGsonLoader<T> {
+    /**
+     * Поле объекта преобразовывающего объекты в json строки
+     */
+    private static final Gson gson = new Gson();
+    /**
+     * Поле класс, который преобразуем
+     */
+    private final Class<T> clazz;
+
+    /**
+     *
+     *
+     * @param clazz
+     */
+    public GenericsGsonLoader(Class<T> clazz) {
+        this.clazz = clazz;
+    }
+
     /**
      *
      *
@@ -25,10 +45,7 @@ public class GenericsGsonLoader<T extends JsonLoadable> {
         FileReader fileReader = new FileReader(pathToLoadObject);
         Scanner scanner = new Scanner(fileReader);
         String json = scanner.nextLine();
-        Type type = new TypeToken<GenericGsonAdapter<T>>(){}.getType();
-        Gson jsonFile = new Gson();
-        GenericGsonAdapter<T> genericClassJsonAdapter = jsonFile.fromJson(json, type);
-        return genericClassJsonAdapter.objectToSaveField;
+        return gson.fromJson(json, clazz);
     }
 
     /**
@@ -44,33 +61,10 @@ public class GenericsGsonLoader<T extends JsonLoadable> {
             return;
         }
 
-        Gson gson = new Gson();
-        GenericGsonAdapter<T> genericClassJsonAdapter = new GenericGsonAdapter<>(objectToSave);
-        String json = gson.toJson(genericClassJsonAdapter);
+        String json = gson.toJson(objectToSave);
         FileWriter file = new FileWriter(pathToSaveObject);
         file.write(json);
         file.close();
-    }
-
-    /**
-     *
-     *
-     * @param <T>
-     */
-    private class GenericGsonAdapter<T> {
-        /**
-         *
-         */
-        private T objectToSaveField;
-
-        /**
-         *
-         *
-         * @param objectToSaveField
-         */
-        private GenericGsonAdapter(T objectToSaveField) {
-            this.objectToSaveField = objectToSaveField;
-        }
     }
 }
 
