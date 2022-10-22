@@ -39,7 +39,7 @@ class VkPostsParser {
             if (groupPostCopy == null) {
                 break;
             }
-
+            
             groupPostAttachments = groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX).getAttachments();
             postTextBuilder.append("\n").append(groupPostCopy.get(VkConstants.FIRST_ELEMENT_INDEX).getText());
         }

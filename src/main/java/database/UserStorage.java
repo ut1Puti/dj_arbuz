@@ -13,11 +13,21 @@ public class UserStorage{
     private Map<String, User> usersBase;
     private static UserStorage userStorage = null;
 
-    public boolean addInfoUser(String a, User b) {
-        usersBase.put(a, b);
+    /**
+     * Метод для добавления информации в базу данных
+     *
+     * @param user - айди юзера в телеграмме
+     * @param userData - данные юзера
+     * @return
+     */
+    public boolean addInfoUser(String user, User userData) {
+        usersBase.put(user, userData);
         return true;
     }
-
+    
+    /**
+     * Метод для сохранения базы данных в json файл
+     */
     public void saveToJsonFile() {
         Gson gson = new Gson();
         String json = gson.toJson(usersBase);
@@ -30,6 +40,9 @@ public class UserStorage{
         }
     }
 
+    /**
+     * Метод для получения информации с json файла
+     */
     public void returnStorageFromDatabase() {
         try {
             FileReader file = new FileReader("src/main/resources/anonsrc/database_for_users.json");
@@ -48,6 +61,11 @@ public class UserStorage{
 
     }
 
+    /**
+     * Инициализация бота
+     *
+     * @return Базу с юзерами
+     */
     public static UserStorage getInstance() {
         if (userStorage == null) {
             userStorage = new UserStorage();
@@ -55,16 +73,27 @@ public class UserStorage{
         return userStorage;
     }
 
+    /**
+     * Метод для получения базы с юзерами
+     */
     private UserStorage() {
         usersBase = new HashMap<>();
         returnStorageFromDatabase();
     }
-
-    public boolean contains(String a) {
-        return usersBase.containsKey(a);
+    /**
+     * Метод для проверки ключей в базе
+     */
+    public boolean contains(String user) {
+        return usersBase.containsKey(user);
     }
 
-    public User getUser(String a) {
-        return usersBase.get(a);
+    /**
+     * Метод для оплучения значения по ключу
+     *
+     * @param user - ключ с айди юзера в телеграмме
+     * @return подписки на группы
+     */
+    public User getUser(String user) {
+        return usersBase.get(user);
     }
 }
