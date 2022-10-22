@@ -1,9 +1,10 @@
 package handlers.vk.oAuth;
 
-import java.io.FileInputStream;
+import com.google.gson.JsonSyntaxException;
+import loaders.gson.GenericsGsonLoader;
+
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Properties;
 
 /**
  * Класс хранящий настройки vk приложения
@@ -12,6 +13,13 @@ import java.util.Properties;
  * @version 2.0
  */
 public class VkAuthConfiguration {
+    /**
+     * Поле объекта, который выполняет чтение json файла и преобразования в объект
+     *
+     * @see GenericsGsonLoader
+     */
+    private static final GenericsGsonLoader<VkAuthConfiguration> vkAuthConfigurationGenericsGsonLoader =
+            new GenericsGsonLoader<>(VkAuthConfiguration.class);
     /**
      * Поле ссылки для аутентификации
      */
@@ -34,47 +42,35 @@ public class VkAuthConfiguration {
     final String REDIRECT_URL;
 
     /**
-     * Конструктор по пути до файла с конфигурацией приложения
+     * Конструктор - создает экземпляр класса
      *
-     * @param vkAppConfigurationFilePath - путь до файла с конфигурацией
-     *                                   файл должен содержать поля authUrl, appId, clientSecret, redirectUri
+     * @param authUrl             ссылка для аутентификации пользователя
+     * @param appId               id приложения
+     * @param clientSecret        ключ доступа приложения к vk api
+     * @param serviceClientSecret ключ доступа пользователя приложения к vk api
+     * @param redirectUrl         сслыка на страницу, на которую попадет пользователь после аутентификации
      */
-    VkAuthConfiguration(String vkAppConfigurationFilePath) {
-        Properties prop = new Properties();
-        FileInputStream stream;
-        try {
-            stream = new FileInputStream(vkAppConfigurationFilePath);
-            prop.load(stream);
-            stream.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Файла по пути " + vkAppConfigurationFilePath + " не найдено");
-        }
-        AUTH_URL = prop.getProperty("authUrl");
-        wasElementFound(AUTH_URL, "authUrl", vkAppConfigurationFilePath);
-        String appId = prop.getProperty("appId");
-        wasElementFound(appId, "appId", vkAppConfigurationFilePath);
-        APP_ID = Integer.parseInt(prop.getProperty("appId"));
-        CLIENT_SECRET = prop.getProperty("clientSecret");
-        wasElementFound(AUTH_URL, "clientSecret", vkAppConfigurationFilePath);
-        SERVICE_CLIENT_SECRET = prop.getProperty("serviceClientSecret");
-        wasElementFound(SERVICE_CLIENT_SECRET, "serviceClientSecret", vkAppConfigurationFilePath);
-        REDIRECT_URL = prop.getProperty("redirectUrl");
-        wasElementFound(REDIRECT_URL, "redirectUrl", vkAppConfigurationFilePath);
+    public VkAuthConfiguration(String authUrl, int appId, String clientSecret, String serviceClientSecret,
+                               String redirectUrl) {
+        this.AUTH_URL = authUrl;
+        this.APP_ID = appId;
+        this.CLIENT_SECRET = clientSecret;
+        this.SERVICE_CLIENT_SECRET = serviceClientSecret;
+        this.REDIRECT_URL = redirectUrl;
     }
 
     /**
-     * Метод проверяющий, был ли найден элемент в файле
+     * Метод для создания конфигурации из json файла
      *
-     * @param fileFindElement            - найденный элемент
-     * @param fileSearchingElementName   - ключ, по которому искался элемент
-     * @param vkAppConfigurationFilePath - путь до файла из которого читались данных
+     * @param vkAuthConfigurationJsonFilePath путь до json файла с конфигурацией приложения
+     * @return конфигурации приложения на основе json файла
      */
-    private void wasElementFound(String fileFindElement, String fileSearchingElementName,
-                                 String vkAppConfigurationFilePath) {
-        if (fileFindElement == null) {
-            throw new RuntimeException("Нет " + fileSearchingElementName + " элемента в файле: " + vkAppConfigurationFilePath);
+    static VkAuthConfiguration loadVkAuthConfigurationFromJson(String vkAuthConfigurationJsonFilePath) {
+        try {
+            return vkAuthConfigurationGenericsGsonLoader.loadFromJson(vkAuthConfigurationJsonFilePath);
+        } catch (IOException | JsonSyntaxException e) {
+            throw new RuntimeException(e);
         }
-
     }
 
     /**

@@ -25,7 +25,7 @@ public abstract class PostsPullingThread extends StoppableThread {
      *
      * @see Vk
      */
-    protected Vk vk = new Vk("src/main/resources/anonsrc/vkconfig.properties");
+    protected Vk vk = new Vk("src/main/resources/anonsrc/vk_config.json");
 
     /**
      * Метод проверяющий наличие новых постов

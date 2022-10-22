@@ -2,6 +2,8 @@ package bots.telegram;
 
 import bots.BotTextResponse;
 import bots.BotUtils;
+import com.google.gson.JsonSyntaxException;
+import loaders.gson.GenericsGsonLoader;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import stoppable.Stoppable;
@@ -19,12 +21,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Класс для обработки сообщений, полученных из телеграммац
@@ -33,36 +31,29 @@ import java.util.Properties;
  * @version 1.0
  */
 public class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser {
+    /**
+     * Поле класса получающего новые посты из групп в базе данных
+     */
     private final NotificationsPuller notificationsPuller;
-
-    /** Никнейм бота*/
-    private final String botUserName;
-    /**Токен бота*/
-    private final String telegramToken;
+    /**
+     * Поле класса содержашего конфигурацию телеграм бота
+     */
+    private final TelegramBotConfiguration telegramBotConfiguration;
     /**
      * Поле кнопок в телеграмм
-     **/
-    private final List<KeyboardRow> keyBoardRows;
+     */
+    private final List<KeyboardRow> keyBoardRows = new ArrayList<>();
 
     /**
      * Конструктор класса для инициализации бота и поля кнопок
      * Также полученные данных бота(ник и токен)
+     *
+     * @param tgConfigurationFilePath путь до json файла с конфигурацией
      */
     public TelegramBot(String tgConfigurationFilePath) {
         //TODO кнопки
         super();
-        keyBoardRows = new ArrayList<>();
-        Properties prop = new Properties();
-        FileInputStream stream;
-        try {
-            stream = new FileInputStream(tgConfigurationFilePath);
-            prop.load(stream);
-            stream.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Файла по пути " + tgConfigurationFilePath + " не найдено");
-        }
-        botUserName = prop.getProperty("botUsernName");
-        telegramToken = prop.getProperty("botToken");
+        telegramBotConfiguration = TelegramBotConfiguration.loadTelegramBotConfigurationFromJson(tgConfigurationFilePath);
         KeyboardRow rowFirst = new KeyboardRow();
         rowFirst.add("/auth");
         rowFirst.add("/help");
@@ -74,11 +65,11 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
     /**
      * Основная логика работы бота
      *
-     * @param args - аргументы командной строки
+     * @param args аргументы командной строки
      */
     public static void main(String[] args) {
         BotUtils.initInstances();
-        TelegramBot telegramBot = new TelegramBot("src/main/resources/anonsrc/tgconfig.properties");
+        TelegramBot telegramBot = new TelegramBot("src/main/resources/anonsrc/telegram_config.json");
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(telegramBot);
@@ -98,7 +89,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
      */
     @Override
     public String getBotUsername() {
-        return botUserName;
+        return telegramBotConfiguration.botUserName;
     }
 
     /**
@@ -108,7 +99,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
      */
     @Override
     public String getBotToken() {
-        return telegramToken;
+        return telegramBotConfiguration.telegramBotToken;
     }
 
     /**
@@ -121,12 +112,12 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
     public void onUpdateReceived(Update update) {
 
         if (update.hasMessage() && update.getMessage()
-                                         .hasText()) {
+                .hasText()) {
             String messageUpdate = update.getMessage()
-                                         .getText();
+                    .getText();
             MessageHandlerResponse response = MessageHandler.executeMessage(
                     messageUpdate, String.valueOf(update.getMessage()
-                                                        .getChatId()), this
+                            .getChatId()), this
             );
             if (response.hasTextMessage()) {
                 sendMessage(update, response);
@@ -137,7 +128,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
                     SendMessage message = new SendMessage();
                     message.setText(post);
                     message.setChatId(String.valueOf(update.getMessage()
-                                                           .getChatId()));
+                            .getChatId()));
                     try {
                         execute(message);
                     } catch (TelegramApiException ignored) {
@@ -147,14 +138,14 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
 
             if (response.hasUpdateUser()) {
                 User user = response.getUpdateUser()
-                                    .createUser(update.getMessage()
-                                                      .getChatId()
-                                                      .toString());
+                        .createUser(update.getMessage()
+                                .getChatId()
+                                .toString());
 
                 if (user == null) {
                     SendMessage authErrorMessage = new SendMessage(update.getMessage()
-                                                                         .getChatId()
-                                                                         .toString(), BotTextResponse.AUTH_ERROR);
+                            .getChatId()
+                            .toString(), BotTextResponse.AUTH_ERROR);
                     try {
                         execute(authErrorMessage);
                     } catch (TelegramApiException ignored) {
@@ -162,7 +153,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
                 } else {
                     UserStorage userBase = UserStorage.getInstance();
                     userBase.addInfoUser(String.valueOf(update.getMessage()
-                                                              .getChatId()), user);
+                            .getChatId()), user);
                 }
 
             }
@@ -183,7 +174,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         keyBoardMarkup.setKeyboard(keyBoardRows);
         message.setReplyMarkup(keyBoardMarkup);
         message.setChatId(String.valueOf(update.getMessage()
-                                               .getChatId()));
+                .getChatId()));
         message.setText(response.getTextMessage());
         try {
             execute(message);

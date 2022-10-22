@@ -28,7 +28,7 @@ public class MessageHandler {
     /**
      * Поле обработчика запросов к Vk API
      */
-    private static Vk vk = new Vk("src/main/resources/anonsrc/vkconfig.properties");
+    private static Vk vk = new Vk("src/main/resources/anonsrc/vk_config.json");
     /**
      * Поле кол-ва запрашиваемых последних постов
      */

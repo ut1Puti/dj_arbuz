@@ -49,12 +49,12 @@ public class Vk implements CreateUser {
     /**
      * Конструктор по пути до файла с конфигурацией приложения
      *
-     * @param vkAppConfigurationFilePath - путь до файла с конфигурацией
+     * @param vkAppConfigurationJsonFilePath путь до json файла с конфигурацией
      */
-    public Vk(String vkAppConfigurationFilePath) {
+    public Vk(String vkAppConfigurationJsonFilePath) {
         TransportClient transportClient = new HttpTransportClient();
         VkApiClient vkApiClient = new VkApiClient(transportClient);
-        oAuth = new VkAuth(vkApiClient, vkAppConfigurationFilePath);
+        oAuth = new VkAuth(vkApiClient, vkAppConfigurationJsonFilePath);
         groups = new VkGroups(vkApiClient);
         wall = new VkWall(vkApiClient);
         vkApp = oAuth.createAppActor();
@@ -84,12 +84,12 @@ public class Vk implements CreateUser {
     /**
      * Метод получающий ссылку на группу в vk найденную по {@code userReceivedGroupName}
      *
-     * @param userReceivedGroupName - Название группы
-     * @param userCallingMethod     - пользователь вызвавший метод
+     * @param userReceivedGroupName Название группы
+     * @param userCallingMethod     пользователь вызвавший метод
      * @return возвращает ссылку на группу в vk
-     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ApiException     возникает при ошибке обращения к vk api со стороны vk
+     * @throws NoGroupException возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException  возникает при ошибке обращения к vk api со стороны клиента
      * @see VkGroups#searchGroup(String, User)
      */
     public String getGroupURL(String userReceivedGroupName, User userCallingMethod)
@@ -100,12 +100,12 @@ public class Vk implements CreateUser {
     /**
      * Метод получающий id группы найденную по {@code userReceivedGroupName}
      *
-     * @param userReceivedGroupName - Название группы
-     * @param userCallingMethod     - пользователь вызвавший метод
+     * @param userReceivedGroupName Название группы
+     * @param userCallingMethod     пользователь вызвавший метод
      * @return возвращает id группы
-     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ApiException     возникает при ошибке обращения к vk api со стороны vk
+     * @throws NoGroupException возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException  возникает при ошибке обращения к vk api со стороны клиента
      * @see VkGroups#searchGroup(String, User) 
      */
     public String getGroupId(String userReceivedGroupName, User userCallingMethod)
@@ -116,13 +116,13 @@ public class Vk implements CreateUser {
     /**
      * Метод для подписки пользователя(сохранение в базу данных id пользователя в телеграмме и группы)
      *
-     * @param userReceivedGroupName - Название группы
-     * @param userCallingMethod     - пользователь вызвавший метод
+     * @param userReceivedGroupName Название группы
+     * @param userCallingMethod     пользователь вызвавший метод
      * @return возвращает {@code true} если пользователь только что подписался
      * {@code false} - если пользователь уже был подписан
-     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws ApiException     возникает при ошибке обращения к vk api со стороны vk
+     * @throws NoGroupException возникает если не нашлась группа по заданной подстроке
+     * @throws ClientException  возникает при ошибке обращения к vk api со стороны клиента
      * @see VkGroups#searchGroup(String, User) 
      * @see VkGroups#subscribeTo(GroupsStorage, String, User) 
      */
