@@ -2,8 +2,6 @@ package bots.telegram;
 
 import bots.BotTextResponse;
 import bots.BotUtils;
-import javassist.compiler.ast.ASTList;
-import org.glassfish.grizzly.http.server.Response;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import stoppable.Stoppable;
@@ -21,27 +19,50 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Класс для обработки сообщений, полученных из телеграммац
- * @version 1.0
+ *
  * @author Щёголев Андрей
+ * @version 1.0
  */
 public class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser {
     private final NotificationsPuller notificationsPuller;
-    /** Поле кнопок в телеграмм **/
+
+    /** Никнейм бота*/
+    private final String botUserName;
+    /**Токен бота*/
+    private final String telegramToken;
+    /**
+     * Поле кнопок в телеграмм
+     **/
     private final List<KeyboardRow> keyBoardRows;
 
     /**
      * Конструктор класса для инициализации бота и поля кнопок
+     * Также полученные данных бота(ник и токен)
      */
-    public TelegramBot() {
+    public TelegramBot(String tgConfigurationFilePath) {
         //TODO кнопки
         super();
         keyBoardRows = new ArrayList<>();
+        Properties prop = new Properties();
+        FileInputStream stream;
+        try {
+            stream = new FileInputStream(tgConfigurationFilePath);
+            prop.load(stream);
+            stream.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Файла по пути " + tgConfigurationFilePath + " не найдено");
+        }
+        botUserName = prop.getProperty("botUsernName");
+        telegramToken = prop.getProperty("botToken");
         KeyboardRow rowFirst = new KeyboardRow();
         rowFirst.add("/auth");
         rowFirst.add("/help");
@@ -52,11 +73,12 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
 
     /**
      * Основная логика работы бота
+     *
      * @param args - аргументы командной строки
      */
     public static void main(String[] args) {
         BotUtils.initInstances();
-        TelegramBot telegramBot = new TelegramBot();
+        TelegramBot telegramBot = new TelegramBot("src/main/resources/anonsrc/tgconfig.properties");
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(telegramBot);
@@ -71,25 +93,28 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
 
     /**
      * Метод для получения имени бота
+     *
      * @return никнейм бота в Телеграмме
      */
     @Override
     public String getBotUsername() {
-        return "DjArbuzBot";
+        return botUserName;
     }
 
     /**
      * Метод для получения токена бота
+     *
      * @return токен бота в Телеграмме
      */
     @Override
     public String getBotToken() {
-        return "5621043600:AAFot_kJRSb2o9oM3l_eezqIvt-KyaSXrbE";
+        return telegramToken;
     }
 
     /**
      * Основной метод для отправки сообщений бота
      * Бот получает какие-то обновления и моментально на них реагирует
+     *
      * @param update обновления, полученные с Телеграмма, когда какой-то пользователь написал боту
      */
     @Override
@@ -148,7 +173,8 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
 
     /**
      * Метод для отправки сообщений
-     * @param update обновления, полученные с Телеграмма, когда какой-то пользователь написал боту
+     *
+     * @param update   обновления, полученные с Телеграмма, когда какой-то пользователь написал боту
      * @param response хранит в себе текст сообщения для отправки пользователю
      */
     private void sendMessage(Update update, MessageHandlerResponse response) {
