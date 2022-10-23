@@ -14,6 +14,7 @@ import handlers.vk.groups.VkGroups;
 import handlers.vk.oAuth.VkAuth;
 import handlers.vk.wall.VkWall;
 import handlers.vk.groups.SubscribeStatus;
+import httpserver.server.HttpServer;
 import user.CreateUser;
 import user.User;
 
@@ -25,7 +26,7 @@ import java.util.Optional;
  *
  * @author Кедровских Олег
  * @author Щеголев Андрей
- * @version 2.0
+ * @version 2.2
  * @see CreateUser
  */
 public class Vk implements CreateUser {
@@ -51,12 +52,26 @@ public class Vk implements CreateUser {
      *
      * @param vkAppConfigurationJsonFilePath путь до json файла с конфигурацией
      */
-    public Vk(String vkAppConfigurationJsonFilePath) {
+    public Vk(HttpServer httpServer, String vkAppConfigurationJsonFilePath) {
         TransportClient transportClient = new HttpTransportClient();
         VkApiClient vkApiClient = new VkApiClient(transportClient);
-        oAuth = new VkAuth(vkApiClient, vkAppConfigurationJsonFilePath);
         groups = new VkGroups(vkApiClient);
         wall = new VkWall(vkApiClient);
+        oAuth = new VkAuth(vkApiClient, httpServer, vkAppConfigurationJsonFilePath);
+        vkApp = oAuth.createAppActor();
+    }
+
+    /**
+     * Конструктор - создает экземпляр класса
+     *
+     * @param vkGroups экземпляр класса отвечающего за взаимодействие с группами vk
+     * @param vkWall   экземпляр класса отвечающего за взаимодействие со стеной vk
+     * @param vkAuth   экземпляр класса отвечающего за аутентификацию в vk
+     */
+    public Vk(VkGroups vkGroups, VkWall vkWall, VkAuth vkAuth) {
+        this.groups = vkGroups;
+        this.wall = vkWall;
+        this.oAuth = vkAuth;
         vkApp = oAuth.createAppActor();
     }
 

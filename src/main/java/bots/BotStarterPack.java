@@ -1,15 +1,21 @@
 package bots;
 
+import com.vk.api.sdk.client.TransportClient;
+import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.httpclient.HttpTransportClient;
 import database.GroupsStorage;
 import database.UserStorage;
 import handlers.vk.Vk;
+import handlers.vk.groups.VkGroups;
+import handlers.vk.oAuth.VkAuth;
+import handlers.vk.wall.VkWall;
 import httpserver.server.HttpServer;
 
 /**
  * Класс хранящий объекты необходимые для запуска бота
  *
  * @author Кедровских Олег
- * @version 0.3
+ * @version 0.5
  */
 public class BotStarterPack {
     /**
@@ -32,6 +38,8 @@ public class BotStarterPack {
     public final UserStorage userStorage;
     /**
      * Поле класса для взаимодействия с vk
+     *
+     * @see Vk
      */
     public final Vk vk;
 
@@ -48,7 +56,12 @@ public class BotStarterPack {
         httpServer.start();
         this.groupsStorage = GroupsStorage.getInstance();
         this.userStorage = UserStorage.getInstance();
-        this.vk = new Vk(vkAppConfigurationJsonFilePath);
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vkApiClient = new VkApiClient(transportClient);
+        VkGroups vkGroups = new VkGroups(vkApiClient);
+        VkWall vkWall = new VkWall(vkApiClient);
+        VkAuth vkAuth = new VkAuth(vkApiClient, httpServer, vkAppConfigurationJsonFilePath);
+        this.vk = new Vk(vkGroups, vkWall, vkAuth);
     }
 
     /**

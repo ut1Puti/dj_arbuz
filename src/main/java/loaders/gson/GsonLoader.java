@@ -6,21 +6,21 @@ import java.io.*;
 import java.util.Scanner;
 
 /**
- * Класс для преобразования объектов классов в json строки
+ * Класс для преобразования экземпляров классов в json строки
  *
+ * @param <T> тип объекта обрабатываемого классом
  * @author Кедровских Олег
  * @version 1.0
- * @param <T> тип объекта обрабатываемого классом
  */
 public class GsonLoader<T extends GsonLoadable> {
     /**
-     * Поле объекта преобразовывающего объекты в json строки
+     * Поле класса преобразовывающего объекты в json строки
      *
      * @see Gson
      */
     private static final Gson GSON = new Gson();
     /**
-     * Поле класс, который преобразуем
+     * Поле класса, который преобразуем
      */
     private final Class<T> jsonLoadingClass;
 
@@ -34,10 +34,10 @@ public class GsonLoader<T extends GsonLoadable> {
     }
 
     /**
-     * Метод превращающий прочитанную из json файла строку в экземпляр объекта типа {@code T}
+     * Метод превращающий прочитанную из json файла строку в экземпляр типа {@code T}
      *
      * @param pathToLoadObject - путь до json файла, из которого будет читать json строка
-     * @return объект типа {@code T} созданный из строки из переданного файла
+     * @return экземпляр типа {@code T} созданный из строки из переданного файла
      * @throws IOException возникает при ошибках чтения файла
      */
     public T loadFromJson(String pathToLoadObject) throws IOException {
@@ -48,10 +48,10 @@ public class GsonLoader<T extends GsonLoadable> {
     }
 
     /**
-     * Метод превращающий объект типа {@code T} в json строку и записывающий ее в файл
+     * Метод превращающий экземпляр типа {@code T} в json строку и записывающий ее в файл
      *
-     * @param pathToSaveObject - путь до json файла в который будет сохранен объект
-     * @param objectToSave - объект типа {@code T} который будет сохранен
+     * @param pathToSaveObject путь до json файла в который будет сохранен объект
+     * @param objectToSave     экземпляр типа {@code T} который будет сохранен
      * @throws IOException возникает при ошибках записи в файл
      */
     public void loadToJson(String pathToSaveObject, T objectToSave) throws IOException {

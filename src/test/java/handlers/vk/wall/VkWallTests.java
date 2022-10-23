@@ -9,6 +9,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import database.GroupsStorage;
 import handlers.vk.oAuth.VkAuth;
+import httpserver.server.HttpServer;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -137,7 +138,8 @@ public class VkWallTests {
      */
     @Test
     public void testNoGroupInDataBase() throws ClientException, ApiException {
-        VkAuth vkAuth = new VkAuth(vk, "src/test/resources/anonsrc/vkconfig.properties");
+        HttpServer httpServer = HttpServer.getInstance();
+        VkAuth vkAuth = new VkAuth(vk, httpServer, "src/test/resources/anonsrc/vk_config.json");
         ServiceActor appUser = vkAuth.createAppActor();
         GroupsStorage groupBase = GroupsStorage.getInstance();
         Optional<List<String>> noPosts = vkWall.getNewPostsStrings(groupBase, "some unknown group", appUser);

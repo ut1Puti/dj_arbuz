@@ -4,6 +4,7 @@ import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import httpserver.server.HttpServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import user.User;
@@ -26,10 +27,14 @@ public class VkAuthTests {
      */
     private static final VkApiClient vk = new VkApiClient(transportClient);
     /**
+     *
+     */
+    private static final HttpServer httpServer = HttpServer.getInstance();
+    /**
      * Поле класса аутентификации пользователя в vk
      */
     private static final VkAuth vkAuth = new VkAuth(
-            vk, "src/test/resources/anonsrc/vkconfig.properties"
+            vk, httpServer,"src/test/resources/anonsrc/vk_config.json"
     );
 
     /**
@@ -54,9 +59,8 @@ public class VkAuthTests {
     /**
      * Метод для тестирования случая при котором пользователь не согласился принимать разрешения доступа бота
      */
-    @AfterAll
     @Test
-    public static void testCreateUserWithRejectionOfStates() {
+    public void testCreateUserWithRejectionOfStates() {
         User user = vkAuth.createUser("some telegram id");
         assertNull(user);
     }

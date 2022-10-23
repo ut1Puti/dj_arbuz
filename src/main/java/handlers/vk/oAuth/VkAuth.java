@@ -13,7 +13,7 @@ import user.User;
  * Класс для аутентификации пользователей
  *
  * @author Кедровских Олег
- * @version 1.0
+ * @version 1.2
  * @see CreateUser
  */
 public class VkAuth implements CreateUser {
@@ -28,7 +28,7 @@ public class VkAuth implements CreateUser {
      *
      * @see HttpServer
      */
-    private HttpServer httpServer;
+    private final HttpServer httpServer;
     /**
      * Поле с конфигурации данных для аутентификации пользователь и приложения
      *
@@ -42,9 +42,10 @@ public class VkAuth implements CreateUser {
      * @param vkApiClient                    клиент vk
      * @param vkAppConfigurationJsonFilePath путь до json файла с конфигурацией
      */
-    public VkAuth(VkApiClient vkApiClient, String vkAppConfigurationJsonFilePath) {
+    public VkAuth(VkApiClient vkApiClient, HttpServer httpServer, String vkAppConfigurationJsonFilePath) {
         this.vkApiClient = vkApiClient;
-        authConfiguration = VkAuthConfiguration.loadVkAuthConfigurationFromJson(vkAppConfigurationJsonFilePath);
+        this.httpServer = httpServer;
+        this.authConfiguration = VkAuthConfiguration.loadVkAuthConfigurationFromJson(vkAppConfigurationJsonFilePath);
     }
 
     /**
@@ -70,12 +71,6 @@ public class VkAuth implements CreateUser {
      * @see VkAuthConfiguration#AUTH_URL
      */
     public String getAuthURL() {
-        httpServer = HttpServer.getInstance();
-
-        if (httpServer == null) {
-            return null;
-        }
-
         return authConfiguration.AUTH_URL;
     }
 
@@ -95,12 +90,6 @@ public class VkAuth implements CreateUser {
      */
     @Override
     public User createUser(String systemUserId) {
-        httpServer = HttpServer.getInstance();
-
-        if (httpServer == null) {
-            return null;
-        }
-
         String httpRequestGetParameters = httpServer.getHttpRequestParameters();
 
         if (httpRequestGetParameters == null) {
