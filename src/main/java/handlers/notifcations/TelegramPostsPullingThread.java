@@ -4,6 +4,7 @@ import bots.telegram.TelegramBot;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import database.GroupsStorage;
+import handlers.vk.Vk;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -14,7 +15,7 @@ import java.util.Optional;
  * Класс получающий новые посты для телеграма
  *
  * @author Кедровских Олег
- * @version 1.0
+ * @version 1.3
  * @see PostsPullingThread
  */
 public class TelegramPostsPullingThread extends PostsPullingThread {
@@ -29,8 +30,10 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * Конструктор - создает экземпляр класса
      *
      * @param telegramBot - телеграмм бот
+     * @param groupsStorage база данных групп на которые оформленна подписка
      */
-    public TelegramPostsPullingThread(TelegramBot telegramBot) {
+    public TelegramPostsPullingThread(TelegramBot telegramBot, GroupsStorage groupsStorage, Vk vk) {
+        super(groupsStorage, vk);
         this.telegramBot = telegramBot;
     }
 

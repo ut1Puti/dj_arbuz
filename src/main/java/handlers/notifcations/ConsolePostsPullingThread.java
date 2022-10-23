@@ -1,7 +1,9 @@
 package handlers.notifcations;
 
 import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;;
+import com.vk.api.sdk.exceptions.ClientException;
+import database.GroupsStorage;
+import handlers.vk.Vk;;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -10,7 +12,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * Класс получающий обновления постов в группах для консольного пользователя
  *
  * @author Кедровских Олег
- * @version 1.0
+ * @version 1.3
  * @see PostsPullingThread
  */
 public class ConsolePostsPullingThread extends PostsPullingThread {
@@ -26,9 +28,11 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param consoleUserId - id консольного пользователя в database
+     * @param consoleUserId id консольного пользователя в database
+     * @param groupsStorage база данных групп на которые оформленна подписка
      */
-    public ConsolePostsPullingThread(String consoleUserId) {
+    public ConsolePostsPullingThread(String consoleUserId, GroupsStorage groupsStorage, Vk vk) {
+        super(groupsStorage, vk);
         this.consoleBotUserId = consoleUserId;
     }
 
@@ -37,7 +41,6 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
      */
     @Override
     public void run() {
-        working = true;
         while (working) {
             try {
                 for (String groupScreenName : groupsBase.getUserSubscribedGroups(consoleBotUserId)) {

@@ -116,15 +116,16 @@ public class Vk implements CreateUser {
     /**
      * Метод для подписки пользователя(сохранение в базу данных id пользователя в телеграмме и группы)
      *
-     * @param userReceivedGroupName Название группы
+     * @param userReceivedGroupName строка по которой будет искаться группа, полученная от пользователя
      * @param userCallingMethod     пользователь вызвавший метод
-     * @return возвращает {@code true} если пользователь только что подписался,
-     * {@code false} - если пользователь уже был подписан
+     * @return статус подписки на группу, {@link SubscribeStatus#SUBSCRIBED} - означает что пользователь успешно подписан,
+     * {@link SubscribeStatus#ALREADY_SUBSCRIBED} - сообщает, что пользователь уже подписан на эту группу,
+     * {@link SubscribeStatus#GROUP_IS_CLOSED} - сообщает, что невозможно подписаться, тк группа закрыта
      * @throws ApiException     возникает при ошибке обращения к vk api со стороны vk
      * @throws NoGroupException возникает если не нашлась группа по заданной подстроке
      * @throws ClientException  возникает при ошибке обращения к vk api со стороны клиента
      * @see VkGroups#searchGroup(String, User)
-     * @see VkGroups#subscribeTo(GroupsStorage, String, User)
+     * @see GroupsStorage#addInfoToGroup(String, String)
      */
     public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, User userCallingMethod)
             throws ApiException, NoGroupException, ClientException {
@@ -134,7 +135,9 @@ public class Vk implements CreateUser {
             return SubscribeStatus.GROUP_IS_CLOSED;
         }
 
-        return groups.subscribeTo(groupBase, userReceivedGroupName, userCallingMethod);
+        //TODO synchronize working with subscribers
+        boolean isSubscribed = groupBase.addInfoToGroup(userFindGroup.getScreenName(), userCallingMethod.getTelegramId());
+        return isSubscribed ? SubscribeStatus.SUBSCRIBED : SubscribeStatus.ALREADY_SUBSCRIBED;
     }
 
     /**

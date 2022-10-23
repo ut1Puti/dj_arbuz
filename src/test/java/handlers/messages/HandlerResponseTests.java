@@ -22,7 +22,7 @@ public class HandlerResponseTests {
     @Test
     public void testTextMessageConstructorsAndSettersAndGetters() {
         String expectedMessage = "some test message";
-        MessageHandlerResponse response = new MessageHandlerResponse(expectedMessage);
+        MessageExecutorResponse response = new MessageExecutorResponse(expectedMessage);
         assertTrue(response.hasTextMessage());
         assertEquals(expectedMessage, response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
@@ -42,7 +42,7 @@ public class HandlerResponseTests {
                 return null;
             }
         };
-        MessageHandlerResponse response = new MessageHandlerResponse(createUser);
+        MessageExecutorResponse response = new MessageExecutorResponse(createUser);
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
@@ -57,7 +57,7 @@ public class HandlerResponseTests {
     @Test
     public void testNewPostsConstructorsAndSettersAndGetters() {
         List<String> newPosts = Arrays.asList("first post", "second post");
-        MessageHandlerResponse response = new MessageHandlerResponse(newPosts);
+        MessageExecutorResponse response = new MessageExecutorResponse(newPosts);
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertTrue((response.hasPostsMessages()));
@@ -65,16 +65,5 @@ public class HandlerResponseTests {
         assertEquals(newPosts, response.getPostsMessages());
         assertFalse((response.hasUpdateUser()));
         assertNull(response.getUpdateUser());
-    }
-
-    /**
-     * Метод проверяющий работу метода append, который складывает текстовые сообщения двух ответов
-     * Также тестируется работа setter'ов getter'ов
-     */
-    @Test
-    public void appendTest() {
-        MessageHandlerResponse response1 = new MessageHandlerResponse("Test");
-        MessageHandlerResponse response2 = new MessageHandlerResponse("text");
-        assertEquals(response1.appendTextMessage(response2).getTextMessage(), "Test\ntext");
     }
 }

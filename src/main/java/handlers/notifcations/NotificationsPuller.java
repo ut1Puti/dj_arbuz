@@ -1,6 +1,8 @@
 package handlers.notifcations;
 
 import bots.telegram.TelegramBot;
+import database.GroupsStorage;
+import handlers.vk.Vk;
 
 import java.util.List;
 
@@ -8,7 +10,7 @@ import java.util.List;
  * Класс получения новых постов
  *
  * @author Кедровских Олег
- * @version 1.0
+ * @version 1.3
  */
 public class NotificationsPuller {
     /**
@@ -20,18 +22,22 @@ public class NotificationsPuller {
 
     /**
      * Конструктор - создает экземпляр класса
+     *
+     * @param consoleBotUserId id пользователя консольной версии бота
+     * @param groupsStorage база данных групп на которые оформленна подписка
      */
-    public NotificationsPuller(String consoleBotUserId) {
-        postsPullingThread = new ConsolePostsPullingThread(consoleBotUserId);
+    public NotificationsPuller(String consoleBotUserId, GroupsStorage groupsStorage, Vk vk) {
+        postsPullingThread = new ConsolePostsPullingThread(consoleBotUserId, groupsStorage, vk);
     }
 
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param telegramBot - бот в телеграмме
+     * @param telegramBot бот в телеграмме
+     * @param groupsStorage база данных групп на которые оформленна подписка
      */
-    public NotificationsPuller(TelegramBot telegramBot) {
-        postsPullingThread = new TelegramPostsPullingThread(telegramBot);
+    public NotificationsPuller(TelegramBot telegramBot, GroupsStorage groupsStorage, Vk vk) {
+        postsPullingThread = new TelegramPostsPullingThread(telegramBot, groupsStorage, vk);
     }
 
     /**

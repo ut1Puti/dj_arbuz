@@ -1,18 +1,17 @@
 package handlers.messages;
 
 import bots.BotTextResponse;
-import handlers.vk.groups.NoGroupException;
-import handlers.vk.Vk;
 import bots.StoppableByUser;
-import handlers.vk.groups.SubscribeStatus;
-import user.CreateUser;
-import user.User;
-import database.GroupsStorage;
-import database.UserStorage;
-
 import com.vk.api.sdk.exceptions.ApiAuthException;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
+import handlers.vk.Vk;
+import database.GroupsStorage;
+import database.UserStorage;
+import handlers.vk.groups.NoGroupException;
+import handlers.vk.groups.SubscribeStatus;
+import user.User;
+import user.CreateUser;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,11 +23,7 @@ import java.util.NoSuchElementException;
  * @author Щеголев Андрей
  * @version 2.0
  */
-public class MessageHandler {
-    /**
-     * Поле обработчика запросов к Vk API
-     */
-    private static Vk vk = new Vk("src/main/resources/anonsrc/vk_config.json");
+public class MessageExecutor {
     /**
      * Поле кол-ва запрашиваемых последних постов
      */
@@ -42,45 +37,54 @@ public class MessageHandler {
      */
     private static final int ARG_INDEX = 1;
     /**
-     * Поле хранилища групп
-     *
-     * @see GroupsStorage
+     * Поле хранилища групп, на которые оформленна подписка
      */
-    private static GroupsStorage groupsBase = GroupsStorage.getInstance();
+    private final GroupsStorage groupsBase;
     /**
-     * Поле хранилища пользователей
-     *
-     * @see UserStorage
+     * Поле хранилища пользователей, аутентифицированный в vk
      */
-    private static UserStorage usersBase = UserStorage.getInstance();
+    private final UserStorage usersBase;
+    /**
+     * Поле класса для взаимодействия с vk api
+     */
+    private final Vk vk;
+
+    /**
+     * Конструктор - создает экземпляр класса
+     *
+     * @param groupsBase хранилище групп на которые оформленны подписки
+     * @param usersBase хранилище пользователей, которые аутентифицированны в vk
+     * @param vk класс для взаимодействия с vk
+     */
+    public MessageExecutor(GroupsStorage groupsBase, UserStorage usersBase, Vk vk) {
+        this.groupsBase = groupsBase;
+        this.usersBase = usersBase;
+        this.vk = vk;
+    }
 
     /**
      * Метод определяющий команды в сообщении пользователя и возвращающий ответ
      *
-     * @param message   - сообщение пользователя
-     * @param botThread - бот из которого был вызван метод
+     * @param message   сообщение пользователя
+     * @param telegramUserId id пользователя в телеграмме
+     * @param botThread бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
-     * @see MessageHandlerResponse
-     * @see MessageHandler#isItNoArgCommand(String[])
-     * @see MessageHandler#getHelpResponse()
-     * @see MessageHandler#getAuthResponse()
-     * @see MessageHandler#getStopResponse(StoppableByUser)
-     * @see MessageHandler#getUnknownCommandResponse()
+     * @see MessageExecutorResponse
+     * @see MessageExecutor#isItNoArgCommand(String[])
+     * @see MessageExecutor#getHelpResponse()
+     * @see MessageExecutor#getAuthResponse()
+     * @see MessageExecutor#getStopResponse(StoppableByUser)
+     * @see MessageExecutor#getUnknownCommandResponse()
      * @see UserStorage#contains(String)
      * @see UserStorage#getUser(String)
-     * @see MessageHandler#isItSingleArgCommand(String[])
-     * @see MessageHandler#getGroupURL(String, User)
-     * @see MessageHandler#getGroupId(String, User)
-     * @see MessageHandler#subscribeTo(String, User)
-     * @see MessageHandler#getFiveLastPosts(String, User)
+     * @see MessageExecutor#isItSingleArgCommand(String[])
+     * @see MessageExecutor#getGroupURL(String, User)
+     * @see MessageExecutor#getGroupId(String, User)
+     * @see MessageExecutor#subscribeTo(String, User)
+     * @see MessageExecutor#getFiveLastPosts(String, User)
      */
-    public static MessageHandlerResponse executeMessage(String message, String telegramUserId,
-                                                        StoppableByUser botThread) {
+    public MessageExecutorResponse executeMessage(String message, String telegramUserId, StoppableByUser botThread) {
         String[] commandAndArgs = message.split(" ", 2);
-
-        if (groupsBase == null) {
-            groupsBase = GroupsStorage.getInstance();
-        }
 
         if (isItNoArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
@@ -149,10 +153,10 @@ public class MessageHandler {
      *
      * @return ответ на команду /help содержит HELP_INFO
      * @see BotTextResponse#HELP_INFO
-     * @see MessageHandlerResponse#MessageHandlerResponse(String)
+     * @see MessageExecutorResponse#MessageExecutorResponse(String)
      */
-    private static MessageHandlerResponse getHelpResponse() {
-        return new MessageHandlerResponse(BotTextResponse.HELP_INFO);
+    private static MessageExecutorResponse getHelpResponse() {
+        return new MessageExecutorResponse(BotTextResponse.HELP_INFO);
     }
 
     /**
@@ -163,17 +167,17 @@ public class MessageHandler {
      * @see Vk#createUser(String)
      * @see BotTextResponse#AUTH_ERROR
      * @see BotTextResponse#AUTH_GO_VIA_LINK
-     * @see MessageHandlerResponse#MessageHandlerResponse(String)
-     * @see MessageHandlerResponse#MessageHandlerResponse(String, CreateUser)
+     * @see MessageExecutorResponse#MessageExecutorResponse(String)
+     * @see MessageExecutorResponse#MessageExecutorResponse(String, CreateUser)
      */
-    private static MessageHandlerResponse getAuthResponse() {
+    private MessageExecutorResponse getAuthResponse() {
         String authURL = vk.getAuthURL();
 
         if (authURL == null) {
-            return new MessageHandlerResponse(BotTextResponse.AUTH_ERROR);
+            return new MessageExecutorResponse(BotTextResponse.AUTH_ERROR);
         }
 
-        return new MessageHandlerResponse(BotTextResponse.AUTH_GO_VIA_LINK + authURL, vk);
+        return new MessageExecutorResponse(BotTextResponse.AUTH_GO_VIA_LINK + authURL, vk);
     }
 
     /**
@@ -183,11 +187,11 @@ public class MessageHandler {
      * @return ответ на /stop содержит STOP_INFO
      * @see StoppableByUser#stopByUser()
      * @see BotTextResponse#STOP_INFO
-     * @see MessageHandlerResponse#MessageHandlerResponse(String)
+     * @see MessageExecutorResponse#MessageExecutorResponse(String)
      */
-    private static MessageHandlerResponse getStopResponse(StoppableByUser botThread) {
+    private static MessageExecutorResponse getStopResponse(StoppableByUser botThread) {
         botThread.stopByUser();
-        return new MessageHandlerResponse(BotTextResponse.STOP_INFO);
+        return new MessageExecutorResponse(BotTextResponse.STOP_INFO);
     }
 
     /**
@@ -195,10 +199,10 @@ public class MessageHandler {
      *
      * @return ответ содержащий NOT_AUTHED_USER
      * @see BotTextResponse#NOT_AUTHED_USER
-     * @see MessageHandlerResponse#MessageHandlerResponse(String)
+     * @see MessageExecutorResponse#MessageExecutorResponse(String)
      */
-    private static MessageHandlerResponse getNotAuthedResponse() {
-        return new MessageHandlerResponse(BotTextResponse.NOT_AUTHED_USER);
+    private static MessageExecutorResponse getNotAuthedResponse() {
+        return new MessageExecutorResponse(BotTextResponse.NOT_AUTHED_USER);
     }
 
     /**
@@ -211,17 +215,17 @@ public class MessageHandler {
      * @see BotTextResponse#UPDATE_TOKEN
      * @see NoGroupException#getMessage()
      * @see BotTextResponse#VK_API_ERROR
-     * @see MessageHandlerResponse#MessageHandlerResponse(String)
+     * @see MessageExecutorResponse#MessageExecutorResponse(String)
      */
-    private static MessageHandlerResponse getGroupURL(String groupName, User user) {
+    private MessageExecutorResponse getGroupURL(String groupName, User user) {
         try {
-            return new MessageHandlerResponse(vk.getGroupURL(groupName, user));
+            return new MessageExecutorResponse(vk.getGroupURL(groupName, user));
         } catch (ApiAuthException e) {
-            return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
+            return new MessageExecutorResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new MessageHandlerResponse(e.getMessage());
+            return new MessageExecutorResponse(e.getMessage());
         } catch (ApiException | ClientException e) {
-            return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
+            return new MessageExecutorResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -235,17 +239,17 @@ public class MessageHandler {
      * @see BotTextResponse#UPDATE_TOKEN
      * @see NoGroupException#getMessage()
      * @see BotTextResponse#VK_API_ERROR
-     * @see MessageHandlerResponse#MessageHandlerResponse(String)
+     * @see MessageExecutorResponse#MessageExecutorResponse(String)
      */
-    private static MessageHandlerResponse getGroupId(String groupName, User user) {
+    private MessageExecutorResponse getGroupId(String groupName, User user) {
         try {
-            return new MessageHandlerResponse(vk.getGroupId(groupName, user));
+            return new MessageExecutorResponse(vk.getGroupId(groupName, user));
         } catch (ApiAuthException e) {
-            return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
+            return new MessageExecutorResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new MessageHandlerResponse(e.getMessage());
+            return new MessageExecutorResponse(e.getMessage());
         } catch (ApiException | ClientException e) {
-            return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
+            return new MessageExecutorResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -260,17 +264,17 @@ public class MessageHandler {
      * @see BotTextResponse#UPDATE_TOKEN
      * @see NoGroupException#getMessage()
      * @see BotTextResponse#VK_API_ERROR
-     * @see MessageHandlerResponse#MessageHandlerResponse(String)
+     * @see MessageExecutorResponse#MessageExecutorResponse(String)
      */
-    private static MessageHandlerResponse subscribeTo(String groupName, User user) {
+    private MessageExecutorResponse subscribeTo(String groupName, User user) {
         try {
-            return new MessageHandlerResponse(vk.subscribeTo(groupsBase, groupName, user).getSubscribeMessage());
+            return new MessageExecutorResponse(vk.subscribeTo(groupsBase, groupName, user).getSubscribeMessage());
         } catch (ApiAuthException e) {
-            return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
+            return new MessageExecutorResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoGroupException e) {
-            return new MessageHandlerResponse(e.getMessage());
+            return new MessageExecutorResponse(e.getMessage());
         } catch (ApiException | ClientException e) {
-            return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
+            return new MessageExecutorResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -281,25 +285,25 @@ public class MessageHandler {
      * @param user      - пользователь отправивший сообщение
      * @return текст постов, ссылки на изображения в них, а также ссылки
      * @see Vk#getLastPosts(String, int, User)
-     * @see MessageHandler#DEFAULT_POST_NUMBER
+     * @see MessageExecutor#DEFAULT_POST_NUMBER
      * @see BotTextResponse#UPDATE_TOKEN
      * @see BotTextResponse#NO_POSTS_IN_GROUP
      * @see NoGroupException#getMessage()
      * @see IllegalArgumentException#getMessage()
      * @see BotTextResponse#VK_API_ERROR
-     * @see MessageHandlerResponse#MessageHandlerResponse(List)
+     * @see MessageExecutorResponse#MessageExecutorResponse(List)
      */
-    private static MessageHandlerResponse getFiveLastPosts(String groupName, User user) {
+    private MessageExecutorResponse getFiveLastPosts(String groupName, User user) {
         try {
-            return new MessageHandlerResponse(vk.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow());
+            return new MessageExecutorResponse(vk.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow());
         } catch (ApiAuthException e) {
-            return new MessageHandlerResponse(BotTextResponse.UPDATE_TOKEN);
+            return new MessageExecutorResponse(BotTextResponse.UPDATE_TOKEN);
         } catch (NoSuchElementException e) {
-            return new MessageHandlerResponse(BotTextResponse.NO_POSTS_IN_GROUP);
+            return new MessageExecutorResponse(BotTextResponse.NO_POSTS_IN_GROUP);
         } catch (NoGroupException | IllegalArgumentException e) {
-            return new MessageHandlerResponse(e.getMessage());
+            return new MessageExecutorResponse(e.getMessage());
         } catch (ApiException | ClientException e) {
-            return new MessageHandlerResponse(BotTextResponse.VK_API_ERROR);
+            return new MessageExecutorResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -308,9 +312,9 @@ public class MessageHandler {
      *
      * @return ответ содержащий UNKNOWN_COMMAND
      * @see BotTextResponse#UNKNOWN_COMMAND
-     * @see MessageHandlerResponse#MessageHandlerResponse(String)
+     * @see MessageExecutorResponse#MessageExecutorResponse(String)
      */
-    private static MessageHandlerResponse getUnknownCommandResponse() {
-        return new MessageHandlerResponse(BotTextResponse.UNKNOWN_COMMAND);
+    private static MessageExecutorResponse getUnknownCommandResponse() {
+        return new MessageExecutorResponse(BotTextResponse.UNKNOWN_COMMAND);
     }
 }

@@ -125,7 +125,7 @@ public class GroupsStorage {
     /**
      * Метод получающий все группы на которые оформлены подписки
      *
-     * @return группы на которые оформлены подписки
+     * @return неизменяемый набор коротких названий групп на которые оформлены подписки
      */
     public Set<String> getGroups() {
         return Set.copyOf(groupsBase.keySet());
@@ -135,10 +135,10 @@ public class GroupsStorage {
      * Метод получающий всех подписчиков определенной группы
      *
      * @param groupScreenName - короткое название группы
-     * @return подписчиков группы
+     * @return неизменяемый спискок подписчиков группы
      */
     public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
-        return groupsBase.get(groupScreenName).getSubscribedUsersId().stream().toList();
+        return List.copyOf(groupsBase.get(groupScreenName).getSubscribedUsersId());
     }
 
     /**
