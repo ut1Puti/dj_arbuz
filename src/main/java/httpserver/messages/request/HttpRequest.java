@@ -6,6 +6,7 @@ import httpserver.parser.HttpStatusCode;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Класс http запросов
@@ -135,9 +136,7 @@ public class HttpRequest extends HttpMessage {
      */
     @Override
     public int hashCode() {
-        return method.hashCode() + requestTarget.hashCode()
-                + originalHttpVersion.hashCode() + bestCompatibleHttpVersion.hashCode()
-                + headers.hashCode() + body.hashCode();
+        return Objects.hash(method, requestTarget, originalHttpVersion, bestCompatibleHttpVersion, headers, body);
     }
 
     /**

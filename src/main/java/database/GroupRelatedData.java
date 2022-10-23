@@ -2,6 +2,7 @@ package database;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс хранящий данные о группе в базе данных
@@ -13,7 +14,7 @@ class GroupRelatedData {
     /**
      * Поле хранящее подписанных пользователей
      */
-    private List<String> subscribedUsersId;
+    private final List<String> subscribedUsersId;
     /**
      * Поле хранящее дату последнего поста
      */
@@ -23,7 +24,7 @@ class GroupRelatedData {
      * Констуктор - создает экземпляр класса
      */
     GroupRelatedData() {
-
+        this.subscribedUsersId = new ArrayList<>();
     }
 
     /**
@@ -144,6 +145,6 @@ class GroupRelatedData {
             return false;
         }
 
-        return subscribedUsersId.equals(anotherGroupRelatedData.subscribedUsersId);
+        return Objects.equals(subscribedUsersId, anotherGroupRelatedData.subscribedUsersId);
     }
 }

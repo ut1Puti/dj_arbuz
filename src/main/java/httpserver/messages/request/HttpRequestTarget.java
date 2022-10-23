@@ -3,6 +3,8 @@ package httpserver.messages.request;
 import httpserver.parser.HttpParserException;
 import httpserver.parser.HttpStatusCode;
 
+import java.util.Objects;
+
 /**
  * Класс для хранения таргетов http запроса
  *
@@ -72,7 +74,7 @@ public class HttpRequestTarget {
      */
     @Override
     public int hashCode() {
-        return (requestTargetFile + parameters).hashCode();
+        return Objects.hash(requestTargetFile, parameters);
     }
 
     /**
@@ -88,11 +90,11 @@ public class HttpRequestTarget {
             return true;
         }
 
-        if (obj == null || obj.getClass() != getClass()) {
+        if (!(obj instanceof HttpRequestTarget anotherHttpRequestTarget)) {
             return false;
         }
 
-        return requestTargetFile.equals(((HttpRequestTarget) obj).requestTargetFile) &&
-                parameters.equals(((HttpRequestTarget) obj).parameters);
+        return requestTargetFile.equals(anotherHttpRequestTarget.requestTargetFile) &&
+                parameters.equals(anotherHttpRequestTarget.parameters);
     }
 }

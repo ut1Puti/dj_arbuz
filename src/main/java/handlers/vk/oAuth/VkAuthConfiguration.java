@@ -81,7 +81,7 @@ public class VkAuthConfiguration implements GsonLoadable {
      */
     @Override
     public int hashCode() {
-        return (APP_ID + AUTH_URL + CLIENT_SECRET + SERVICE_CLIENT_SECRET + REDIRECT_URL).hashCode();
+        return APP_ID;
     }
 
     /**
@@ -101,10 +101,10 @@ public class VkAuthConfiguration implements GsonLoadable {
             return false;
         }
 
-        return AUTH_URL.equals(anotherVkAuthConfiguration.AUTH_URL) &&
+        return Objects.equals(AUTH_URL, anotherVkAuthConfiguration.AUTH_URL) &&
                 Objects.equals(APP_ID, anotherVkAuthConfiguration.APP_ID) &&
-                CLIENT_SECRET.equals(anotherVkAuthConfiguration.CLIENT_SECRET) &&
-                SERVICE_CLIENT_SECRET.equals(anotherVkAuthConfiguration.SERVICE_CLIENT_SECRET) &&
-                REDIRECT_URL.equals(anotherVkAuthConfiguration.REDIRECT_URL);
+                Objects.equals(CLIENT_SECRET, anotherVkAuthConfiguration.CLIENT_SECRET) &&
+                Objects.equals(SERVICE_CLIENT_SECRET, anotherVkAuthConfiguration.SERVICE_CLIENT_SECRET) &&
+                Objects.equals(REDIRECT_URL, anotherVkAuthConfiguration.REDIRECT_URL);
     }
 }

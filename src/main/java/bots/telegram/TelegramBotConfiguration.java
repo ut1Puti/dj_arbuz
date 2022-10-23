@@ -5,6 +5,7 @@ import loaders.gson.GsonLoader;
 import loaders.gson.GsonLoadable;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Класс хранящий конфигурацию телеграм бота
@@ -61,7 +62,7 @@ public class TelegramBotConfiguration implements GsonLoadable {
      */
     @Override
     public int hashCode() {
-        return (telegramBotToken + botUserName).hashCode();
+        return Objects.hash(telegramBotToken, botUserName);
     }
 
     /**
@@ -81,7 +82,7 @@ public class TelegramBotConfiguration implements GsonLoadable {
             return false;
         }
 
-        return botUserName.equals(anotherTelegramBotConfiguration.botUserName) &&
-                telegramBotToken.equals(anotherTelegramBotConfiguration.telegramBotToken);
+        return Objects.equals(botUserName, anotherTelegramBotConfiguration.botUserName) &&
+                Objects.equals(telegramBotToken, anotherTelegramBotConfiguration.telegramBotToken);
     }
 }
