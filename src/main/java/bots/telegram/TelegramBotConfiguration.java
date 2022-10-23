@@ -1,8 +1,8 @@
 package bots.telegram;
 
 import com.google.gson.JsonSyntaxException;
-import handlers.vk.oAuth.VkAuthConfiguration;
-import loaders.gson.GenericsGsonLoader;
+import loaders.gson.GsonLoader;
+import loaders.gson.GsonLoadable;
 
 import java.io.IOException;
 
@@ -12,14 +12,14 @@ import java.io.IOException;
  * @author Щёголев Андрей
  * @version 1.0
  */
-public class TelegramBotConfiguration {
+public class TelegramBotConfiguration implements GsonLoadable {
     /**
      * Поле объекта, который выполняет чтение json файла и преобразования в объект
      *
-     * @see GenericsGsonLoader
+     * @see GsonLoader
      */
-    private static final GenericsGsonLoader<TelegramBotConfiguration> telegramBotConfigurationGenericsGsonLoader =
-            new GenericsGsonLoader<>(TelegramBotConfiguration.class);
+    private static final GsonLoader<TelegramBotConfiguration> TELEGRAM_BOT_CONFIGURATION_GSON_LOADER =
+            new GsonLoader<>(TelegramBotConfiguration.class);
     /**
      * Поле имени бота
      */
@@ -48,7 +48,7 @@ public class TelegramBotConfiguration {
      */
     static TelegramBotConfiguration loadTelegramBotConfigurationFromJson(String telegramBotConfigurationJsonFilePath) {
         try {
-            return telegramBotConfigurationGenericsGsonLoader.loadFromJson(telegramBotConfigurationJsonFilePath);
+            return TELEGRAM_BOT_CONFIGURATION_GSON_LOADER.loadFromJson(telegramBotConfigurationJsonFilePath);
         } catch (IOException | JsonSyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -65,7 +65,7 @@ public class TelegramBotConfiguration {
     }
 
     /**
-     * Метод проверяющий равенство {@code obj} и {@code VkAuthConfiguration}
+     * Метод проверяющий равенство {@code obj} и {@code TelegramBotConfiguration}
      *
      * @param obj - сравниваемый объект
      * @return true если объекты равны по полям, false если объекты не равны по полям

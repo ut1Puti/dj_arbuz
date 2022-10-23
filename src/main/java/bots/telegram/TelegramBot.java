@@ -2,8 +2,6 @@ package bots.telegram;
 
 import bots.BotTextResponse;
 import bots.BotUtils;
-import com.google.gson.JsonSyntaxException;
-import loaders.gson.GenericsGsonLoader;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import stoppable.Stoppable;

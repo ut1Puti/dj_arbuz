@@ -39,7 +39,7 @@ public class VkAuth implements CreateUser {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param vkApiClient                клиент vk
+     * @param vkApiClient                    клиент vk
      * @param vkAppConfigurationJsonFilePath путь до json файла с конфигурацией
      */
     public VkAuth(VkApiClient vkApiClient, String vkAppConfigurationJsonFilePath) {

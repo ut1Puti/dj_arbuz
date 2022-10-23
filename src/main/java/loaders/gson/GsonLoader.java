@@ -12,13 +12,13 @@ import java.util.Scanner;
  * @version 1.0
  * @param <T> тип объекта обрабатываемого классом
  */
-public class GenericsGsonLoader<T> {
+public class GsonLoader<T extends GsonLoadable> {
     /**
      * Поле объекта преобразовывающего объекты в json строки
      *
      * @see Gson
      */
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
     /**
      * Поле класс, который преобразуем
      */
@@ -29,7 +29,7 @@ public class GenericsGsonLoader<T> {
      *
      * @param jsonLoadingClass класс, который будет обрабатываться экземпляром {@code GenericsGsonLoader}
      */
-    public GenericsGsonLoader(Class<T> jsonLoadingClass) {
+    public GsonLoader(Class<T> jsonLoadingClass) {
         this.jsonLoadingClass = jsonLoadingClass;
     }
 
@@ -44,7 +44,7 @@ public class GenericsGsonLoader<T> {
         FileReader fileReader = new FileReader(pathToLoadObject);
         Scanner scanner = new Scanner(fileReader);
         String json = scanner.nextLine();
-        return gson.fromJson(json, jsonLoadingClass);
+        return GSON.fromJson(json, jsonLoadingClass);
     }
 
     /**
@@ -60,7 +60,7 @@ public class GenericsGsonLoader<T> {
             return;
         }
 
-        String json = gson.toJson(objectToSave);
+        String json = GSON.toJson(objectToSave);
         FileWriter file = new FileWriter(pathToSaveObject);
         file.write(json);
         file.close();

@@ -1,7 +1,8 @@
 package handlers.vk.oAuth;
 
 import com.google.gson.JsonSyntaxException;
-import loaders.gson.GenericsGsonLoader;
+import loaders.gson.GsonLoader;
+import loaders.gson.GsonLoadable;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -12,14 +13,14 @@ import java.util.Objects;
  * @author Кедровских Олег
  * @version 2.0
  */
-public class VkAuthConfiguration {
+public class VkAuthConfiguration implements GsonLoadable {
     /**
      * Поле объекта, который выполняет чтение json файла и преобразования в объект
      *
-     * @see GenericsGsonLoader
+     * @see GsonLoader
      */
-    private static final GenericsGsonLoader<VkAuthConfiguration> vkAuthConfigurationGenericsGsonLoader =
-            new GenericsGsonLoader<>(VkAuthConfiguration.class);
+    private static final GsonLoader<VkAuthConfiguration> VK_AUTH_CONFIGURATION_GSON_LOADER =
+            new GsonLoader<>(VkAuthConfiguration.class);
     /**
      * Поле ссылки для аутентификации
      */
@@ -48,7 +49,7 @@ public class VkAuthConfiguration {
      * @param appId               id приложения
      * @param clientSecret        ключ доступа приложения к vk api
      * @param serviceClientSecret ключ доступа пользователя приложения к vk api
-     * @param redirectUrl         сслыка на страницу, на которую попадет пользователь после аутентификации
+     * @param redirectUrl         ссылка на страницу, на которую попадет пользователь после аутентификации
      */
     public VkAuthConfiguration(String authUrl, int appId, String clientSecret, String serviceClientSecret,
                                String redirectUrl) {
@@ -63,11 +64,11 @@ public class VkAuthConfiguration {
      * Метод для создания конфигурации из json файла
      *
      * @param vkAuthConfigurationJsonFilePath путь до json файла с конфигурацией приложения
-     * @return конфигурации приложения на основе json файла
+     * @return {@code VkAuthConfiguration} на основе json файла
      */
     static VkAuthConfiguration loadVkAuthConfigurationFromJson(String vkAuthConfigurationJsonFilePath) {
         try {
-            return vkAuthConfigurationGenericsGsonLoader.loadFromJson(vkAuthConfigurationJsonFilePath);
+            return VK_AUTH_CONFIGURATION_GSON_LOADER.loadFromJson(vkAuthConfigurationJsonFilePath);
         } catch (IOException | JsonSyntaxException e) {
             throw new RuntimeException(e);
         }
