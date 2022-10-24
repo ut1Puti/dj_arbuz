@@ -1,7 +1,7 @@
 package handlers.notifcations;
 
 import database.GroupsStorage;
-import handlers.vk.Vk;
+import socialnetworks.socialnetwork.SocialNetwork;
 import stoppable.StoppableThread;
 
 import java.util.List;
@@ -23,18 +23,20 @@ public abstract class PostsPullingThread extends StoppableThread {
     /**
      * Поле обработчика обращений к vk api
      *
-     * @see Vk
+     * @see SocialNetwork
      */
-    protected final Vk vk;
+    protected final SocialNetwork socialNetwork;
 
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param groupsStorage база данных групп на которые оформленна подписка
+     * @param groupsStorage база данных групп на которые оформлена подписка
+     * @param socialNetwork интерфейс реализующий доступ к необходимым методам социальной сети
      */
-    public PostsPullingThread(GroupsStorage groupsStorage, Vk vk) {
+    public PostsPullingThread(GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
         this.groupsBase = groupsStorage;
-        this.vk = vk;
+        this.socialNetwork = socialNetwork;
+        this.setDaemon(true);
     }
 
     /**

@@ -1,10 +1,9 @@
 package handlers.notifcations;
 
 import bots.telegram.TelegramBot;
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
 import database.GroupsStorage;
-import handlers.vk.Vk;
+import socialnetworks.socialnetwork.SocialNetworkException;
+import socialnetworks.socialnetwork.SocialNetwork;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -29,11 +28,12 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param telegramBot - телеграмм бот
-     * @param groupsStorage база данных групп на которые оформленна подписка
+     * @param telegramBot телеграмм бот
+     * @param groupsStorage база данных групп на которые оформлена подписка
+     * @param socialNetwork социальная сети реализующая необходимые для работы методы
      */
-    public TelegramPostsPullingThread(TelegramBot telegramBot, GroupsStorage groupsStorage, Vk vk) {
-        super(groupsStorage, vk);
+    public TelegramPostsPullingThread(TelegramBot telegramBot, GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
+        super(groupsStorage, socialNetwork);
         this.telegramBot = telegramBot;
     }
 
@@ -41,15 +41,15 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * Метод логики выполняемой внутри {@code TelegramPostsPullingThread}
      *
      * @see GroupsStorage#getGroups()
-     * @see handlers.vk.Vk#getNewPosts(GroupsStorage, String)
+     * @see SocialNetwork#getNewPosts(GroupsStorage, String)
      * @see GroupsStorage#getSubscribedToGroupUsersId(String)
      */
     @Override
     public void run() {
-        while (working) {
+        while (working.get()) {
             try {
                 for (String groupScreenName : groupsBase.getGroups()) {
-                    Optional<List<String>> threadFindNewPosts = vk.getNewPosts(groupsBase, groupScreenName);
+                    Optional<List<String>> threadFindNewPosts = socialNetwork.getNewPosts(groupsBase, groupScreenName);
 
                     if (threadFindNewPosts.isPresent()) {
                         for (String postsAttachments : threadFindNewPosts.get()) {
@@ -68,10 +68,10 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
                 Thread.sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
-            } catch (ApiException | ClientException ignored) {
+            } catch (SocialNetworkException ignored) {
             }
         }
-        working = false;
+        working.set(false);
     }
 
     /**

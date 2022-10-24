@@ -1,4 +1,4 @@
-package handlers.vk;
+package socialnetworks.vk;
 
 /**
  * Класс констант используемых в vkapi

@@ -1,11 +1,10 @@
-package handlers.vk.oAuth;
+package socialnetworks.vk.oAuth;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import httpserver.server.HttpServer;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import user.User;
 
@@ -52,7 +51,7 @@ public class VkAuthTests {
     @Test
     public void testAuthUrl() {
         String expectedAuthUrl = "https://oauth.vk.com/authorize?client_id=51434490&display=page&redirect_uri=http://localhost:8080/redirect.html&scope=270336&response_type=code&v=5.131";
-        String authUrl = vkAuth.getAuthURL();
+        String authUrl = vkAuth.getAuthUrl();
         assertEquals(expectedAuthUrl, authUrl);
     }
 

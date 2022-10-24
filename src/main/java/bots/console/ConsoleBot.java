@@ -1,6 +1,6 @@
 package bots.console;
 
-import bots.BotStarterPack;
+import bots.BotStartInstances;
 import bots.BotTextResponse;
 import database.UserStorage;
 import handlers.messages.MessageExecutor;
@@ -47,21 +47,25 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param botStarterPack набор объектов необходимых для запуска бота
+     * @param botStartInstances набор объектов необходимых для запуска бота
      */
-    public ConsoleBot(BotStarterPack botStarterPack) {
-        this.messageExecutor = new MessageExecutor(botStarterPack.groupsStorage, botStarterPack.userStorage, botStarterPack.vk);
-        this.userBase = botStarterPack.userStorage;
-        this.notificationsPuller = new NotificationsPuller(defaultConsoleUserId, botStarterPack.groupsStorage, botStarterPack.vk);
+    public ConsoleBot(BotStartInstances botStartInstances) {
+        this.messageExecutor = new MessageExecutor(
+                botStartInstances.groupsStorage, botStartInstances.userStorage, botStartInstances.vk
+        );
+        this.userBase = botStartInstances.userStorage;
+        this.notificationsPuller = new NotificationsPuller(
+                defaultConsoleUserId, botStartInstances.groupsStorage, botStartInstances.vk
+        );
     }
 
     public static void main(String[] args) {
-        BotStarterPack botStarterPack = new BotStarterPack("src/main/resources/anonsrc/vk_config.json");
-        ConsoleBot consoleBot = new ConsoleBot(botStarterPack);
+        BotStartInstances botStartInstances = new BotStartInstances("src/main/resources/anonsrc/vk_config.json");
+        ConsoleBot consoleBot = new ConsoleBot(botStartInstances);
         consoleBot.start();
         while (consoleBot.isWorking()) Thread.onSpinWait();
         consoleBot.stopWithInterrupt();
-        botStarterPack.stop();
+        botStartInstances.stop();
     }
 
     /**
@@ -82,7 +86,7 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser {
     public void run() {
         notificationsPuller.start();
         Scanner userInput = new Scanner(System.in);
-        while (working) {
+        while (working.get()) {
 
             if (userInput.hasNextLine()) {
                 MessageExecutorResponse response = messageExecutor.executeMessage(
@@ -121,7 +125,7 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser {
             }
 
         }
-        working = false;
+        working.set(false);
         userInput.close();
         notificationsPuller.stop();
     }

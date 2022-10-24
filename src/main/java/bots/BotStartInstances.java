@@ -5,10 +5,11 @@ import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import database.GroupsStorage;
 import database.UserStorage;
-import handlers.vk.Vk;
-import handlers.vk.groups.VkGroups;
-import handlers.vk.oAuth.VkAuth;
-import handlers.vk.wall.VkWall;
+import socialnetworks.socialnetwork.SocialNetwork;
+import socialnetworks.vk.Vk;
+import socialnetworks.vk.groups.VkGroups;
+import socialnetworks.vk.oAuth.VkAuth;
+import socialnetworks.vk.wall.VkWall;
 import httpserver.server.HttpServer;
 
 /**
@@ -17,7 +18,7 @@ import httpserver.server.HttpServer;
  * @author Кедровских Олег
  * @version 0.5
  */
-public class BotStarterPack {
+public class BotStartInstances {
     /**
      * Поле http сервера
      *
@@ -41,12 +42,12 @@ public class BotStarterPack {
      *
      * @see Vk
      */
-    public final Vk vk;
+    public final SocialNetwork vk;
 
     /**
      * Конструктор - создает экземпляр класса
      */
-    public BotStarterPack(String vkAppConfigurationJsonFilePath) {
+    public BotStartInstances(String vkAppConfigurationJsonFilePath) {
         this.httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {

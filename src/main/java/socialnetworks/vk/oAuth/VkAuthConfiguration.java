@@ -1,4 +1,4 @@
-package handlers.vk.oAuth;
+package socialnetworks.vk.oAuth;
 
 import com.google.gson.JsonSyntaxException;
 import loaders.gson.GsonLoader;

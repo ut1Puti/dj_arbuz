@@ -56,7 +56,7 @@ public class ServerListenerThread extends StoppableThread {
      */
     @Override
     public void run() {
-        while (serverSocket.isBound() && working) {
+        while (serverSocket.isBound() && working.get()) {
             try {
                 Socket socket = serverSocket.accept();
                 if (socket.isBound() && socket.isConnected()) {
@@ -103,7 +103,7 @@ public class ServerListenerThread extends StoppableThread {
                 break;
             }
         }
-        working = false;
+        working.set(false);
     }
 
     /**

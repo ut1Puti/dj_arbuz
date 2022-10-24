@@ -2,14 +2,12 @@ package handlers.messages;
 
 import bots.BotTextResponse;
 import bots.StoppableByUser;
-import com.vk.api.sdk.exceptions.ApiAuthException;
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
-import handlers.vk.Vk;
+import socialnetworks.socialnetwork.SocialNetworkException;
+import socialnetworks.socialnetwork.SocialNetwork;
 import database.GroupsStorage;
 import database.UserStorage;
-import handlers.vk.groups.NoGroupException;
-import handlers.vk.groups.SubscribeStatus;
+import socialnetworks.socialnetwork.groups.NoGroupException;
+import socialnetworks.socialnetwork.groups.SubscribeStatus;
 import user.User;
 import user.CreateUser;
 
@@ -37,29 +35,35 @@ public class MessageExecutor {
      */
     private static final int ARG_INDEX = 1;
     /**
-     * Поле хранилища групп, на которые оформленна подписка
+     * Поле хранилища групп, на которые оформлена подписка
+     *
+     * @see GroupsStorage
      */
     private final GroupsStorage groupsBase;
     /**
-     * Поле хранилища пользователей, аутентифицированный в vk
+     * Поле хранилища пользователей, аутентифицированный в социальной сети
+     *
+     * @see UserStorage
      */
     private final UserStorage usersBase;
     /**
-     * Поле класса для взаимодействия с vk api
+     * Поле класса для взаимодействия с api социальной сети
+     *
+     * @see SocialNetwork
      */
-    private final Vk vk;
+    private final SocialNetwork socialNetwork;
 
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param groupsBase хранилище групп на которые оформленны подписки
-     * @param usersBase хранилище пользователей, которые аутентифицированны в vk
-     * @param vk класс для взаимодействия с vk
+     * @param groupsBase хранилище групп на которые оформлены подписки
+     * @param usersBase хранилище пользователей, которые аутентифицированы в социальной сети
+     * @param socialNetwork класс для взаимодействия с социальными сетями
      */
-    public MessageExecutor(GroupsStorage groupsBase, UserStorage usersBase, Vk vk) {
+    public MessageExecutor(GroupsStorage groupsBase, UserStorage usersBase, SocialNetwork socialNetwork) {
         this.groupsBase = groupsBase;
         this.usersBase = usersBase;
-        this.vk = vk;
+        this.socialNetwork = socialNetwork;
     }
 
     /**
@@ -163,21 +167,21 @@ public class MessageExecutor {
      * Метод формирующий ответ на команду /auth
      *
      * @return ответ на команду /auth
-     * @see Vk#getAuthURL()
-     * @see Vk#createUser(String)
+     * @see SocialNetwork#getAuthUrl()
+     * @see SocialNetwork#createUser(String)
      * @see BotTextResponse#AUTH_ERROR
      * @see BotTextResponse#AUTH_GO_VIA_LINK
      * @see MessageExecutorResponse#MessageExecutorResponse(String)
      * @see MessageExecutorResponse#MessageExecutorResponse(String, CreateUser)
      */
     private MessageExecutorResponse getAuthResponse() {
-        String authURL = vk.getAuthURL();
+        String authURL = socialNetwork.getAuthUrl();
 
         if (authURL == null) {
             return new MessageExecutorResponse(BotTextResponse.AUTH_ERROR);
         }
 
-        return new MessageExecutorResponse(BotTextResponse.AUTH_GO_VIA_LINK + authURL, vk);
+        return new MessageExecutorResponse(BotTextResponse.AUTH_GO_VIA_LINK + authURL, socialNetwork);
     }
 
     /**
@@ -211,21 +215,16 @@ public class MessageExecutor {
      * @param groupName - имя группы
      * @param user      - пользователь отправивший сообщение
      * @return ссылку на верифицированную группу если такая нашлась
-     * @see Vk#getGroupURL(String, User)
+     * @see SocialNetwork#getGroupUrl(String, User)
      * @see BotTextResponse#UPDATE_TOKEN
-     * @see NoGroupException#getMessage()
      * @see BotTextResponse#VK_API_ERROR
      * @see MessageExecutorResponse#MessageExecutorResponse(String)
      */
     private MessageExecutorResponse getGroupURL(String groupName, User user) {
         try {
-            return new MessageExecutorResponse(vk.getGroupURL(groupName, user));
-        } catch (ApiAuthException e) {
-            return new MessageExecutorResponse(BotTextResponse.UPDATE_TOKEN);
-        } catch (NoGroupException e) {
+            return new MessageExecutorResponse(socialNetwork.getGroupUrl(groupName, user));
+        } catch (NoGroupException | SocialNetworkException e) {
             return new MessageExecutorResponse(e.getMessage());
-        } catch (ApiException | ClientException e) {
-            return new MessageExecutorResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -234,22 +233,17 @@ public class MessageExecutor {
      *
      * @param groupName - имя группы
      * @param user      - пользователь отправивший сообщение
-     * @return id верефицированной группы если такая нашлась
-     * @see Vk#getGroupId(String, User)
+     * @return id верифицированной группы если такая нашлась
+     * @see SocialNetwork#getGroupId(String, User)
      * @see BotTextResponse#UPDATE_TOKEN
-     * @see NoGroupException#getMessage()
      * @see BotTextResponse#VK_API_ERROR
      * @see MessageExecutorResponse#MessageExecutorResponse(String)
      */
     private MessageExecutorResponse getGroupId(String groupName, User user) {
         try {
-            return new MessageExecutorResponse(vk.getGroupId(groupName, user));
-        } catch (ApiAuthException e) {
-            return new MessageExecutorResponse(BotTextResponse.UPDATE_TOKEN);
-        } catch (NoGroupException e) {
+            return new MessageExecutorResponse(socialNetwork.getGroupId(groupName, user));
+        } catch (NoGroupException | SocialNetworkException e) {
             return new MessageExecutorResponse(e.getMessage());
-        } catch (ApiException | ClientException e) {
-            return new MessageExecutorResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -259,22 +253,17 @@ public class MessageExecutor {
      * @param groupName - Название группы
      * @param user      - айди юзера
      * @return - возврат текста для сообщения
-     * @see Vk#subscribeTo(GroupsStorage, String, User)
+     * @see SocialNetwork#subscribeTo(GroupsStorage, String, User)
      * @see SubscribeStatus#getSubscribeMessage()
      * @see BotTextResponse#UPDATE_TOKEN
-     * @see NoGroupException#getMessage()
      * @see BotTextResponse#VK_API_ERROR
      * @see MessageExecutorResponse#MessageExecutorResponse(String)
      */
     private MessageExecutorResponse subscribeTo(String groupName, User user) {
         try {
-            return new MessageExecutorResponse(vk.subscribeTo(groupsBase, groupName, user).getSubscribeMessage());
-        } catch (ApiAuthException e) {
-            return new MessageExecutorResponse(BotTextResponse.UPDATE_TOKEN);
-        } catch (NoGroupException e) {
+            return new MessageExecutorResponse(socialNetwork.subscribeTo(groupsBase, groupName, user).getSubscribeMessage());
+        } catch (NoGroupException | SocialNetworkException e) {
             return new MessageExecutorResponse(e.getMessage());
-        } catch (ApiException | ClientException e) {
-            return new MessageExecutorResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 
@@ -284,26 +273,20 @@ public class MessageExecutor {
      * @param groupName - имя группы
      * @param user      - пользователь отправивший сообщение
      * @return текст постов, ссылки на изображения в них, а также ссылки
-     * @see Vk#getLastPosts(String, int, User)
+     * @see SocialNetwork#getLastPosts(String, int, User)
      * @see MessageExecutor#DEFAULT_POST_NUMBER
      * @see BotTextResponse#UPDATE_TOKEN
      * @see BotTextResponse#NO_POSTS_IN_GROUP
-     * @see NoGroupException#getMessage()
-     * @see IllegalArgumentException#getMessage()
      * @see BotTextResponse#VK_API_ERROR
      * @see MessageExecutorResponse#MessageExecutorResponse(List)
      */
     private MessageExecutorResponse getFiveLastPosts(String groupName, User user) {
         try {
-            return new MessageExecutorResponse(vk.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow());
-        } catch (ApiAuthException e) {
-            return new MessageExecutorResponse(BotTextResponse.UPDATE_TOKEN);
+            return new MessageExecutorResponse(socialNetwork.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow());
         } catch (NoSuchElementException e) {
             return new MessageExecutorResponse(BotTextResponse.NO_POSTS_IN_GROUP);
-        } catch (NoGroupException | IllegalArgumentException e) {
+        } catch (NoGroupException | SocialNetworkException | IllegalArgumentException e) {
             return new MessageExecutorResponse(e.getMessage());
-        } catch (ApiException | ClientException e) {
-            return new MessageExecutorResponse(BotTextResponse.VK_API_ERROR);
         }
     }
 

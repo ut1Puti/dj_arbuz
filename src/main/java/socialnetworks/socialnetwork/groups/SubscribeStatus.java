@@ -1,4 +1,4 @@
-package handlers.vk.groups;
+package socialnetworks.socialnetwork.groups;
 
 import bots.BotTextResponse;
 

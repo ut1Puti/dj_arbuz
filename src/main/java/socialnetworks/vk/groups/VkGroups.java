@@ -1,4 +1,4 @@
-package handlers.vk.groups;
+package socialnetworks.vk.groups;
 
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -8,8 +8,11 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.groups.Fields;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
-import database.GroupsStorage;
-import handlers.vk.VkConstants;
+import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
+import socialnetworks.socialnetwork.SocialNetworkException;
+import socialnetworks.socialnetwork.groups.NoGroupException;
+import socialnetworks.socialnetwork.groups.SocialNetworkGroups;
+import socialnetworks.vk.VkConstants;
 import user.User;
 
 import java.util.HashMap;
@@ -21,8 +24,9 @@ import java.util.Map;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see SocialNetworkGroups
  */
-public class VkGroups {
+public class VkGroups implements SocialNetworkGroups {
     /**
      * Поле класс позволяющего работать с vk api
      */
@@ -43,18 +47,25 @@ public class VkGroups {
      * @param userReceivedGroupName - запрос
      * @param userCallingMethod     - пользователь сделавший запрос
      * @return список групп полученных по запросу
-     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
-     * @throws ApiAuthException - возникает при необходимости продлить токен путем повторной авторизации
+     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
      * @see com.vk.api.sdk.actions.Groups#search(UserActor, String)
      */
+    @Override
     public List<Group> searchGroups(String userReceivedGroupName, User userCallingMethod)
-            throws NoGroupException, ApiException, ClientException {
-        List<Group> userFindGroups = vkApiClient.groups().search(userCallingMethod, userReceivedGroupName)
-                .offset(VkConstants.DEFAULT_OFFSET).count(VkConstants.DEFAULT_GROUPS_NUMBER)
-                .execute()
-                .getItems();
+            throws NoGroupException, SocialNetworkException, SocialNetworkAuthException {
+        List<Group> userFindGroups;
+        try {
+            userFindGroups = vkApiClient.groups().search(userCallingMethod, userReceivedGroupName)
+                    .offset(VkConstants.DEFAULT_OFFSET).count(VkConstants.DEFAULT_GROUPS_NUMBER)
+                    .execute()
+                    .getItems();
+        } catch (ApiAuthException e) {
+            throw new SocialNetworkAuthException(e);
+        } catch (ApiException | ClientException e) {
+            throw new SocialNetworkException(e);
+        }
 
         if (userFindGroups.isEmpty()) {
             throw new NoGroupException(userReceivedGroupName);
@@ -69,16 +80,16 @@ public class VkGroups {
      * @param userReceivedGroupName - запрос
      * @param userCallingMethod     - пользователь сделавший запрос
      * @return группу с наибольшим числом подписчиков, среди группс название совпадающим хотя бы на 50%, относительно
-     * заданной пользователем строки, если таких групп не нашлось кидает NoGroupException
-     * @throws ApiException     - возникает при ошибке обращения к vk api со стороны vk
-     * @throws ApiAuthException - возникает при необходимости продлить токен путем повторной авторизации
+     * заданной пользователем строки, если таких групп не нашлось, кидает {@code NoGroupException}
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws ClientException  - возникает при ошибке обращения к vk api со стороны клиента
+     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
      * @see VkGroups#searchGroups(String, User)
      * @see VkGroups#chooseGroup(List, String, User)
      */
+    @Override
     public Group searchGroup(String userReceivedGroupName, User userCallingMethod)
-            throws ApiException, NoGroupException, ClientException {
+            throws NoGroupException, SocialNetworkException {
         List<Group> userFindGroups = searchGroups(userReceivedGroupName, userCallingMethod);
         Group groupWithSimilarName = chooseGroup(userFindGroups, userReceivedGroupName, userCallingMethod);
 

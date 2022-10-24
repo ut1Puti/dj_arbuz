@@ -1,7 +1,9 @@
-package handlers.vk.groups;
+package socialnetworks.vk.groups;
 
 import bots.BotTextResponse;
 import org.junit.jupiter.api.Test;
+import socialnetworks.socialnetwork.groups.SubscribeStatus;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

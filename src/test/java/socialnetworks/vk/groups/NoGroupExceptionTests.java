@@ -1,6 +1,8 @@
-package handlers.vk.groups;
+package socialnetworks.vk.groups;
 
 import org.junit.jupiter.api.Test;
+import socialnetworks.socialnetwork.groups.NoGroupException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

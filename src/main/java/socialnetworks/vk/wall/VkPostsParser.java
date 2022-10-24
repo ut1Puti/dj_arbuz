@@ -1,10 +1,11 @@
-package handlers.vk.wall;
+package socialnetworks.vk.wall;
 
 import com.vk.api.sdk.objects.wall.Wallpost;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostFull;
-import handlers.vk.VkConstants;
+import socialnetworks.vk.VkConstants;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,11 +16,26 @@ import java.util.regex.Pattern;
  * @author Кедровских Олег
  * @version 1.0
  */
-class VkPostsParser {
+public class VkPostsParser {
     /**
      * Поле регулярного выражения для нахождения характеристик группы и вытягивание из найденной подстроки id группы
      */
-    private static final Pattern groupStatsRegex = Pattern.compile("\\[(?<id>\\w+)[|][а-яА-Я\\w\\s]+]");
+    private static final Pattern groupStatsRegex = Pattern.compile("\\[(?<id>\\w+)[|][@а-яА-Я\\w\\s]+]");
+
+    /**
+     * Метод превращающий {@link WallpostFull} в строки
+     *
+     * @param groupPosts - посты
+     * @return список постов в виде строк
+     * @see VkPostsParser#parsePost(WallpostFull)
+     */
+    public static List<String> parsePosts(List<WallpostFull> groupPosts) {
+        List<String> groupPostsParsed = new ArrayList<>();
+        for (WallpostFull groupPost : groupPosts) {
+            groupPostsParsed.add(parsePost(groupPost));
+        }
+        return groupPostsParsed;
+    }
 
     /**
      * Метод парясщий {@link WallpostFull} в строку
@@ -30,7 +46,7 @@ class VkPostsParser {
      * @see WallpostFull#getText()
      * @see WallpostFull#getCopyHistory()
      */
-    static String parsePost(WallpostFull groupPost) {
+    public static String parsePost(WallpostFull groupPost) {
         List<WallpostAttachment> groupPostAttachments = groupPost.getAttachments();
         StringBuilder postTextBuilder = new StringBuilder(groupPost.getText());
         while (groupPostAttachments == null) {

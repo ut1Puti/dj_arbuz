@@ -1,4 +1,4 @@
-package handlers.vk.oAuth;
+package socialnetworks.vk.oAuth;
 
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
@@ -6,7 +6,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import httpserver.server.HttpServer;
-import user.CreateUser;
+import socialnetworks.socialnetwork.oAuth.SocialNetworkAuth;
 import user.User;
 
 /**
@@ -14,9 +14,9 @@ import user.User;
  *
  * @author Кедровских Олег
  * @version 1.2
- * @see CreateUser
+ * @see SocialNetworkAuth
  */
-public class VkAuth implements CreateUser {
+public class VkAuth implements SocialNetworkAuth {
     /**
      * Поле класс позволяющего работать с vk api
      *
@@ -57,6 +57,7 @@ public class VkAuth implements CreateUser {
      * @see VkAuthConfiguration#CLIENT_SECRET
      * @see VkAuthConfiguration#SERVICE_CLIENT_SECRET
      */
+    @Override
     public ServiceActor createAppActor() {
         return new ServiceActor(
                 authConfiguration.APP_ID, authConfiguration.CLIENT_SECRET, authConfiguration.SERVICE_CLIENT_SECRET
@@ -67,10 +68,10 @@ public class VkAuth implements CreateUser {
      * Метод возвращающий ссылку для аутентификации
      *
      * @return ссылку для аутентификации, если сервер недоступен, то это null
-     * @see HttpServer#getInstance()
      * @see VkAuthConfiguration#AUTH_URL
      */
-    public String getAuthURL() {
+    @Override
+    public String getAuthUrl() {
         return authConfiguration.AUTH_URL;
     }
 
@@ -81,7 +82,6 @@ public class VkAuth implements CreateUser {
      * @param systemUserId - id пользователя в системе
      * @return нового пользователя, null если возникли проблемы при обращении к серверу, при ошибках на сервере
      * или при ошибке обращения к vk api
-     * @see HttpServer#getInstance()
      * @see HttpServer#getHttpRequestParameters()
      * @see VkAuth#getAuthCodeFromHttpRequest(String)
      * @see VkAuthConfiguration#APP_ID

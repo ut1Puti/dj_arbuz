@@ -11,9 +11,10 @@ public interface CreateUser {
     /**
      * Метод создающий пользователя, имеющего id в системе
      *
-     * @param systemUserId - id пользователя в системе
-     * @return пользователя содержащего id в vk и в системе,
-     * token - ключ доступа к vk api с использованием аккаунта пользоватлеля
+     * @param userIdInBotSystem - id пользователя в системе
+     * @return пользователя содержащего id в социальной сети и в бот,
+     * token - ключ доступа к api социальной сети с использованием аккаунта пользователя,
+     * либо же {@code null} если не удается создать пользователя по какой-то причине
      */
-    User createUser(String systemUserId);
+    User createUser(String userIdInBotSystem);
 }

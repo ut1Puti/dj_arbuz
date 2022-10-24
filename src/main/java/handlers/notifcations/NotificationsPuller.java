@@ -2,7 +2,8 @@ package handlers.notifcations;
 
 import bots.telegram.TelegramBot;
 import database.GroupsStorage;
-import handlers.vk.Vk;
+import socialnetworks.socialnetwork.SocialNetwork;
+import socialnetworks.vk.Vk;
 
 import java.util.List;
 
@@ -26,18 +27,19 @@ public class NotificationsPuller {
      * @param consoleBotUserId id пользователя консольной версии бота
      * @param groupsStorage база данных групп на которые оформленна подписка
      */
-    public NotificationsPuller(String consoleBotUserId, GroupsStorage groupsStorage, Vk vk) {
-        postsPullingThread = new ConsolePostsPullingThread(consoleBotUserId, groupsStorage, vk);
+    public NotificationsPuller(String consoleBotUserId, GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
+        postsPullingThread = new ConsolePostsPullingThread(consoleBotUserId, groupsStorage, socialNetwork);
     }
 
     /**
      * Конструктор - создает экземпляр класса
      *
      * @param telegramBot бот в телеграмме
-     * @param groupsStorage база данных групп на которые оформленна подписка
+     * @param groupsStorage база данных групп на которые оформлена подписка
+     * @param socialNetwork социальная сеть реализующая необходимые для работы методы
      */
-    public NotificationsPuller(TelegramBot telegramBot, GroupsStorage groupsStorage, Vk vk) {
-        postsPullingThread = new TelegramPostsPullingThread(telegramBot, groupsStorage, vk);
+    public NotificationsPuller(TelegramBot telegramBot, GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
+        postsPullingThread = new TelegramPostsPullingThread(telegramBot, groupsStorage, socialNetwork);
     }
 
     /**

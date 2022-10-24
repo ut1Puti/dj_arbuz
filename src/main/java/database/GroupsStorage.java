@@ -33,9 +33,9 @@ public class GroupsStorage {
      * @param groupId - айди группы
      */
     private void addNewGroup(String groupId, String userId) {
-        List<String> newList = new LinkedList<>();
+        List<String> newList = new ArrayList<>();
         newList.add(userId);
-        groupsBase.put(groupId, new GroupRelatedData(newList, (int)Instant.now().getEpochSecond()));
+        groupsBase.put(groupId, new GroupRelatedData(newList, Instant.now().getEpochSecond()));
     }
 
     /**

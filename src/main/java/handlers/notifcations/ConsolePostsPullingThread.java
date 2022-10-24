@@ -1,9 +1,9 @@
 package handlers.notifcations;
 
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
 import database.GroupsStorage;
-import handlers.vk.Vk;;
+import socialnetworks.socialnetwork.SocialNetworkException;
+import socialnetworks.socialnetwork.SocialNetwork;
+;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -30,9 +30,10 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
      *
      * @param consoleUserId id консольного пользователя в database
      * @param groupsStorage база данных групп на которые оформленна подписка
+     * @param socialNetwork интерфейс социальной сети реализующий необходимые методы
      */
-    public ConsolePostsPullingThread(String consoleUserId, GroupsStorage groupsStorage, Vk vk) {
-        super(groupsStorage, vk);
+    public ConsolePostsPullingThread(String consoleUserId, GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
+        super(groupsStorage, socialNetwork);
         this.consoleBotUserId = consoleUserId;
     }
 
@@ -41,10 +42,10 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
      */
     @Override
     public void run() {
-        while (working) {
+        while (working.get()) {
             try {
                 for (String groupScreenName : groupsBase.getUserSubscribedGroups(consoleBotUserId)) {
-                    Optional<List<String>> threadNewPosts = vk.getNewPosts(groupsBase, groupScreenName);
+                    Optional<List<String>> threadNewPosts = socialNetwork.getNewPosts(groupsBase, groupScreenName);
 
                     if (threadNewPosts.isPresent()) {
                         List<String> threadFindNewPosts = threadNewPosts.get();
@@ -65,10 +66,10 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
                 Thread.sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
-            } catch (ApiException | ClientException ignored) {
+            } catch (SocialNetworkException ignored) {
             }
         }
-        working = false;
+        working.set(false);
     }
 
     /**

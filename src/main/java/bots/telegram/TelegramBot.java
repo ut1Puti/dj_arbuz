@@ -1,6 +1,6 @@
 package bots.telegram;
 
-import bots.BotStarterPack;
+import bots.BotStartInstances;
 import bots.BotTextResponse;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -52,12 +52,16 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
      *
      * @param tgConfigurationFilePath путь до json файла с конфигурацией
      */
-    public TelegramBot(String tgConfigurationFilePath, BotStarterPack botStarterPack) {
+    public TelegramBot(String tgConfigurationFilePath, BotStartInstances botStartInstances) {
         //TODO кнопки
         super();
         telegramBotConfiguration = TelegramBotConfiguration.loadTelegramBotConfigurationFromJson(tgConfigurationFilePath);
-        messageExecutor = new MessageExecutor(botStarterPack.groupsStorage, botStarterPack.userStorage, botStarterPack.vk);
-        notificationsPuller = new NotificationsPuller(this, botStarterPack.groupsStorage, botStarterPack.vk);
+        messageExecutor = new MessageExecutor(
+                botStartInstances.groupsStorage, botStartInstances.userStorage, botStartInstances.vk
+        );
+        notificationsPuller = new NotificationsPuller(
+                this, botStartInstances.groupsStorage, botStartInstances.vk
+        );
         notificationsPuller.start();
         KeyboardRow rowFirst = new KeyboardRow();
         rowFirst.add("/auth");
@@ -71,9 +75,9 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
      * @param args аргументы командной строки
      */
     public static void main(String[] args) {
-        BotStarterPack botStarterPack = new BotStarterPack("src/main/resources/anonsrc/vk_config.json");
+        BotStartInstances botStartInstances = new BotStartInstances("src/main/resources/anonsrc/vk_config.json");
         TelegramBot telegramBot = new TelegramBot(
-                "src/main/resources/anonsrc/telegram_config.json", botStarterPack
+                "src/main/resources/anonsrc/telegram_config.json", botStartInstances
         );
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
@@ -83,7 +87,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         }
         while (telegramBot.isWorking()) Thread.onSpinWait();
         telegramBot.stopWithInterrupt();
-        botStarterPack.stop();;
+        botStartInstances.stop();;
         System.exit(0);
     }
 
