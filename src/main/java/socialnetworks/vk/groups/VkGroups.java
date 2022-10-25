@@ -48,9 +48,9 @@ public class VkGroups implements SocialNetworkGroups {
      * @param userReceivedGroupName - запрос
      * @param userCallingMethod     - пользователь сделавший запрос
      * @return список групп полученных по запросу
-     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
+     * @throws NoGroupException           - возникает если не нашлась группа по заданной подстроке
      * @see com.vk.api.sdk.actions.Groups#search(UserActor, String)
      */
     @Override
@@ -82,8 +82,8 @@ public class VkGroups implements SocialNetworkGroups {
      * @param userCallingMethod     - пользователь сделавший запрос
      * @return группу с наибольшим числом подписчиков, среди групп с названием совпадающим хотя бы на 50%, относительно
      * заданной пользователем строки, если таких групп не нашлось, кидает {@code NoGroupException}
-     * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
-     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws NoGroupException           - возникает если не нашлась группа по заданной подстроке
+     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
      * @see VkGroups#searchGroups(String, User)
      * @see VkGroups#chooseGroup(List, String, User)
@@ -108,28 +108,28 @@ public class VkGroups implements SocialNetworkGroups {
      * @param userReceivedGroupName - название группы
      * @param userCallingMethod     - пользователь вызвавший метод
      * @return группу соответсвующую подстроке
+     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
+     * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
      * @see com.vk.api.sdk.actions.Groups#getByIdObjectLegacy(UserActor)
      * @see VkGroups#isNameDifferent(String, String)
      */
-    private Group chooseGroup(List<Group> userFindGroups, String userReceivedGroupName, User userCallingMethod) {
+    private Group chooseGroup(List<Group> userFindGroups, String userReceivedGroupName, User userCallingMethod)
+            throws SocialNetworkException {
         int maxMembersCount = Integer.MIN_VALUE;
         Group resultGroup = null;
-        for (Group userFindGroup : userFindGroups) {
-            List<GetByIdObjectLegacyResponse> userFindByIdGroups;
-            try {
-                userFindByIdGroups = vkApiClient.groups().getByIdObjectLegacy(userCallingMethod)
-                        .groupId(String.valueOf(userFindGroup.getId()))
-                        .fields(Fields.MEMBERS_COUNT)
-                        .execute();
-            } catch (ApiException | ClientException e) {
-                continue;
-            }
-
-            if (userFindByIdGroups.isEmpty()) {
-                continue;
-            }
-
-            GetByIdObjectLegacyResponse userFindByIdGroup = userFindByIdGroups.get(VkConstants.FIRST_ELEMENT_INDEX);
+        List<String> userFindGroupsId = userFindGroups.stream().map(group -> String.valueOf(group.getId())).toList();
+        List<GetByIdObjectLegacyResponse> userFindByIdGroups;
+        try {
+            userFindByIdGroups = vkApiClient.groups().getByIdObjectLegacy(userCallingMethod)
+                    .groupIds(userFindGroupsId)
+                    .fields(Fields.MEMBERS_COUNT)
+                    .execute();
+        } catch (ApiAuthException e) {
+            throw new SocialNetworkAuthException(BotTextResponse.UPDATE_TOKEN, e);
+        } catch (ApiException | ClientException e) {
+            throw new SocialNetworkException(BotTextResponse.VK_API_ERROR, e);
+        }
+        for (GetByIdObjectLegacyResponse userFindByIdGroup : userFindByIdGroups) {
             String[] foundByIdGroupNames = userFindByIdGroup.getName().split("[/|]");
             for (String foundByIdGroupName : foundByIdGroupNames) {
 

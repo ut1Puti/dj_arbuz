@@ -9,11 +9,16 @@ import handlers.messages.MessageExecutor;
 import handlers.messages.MessageExecutorResponse;
 import handlers.notifcations.ConsolePostsPullingThread;
 import bots.StoppableByUser;
-import handlers.notifcations.PostsPullingThread;
 import socialnetworks.socialnetwork.SocialNetwork;
 import stoppable.StoppableThread;
 import user.User;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.security.PrivilegedAction;
 import java.util.Scanner;
 
 /**

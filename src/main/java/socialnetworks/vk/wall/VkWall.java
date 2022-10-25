@@ -56,7 +56,7 @@ public class VkWall implements SocialNetworkWall {
      * @see VkPostsParser#parsePosts(List)
      */
     @Override
-    public Optional<List<String>> getLastPostsStrings(String groupScreenName, int amountOfPosts, User userCallingMethod)
+    public Optional<List<String>> getLastPostsStrings(String groupScreenName, int amountOfPosts, Actor userCallingMethod)
             throws SocialNetworkException, SocialNetworkAuthException {
         List<WallpostFull> userFindGroupPosts;
         try {

@@ -28,7 +28,7 @@ public interface SocialNetworkWall {
      * @throws SocialNetworkException     возникает при ошибке обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    Optional<List<String>> getLastPostsStrings(String groupScreenName, int amountOfPosts, User userCallingMethod)
+    Optional<List<String>> getLastPostsStrings(String groupScreenName, int amountOfPosts, Actor userCallingMethod)
             throws SocialNetworkException, SocialNetworkAuthException;
 
     /**

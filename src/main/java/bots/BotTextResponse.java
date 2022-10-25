@@ -69,6 +69,18 @@ public class BotTextResponse {
      */
     public static final String GROUP_IS_CLOSED = "Не могу подписать так как группа закрыта";
     /**
+     * Поле сообщения, о том что пользователь был успешно отписан от группы
+     */
+    public static final String UNSUBSCRIBED = "Вы были отписаны от группы";
+    /**
+     * Поле сообщения, о том что пользователь не был подписан на эту группу
+     */
+    public static final String NOT_SUBSCRIBER = "Вы не были подписаны на эту группу";
+    /**
+     * Поле сообщения, о том что пользователь не подписан ни на одну группу
+     */
+    public static final String NO_SUBSCRIBED_GROUPS = "Вы ни на кого не подписаны, чтоб подписать используйте команду /subscribe";
+    /**
      * Поле сообщения о том, что в группе отсутствуют посты
      */
     public static final String NO_POSTS_IN_GROUP = "В этой группе нет постов";

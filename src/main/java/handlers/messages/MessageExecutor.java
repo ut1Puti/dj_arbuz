@@ -8,11 +8,13 @@ import database.GroupsStorage;
 import database.UserStorage;
 import socialnetworks.socialnetwork.groups.NoGroupException;
 import socialnetworks.socialnetwork.groups.SubscribeStatus;
+import socialnetworks.vk.VkConstants;
 import user.User;
 import user.CreateUser;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * Класс для обработки сообщений пользователей, а также создающий ответы на них
@@ -75,6 +77,30 @@ public class MessageExecutor implements MessageExecutable {
      */
     private static final MessageExecutorResponse NO_POSTS_IN_GROUP = MessageExecutorResponse.newBuilder()
             .textMessage(BotTextResponse.NO_POSTS_IN_GROUP).build();
+    /**
+     * Поле сообщения с текстом, в котором говориться, что пользователь быд отписан от группы
+     *
+     * @see MessageExecutorResponse
+     * @see BotTextResponse#UNSUBSCRIBED
+     */
+    private static final MessageExecutorResponse UNSUBSCRIBED = MessageExecutorResponse.newBuilder()
+            .textMessage(BotTextResponse.UNSUBSCRIBED).build();
+    /**
+     * Поле сообщения с текстом, в котором говориться, что пользователь не был подписчиком группы
+     *
+     * @see MessageExecutorResponse
+     * @see BotTextResponse#NOT_SUBSCRIBER
+     */
+    private static final MessageExecutorResponse NOT_SUBSCRIBER = MessageExecutorResponse.newBuilder()
+            .textMessage(BotTextResponse.NOT_SUBSCRIBER).build();
+    /**
+     * Поле сообщения с текстом, в котором говориться, что пользователь не подписан ни на одну группу
+     *
+     * @see MessageExecutorResponse
+     * @see BotTextResponse#NO_SUBSCRIBED_GROUPS
+     */
+    private static final MessageExecutorResponse NO_SUBSCRIBED_GROUPS = MessageExecutorResponse.newBuilder()
+            .textMessage(BotTextResponse.NO_SUBSCRIBED_GROUPS).build();
     /**
      * Поле хранилища групп, на которые оформлена подписка
      *
@@ -145,7 +171,11 @@ public class MessageExecutor implements MessageExecutable {
                     return getStopResponse(botThread);
                 }
                 default -> {
-                    return UNKNOWN_COMMAND;
+
+                    if (!commandAndArgs[COMMAND_INDEX].equals("/subscribed")) {
+                        return UNKNOWN_COMMAND;
+                    }
+
                 }
             }
         }
@@ -155,6 +185,10 @@ public class MessageExecutor implements MessageExecutable {
         }
 
         User user = usersBase.getUser(telegramUserId);
+
+        if (commandAndArgs[COMMAND_INDEX].equals("/subscribed")) {
+            return getUserSubscribedGroupsLinks(user);
+        }
 
         if (isItSingleArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
@@ -166,6 +200,9 @@ public class MessageExecutor implements MessageExecutable {
                 }
                 case "/subscribe" -> {
                     return subscribeTo(commandAndArgs[ARG_INDEX], user);
+                }
+                case "/unsubscribe" -> {
+                    return unsubscribeFrom(commandAndArgs[ARG_INDEX], user);
                 }
                 case "/five_posts" -> {
                     return getFiveLastPosts(commandAndArgs[ARG_INDEX], user);
@@ -240,17 +277,17 @@ public class MessageExecutor implements MessageExecutable {
     /**
      * Метод возвращающий ответ на /link
      *
-     * @param groupName имя группы
-     * @param user      пользователь отправивший сообщение
+     * @param userReceivedGroupName имя группы
+     * @param userCallingMethod     пользователь отправивший сообщение
      * @return ссылку на верифицированную группу если такая нашлась
      * @see SocialNetwork#getGroupUrl(String, User)
      * @see MessageExecutorResponse#newBuilder()
      * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
      */
-    private MessageExecutorResponse getGroupUrl(String groupName, User user) {
+    private MessageExecutorResponse getGroupUrl(String userReceivedGroupName, User userCallingMethod) {
         try {
             return MessageExecutorResponse.newBuilder()
-                    .textMessage(socialNetwork.getGroupUrl(groupName, user))
+                    .textMessage(socialNetwork.getGroupUrl(userReceivedGroupName, userCallingMethod))
                     .build();
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageExecutorResponse.newBuilder().textMessage(e.getMessage()).build();
@@ -260,17 +297,17 @@ public class MessageExecutor implements MessageExecutable {
     /**
      * Метод возвращающий ответ на /id
      *
-     * @param groupName имя группы
-     * @param user      пользователь отправивший сообщение
+     * @param userReceivedGroupName имя группы
+     * @param userCallingMethod     пользователь отправивший сообщение
      * @return id верифицированной группы если такая нашлась
      * @see SocialNetwork#getGroupId(String, User)
      * @see MessageExecutorResponse#newBuilder()
      * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
      */
-    private MessageExecutorResponse getGroupId(String groupName, User user) {
+    private MessageExecutorResponse getGroupId(String userReceivedGroupName, User userCallingMethod) {
         try {
             return MessageExecutorResponse.newBuilder()
-                    .textMessage(socialNetwork.getGroupId(groupName, user))
+                    .textMessage(socialNetwork.getGroupId(userReceivedGroupName, userCallingMethod))
                     .build();
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageExecutorResponse.newBuilder().textMessage(e.getMessage()).build();
@@ -280,18 +317,20 @@ public class MessageExecutor implements MessageExecutable {
     /**
      * Метод для подписки пользователя
      *
-     * @param groupName Название группы
-     * @param user      айди юзера
-     * @return - возврат текста для сообщения
+     * @param userReceivedGroupName Название группы
+     * @param userCallingMethod     пользователь вызыввший метод
+     * @return возвращает ответ содержащий информацию о статусе подписки пользователя
      * @see SocialNetwork#subscribeTo(GroupsStorage, String, User)
      * @see SubscribeStatus#getSubscribeMessage()
      * @see MessageExecutorResponse#newBuilder()
      * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
      */
-    private MessageExecutorResponse subscribeTo(String groupName, User user) {
+    private MessageExecutorResponse subscribeTo(String userReceivedGroupName, User userCallingMethod) {
         try {
             return MessageExecutorResponse.newBuilder()
-                    .textMessage(socialNetwork.subscribeTo(groupsBase, groupName, user).getSubscribeMessage())
+                    .textMessage(socialNetwork
+                            .subscribeTo(groupsBase, userReceivedGroupName, userCallingMethod)
+                            .getSubscribeMessage())
                     .build();
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageExecutorResponse.newBuilder().textMessage(e.getMessage()).build();
@@ -299,10 +338,56 @@ public class MessageExecutor implements MessageExecutable {
     }
 
     /**
+     * Метод для отписывания пользователей от группы
+     *
+     * @param userReceivedGroupName название группы
+     * @param userCallingMethod     пользователь вызвавший метод
+     * @return ответ с сообщением о статусе отписки пользователя
+     * @see SocialNetwork#unsubscribeFrom(GroupsStorage, String, User)
+     * @see MessageExecutorResponse#newBuilder()
+     * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
+     */
+    private MessageExecutorResponse unsubscribeFrom(String userReceivedGroupName, User userCallingMethod) {
+        try {
+            boolean isUnsubscribed = socialNetwork.unsubscribeFrom(groupsBase, userReceivedGroupName, userCallingMethod);
+
+            if (isUnsubscribed) {
+                return UNSUBSCRIBED;
+            }
+
+            return NOT_SUBSCRIBER;
+        } catch (NoGroupException | SocialNetworkException e) {
+            return MessageExecutorResponse.newBuilder().textMessage(e.getMessage()).build();
+        }
+    }
+
+    /**
+     * Метод возвращающий строку содержащую ссылки на группы, на которые подписан пользователь
+     *
+     * @param userCallingMethod пользователь вызвавший метод
+     * @return ответ содержащий ссылки на группы, на которые подписан пользователь
+     */
+    private MessageExecutorResponse getUserSubscribedGroupsLinks(User userCallingMethod) {
+        Set<String> userSubscribedGroupsName = groupsBase.getUserSubscribedGroups(userCallingMethod.getTelegramId());
+
+        if (userSubscribedGroupsName.isEmpty()) {
+            return NO_SUBSCRIBED_GROUPS;
+        }
+
+        StringBuilder userSubscribedGroupsLinks = new StringBuilder();
+        for (String userSubscribedGroupName : userSubscribedGroupsName) {
+            userSubscribedGroupsLinks.append(VkConstants.VK_ADDRESS).append(userSubscribedGroupName).append("\n");
+        }
+        return MessageExecutorResponse.newBuilder()
+                .textMessage(userSubscribedGroupsLinks.toString())
+                .build();
+    }
+
+    /**
      * Метод возвращающий ответ на ответ на /get_last_posts
      *
-     * @param groupName имя группы
-     * @param user      пользователь отправивший сообщение
+     * @param userReceivedGroupName имя группы
+     * @param userCallingMethod     пользователь отправивший сообщение
      * @return текст постов, ссылки на изображения в них, а также ссылки
      * @see SocialNetwork#getLastPosts(String, int, User)
      * @see MessageExecutor#DEFAULT_POST_NUMBER
@@ -311,10 +396,10 @@ public class MessageExecutor implements MessageExecutable {
      * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
      * @see MessageExecutorResponse.MessageExecutorResponseBuilder#postsText(List)
      */
-    private MessageExecutorResponse getFiveLastPosts(String groupName, User user) {
+    private MessageExecutorResponse getFiveLastPosts(String userReceivedGroupName, User userCallingMethod) {
         try {
             return MessageExecutorResponse.newBuilder()
-                    .postsText(socialNetwork.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow())
+                    .postsText(socialNetwork.getLastPosts(userReceivedGroupName, DEFAULT_POST_NUMBER, userCallingMethod).orElseThrow())
                     .build();
         } catch (NoSuchElementException e) {
             return NO_POSTS_IN_GROUP;

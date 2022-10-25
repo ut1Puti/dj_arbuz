@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 public class GroupsStorage {
     /**
-     * Поле хеш таблицы, где ключ - айди группы, значение - список пользователей
+     * Поле хеш таблицы, где ключ - имя группы в социальной сети, значение - список пользователей
      */
     private Map<String, GroupRelatedData> groupsBase;
     private static GroupsStorage groupsStorage = null;
@@ -29,8 +29,8 @@ public class GroupsStorage {
     /**
      * Метод для создания нового пользователя в наш класс
      *
-     * @param userId  -айди пользователя
-     * @param groupId - айди группы
+     * @param userId  id пользователя
+     * @param groupId имя группы
      */
     private void addNewGroup(String groupId, String userId) {
         List<String> newList = new ArrayList<>();
@@ -53,7 +53,7 @@ public class GroupsStorage {
     }
 
     /**
-     * метод для добавления информации где происходит ветвление на методы добавления старой/новой группы
+     * метод для добавления информации, где происходит ветвление на методы добавления старой/новой группы
      *
      * @param groupId - айди группы
      * @param userID  - айди пользователя
@@ -100,7 +100,7 @@ public class GroupsStorage {
     }
 
     /**
-     * Метод для возврата хеш таблицы с помощью созданнового json файла
+     * Метод для возврата хеш таблицы с помощью созданного json файла
      *
      * @see GroupsStorage#saveToJsonFile()
      */
@@ -123,6 +123,34 @@ public class GroupsStorage {
     }
 
     /**
+     * Метод для удаления пользователя из подписчика группы
+     *
+     * @param groupName название группы в базе данных
+     * @param userId    id пользователя
+     * @return {@code true} если пользователь был удален, {@code false} если пользователь не был удален
+     */
+    public boolean deleteInfoFromGroup(String groupName, String userId) {
+
+        if (!groupsBase.containsKey(groupName)) {
+            return false;
+        }
+
+        List<String> subscribedToGroupUsers = groupsBase.get(groupName).getSubscribedUsersId();
+
+        if (!subscribedToGroupUsers.contains(userId)) {
+            return false;
+        }
+
+        boolean isUnsubscribed = subscribedToGroupUsers.remove(userId);
+
+        if (isUnsubscribed && subscribedToGroupUsers.isEmpty()) {
+            groupsBase.remove(groupName);
+        }
+
+        return isUnsubscribed;
+    }
+
+    /**
      * Метод получающий все группы на которые оформлены подписки
      *
      * @return неизменяемый набор коротких названий групп на которые оформлены подписки
@@ -135,7 +163,7 @@ public class GroupsStorage {
      * Метод получающий всех подписчиков определенной группы
      *
      * @param groupScreenName - короткое название группы
-     * @return неизменяемый спискок подписчиков группы
+     * @return неизменяемый список подписчиков группы
      */
     public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
         return List.copyOf(groupsBase.get(groupScreenName).getSubscribedUsersId());
@@ -144,7 +172,7 @@ public class GroupsStorage {
     /**
      * Метод получающий подписки пользователя
      *
-     * @param userId - id пользователя, подписки которого нужно получить
+     * @param userId id пользователя, подписки которого нужно получить
      * @return подписки пользователя
      */
     public Set<String> getUserSubscribedGroups(String userId) {

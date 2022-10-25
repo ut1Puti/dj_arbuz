@@ -69,6 +69,21 @@ public interface SocialNetwork extends CreateUser {
             throws NoGroupException, SocialNetworkException;
 
     /**
+     * Метод отписывающий пользователя от группы, то есть удаляющий информацию о том, что он подписан из базы данных
+     *
+     * @param groupsStorage база данных
+     * @param userReceivedGroupName название группы полученное от пользователя
+     * @param userCallingMethod пользователь вызвавший метод
+     * @return {@code true} если пользователь был отписан от группы,
+     * {@code false} если пользователь не был отписан от группы
+     * @throws NoGroupException возникает если группа по заданной подстроке не была найдена
+     * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
+     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
+     */
+    boolean unsubscribeFrom(GroupsStorage groupsStorage, String userReceivedGroupName, User userCallingMethod)
+            throws NoGroupException, SocialNetworkException;
+
+    /**
      * Метод получающий последние {@code amountOfPosts} постов из социальной сети в виде строк
      *
      * @param userReceivedGroupName подстрока полученная от пользователя

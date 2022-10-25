@@ -149,6 +149,30 @@ public class Vk implements SocialNetwork {
     }
 
     /**
+     * Метод отпичывающий пользователя от группы
+     *
+     * @param groupBase база данных
+     * @param userReceivedGroupName название группы полученное от пользователя
+     * @param userCallingMethod пользователь вызвавший метод
+     * @return {@code true} если пользователь был отписан, {@code false} если пользователь не был отписан
+     * @throws NoGroupException         возникает если не нашлась группа по заданной подстроке
+     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
+     */
+    @Override
+    public boolean unsubscribeFrom(GroupsStorage groupBase, String userReceivedGroupName, User userCallingMethod)
+            throws NoGroupException, SocialNetworkException {
+        Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
+
+        if (userFindGroup.getIsClosed() == GroupIsClosed.CLOSED) {
+            return false;
+        }
+
+        //TODO synchronize working with subscribers
+        return groupBase.deleteInfoFromGroup(userFindGroup.getScreenName(), userCallingMethod.getTelegramId());
+    }
+
+    /**
      * Метод для получения последних {@code amountOfPosts} постов со стены по {@code userReceivedGroupName}
      *
      * @param amountOfPosts         - кол-во постов
@@ -161,7 +185,7 @@ public class Vk implements SocialNetwork {
      * @throws IllegalArgumentException возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
      * @see VkGroups#searchGroup(String, User)
-     * @see VkWall#getLastPostsStrings(String, int, User)
+     * @see VkWall#getLastPostsStrings(String, int, Actor)
      */
     @Override
     public Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCallingMethod)
