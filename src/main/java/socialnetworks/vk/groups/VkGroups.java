@@ -1,5 +1,6 @@
 package socialnetworks.vk.groups;
 
+import bots.BotTextResponse;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiAuthException;
@@ -62,9 +63,9 @@ public class VkGroups implements SocialNetworkGroups {
                     .execute()
                     .getItems();
         } catch (ApiAuthException e) {
-            throw new SocialNetworkAuthException(e);
+            throw new SocialNetworkAuthException(BotTextResponse.UPDATE_TOKEN, e);
         } catch (ApiException | ClientException e) {
-            throw new SocialNetworkException(e);
+            throw new SocialNetworkException(BotTextResponse.VK_API_ERROR, e);
         }
 
         if (userFindGroups.isEmpty()) {
@@ -79,7 +80,7 @@ public class VkGroups implements SocialNetworkGroups {
      *
      * @param userReceivedGroupName - запрос
      * @param userCallingMethod     - пользователь сделавший запрос
-     * @return группу с наибольшим числом подписчиков, среди группс название совпадающим хотя бы на 50%, относительно
+     * @return группу с наибольшим числом подписчиков, среди групп с названием совпадающим хотя бы на 50%, относительно
      * заданной пользователем строки, если таких групп не нашлось, кидает {@code NoGroupException}
      * @throws NoGroupException - возникает если не нашлась группа по заданной подстроке
      * @throws SocialNetworkException возникает при ошибке обращения к vk api

@@ -15,13 +15,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Класс утилитных методов создающий ответы на сообщения пользователя
+ * Класс для обработки сообщений пользователей, а также создающий ответы на них
  *
  * @author Кедровских Олег
  * @author Щеголев Андрей
- * @version 2.0
+ * @version 2.2
+ * @see MessageExecutable
  */
-public class MessageExecutor {
+public class MessageExecutor implements MessageExecutable {
     /**
      * Поле кол-ва запрашиваемых последних постов
      */
@@ -34,6 +35,46 @@ public class MessageExecutor {
      * Поле индекса аргумента
      */
     private static final int ARG_INDEX = 1;
+    /**
+     * Поле сообщения при ошибке аутентификации пользователя
+     *
+     * @see MessageExecutorResponse
+     * @see BotTextResponse#AUTH_ERROR
+     */
+    private static final MessageExecutorResponse AUTH_ERROR = MessageExecutorResponse.newBuilder()
+            .textMessage(BotTextResponse.AUTH_ERROR).build();
+    /**
+     * Поле help сообщения бота
+     *
+     * @see MessageExecutorResponse
+     * @see BotTextResponse#HELP_INFO
+     */
+    private static final MessageExecutorResponse HELP_INFO = MessageExecutorResponse.newBuilder()
+            .textMessage(BotTextResponse.HELP_INFO).build();
+    /**
+     * Поле сообщения о получении неизвестной команды
+     *
+     * @see MessageExecutorResponse
+     * @see BotTextResponse#UNKNOWN_COMMAND
+     */
+    private static final MessageExecutorResponse UNKNOWN_COMMAND = MessageExecutorResponse.newBuilder()
+            .textMessage(BotTextResponse.UNKNOWN_COMMAND).build();
+    /**
+     * Поле сообщения с текстом, в котором говориться, что пользователь не аутентифицировался в социальной сети
+     *
+     * @see MessageExecutorResponse
+     * @see BotTextResponse#NOT_AUTHED_USER
+     */
+    private static final MessageExecutorResponse NOT_AUTHED_USER = MessageExecutorResponse.newBuilder()
+            .textMessage(BotTextResponse.NOT_AUTHED_USER).build();
+    /**
+     * Поле сообщения с текстом, в котором говориться, что не нашлось постов в группе
+     *
+     * @see MessageExecutorResponse
+     * @see BotTextResponse#NO_POSTS_IN_GROUP
+     */
+    private static final MessageExecutorResponse NO_POSTS_IN_GROUP = MessageExecutorResponse.newBuilder()
+            .textMessage(BotTextResponse.NO_POSTS_IN_GROUP).build();
     /**
      * Поле хранилища групп, на которые оформлена подписка
      *
@@ -75,25 +116,27 @@ public class MessageExecutor {
      * @return возвращает ответ на сообщение пользователя
      * @see MessageExecutorResponse
      * @see MessageExecutor#isItNoArgCommand(String[])
-     * @see MessageExecutor#getHelpResponse()
+     * @see MessageExecutor#HELP_INFO
      * @see MessageExecutor#getAuthResponse()
      * @see MessageExecutor#getStopResponse(StoppableByUser)
-     * @see MessageExecutor#getUnknownCommandResponse()
      * @see UserStorage#contains(String)
+     * @see MessageExecutor#NOT_AUTHED_USER
      * @see UserStorage#getUser(String)
      * @see MessageExecutor#isItSingleArgCommand(String[])
-     * @see MessageExecutor#getGroupURL(String, User)
+     * @see MessageExecutor#getGroupUrl(String, User)
      * @see MessageExecutor#getGroupId(String, User)
      * @see MessageExecutor#subscribeTo(String, User)
      * @see MessageExecutor#getFiveLastPosts(String, User)
+     * @see MessageExecutor#UNKNOWN_COMMAND
      */
+    @Override
     public MessageExecutorResponse executeMessage(String message, String telegramUserId, StoppableByUser botThread) {
         String[] commandAndArgs = message.split(" ", 2);
 
         if (isItNoArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
                 case "/help" -> {
-                    return getHelpResponse();
+                    return HELP_INFO;
                 }
                 case "/auth" -> {
                     return getAuthResponse();
@@ -102,13 +145,13 @@ public class MessageExecutor {
                     return getStopResponse(botThread);
                 }
                 default -> {
-                    return getUnknownCommandResponse();
+                    return UNKNOWN_COMMAND;
                 }
             }
         }
 
         if (!usersBase.contains(telegramUserId)) {
-            return getNotAuthedResponse();
+            return NOT_AUTHED_USER;
         }
 
         User user = usersBase.getUser(telegramUserId);
@@ -116,7 +159,7 @@ public class MessageExecutor {
         if (isItSingleArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
                 case "/link" -> {
-                    return getGroupURL(commandAndArgs[ARG_INDEX], user);
+                    return getGroupUrl(commandAndArgs[ARG_INDEX], user);
                 }
                 case "/id" -> {
                     return getGroupId(commandAndArgs[ARG_INDEX], user);
@@ -129,14 +172,14 @@ public class MessageExecutor {
                 }
             }
         }
-        return getUnknownCommandResponse();
+        return UNKNOWN_COMMAND;
     }
 
     /**
      * Метод проверяет есть ли аргументы в полученной команде
      *
-     * @param commandAndArgs - массив аргументов и комманд
-     * @return true - если нет аргументов, false - если есть аргументы
+     * @param commandAndArgs - массив аргументов и команд
+     * @return {@code true} - если нет аргументов, {@code false} - если есть аргументы
      */
     private static boolean isItNoArgCommand(String[] commandAndArgs) {
         return commandAndArgs.length == 1;
@@ -145,22 +188,11 @@ public class MessageExecutor {
     /**
      * Метод проверяет есть ли аргументы в полученной команде
      *
-     * @param commandAndArgs - массив аргументов и комманд
-     * @return true - если есть только один аргумент, false - если нет аргументов или их больше одного
+     * @param commandAndArgs - массив аргументов и команд
+     * @return {@code true} - если есть только один аргумент, {@code false} - если нет аргументов или их больше одного
      */
     private static boolean isItSingleArgCommand(String[] commandAndArgs) {
         return commandAndArgs.length == 2;
-    }
-
-    /**
-     * Метод формирующий ответ на команду /help
-     *
-     * @return ответ на команду /help содержит HELP_INFO
-     * @see BotTextResponse#HELP_INFO
-     * @see MessageExecutorResponse#MessageExecutorResponse(String)
-     */
-    private static MessageExecutorResponse getHelpResponse() {
-        return new MessageExecutorResponse(BotTextResponse.HELP_INFO);
     }
 
     /**
@@ -169,19 +201,23 @@ public class MessageExecutor {
      * @return ответ на команду /auth
      * @see SocialNetwork#getAuthUrl()
      * @see SocialNetwork#createUser(String)
-     * @see BotTextResponse#AUTH_ERROR
+     * @see MessageExecutor#AUTH_ERROR
+     * @see MessageExecutorResponse#newBuilder()
      * @see BotTextResponse#AUTH_GO_VIA_LINK
-     * @see MessageExecutorResponse#MessageExecutorResponse(String)
-     * @see MessageExecutorResponse#MessageExecutorResponse(String, CreateUser)
+     * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
+     * @see MessageExecutorResponse.MessageExecutorResponseBuilder#updateUser(CreateUser)
      */
     private MessageExecutorResponse getAuthResponse() {
         String authURL = socialNetwork.getAuthUrl();
 
         if (authURL == null) {
-            return new MessageExecutorResponse(BotTextResponse.AUTH_ERROR);
+            return AUTH_ERROR;
         }
 
-        return new MessageExecutorResponse(BotTextResponse.AUTH_GO_VIA_LINK + authURL, socialNetwork);
+        return MessageExecutorResponse.newBuilder()
+                .textMessage(BotTextResponse.AUTH_GO_VIA_LINK + authURL)
+                .updateUser(socialNetwork)
+                .build();
     }
 
     /**
@@ -191,22 +227,14 @@ public class MessageExecutor {
      * @return ответ на /stop содержит STOP_INFO
      * @see StoppableByUser#stopByUser()
      * @see BotTextResponse#STOP_INFO
-     * @see MessageExecutorResponse#MessageExecutorResponse(String)
+     * @see MessageExecutorResponse#newBuilder()
+     * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
      */
     private static MessageExecutorResponse getStopResponse(StoppableByUser botThread) {
         botThread.stopByUser();
-        return new MessageExecutorResponse(BotTextResponse.STOP_INFO);
-    }
-
-    /**
-     * Метод формирующий ответ если пользователь обращается к ф-циям требующим аутентификации
-     *
-     * @return ответ содержащий NOT_AUTHED_USER
-     * @see BotTextResponse#NOT_AUTHED_USER
-     * @see MessageExecutorResponse#MessageExecutorResponse(String)
-     */
-    private static MessageExecutorResponse getNotAuthedResponse() {
-        return new MessageExecutorResponse(BotTextResponse.NOT_AUTHED_USER);
+        return MessageExecutorResponse.newBuilder()
+                .textMessage(BotTextResponse.STOP_INFO)
+                .build();
     }
 
     /**
@@ -216,15 +244,16 @@ public class MessageExecutor {
      * @param user      пользователь отправивший сообщение
      * @return ссылку на верифицированную группу если такая нашлась
      * @see SocialNetwork#getGroupUrl(String, User)
-     * @see BotTextResponse#UPDATE_TOKEN
-     * @see BotTextResponse#VK_API_ERROR
-     * @see MessageExecutorResponse#MessageExecutorResponse(String)
+     * @see MessageExecutorResponse#newBuilder()
+     * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
      */
-    private MessageExecutorResponse getGroupURL(String groupName, User user) {
+    private MessageExecutorResponse getGroupUrl(String groupName, User user) {
         try {
-            return new MessageExecutorResponse(socialNetwork.getGroupUrl(groupName, user));
+            return MessageExecutorResponse.newBuilder()
+                    .textMessage(socialNetwork.getGroupUrl(groupName, user))
+                    .build();
         } catch (NoGroupException | SocialNetworkException e) {
-            return new MessageExecutorResponse(e.getMessage());
+            return MessageExecutorResponse.newBuilder().textMessage(e.getMessage()).build();
         }
     }
 
@@ -235,15 +264,16 @@ public class MessageExecutor {
      * @param user      пользователь отправивший сообщение
      * @return id верифицированной группы если такая нашлась
      * @see SocialNetwork#getGroupId(String, User)
-     * @see BotTextResponse#UPDATE_TOKEN
-     * @see BotTextResponse#VK_API_ERROR
-     * @see MessageExecutorResponse#MessageExecutorResponse(String)
+     * @see MessageExecutorResponse#newBuilder()
+     * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
      */
     private MessageExecutorResponse getGroupId(String groupName, User user) {
         try {
-            return new MessageExecutorResponse(socialNetwork.getGroupId(groupName, user));
+            return MessageExecutorResponse.newBuilder()
+                    .textMessage(socialNetwork.getGroupId(groupName, user))
+                    .build();
         } catch (NoGroupException | SocialNetworkException e) {
-            return new MessageExecutorResponse(e.getMessage());
+            return MessageExecutorResponse.newBuilder().textMessage(e.getMessage()).build();
         }
     }
 
@@ -255,15 +285,16 @@ public class MessageExecutor {
      * @return - возврат текста для сообщения
      * @see SocialNetwork#subscribeTo(GroupsStorage, String, User)
      * @see SubscribeStatus#getSubscribeMessage()
-     * @see BotTextResponse#UPDATE_TOKEN
-     * @see BotTextResponse#VK_API_ERROR
-     * @see MessageExecutorResponse#MessageExecutorResponse(String)
+     * @see MessageExecutorResponse#newBuilder()
+     * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
      */
     private MessageExecutorResponse subscribeTo(String groupName, User user) {
         try {
-            return new MessageExecutorResponse(socialNetwork.subscribeTo(groupsBase, groupName, user).getSubscribeMessage());
+            return MessageExecutorResponse.newBuilder()
+                    .textMessage(socialNetwork.subscribeTo(groupsBase, groupName, user).getSubscribeMessage())
+                    .build();
         } catch (NoGroupException | SocialNetworkException e) {
-            return new MessageExecutorResponse(e.getMessage());
+            return MessageExecutorResponse.newBuilder().textMessage(e.getMessage()).build();
         }
     }
 
@@ -275,29 +306,20 @@ public class MessageExecutor {
      * @return текст постов, ссылки на изображения в них, а также ссылки
      * @see SocialNetwork#getLastPosts(String, int, User)
      * @see MessageExecutor#DEFAULT_POST_NUMBER
-     * @see BotTextResponse#UPDATE_TOKEN
-     * @see BotTextResponse#NO_POSTS_IN_GROUP
-     * @see BotTextResponse#VK_API_ERROR
-     * @see MessageExecutorResponse#MessageExecutorResponse(List)
+     * @see MessageExecutor#NO_POSTS_IN_GROUP
+     * @see MessageExecutorResponse#newBuilder()
+     * @see MessageExecutorResponse.MessageExecutorResponseBuilder#textMessage(String)
+     * @see MessageExecutorResponse.MessageExecutorResponseBuilder#postsText(List)
      */
     private MessageExecutorResponse getFiveLastPosts(String groupName, User user) {
         try {
-            return new MessageExecutorResponse(socialNetwork.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow());
+            return MessageExecutorResponse.newBuilder()
+                    .postsText(socialNetwork.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow())
+                    .build();
         } catch (NoSuchElementException e) {
-            return new MessageExecutorResponse(BotTextResponse.NO_POSTS_IN_GROUP);
+            return NO_POSTS_IN_GROUP;
         } catch (NoGroupException | SocialNetworkException e) {
-            return new MessageExecutorResponse(e.getMessage());
+            return MessageExecutorResponse.newBuilder().textMessage(e.getMessage()).build();
         }
-    }
-
-    /**
-     * Метод возвращающий ответ при получении неизвестной команды
-     *
-     * @return ответ содержащий UNKNOWN_COMMAND
-     * @see BotTextResponse#UNKNOWN_COMMAND
-     * @see MessageExecutorResponse#MessageExecutorResponse(String)
-     */
-    private static MessageExecutorResponse getUnknownCommandResponse() {
-        return new MessageExecutorResponse(BotTextResponse.UNKNOWN_COMMAND);
     }
 }

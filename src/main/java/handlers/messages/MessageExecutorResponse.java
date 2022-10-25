@@ -3,12 +3,14 @@ package handlers.messages;
 import user.CreateUser;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс ответов обработчика сообщений
  *
  * @author Кедровских Олег
- * @version 2.0
+ * @version 3.0
+ * @see MessageExecutorResponseBuilder
  */
 public class MessageExecutorResponse {
     /**
@@ -23,111 +25,28 @@ public class MessageExecutorResponse {
      * Поле со списком постов в виде строк
      */
     private final List<String> postsMessages;
-    /**
-     * Поле флага о необходимости остановить бота
-     */
-    private final boolean stop;
 
     /**
-     * Конструктор - создание объекта с определенными параметрами
+     * Конструктор - создает экземпляр класса
      *
-     * @param textMessage   текстовое сообщение
-     * @param updateUser    интерфейс для обновления или создания пользователя
-     * @param postsMessages посты в виде строки
-     * @param stop          флаг сообщающий нужно ли прекратить работу бота
+     * @param textMessage   текст сообщения отправленного от бота пользователю
+     * @param updateUser    интерфейс для обновления пользователя
+     * @param postsMessages список постов в виде строк
      */
-    MessageExecutorResponse(String textMessage, CreateUser updateUser, List<String> postsMessages, boolean stop) {
+    private MessageExecutorResponse(String textMessage, CreateUser updateUser, List<String> postsMessages) {
         this.textMessage = textMessage;
         this.updateUser = updateUser;
         this.postsMessages = postsMessages;
-        this.stop = stop;
     }
 
     /**
-     * Конструктор - создание объекта с определенными параметрами
+     * Метод создающий класс {@code builder}, который позволяет создавать экземпляр класса с определенными параметрами
      *
-     * @param textMessage   текстовое сообщение
-     * @param updateUser    интерфейс для обновления или создания пользователя
-     * @param postsMessages посты в виде строки
+     * @return {@code builder} класса ответов обработчика
+     * @see MessageExecutorResponseBuilder
      */
-    MessageExecutorResponse(String textMessage, CreateUser updateUser, List<String> postsMessages) {
-        this(textMessage, updateUser, postsMessages, false);
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param textMessage текстовое сообщение
-     * @param updateUser  интерфейс для обновления или создания пользователя
-     */
-    MessageExecutorResponse(String textMessage, CreateUser updateUser) {
-        this(textMessage, updateUser, null, false);
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param textMessage   текстовое сообщение
-     * @param postsMessages посты в виде строки
-     */
-    MessageExecutorResponse(String textMessage, List<String> postsMessages) {
-        this(textMessage, null, postsMessages, false);
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param updateUser    интерфейс для обновления или создания пользователя
-     * @param postsMessages посты в виде строки
-     */
-    MessageExecutorResponse(CreateUser updateUser, List<String> postsMessages) {
-        this(null, updateUser, postsMessages, false);
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param textMessage текстовое сообщение
-     * @param stop        флаг сообщающий нужно ли прекратить работу бота
-     */
-    MessageExecutorResponse(String textMessage, boolean stop) {
-        this(textMessage, null, null, stop);
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param textMessage текстовое сообщение
-     */
-    MessageExecutorResponse(String textMessage) {
-        this(textMessage, null, null, false);
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param updateUser интерфейс для обновления или создания пользователя
-     */
-    MessageExecutorResponse(CreateUser updateUser) {
-        this(null, updateUser, null, false);
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param postsMessages посты в виде строки
-     */
-    MessageExecutorResponse(List<String> postsMessages) {
-        this(null, null, postsMessages, false);
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param stop флаг сообщающий нужно ли прекратить работу бота
-     */
-    MessageExecutorResponse(boolean stop) {
-        this(null, null, null, stop);
+    public static MessageExecutorResponseBuilder newBuilder() {
+        return new MessageExecutorResponseBuilder();
     }
 
     /**
@@ -191,11 +110,101 @@ public class MessageExecutorResponse {
     }
 
     /**
-     * Метод проверяющий, надо ли прекратить работу бота
+     * Метод создающий хэш класса
      *
-     * @return значение флага {@code stop}
+     * @return хэш текущего класса
      */
-    public boolean isBotStopped() {
-        return stop;
+    @Override
+    public int hashCode() {
+        return Objects.hash(textMessage, postsMessages);
+    }
+
+    /**
+     * Метод проверяющий равен ли {@code obj} экземпляру {@code MessageExecutorResponse}
+     *
+     * @param obj объект с которым сравнивается {@code MessageExecutorResponse}
+     * @return {@code true} если равны, {@code false} если не равны
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof MessageExecutorResponse messageExecutorResponse)) {
+            return false;
+        }
+
+        return Objects.equals(textMessage, messageExecutorResponse.textMessage) &&
+                Objects.equals(postsMessages, messageExecutorResponse.postsMessages);
+    }
+
+    /**
+     * Класс {@code builder} для класса {@code MessageExecutorResponse}
+     *
+     * @author Кедровских Олег
+     * @version 1.0
+     * @see MessageExecutorResponse
+     */
+    public static class MessageExecutorResponseBuilder {
+        /**
+         * Поле текстового сообщения
+         */
+        private String textMessage;
+        /**
+         * Поле содержащее интерфейс для создания или обновления пользователя
+         */
+        private CreateUser updateUser;
+        /**
+         * Поле со списком постов в виде строк
+         */
+        private List<String> postsText;
+
+        /**
+         * Метод устанавливающий значение {@code testMessage}
+         *
+         * @param textMessage текстовое сообщения ответа
+         * @return этот же {@code Builder}
+         * @see MessageExecutorResponseBuilder#textMessage
+         */
+        public MessageExecutorResponseBuilder textMessage(String textMessage) {
+            this.textMessage = textMessage;
+            return this;
+        }
+
+        /**
+         * Метод устанавливающий значение {@code updateUser}
+         *
+         * @param updateUser Поле содержащее интерфейс для создания или обновления пользователя
+         * @return этот же {@code Builder}
+         * @see MessageExecutorResponseBuilder#updateUser
+         */
+        public MessageExecutorResponseBuilder updateUser(CreateUser updateUser) {
+            this.updateUser = updateUser;
+            return this;
+        }
+
+        /**
+         * Метод устанавливающий значение {@code postsText}
+         *
+         * @param postsText список постов в виде строк
+         * @return этот же {@code Builder}
+         * @see MessageExecutorResponseBuilder#postsText
+         */
+        public MessageExecutorResponseBuilder postsText(List<String> postsText) {
+            this.postsText = postsText;
+            return this;
+        }
+
+        /**
+         * Метод строящий новый ответ обработчика
+         *
+         * @return новый экземпляр {@code MessageExecutorResponse}
+         * @see MessageExecutorResponse#MessageExecutorResponse(String, CreateUser, List)
+         */
+        public MessageExecutorResponse build() {
+            return new MessageExecutorResponse(textMessage, updateUser, postsText);
+        }
     }
 }

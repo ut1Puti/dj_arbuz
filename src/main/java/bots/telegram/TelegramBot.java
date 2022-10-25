@@ -2,13 +2,14 @@ package bots.telegram;
 
 import bots.BotStartInstances;
 import bots.BotTextResponse;
+import handlers.messages.MessageExecutable;
+import handlers.notifcations.PostsPullingThread;
+import handlers.notifcations.TelegramPostsPullingThread;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import stoppable.Stoppable;
 import database.UserStorage;
-import handlers.messages.MessageExecutor;
 import handlers.messages.MessageExecutorResponse;
-import handlers.notifcations.NotificationsPuller;
 import bots.StoppableByUser;
 import user.User;
 
@@ -30,17 +31,29 @@ import java.util.List;
  */
 public class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser {
     /**
-     * Поле класса содержашего конфигурацию телеграм бота
+     * Поле класса содержащего конфигурацию телеграм бота
+     *
+     * @see TelegramBotConfiguration
      */
     private final TelegramBotConfiguration telegramBotConfiguration;
     /**
+     * Поле хранящее пользователя пользующегося ботом
      *
+     * @see UserStorage
      */
-    private final MessageExecutor messageExecutor;
+    private final UserStorage userBase;
+    /**
+     * Поле обработчика сообщений пользователя
+     *
+     * @see MessageExecutable
+     */
+    private final MessageExecutable messageExecutor;
     /**
      * Поле класса получающего новые посты из групп в базе данных
+     *
+     * @see TelegramPostsPullingThread
      */
-    private final NotificationsPuller notificationsPuller;
+    private final TelegramPostsPullingThread telegramPostsPullingThread;
     /**
      * Поле кнопок в телеграмм
      */
@@ -56,13 +69,12 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         //TODO кнопки
         super();
         telegramBotConfiguration = TelegramBotConfiguration.loadTelegramBotConfigurationFromJson(tgConfigurationFilePath);
-        messageExecutor = new MessageExecutor(
-                botStartInstances.groupsStorage, botStartInstances.userStorage, botStartInstances.vk
-        );
-        notificationsPuller = new NotificationsPuller(
+        this.userBase = botStartInstances.userStorage;
+        messageExecutor = botStartInstances.messageExecutor;
+        telegramPostsPullingThread = new TelegramPostsPullingThread(
                 this, botStartInstances.groupsStorage, botStartInstances.vk
         );
-        notificationsPuller.start();
+        telegramPostsPullingThread.start();
         KeyboardRow rowFirst = new KeyboardRow();
         rowFirst.add("/auth");
         rowFirst.add("/help");
@@ -87,7 +99,8 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         }
         while (telegramBot.isWorking()) Thread.onSpinWait();
         telegramBot.stopWithInterrupt();
-        botStartInstances.stop();;
+        botStartInstances.stop();
+        ;
         System.exit(0);
     }
 
@@ -160,7 +173,6 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
                     } catch (TelegramApiException ignored) {
                     }
                 } else {
-                    UserStorage userBase = UserStorage.getInstance();
                     userBase.addInfoUser(String.valueOf(update.getMessage()
                             .getChatId()), user);
                 }
@@ -174,7 +186,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
     /**
      * Метод для отправки сообщений
      *
-     * @param update   обновления, полученные с Телеграмма, когда какой-то пользователь написал боту
+     * @param update   обновления, полученные с Телеграма, когда какой-то пользователь написал боту
      * @param response хранит в себе текст сообщения для отправки пользователю
      */
     private void sendMessage(Update update, MessageExecutorResponse response) {
@@ -207,7 +219,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
      */
     @Override
     public void stopWithInterrupt() {
-        notificationsPuller.stop();
+        telegramPostsPullingThread.stopWithInterrupt();
         exe.shutdownNow();
     }
 

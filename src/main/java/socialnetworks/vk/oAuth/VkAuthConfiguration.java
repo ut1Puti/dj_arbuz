@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author Кедровских Олег
  * @version 2.0
  */
-public class VkAuthConfiguration implements GsonLoadable {
+public final class VkAuthConfiguration implements GsonLoadable {
     /**
      * Поле объекта, который выполняет чтение json файла и преобразования в объект
      *

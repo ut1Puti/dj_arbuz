@@ -5,6 +5,8 @@ import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import database.GroupsStorage;
 import database.UserStorage;
+import handlers.messages.MessageExecutable;
+import handlers.messages.MessageExecutor;
 import socialnetworks.socialnetwork.SocialNetwork;
 import socialnetworks.vk.Vk;
 import socialnetworks.vk.groups.VkGroups;
@@ -43,6 +45,12 @@ public class BotStartInstances {
      * @see Vk
      */
     public final SocialNetwork vk;
+    /**
+     * Поле обработчика сообщений бота
+     *
+     * @see MessageExecutable
+     */
+    public final MessageExecutable messageExecutor;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -63,6 +71,7 @@ public class BotStartInstances {
         VkWall vkWall = new VkWall(vkApiClient);
         VkAuth vkAuth = new VkAuth(vkApiClient, httpServer, vkAppConfigurationJsonFilePath);
         this.vk = new Vk(vkGroups, vkWall, vkAuth);
+        this.messageExecutor = new MessageExecutor(groupsStorage, userStorage, vk);
     }
 
     /**

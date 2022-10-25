@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author Щёголев Андрей
  * @version 1.0
  */
-public class TelegramBotConfiguration implements GsonLoadable {
+public final class TelegramBotConfiguration implements GsonLoadable {
     /**
      * Поле объекта, который выполняет чтение json файла и преобразования в объект
      *

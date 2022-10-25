@@ -9,7 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class UserStorage{
+public class UserStorage {
     private Map<String, User> usersBase;
     private static UserStorage userStorage = null;
 

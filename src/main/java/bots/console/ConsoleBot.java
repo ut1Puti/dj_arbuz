@@ -2,11 +2,15 @@ package bots.console;
 
 import bots.BotStartInstances;
 import bots.BotTextResponse;
+import database.GroupsStorage;
 import database.UserStorage;
+import handlers.messages.MessageExecutable;
 import handlers.messages.MessageExecutor;
 import handlers.messages.MessageExecutorResponse;
-import handlers.notifcations.NotificationsPuller;
+import handlers.notifcations.ConsolePostsPullingThread;
 import bots.StoppableByUser;
+import handlers.notifcations.PostsPullingThread;
+import socialnetworks.socialnetwork.SocialNetwork;
 import stoppable.StoppableThread;
 import user.User;
 
@@ -26,35 +30,34 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser {
      */
     private final String defaultConsoleUserId = "consoleUser";
     /**
-     * Поле обработчика сообщений пользователя
-     *
-     * @see MessageExecutor
-     */
-    private final MessageExecutor messageExecutor;
-    /**
      * Поле хранящее пользователя пользующегося ботом
      *
      * @see UserStorage
      */
     private final UserStorage userBase;
     /**
+     * Поле обработчика сообщений пользователя
+     *
+     * @see MessageExecutable
+     */
+    private final MessageExecutable messageExecutor;
+    /**
      * Поле класса получающего новые посты
      *
-     * @see NotificationsPuller
+     * @see ConsolePostsPullingThread
      */
-    private final NotificationsPuller notificationsPuller;
+    private final ConsolePostsPullingThread consolePostsPullingThread;
 
     /**
      * Конструктор - создает экземпляр класса
      *
      * @param botStartInstances набор объектов необходимых для запуска бота
+     * @see ConsolePostsPullingThread#ConsolePostsPullingThread(String, GroupsStorage, SocialNetwork)
      */
     public ConsoleBot(BotStartInstances botStartInstances) {
-        this.messageExecutor = new MessageExecutor(
-                botStartInstances.groupsStorage, botStartInstances.userStorage, botStartInstances.vk
-        );
         this.userBase = botStartInstances.userStorage;
-        this.notificationsPuller = new NotificationsPuller(
+        this.messageExecutor = botStartInstances.messageExecutor;
+        this.consolePostsPullingThread = new ConsolePostsPullingThread(
                 defaultConsoleUserId, botStartInstances.groupsStorage, botStartInstances.vk
         );
     }
@@ -73,18 +76,18 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser {
      *
      * @see StoppableThread#run()
      * @see MessageExecutor#executeMessage(String, String, StoppableByUser)
-     * @see NotificationsPuller#start()
+     * @see ConsolePostsPullingThread#start()
      * @see MessageExecutorResponse#hasTextMessage()
      * @see MessageExecutorResponse#getTextMessage()
      * @see MessageExecutorResponse#hasPostsMessages()
      * @see MessageExecutorResponse#getPostsMessages()
      * @see MessageExecutorResponse#hasUpdateUser()
      * @see MessageExecutorResponse#getUpdateUser()
-     * @see NotificationsPuller#stop()
+     * @see ConsolePostsPullingThread#stopWithInterrupt()
      */
     @Override
     public void run() {
-        notificationsPuller.start();
+        consolePostsPullingThread.start();
         Scanner userInput = new Scanner(System.in);
         while (working.get()) {
 
@@ -114,20 +117,16 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser {
                     userBase.addInfoUser(defaultConsoleUserId, currentUser);
                 }
 
-                if (response.isBotStopped()) {
-                    stopWithInterrupt();
-                }
-
             }
 
-            if (notificationsPuller.hasNewPosts()) {
-                notificationsPuller.getNewPosts().forEach(System.out::println);
+            if (consolePostsPullingThread.hasNewPosts()) {
+                consolePostsPullingThread.getNewPosts().forEach(System.out::println);
             }
 
         }
         working.set(false);
         userInput.close();
-        notificationsPuller.stop();
+        consolePostsPullingThread.stopWithInterrupt();
     }
 
     /**

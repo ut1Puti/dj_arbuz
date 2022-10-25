@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Класс хранящий данные о группе в базе данных
  *
- * @author Кедровсикх Олег
+ * @author Кедровских Олег
  * @version 1.0
  */
 class GroupRelatedData {
