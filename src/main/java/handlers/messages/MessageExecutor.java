@@ -56,8 +56,8 @@ public class MessageExecutor {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param groupsBase хранилище групп на которые оформлены подписки
-     * @param usersBase хранилище пользователей, которые аутентифицированы в социальной сети
+     * @param groupsBase    хранилище групп на которые оформлены подписки
+     * @param usersBase     хранилище пользователей, которые аутентифицированы в социальной сети
      * @param socialNetwork класс для взаимодействия с социальными сетями
      */
     public MessageExecutor(GroupsStorage groupsBase, UserStorage usersBase, SocialNetwork socialNetwork) {
@@ -69,9 +69,9 @@ public class MessageExecutor {
     /**
      * Метод определяющий команды в сообщении пользователя и возвращающий ответ
      *
-     * @param message   сообщение пользователя
+     * @param message        сообщение пользователя
      * @param telegramUserId id пользователя в телеграмме
-     * @param botThread бот из которого был вызван метод
+     * @param botThread      бот из которого был вызван метод
      * @return возвращает ответ на сообщение пользователя
      * @see MessageExecutorResponse
      * @see MessageExecutor#isItNoArgCommand(String[])
@@ -187,7 +187,7 @@ public class MessageExecutor {
     /**
      * Метод формирующий ответ на команду /stop
      *
-     * @param botThread - бот вызвавший метод
+     * @param botThread бот вызвавший метод
      * @return ответ на /stop содержит STOP_INFO
      * @see StoppableByUser#stopByUser()
      * @see BotTextResponse#STOP_INFO
@@ -212,8 +212,8 @@ public class MessageExecutor {
     /**
      * Метод возвращающий ответ на /link
      *
-     * @param groupName - имя группы
-     * @param user      - пользователь отправивший сообщение
+     * @param groupName имя группы
+     * @param user      пользователь отправивший сообщение
      * @return ссылку на верифицированную группу если такая нашлась
      * @see SocialNetwork#getGroupUrl(String, User)
      * @see BotTextResponse#UPDATE_TOKEN
@@ -231,8 +231,8 @@ public class MessageExecutor {
     /**
      * Метод возвращающий ответ на /id
      *
-     * @param groupName - имя группы
-     * @param user      - пользователь отправивший сообщение
+     * @param groupName имя группы
+     * @param user      пользователь отправивший сообщение
      * @return id верифицированной группы если такая нашлась
      * @see SocialNetwork#getGroupId(String, User)
      * @see BotTextResponse#UPDATE_TOKEN
@@ -250,8 +250,8 @@ public class MessageExecutor {
     /**
      * Метод для подписки пользователя
      *
-     * @param groupName - Название группы
-     * @param user      - айди юзера
+     * @param groupName Название группы
+     * @param user      айди юзера
      * @return - возврат текста для сообщения
      * @see SocialNetwork#subscribeTo(GroupsStorage, String, User)
      * @see SubscribeStatus#getSubscribeMessage()
@@ -270,8 +270,8 @@ public class MessageExecutor {
     /**
      * Метод возвращающий ответ на ответ на /get_last_posts
      *
-     * @param groupName - имя группы
-     * @param user      - пользователь отправивший сообщение
+     * @param groupName имя группы
+     * @param user      пользователь отправивший сообщение
      * @return текст постов, ссылки на изображения в них, а также ссылки
      * @see SocialNetwork#getLastPosts(String, int, User)
      * @see MessageExecutor#DEFAULT_POST_NUMBER
@@ -285,7 +285,7 @@ public class MessageExecutor {
             return new MessageExecutorResponse(socialNetwork.getLastPosts(groupName, DEFAULT_POST_NUMBER, user).orElseThrow());
         } catch (NoSuchElementException e) {
             return new MessageExecutorResponse(BotTextResponse.NO_POSTS_IN_GROUP);
-        } catch (NoGroupException | SocialNetworkException | IllegalArgumentException e) {
+        } catch (NoGroupException | SocialNetworkException e) {
             return new MessageExecutorResponse(e.getMessage());
         }
     }

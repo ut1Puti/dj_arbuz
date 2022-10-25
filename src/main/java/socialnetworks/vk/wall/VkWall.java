@@ -25,7 +25,7 @@ import java.util.Optional;
  * @version 1.0
  * @see SocialNetworkWall
  */
-public class VkWall implements SocialNetworkWall<WallpostFull> {
+public class VkWall implements SocialNetworkWall {
     /**
      * Поле класс позволяющего работать с vk api
      */
@@ -43,9 +43,10 @@ public class VkWall implements SocialNetworkWall<WallpostFull> {
     /**
      * Метод получает последние {@code amountOfPosts} посты из сообщества
      *
-     * @param amountOfPosts     - кол-во постов
-     * @param groupScreenName   - имя группы
-     * @param userCallingMethod - пользователь вызвавший метод
+     * @param amountOfPosts     кол-во постов
+     * @param groupScreenName   имя группы
+     * @param userCallingMethod пользователь вызвавший метод, доступные пользователи
+     *                          {@link User}, {@link UserActor}, {@link ServiceActor}
      * @return текст указанного кол-ва постов, а также ссылки на другие группы, указанные в посте, и ссылки на посты,
      * {@code Optional.empty()} возникает при ошибках обращения к vk api
      * не связанных с самим api, а также в группе с указанным именем не было найдено постов
@@ -70,13 +71,14 @@ public class VkWall implements SocialNetworkWall<WallpostFull> {
     /**
      * Метод получающий последние {@code amountOfPosts} постов из группы в представлении вк
      *
-     * @param userCalledMethod - пользователь бота вызвавший метод(User, ServiceActor)
-     * @param groupScreenName  - короткое имя группы в которой ищем посты
-     * @param amountOfPosts    - кол-во постов
+     * @param userCalledMethod пользователь бота вызвавший метод доступные пользователи
+     *                         {@link User}, {@link UserActor}, {@link ServiceActor}
+     * @param groupScreenName  короткое имя группы в которой ищем посты
+     * @param amountOfPosts    кол-во постов
      * @return список постов в виде {@link WallpostFull}
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
-     * @throws IllegalArgumentException   - возникает при передаче кол-ва постов большего, чем можно получить(max 100).
+     * @throws IllegalArgumentException   возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                    Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
      * @see User
      * @see ServiceActor

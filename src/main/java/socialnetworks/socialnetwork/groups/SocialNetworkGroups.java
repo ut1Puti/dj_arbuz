@@ -12,9 +12,8 @@ import java.util.List;
  *
  * @author Кедровских Олег
  * @version 1.0
- * @param <T> тип данных, представляющий собой реализацию групп в api социальной сети
  */
-public interface SocialNetworkGroups<T> {
+public interface SocialNetworkGroups {
     /**
      * Метод для получения групп в социальной сети, по подстроке полученной от пользователя
      *
@@ -24,7 +23,7 @@ public interface SocialNetworkGroups<T> {
      * @throws NoGroupException возникает если не нашлось групп по заданной подстроке
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      */
-    List<T> searchGroups(String userReceivedGroupName, User userCallingMethod)
+    List<Group> searchGroups(String userReceivedGroupName, User userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**
@@ -39,6 +38,6 @@ public interface SocialNetworkGroups<T> {
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    T searchGroup(String userReceivedGroupName, User userCallingMethod)
+    Group searchGroup(String userReceivedGroupName, User userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 }
