@@ -2,6 +2,12 @@ package bots.telegram;
 
 import bots.BotTextResponse;
 import bots.BotUtils;
+import hibernate.HibernateUtil;
+import hibernate.UsersDao.UserDao;
+import hibernate.entity.UserData;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Query;
+import org.hibernate.Session;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import stoppable.Stoppable;
@@ -66,18 +72,35 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
      * @param args аргументы командной строки
      */
     public static void main(String[] args) {
-        BotUtils.initInstances();
-        TelegramBot telegramBot = new TelegramBot("src/main/resources/anonsrc/telegram_config.json");
-        try {
-            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(telegramBot);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-        while (telegramBot.isWorking()) Thread.onSpinWait();
-        telegramBot.stopWithInterrupt();
-        BotUtils.stopInstances();
-        System.exit(0);
+        UserDao UserDao = new UserDao();
+        UserDao.deleteUser("0");
+//        session.close();
+//        HibernateUtil.shutdown();
+//        UserData users = (UserData) session.load(UserData.class, "0");
+//        System.out.println(users.getTelegramId()+ ' ' + users.getCoveredAccessToken());
+//        System.out.println(users.getUserId());
+//        session.getTransaction().begin();
+//        UserData user1 = new UserData();
+//        user1.setTelegramId("123");
+//        user1.setUserId(999);
+//        user1.setCoveredAccessToken("zxc");
+//        user1.setAccessToken("mda");
+//        session.save(user1);
+//        session.getTransaction().commit();
+//        session.close();
+//        HibernateUtil.shutdown();
+//        BotUtils.initInstances();
+//        TelegramBot telegramBot = new TelegramBot("src/main/resources/anonsrc/telegram_config.json");
+//        try {
+//            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+//            botsApi.registerBot(telegramBot);
+//        } catch (TelegramApiException e) {
+//            e.printStackTrace();
+////        }
+//        while (telegramBot.isWorking()) Thread.onSpinWait();
+//        telegramBot.stopWithInterrupt();
+//        BotUtils.stopInstances();
+//        System.exit(0);
     }
 
     /**
@@ -109,13 +132,12 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
     @Override
     public void onUpdateReceived(Update update) {
 
-        if (update.hasMessage() && update.getMessage()
-                .hasText()) {
+        if (update.hasMessage() && update.getMessage().hasText()) {
             String messageUpdate = update.getMessage()
-                    .getText();
+                                         .getText();
             MessageHandlerResponse response = MessageHandler.executeMessage(
                     messageUpdate, String.valueOf(update.getMessage()
-                            .getChatId()), this
+                                                        .getChatId()), this
             );
             if (response.hasTextMessage()) {
                 sendMessage(update, response);
@@ -126,7 +148,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
                     SendMessage message = new SendMessage();
                     message.setText(post);
                     message.setChatId(String.valueOf(update.getMessage()
-                            .getChatId()));
+                                                           .getChatId()));
                     try {
                         execute(message);
                     } catch (TelegramApiException ignored) {
@@ -136,14 +158,14 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
 
             if (response.hasUpdateUser()) {
                 User user = response.getUpdateUser()
-                        .createUser(update.getMessage()
-                                .getChatId()
-                                .toString());
+                                    .createUser(update.getMessage()
+                                                      .getChatId()
+                                                      .toString());
 
                 if (user == null) {
                     SendMessage authErrorMessage = new SendMessage(update.getMessage()
-                            .getChatId()
-                            .toString(), BotTextResponse.AUTH_ERROR);
+                                                                         .getChatId()
+                                                                         .toString(), BotTextResponse.AUTH_ERROR);
                     try {
                         execute(authErrorMessage);
                     } catch (TelegramApiException ignored) {
@@ -151,7 +173,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
                 } else {
                     UserStorage userBase = UserStorage.getInstance();
                     userBase.addInfoUser(String.valueOf(update.getMessage()
-                            .getChatId()), user);
+                                                              .getChatId()), user);
                 }
 
             }
@@ -172,7 +194,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         keyBoardMarkup.setKeyboard(keyBoardRows);
         message.setReplyMarkup(keyBoardMarkup);
         message.setChatId(String.valueOf(update.getMessage()
-                .getChatId()));
+                                               .getChatId()));
         message.setText(response.getTextMessage());
         try {
             execute(message);
