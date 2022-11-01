@@ -1,21 +1,19 @@
 package handlers.messages;
 
-import bots.StoppableByUser;
+import database.UserStorage;
 
 /**
- * Интерфейс для обработки сообщений бота, полученные от пользователя
+ * Интерфейс для отправки сообщений обработчика пользователям
  *
  * @author Кедровских Олег
  * @version 1.0
  */
-public interface MessageExecutable {
+interface MessageExecutable {
     /**
-     * Метод для обработки сообщения пользователем
+     * Метод для отправки сообщений пользователям
      *
-     * @param message     сообщение пользователя
-     * @param userIdInBot id пользователя в системе бота
-     * @param botThread   поток бота, из которого был получен запрос
-     * @return ответ бота на сообщение пользователя
+     * @param response ответ бота, который необходимо отправить пользователю
+     * @param userBase база данных пользователей
      */
-    MessageExecutorResponse executeMessage(String message, String userIdInBot, StoppableByUser botThread);
+    void executeMessage(MessageHandlerResponse response, UserStorage userBase);
 }

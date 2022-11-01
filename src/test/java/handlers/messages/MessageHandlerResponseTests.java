@@ -15,13 +15,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Кедровских Олег
  * @version 3.0
  */
-public class MessageExecutorResponseTests {
+public class MessageHandlerResponseTests {
+    /**
+     *
+     */
+    private final String testUserId = "testId";
+
     /**
      * Метод тестирующий создание пустого ответа
      */
     @Test
     public void testNullMessageConstructor() {
-        MessageExecutorResponse response = MessageExecutorResponse.newBuilder().build();
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().build(testUserId);
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
@@ -35,7 +40,7 @@ public class MessageExecutorResponseTests {
     @Test
     public void testTextMessageConstructorsAndSettersAndGetters() {
         String expectedMessage = "some test message";
-        MessageExecutorResponse response = MessageExecutorResponse.newBuilder().textMessage(expectedMessage).build();
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().textMessage(expectedMessage).build(testUserId);
         assertTrue(response.hasTextMessage());
         assertEquals(expectedMessage, response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
@@ -55,7 +60,7 @@ public class MessageExecutorResponseTests {
                 return null;
             }
         };
-        MessageExecutorResponse response = MessageExecutorResponse.newBuilder().updateUser(createUser).build();
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().updateUser(createUser).build(testUserId);
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
@@ -70,7 +75,7 @@ public class MessageExecutorResponseTests {
     @Test
     public void testNewPostsConstructorsAndSettersAndGetters() {
         List<String> newPosts = Arrays.asList("first post", "second post");
-        MessageExecutorResponse response = MessageExecutorResponse.newBuilder().postsText(newPosts).build();
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().postsText(newPosts).build(testUserId);
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertTrue((response.hasPostsMessages()));

@@ -1,24 +1,16 @@
 package bots.console;
 
-import bots.BotStartInstances;
-import bots.BotTextResponse;
+import bots.BotMessageExecutable;
+import handlers.messages.*;
 import database.GroupsStorage;
 import database.UserStorage;
-import handlers.messages.MessageExecutable;
-import handlers.messages.MessageExecutor;
-import handlers.messages.MessageExecutorResponse;
 import handlers.notifcations.ConsolePostsPullingThread;
 import bots.StoppableByUser;
+import httpserver.server.HttpServer;
 import socialnetworks.socialnetwork.SocialNetwork;
+import socialnetworks.vk.Vk;
 import stoppable.StoppableThread;
-import user.User;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.security.PrivilegedAction;
 import java.util.Scanner;
 
 /**
@@ -29,7 +21,7 @@ import java.util.Scanner;
  * @see StoppableThread
  * @see StoppableByUser
  */
-public class ConsoleBot extends StoppableThread implements StoppableByUser {
+public class ConsoleBot extends StoppableThread implements StoppableByUser, BotMessageExecutable {
     /**
      * Поле id пользователя консольной версии бота
      */
@@ -43,9 +35,15 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser {
     /**
      * Поле обработчика сообщений пользователя
      *
-     * @see MessageExecutable
+     * @see MessageHandleable
      */
-    private final MessageExecutable messageExecutor;
+    private final MessageHandleable messageHandler;
+    /**
+     * Поле класса-отправителя сообщений пользователю
+     *
+     * @see ConsoleMessageExecutor
+     */
+    private final ConsoleMessageExecutor messageExecutor;
     /**
      * Поле класса получающего новые посты
      *
@@ -54,40 +52,52 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser {
     private final ConsolePostsPullingThread consolePostsPullingThread;
 
     /**
-     * Конструктор - создает экземпляр класса
      *
-     * @param botStartInstances набор объектов необходимых для запуска бота
-     * @see ConsolePostsPullingThread#ConsolePostsPullingThread(String, GroupsStorage, SocialNetwork)
+     *
+     * @param userStorage
+     * @param groupsStorage
+     * @param socialNetwork
      */
-    public ConsoleBot(BotStartInstances botStartInstances) {
-        this.userBase = botStartInstances.userStorage;
-        this.messageExecutor = botStartInstances.messageExecutor;
+    public ConsoleBot(UserStorage userStorage, GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
+        this.userBase = userStorage;
+        this.messageHandler = new MessageHandler(groupsStorage, userStorage, socialNetwork);
+        this.messageExecutor = new ConsoleMessageExecutor(this);
         this.consolePostsPullingThread = new ConsolePostsPullingThread(
-                defaultConsoleUserId, botStartInstances.groupsStorage, botStartInstances.vk
+                defaultConsoleUserId, groupsStorage, socialNetwork
         );
     }
 
     public static void main(String[] args) {
-        BotStartInstances botStartInstances = new BotStartInstances("src/main/resources/anonsrc/vk_config.json");
-        ConsoleBot consoleBot = new ConsoleBot(botStartInstances);
+        HttpServer httpServer = HttpServer.getInstance();
+
+        if (httpServer == null) {
+            throw new RuntimeException("Не удалось настроить сервер");
+        }
+
+        SocialNetwork vk = new Vk();
+        UserStorage userStorage = UserStorage.getInstance();
+        GroupsStorage groupsStorage = GroupsStorage.getInstance();
+        ConsoleBot consoleBot = new ConsoleBot(userStorage, groupsStorage, vk);
         consoleBot.start();
         while (consoleBot.isWorking()) Thread.onSpinWait();
         consoleBot.stopWithInterrupt();
-        botStartInstances.stop();
+        httpServer.stop();
+        userStorage.saveToJsonFile();
+        groupsStorage.saveToJsonFile();
     }
 
     /**
      * Метод с логикой выполняемой внутри потока
      *
      * @see StoppableThread#run()
-     * @see MessageExecutor#executeMessage(String, String, StoppableByUser)
+     * @see MessageHandler#handleMessage(String, String, StoppableByUser)
      * @see ConsolePostsPullingThread#start()
-     * @see MessageExecutorResponse#hasTextMessage()
-     * @see MessageExecutorResponse#getTextMessage()
-     * @see MessageExecutorResponse#hasPostsMessages()
-     * @see MessageExecutorResponse#getPostsMessages()
-     * @see MessageExecutorResponse#hasUpdateUser()
-     * @see MessageExecutorResponse#getUpdateUser()
+     * @see MessageHandlerResponse#hasTextMessage()
+     * @see MessageHandlerResponse#getTextMessage()
+     * @see MessageHandlerResponse#hasPostsMessages()
+     * @see MessageHandlerResponse#getPostsMessages()
+     * @see MessageHandlerResponse#hasUpdateUser()
+     * @see MessageHandlerResponse#getUpdateUser()
      * @see ConsolePostsPullingThread#stopWithInterrupt()
      */
     @Override
@@ -97,31 +107,10 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser {
         while (working.get()) {
 
             if (userInput.hasNextLine()) {
-                MessageExecutorResponse response = messageExecutor.executeMessage(
+                MessageHandlerResponse response = messageHandler.handleMessage(
                         userInput.nextLine(), defaultConsoleUserId, this
                 );
-
-                if (response.hasTextMessage()) {
-                    System.out.println(response.getTextMessage());
-                }
-
-                if (response.hasPostsMessages()) {
-                    response.getPostsMessages().forEach(System.out::println);
-                }
-
-                if (response.hasUpdateUser()) {
-                    User currentUser = response.getUpdateUser().createUser(defaultConsoleUserId);
-
-                    if (currentUser == null) {
-                        System.out.println(BotTextResponse.AUTH_ERROR);
-                        continue;
-                    }
-
-                    System.out.println(BotTextResponse.AUTH_SUCCESS);
-
-                    userBase.addInfoUser(defaultConsoleUserId, currentUser);
-                }
-
+                messageExecutor.executeMessage(response, userBase);
             }
 
             if (consolePostsPullingThread.hasNewPosts()) {
@@ -132,6 +121,22 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser {
         working.set(false);
         userInput.close();
         consolePostsPullingThread.stopWithInterrupt();
+    }
+
+    /**
+     * Реализация интерфейса для отправки сообщения пользователю, выводит сообщение в консоль
+     *
+     * @param userSendResponseId  id пользователя, которому необходимо отправить сообщение
+     * @param responseSendMessage сообщение, которое будет отправлено пользователю
+     */
+    @Override
+    public void execute(String userSendResponseId, String responseSendMessage) {
+
+        if (!userSendResponseId.equals(defaultConsoleUserId)) {
+            return;
+        }
+
+        System.out.println(responseSendMessage);
     }
 
     /**

@@ -1,11 +1,15 @@
 package socialnetworks.vk;
 
+import com.vk.api.sdk.client.TransportClient;
+import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.Actor;
 import com.vk.api.sdk.client.actors.ServiceActor;
+import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.GroupIsClosed;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.GroupsStorage;
+import httpserver.server.HttpServer;
 import socialnetworks.socialnetwork.groups.NoGroupException;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
 import socialnetworks.vk.groups.VkGroups;
@@ -51,14 +55,14 @@ public class Vk implements SocialNetwork {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param vkGroups экземпляр класса отвечающего за взаимодействие с группами vk
-     * @param vkWall   экземпляр класса отвечающего за взаимодействие со стеной vk
-     * @param vkAuth   экземпляр класса отвечающего за аутентификацию в vk
+     * @param vkAppConfigurationJsonFilePath путь до файла с конфигурацией приложения в vk
      */
-    public Vk(VkGroups vkGroups, VkWall vkWall, VkAuth vkAuth) {
-        this.groups = vkGroups;
-        this.wall = vkWall;
-        this.oAuth = vkAuth;
+    public Vk() {
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vkApiClient = new VkApiClient(transportClient);
+        this.groups = new VkGroups(vkApiClient);
+        this.wall = new VkWall(vkApiClient);
+        this.oAuth = new VkAuth(vkApiClient, HttpServer.getInstance(), "src/main/resources/anonsrc/vk_config.json");
         vkApp = oAuth.createAppActor();
     }
 

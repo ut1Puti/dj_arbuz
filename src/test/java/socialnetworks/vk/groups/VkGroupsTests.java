@@ -3,7 +3,6 @@ package socialnetworks.vk.groups;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import socialnetworks.vk.groups.VkGroups;
 
 /**
  * Класс для тестирования класса для взаимодействия с группами через vk api

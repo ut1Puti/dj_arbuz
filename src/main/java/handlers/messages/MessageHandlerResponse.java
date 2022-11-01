@@ -10,9 +10,13 @@ import java.util.Objects;
  *
  * @author Кедровских Олег
  * @version 3.0
- * @see MessageExecutorResponseBuilder
+ * @see MessageHandlerResponseBuilder
  */
-public class MessageExecutorResponse {
+public class MessageHandlerResponse {
+    /**
+     * Поле id пользователя которому будет отправлен ответ
+     */
+    private final String userSendResponseId;
     /**
      * Поле текстового сообщения
      */
@@ -33,7 +37,8 @@ public class MessageExecutorResponse {
      * @param updateUser    интерфейс для обновления пользователя
      * @param postsMessages список постов в виде строк
      */
-    private MessageExecutorResponse(String textMessage, CreateUser updateUser, List<String> postsMessages) {
+    private MessageHandlerResponse(String userSendResponseId, String textMessage, CreateUser updateUser, List<String> postsMessages) {
+        this.userSendResponseId = userSendResponseId;
         this.textMessage = textMessage;
         this.updateUser = updateUser;
         this.postsMessages = postsMessages;
@@ -43,10 +48,19 @@ public class MessageExecutorResponse {
      * Метод создающий класс {@code builder}, который позволяет создавать экземпляр класса с определенными параметрами
      *
      * @return {@code builder} класса ответов обработчика
-     * @see MessageExecutorResponseBuilder
+     * @see MessageHandlerResponseBuilder
      */
-    public static MessageExecutorResponseBuilder newBuilder() {
-        return new MessageExecutorResponseBuilder();
+    public static MessageHandlerResponseBuilder newBuilder() {
+        return new MessageHandlerResponseBuilder();
+    }
+
+    /**
+     * Метод для получения id пользователя, которому будет отправлено сообщение
+     *
+     * @return строку, содержащую id пользователя, которому будет отправлен ответ
+     */
+    public String getUserSendResponseId() {
+        return userSendResponseId;
     }
 
     /**
@@ -70,8 +84,7 @@ public class MessageExecutorResponse {
     /**
      * Метод проверяющий наличие постов в ответе
      *
-     * @return true - если есть посты
-     * false - если нет постов
+     * @return {@code true} - если есть посты, {@code false} - если нет постов
      */
     public boolean hasPostsMessages() {
 
@@ -116,13 +129,13 @@ public class MessageExecutorResponse {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(textMessage, postsMessages);
+        return Objects.hash(userSendResponseId, textMessage, postsMessages);
     }
 
     /**
-     * Метод проверяющий равен ли {@code obj} экземпляру {@code MessageExecutorResponse}
+     * Метод проверяющий равен ли {@code obj} экземпляру {@code MessageHandlerResponse}
      *
-     * @param obj объект с которым сравнивается {@code MessageExecutorResponse}
+     * @param obj объект с которым сравнивается {@code MessageHandlerResponse}
      * @return {@code true} если равны, {@code false} если не равны
      */
     @Override
@@ -132,22 +145,23 @@ public class MessageExecutorResponse {
             return true;
         }
 
-        if (!(obj instanceof MessageExecutorResponse messageExecutorResponse)) {
+        if (!(obj instanceof MessageHandlerResponse otherMessageHandlerResponse)) {
             return false;
         }
 
-        return Objects.equals(textMessage, messageExecutorResponse.textMessage) &&
-                Objects.equals(postsMessages, messageExecutorResponse.postsMessages);
+        return  Objects.equals(userSendResponseId, otherMessageHandlerResponse.userSendResponseId) &&
+                Objects.equals(textMessage, otherMessageHandlerResponse.textMessage) &&
+                Objects.equals(postsMessages, otherMessageHandlerResponse.postsMessages);
     }
 
     /**
-     * Класс {@code builder} для класса {@code MessageExecutorResponse}
+     * Класс {@code builder} для класса {@code MessageHandlerResponse}
      *
      * @author Кедровских Олег
      * @version 1.0
-     * @see MessageExecutorResponse
+     * @see MessageHandlerResponse
      */
-    public static class MessageExecutorResponseBuilder {
+    public static class MessageHandlerResponseBuilder {
         /**
          * Поле текстового сообщения
          */
@@ -159,16 +173,16 @@ public class MessageExecutorResponse {
         /**
          * Поле со списком постов в виде строк
          */
-        private List<String> postsText;
+        private List<String> postsMessages;
 
         /**
          * Метод устанавливающий значение {@code testMessage}
          *
          * @param textMessage текстовое сообщения ответа
          * @return этот же {@code Builder}
-         * @see MessageExecutorResponseBuilder#textMessage
+         * @see MessageHandlerResponseBuilder#textMessage
          */
-        public MessageExecutorResponseBuilder textMessage(String textMessage) {
+        public MessageHandlerResponseBuilder textMessage(String textMessage) {
             this.textMessage = textMessage;
             return this;
         }
@@ -178,9 +192,9 @@ public class MessageExecutorResponse {
          *
          * @param updateUser Поле содержащее интерфейс для создания или обновления пользователя
          * @return этот же {@code Builder}
-         * @see MessageExecutorResponseBuilder#updateUser
+         * @see MessageHandlerResponseBuilder#updateUser
          */
-        public MessageExecutorResponseBuilder updateUser(CreateUser updateUser) {
+        public MessageHandlerResponseBuilder updateUser(CreateUser updateUser) {
             this.updateUser = updateUser;
             return this;
         }
@@ -190,10 +204,10 @@ public class MessageExecutorResponse {
          *
          * @param postsText список постов в виде строк
          * @return этот же {@code Builder}
-         * @see MessageExecutorResponseBuilder#postsText
+         * @see MessageHandlerResponseBuilder#postsMessages
          */
-        public MessageExecutorResponseBuilder postsText(List<String> postsText) {
-            this.postsText = postsText;
+        public MessageHandlerResponseBuilder postsText(List<String> postsText) {
+            this.postsMessages = postsText;
             return this;
         }
 
@@ -201,10 +215,41 @@ public class MessageExecutorResponse {
          * Метод строящий новый ответ обработчика
          *
          * @return новый экземпляр {@code MessageExecutorResponse}
-         * @see MessageExecutorResponse#MessageExecutorResponse(String, CreateUser, List)
+         * @see MessageHandlerResponse#MessageHandlerResponse(String, String, CreateUser, List)
          */
-        public MessageExecutorResponse build() {
-            return new MessageExecutorResponse(textMessage, updateUser, postsText);
+        public MessageHandlerResponse build(String userSendResponseId) {
+            return new MessageHandlerResponse(userSendResponseId, textMessage, updateUser, postsMessages);
+        }
+
+        /**
+         * Метод создающий хэш класса
+         *
+         * @return хэш текущего класса
+         */
+        @Override
+        public int hashCode() {
+            return Objects.hash(textMessage, postsMessages);
+        }
+
+        /**
+         * Метод проверяющий равен ли {@code obj} экземпляру {@code MessageHandlerResponseBuilder}
+         *
+         * @param obj объект с которым сравнивается {@code MessageHandlerResponseBuilder}
+         * @return {@code true} если равны, {@code false} если не равны
+         */
+        @Override
+        public boolean equals(Object obj) {
+
+            if (this == obj) {
+                return true;
+            }
+
+            if (!(obj instanceof MessageHandlerResponseBuilder otherMessageHandlerResponseBuilder)) {
+                return false;
+            }
+
+            return  Objects.equals(textMessage, otherMessageHandlerResponseBuilder.textMessage) &&
+                    Objects.equals(postsMessages, otherMessageHandlerResponseBuilder.postsMessages);
         }
     }
 }

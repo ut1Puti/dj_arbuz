@@ -1,0 +1,448 @@
+package handlers.messages;
+
+import bots.BotTextResponse;
+import bots.StoppableByUser;
+import socialnetworks.socialnetwork.SocialNetworkException;
+import socialnetworks.socialnetwork.SocialNetwork;
+import database.GroupsStorage;
+import database.UserStorage;
+import socialnetworks.socialnetwork.groups.NoGroupException;
+import socialnetworks.socialnetwork.groups.SubscribeStatus;
+import socialnetworks.vk.VkConstants;
+import user.User;
+import user.CreateUser;
+import handlers.messages.MessageHandlerResponse.MessageHandlerResponseBuilder;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+/**
+ * Класс для обработки сообщений пользователей, а также создающий ответы на них
+ *
+ * @author Кедровских Олег
+ * @author Щеголев Андрей
+ * @version 2.2
+ * @see MessageHandleable
+ */
+public class MessageHandler implements MessageHandleable {
+    /**
+     * Поле кол-ва запрашиваемых последних постов
+     */
+    private static final int DEFAULT_POST_NUMBER = 5;
+    /**
+     * Поле индекса команды
+     */
+    private static final int COMMAND_INDEX = 0;
+    /**
+     * Поле индекса аргумента
+     */
+    private static final int ARG_INDEX = 1;
+    /**
+     * Поле сообщения при ошибке аутентификации пользователя
+     *
+     * @see MessageHandlerResponse
+     * @see BotTextResponse#AUTH_ERROR
+     */
+    private static final MessageHandlerResponseBuilder AUTH_ERROR = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.AUTH_ERROR);
+    /**
+     * Поле help сообщения бота
+     *
+     * @see MessageHandlerResponse
+     * @see BotTextResponse#HELP_INFO
+     */
+    private static final MessageHandlerResponseBuilder HELP_INFO = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.HELP_INFO);
+    /**
+     * Поле сообщения о получении неизвестной команды
+     *
+     * @see MessageHandlerResponse
+     * @see BotTextResponse#UNKNOWN_COMMAND
+     */
+    private static final MessageHandlerResponseBuilder UNKNOWN_COMMAND = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.UNKNOWN_COMMAND);
+    /**
+     * Поле сообщения с текстом, в котором говориться, что пользователь не аутентифицировался в социальной сети
+     *
+     * @see MessageHandlerResponse
+     * @see BotTextResponse#NOT_AUTHED_USER
+     */
+    private static final MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NOT_AUTHED_USER);
+    /**
+     * Поле сообщения с текстом, в котором говориться, что не нашлось постов в группе
+     *
+     * @see MessageHandlerResponse
+     * @see BotTextResponse#NO_POSTS_IN_GROUP
+     */
+    private static final MessageHandlerResponseBuilder NO_POSTS_IN_GROUP = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NO_POSTS_IN_GROUP);
+    /**
+     * Поле сообщения с текстом, в котором говориться, что пользователь быд отписан от группы
+     *
+     * @see MessageHandlerResponse
+     * @see BotTextResponse#UNSUBSCRIBED
+     */
+    private static final MessageHandlerResponseBuilder UNSUBSCRIBED = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.UNSUBSCRIBED);
+    /**
+     * Поле сообщения с текстом, в котором говориться, что пользователь не был подписчиком группы
+     *
+     * @see MessageHandlerResponse
+     * @see BotTextResponse#NOT_SUBSCRIBER
+     */
+    private static final MessageHandlerResponseBuilder NOT_SUBSCRIBER = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NOT_SUBSCRIBER);
+    /**
+     * Поле сообщения с текстом, в котором говориться, что пользователь не подписан ни на одну группу
+     *
+     * @see MessageHandlerResponse
+     * @see BotTextResponse#NO_SUBSCRIBED_GROUPS
+     */
+    private static final MessageHandlerResponseBuilder NO_SUBSCRIBED_GROUPS = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NO_SUBSCRIBED_GROUPS);
+    /**
+     * Поле хранилища групп, на которые оформлена подписка
+     *
+     * @see GroupsStorage
+     */
+    private final GroupsStorage groupsBase;
+    /**
+     * Поле хранилища пользователей, аутентифицированный в социальной сети
+     *
+     * @see UserStorage
+     */
+    private final UserStorage usersBase;
+    /**
+     * Поле класса для взаимодействия с api социальной сети
+     *
+     * @see SocialNetwork
+     */
+    private final SocialNetwork socialNetwork;
+
+    /**
+     * Конструктор - создает экземпляр класса
+     *
+     * @param groupsBase    хранилище групп на которые оформлены подписки
+     * @param usersBase     хранилище пользователей, которые аутентифицированы в социальной сети
+     * @param socialNetwork класс для взаимодействия с социальными сетями
+     */
+    public MessageHandler(GroupsStorage groupsBase, UserStorage usersBase, SocialNetwork socialNetwork) {
+        this.groupsBase = groupsBase;
+        this.usersBase = usersBase;
+        this.socialNetwork = socialNetwork;
+    }
+
+    /**
+     * Метод определяющий команды в сообщении пользователя и возвращающий ответ
+     *
+     * @param message            сообщение пользователя
+     * @param userSendResponseId id пользователя в телеграмме
+     * @param stoppableByUserThread          бот из которого был вызван метод
+     * @return возвращает ответ на сообщение пользователя
+     * @see MessageHandlerResponse
+     * @see MessageHandler#isItNoArgCommand(String[])
+     * @see MessageHandler#HELP_INFO
+     * @see MessageHandler#getAuthResponse(String)
+     * @see MessageHandler#getStopResponse(StoppableByUser, String)
+     * @see UserStorage#contains(String)
+     * @see MessageHandler#NOT_AUTHED_USER
+     * @see UserStorage#getUser(String)
+     * @see MessageHandler#isItSingleArgCommand(String[])
+     * @see MessageHandler#getGroupUrl(String, String)
+     * @see MessageHandler#getGroupId(String, String)
+     * @see MessageHandler#subscribeTo(String, String)
+     * @see MessageHandler#getFiveLastPosts(String, String)
+     * @see MessageHandler#UNKNOWN_COMMAND
+     */
+    @Override
+    public MessageHandlerResponse handleMessage(String message, String userSendResponseId, StoppableByUser stoppableByUserThread) {
+        String[] commandAndArgs = message.split(" ", 2);
+
+        if (isItNoArgCommand(commandAndArgs)) {
+            switch (commandAndArgs[COMMAND_INDEX]) {
+                case "/help" -> {
+                    return HELP_INFO.build(userSendResponseId);
+                }
+                case "/auth" -> {
+                    return getAuthResponse(userSendResponseId);
+                }
+                case "/stop" -> {
+                    return getStopResponse(stoppableByUserThread, userSendResponseId);
+                }
+                default -> {
+
+                    if (!commandAndArgs[COMMAND_INDEX].equals("/subscribed")) {
+                        return UNKNOWN_COMMAND.build(userSendResponseId);
+                    }
+
+                }
+            }
+        }
+
+        if (commandAndArgs[COMMAND_INDEX].equals("/subscribed")) {
+            return getUserSubscribedGroupsLinks(userSendResponseId);
+        }
+
+        if (isItSingleArgCommand(commandAndArgs)) {
+            switch (commandAndArgs[COMMAND_INDEX]) {
+                case "/link" -> {
+                    return getGroupUrl(commandAndArgs[ARG_INDEX], userSendResponseId);
+                }
+                case "/id" -> {
+                    return getGroupId(commandAndArgs[ARG_INDEX], userSendResponseId);
+                }
+                case "/subscribe" -> {
+                    return subscribeTo(commandAndArgs[ARG_INDEX], userSendResponseId);
+                }
+                case "/unsubscribe" -> {
+                    return unsubscribeFrom(commandAndArgs[ARG_INDEX], userSendResponseId);
+                }
+                case "/five_posts" -> {
+                    return getFiveLastPosts(commandAndArgs[ARG_INDEX], userSendResponseId);
+                }
+            }
+        }
+        return UNKNOWN_COMMAND.build(userSendResponseId);
+    }
+
+    /**
+     * Метод проверяет есть ли аргументы в полученной команде
+     *
+     * @param commandAndArgs - массив аргументов и команд
+     * @return {@code true} - если нет аргументов, {@code false} - если есть аргументы
+     */
+    private static boolean isItNoArgCommand(String[] commandAndArgs) {
+        return commandAndArgs.length == 1;
+    }
+
+    /**
+     * Метод проверяет есть ли аргументы в полученной команде
+     *
+     * @param commandAndArgs - массив аргументов и команд
+     * @return {@code true} - если есть только один аргумент, {@code false} - если нет аргументов или их больше одного
+     */
+    private static boolean isItSingleArgCommand(String[] commandAndArgs) {
+        return commandAndArgs.length == 2;
+    }
+
+    /**
+     * Метод формирующий ответ на команду /auth
+     *
+     * @param userSendResponseId    id пользователю, которому будет отправлен ответ
+     * @return ответ на команду /auth
+     * @see SocialNetwork#getAuthUrl()
+     * @see SocialNetwork#createUser(String)
+     * @see MessageHandler#AUTH_ERROR
+     * @see MessageHandlerResponse#newBuilder()
+     * @see BotTextResponse#AUTH_GO_VIA_LINK
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#updateUser(CreateUser)
+     */
+    private MessageHandlerResponse getAuthResponse(String userSendResponseId) {
+        String authURL = socialNetwork.getAuthUrl();
+
+        if (authURL == null) {
+            return AUTH_ERROR.build(userSendResponseId);
+        }
+
+        return MessageHandlerResponse.newBuilder()
+                .textMessage(BotTextResponse.AUTH_GO_VIA_LINK + authURL)
+                .updateUser(socialNetwork)
+                .build(userSendResponseId);
+    }
+
+    /**
+     * Метод формирующий ответ на команду /stop
+     *
+     * @param stoppableByUserThread          бот вызвавший метод
+     * @param userSendResponseId id пользователю, которому будет отправлен ответ
+     * @return ответ на /stop содержит STOP_INFO
+     * @see StoppableByUser#stopByUser()
+     * @see BotTextResponse#STOP_INFO
+     * @see MessageHandlerResponse#newBuilder()
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
+     */
+    private static MessageHandlerResponse getStopResponse(StoppableByUser stoppableByUserThread, String userSendResponseId) {
+        stoppableByUserThread.stopByUser();
+        return MessageHandlerResponse.newBuilder()
+                .textMessage(BotTextResponse.STOP_INFO)
+                .build(userSendResponseId);
+    }
+
+    /**
+     * Метод возвращающий ответ на /link
+     *
+     * @param userReceivedGroupName имя группы
+     * @param userSendResponseId    id пользователю, которому будет отправлен ответ
+     * @return ссылку на верифицированную группу если такая нашлась
+     * @see SocialNetwork#getGroupUrl(String, User)
+     * @see MessageHandlerResponse#newBuilder()
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
+     */
+    private MessageHandlerResponse getGroupUrl(String userReceivedGroupName, String userSendResponseId) {
+
+        if (!usersBase.contains(userSendResponseId)) {
+            return NOT_AUTHED_USER.build(userSendResponseId);
+        }
+
+        User userCallingMethod = usersBase.getUser(userSendResponseId);
+
+        try {
+            return MessageHandlerResponse.newBuilder()
+                    .textMessage(socialNetwork.getGroupUrl(userReceivedGroupName, userCallingMethod))
+                    .build(userSendResponseId);
+        } catch (NoGroupException | SocialNetworkException e) {
+            return MessageHandlerResponse.newBuilder().textMessage(e.getMessage()).build(userSendResponseId);
+        }
+    }
+
+    /**
+     * Метод возвращающий ответ на /id
+     *
+     * @param userReceivedGroupName имя группы
+     * @param userSendResponseId    id пользователю, которому будет отправлен ответ
+     * @return id верифицированной группы если такая нашлась
+     * @see SocialNetwork#getGroupId(String, User)
+     * @see MessageHandlerResponse#newBuilder()
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
+     */
+    private MessageHandlerResponse getGroupId(String userReceivedGroupName, String userSendResponseId) {
+
+        if (!usersBase.contains(userSendResponseId)) {
+            return NOT_AUTHED_USER.build(userSendResponseId);
+        }
+
+        User userCallingMethod = usersBase.getUser(userSendResponseId);
+
+        try {
+            return MessageHandlerResponse.newBuilder()
+                    .textMessage(socialNetwork.getGroupId(userReceivedGroupName, userCallingMethod))
+                    .build(userSendResponseId);
+        } catch (NoGroupException | SocialNetworkException e) {
+            return MessageHandlerResponse.newBuilder().textMessage(e.getMessage()).build(userSendResponseId);
+        }
+    }
+
+    /**
+     * Метод для подписки пользователя
+     *
+     * @param userReceivedGroupName Название группы
+     * @param userSendResponseId    id пользователю, которому будет отправлен ответ
+     * @return возвращает ответ содержащий информацию о статусе подписки пользователя
+     * @see SocialNetwork#subscribeTo(GroupsStorage, String, User)
+     * @see SubscribeStatus#getSubscribeMessage()
+     * @see MessageHandlerResponse#newBuilder()
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
+     */
+    private MessageHandlerResponse subscribeTo(String userReceivedGroupName, String userSendResponseId) {
+
+        if (!usersBase.contains(userSendResponseId)) {
+            return NOT_AUTHED_USER.build(userSendResponseId);
+        }
+
+        User userCallingMethod = usersBase.getUser(userSendResponseId);
+
+        try {
+            return MessageHandlerResponse.newBuilder()
+                    .textMessage(socialNetwork
+                            .subscribeTo(groupsBase, userReceivedGroupName, userCallingMethod)
+                            .getSubscribeMessage())
+                    .build(userSendResponseId);
+        } catch (NoGroupException | SocialNetworkException e) {
+            return MessageHandlerResponse.newBuilder().textMessage(e.getMessage()).build(userSendResponseId);
+        }
+    }
+
+    /**
+     * Метод для отписывания пользователей от группы
+     *
+     * @param userReceivedGroupName название группы
+     * @param userSendResponseId    id пользователю, которому будет отправлен ответ
+     * @return ответ с сообщением о статусе отписки пользователя
+     * @see SocialNetwork#unsubscribeFrom(GroupsStorage, String, User)
+     * @see MessageHandlerResponse#newBuilder()
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
+     */
+    private MessageHandlerResponse unsubscribeFrom(String userReceivedGroupName, String userSendResponseId) {
+
+        if (!usersBase.contains(userSendResponseId)) {
+            return NOT_AUTHED_USER.build(userSendResponseId);
+        }
+
+        User userCallingMethod = usersBase.getUser(userSendResponseId);
+
+        try {
+            boolean isUnsubscribed = socialNetwork.unsubscribeFrom(groupsBase, userReceivedGroupName, userCallingMethod);
+
+            if (isUnsubscribed) {
+                return UNSUBSCRIBED.build(userSendResponseId);
+            }
+
+            return NOT_SUBSCRIBER.build(userSendResponseId);
+        } catch (NoGroupException | SocialNetworkException e) {
+            return MessageHandlerResponse.newBuilder().textMessage(e.getMessage()).build(userSendResponseId);
+        }
+    }
+
+    /**
+     * Метод возвращающий строку содержащую ссылки на группы, на которые подписан пользователь
+     *
+     * @param userSendResponseId    id пользователю, которому будет отправлен ответ
+     * @return ответ содержащий ссылки на группы, на которые подписан пользователь
+     */
+    private MessageHandlerResponse getUserSubscribedGroupsLinks(String userSendResponseId) {
+
+        if (!usersBase.contains(userSendResponseId)) {
+            return NOT_AUTHED_USER.build(userSendResponseId);
+        }
+
+        User userCallingMethod = usersBase.getUser(userSendResponseId);
+        Set<String> userSubscribedGroupsName = groupsBase.getUserSubscribedGroups(userCallingMethod.getTelegramId());
+
+        if (userSubscribedGroupsName.isEmpty()) {
+            return NO_SUBSCRIBED_GROUPS.build(userSendResponseId);
+        }
+
+        StringBuilder userSubscribedGroupsLinks = new StringBuilder();
+        for (String userSubscribedGroupName : userSubscribedGroupsName) {
+            userSubscribedGroupsLinks.append(VkConstants.VK_ADDRESS).append(userSubscribedGroupName).append("\n");
+        }
+        return MessageHandlerResponse.newBuilder()
+                .textMessage(userSubscribedGroupsLinks.toString())
+                .build(userSendResponseId);
+    }
+
+    /**
+     * Метод возвращающий ответ на ответ на /get_last_posts
+     *
+     * @param userReceivedGroupName имя группы
+     * @param userSendResponseId    id пользователю, которому будет отправлен ответ
+     * @return текст постов, ссылки на изображения в них, а также ссылки
+     * @see SocialNetwork#getLastPosts(String, int, User)
+     * @see MessageHandler#DEFAULT_POST_NUMBER
+     * @see MessageHandler#NO_POSTS_IN_GROUP
+     * @see MessageHandlerResponse#newBuilder()
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#postsText(List)
+     */
+    private MessageHandlerResponse getFiveLastPosts(String userReceivedGroupName, String userSendResponseId) {
+
+        if (!usersBase.contains(userSendResponseId)) {
+            return NOT_AUTHED_USER.build(userSendResponseId);
+        }
+
+        User userCallingMethod = usersBase.getUser(userSendResponseId);
+
+        try {
+            return MessageHandlerResponse.newBuilder()
+                    .postsText(socialNetwork.getLastPosts(userReceivedGroupName, DEFAULT_POST_NUMBER, userCallingMethod).orElseThrow())
+                    .build(userSendResponseId);
+        } catch (NoSuchElementException e) {
+            return NO_POSTS_IN_GROUP.build(userSendResponseId);
+        } catch (NoGroupException | SocialNetworkException e) {
+            return MessageHandlerResponse.newBuilder().textMessage(e.getMessage()).build(userSendResponseId);
+        }
+    }
+}
