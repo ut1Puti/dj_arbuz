@@ -9,7 +9,7 @@ import com.vk.api.sdk.client.actors.UserActor;
  * @version 1.0
  * @see UserActor
  */
-public class User extends UserActor {
+public class BotUser extends UserActor {
     /**
      * Поле id пользователя в телеграме
      */
@@ -22,7 +22,7 @@ public class User extends UserActor {
      * @param accessToken - токен для доступа к vk api
      * @param telegramId  - id пользователя в телеграме
      */
-    public User(Integer vkId, String accessToken, String telegramId) {
+    public BotUser(Integer vkId, String accessToken, String telegramId) {
         super(vkId, accessToken);
         this.telegramId = telegramId;
     }
@@ -59,10 +59,10 @@ public class User extends UserActor {
             return true;
         }
 
-        if (!(obj instanceof User)) {
+        if (!(obj instanceof BotUser)) {
             return false;
         }
 
-        return super.equals(obj) && telegramId.equals(((User) obj).telegramId);
+        return super.equals(obj) && telegramId.equals(((BotUser) obj).telegramId);
     }
 }

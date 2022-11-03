@@ -56,9 +56,11 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
     private final ConsolePostsPullingThread consolePostsPullingThread;
 
     /**
-     * @param userStorage
-     * @param groupsStorage
-     * @param socialNetwork
+     * Конструктор - создает экземпляр класса
+     *
+     * @param userStorage   база данных пользователей
+     * @param groupsStorage база данных групп
+     * @param socialNetwork социальная сеть с которой будет работать бот
      */
     public ConsoleBot(UserStorage userStorage, GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
         this.userBase = userStorage;

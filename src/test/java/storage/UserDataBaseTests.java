@@ -4,14 +4,14 @@ package storage;
 import database.UserStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import user.User;
+import user.BotUser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UserDataBaseTests {
     private UserStorage userStorageTest;
-    User userTest;
+    BotUser userTest;
 
     /**
      * Инициализация базы и одного тестового пользователя
@@ -19,7 +19,7 @@ public class UserDataBaseTests {
     @BeforeEach
     public void setUserStorge() {
         userStorageTest = UserStorage.getInstance();
-        userTest = new User(123, "123", "some Id");
+        userTest = new BotUser(123, "123", "some Id");
 
     }
 
@@ -39,7 +39,7 @@ public class UserDataBaseTests {
     @Test
     public void testTwoUsersForOneId() {
         String telegramId = "some id";
-        User secondUser = new User(150, "830", "second some text");
+        BotUser secondUser = new BotUser(150, "830", "second some text");
         userStorageTest.addInfoUser(telegramId, userTest);
         userStorageTest.addInfoUser(telegramId, secondUser);
         assertEquals(secondUser, userStorageTest.getUser(telegramId));
@@ -52,7 +52,7 @@ public class UserDataBaseTests {
         String telegramId1 = "some id";
         String telegramId2 = "some id2";
 
-        User secondUser = new User(150, "830", "second some text");
+        BotUser secondUser = new BotUser(150, "830", "second some text");
         userStorageTest.addInfoUser(telegramId1, userTest);
         userStorageTest.addInfoUser(telegramId2, secondUser);
         assertTrue(userTest.equals(userStorageTest.getUser(telegramId1)) && secondUser.equals(userStorageTest.getUser(telegramId2)));

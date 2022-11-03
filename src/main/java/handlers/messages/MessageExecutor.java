@@ -3,7 +3,9 @@ package handlers.messages;
 import bots.BotMessageExecutable;
 import bots.BotTextResponse;
 import database.UserStorage;
-import user.User;
+import user.BotUser;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Класс-отправитель сообщений пользователям
@@ -11,7 +13,7 @@ import user.User;
  * @author Кедровских Олег
  * @version 1.0
  */
-abstract class MessageExecutor implements MessageExecutable {
+public class MessageExecutor implements MessageExecutable {
     /**
      * Поле бота, от имени которого будут отправлены сообщения
      *
@@ -24,7 +26,7 @@ abstract class MessageExecutor implements MessageExecutable {
      *
      * @param responseSendingBot бот, от имени которого будет отправлено сообщение
      */
-    public MessageExecutor(BotMessageExecutable responseSendingBot) {
+    protected MessageExecutor(BotMessageExecutable responseSendingBot) {
         this.responseSendingBot = responseSendingBot;
     }
 
@@ -48,7 +50,11 @@ abstract class MessageExecutor implements MessageExecutable {
         }
 
         if (response.hasUpdateUser()) {
-            User currentUser = response.getUpdateUser().createUser(userSendResponseId);
+            BotUser currentUser = null;
+            try {
+                currentUser = response.getUpdateUser().get();
+            } catch (InterruptedException | ExecutionException ignored) {
+            }
 
             if (currentUser == null) {
                 responseSendingBot.execute(userSendResponseId, BotTextResponse.AUTH_ERROR);
@@ -56,7 +62,6 @@ abstract class MessageExecutor implements MessageExecutable {
             }
 
             responseSendingBot.execute(userSendResponseId, BotTextResponse.AUTH_SUCCESS);
-
             userBase.addInfoUser(userSendResponseId, currentUser);
         }
 

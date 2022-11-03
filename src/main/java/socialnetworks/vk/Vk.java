@@ -20,12 +20,12 @@ import socialnetworks.vk.wall.VkWall;
 import socialnetworks.socialnetwork.groups.SubscribeStatus;
 import socialnetworks.socialnetwork.SocialNetwork;
 import socialnetworks.socialnetwork.SocialNetworkException;
-import user.CreateUser;
-import user.User;
+import user.BotUser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Класс обрабатывающий запросы пользователя к Vk API
@@ -73,15 +73,14 @@ public class Vk extends AbstractSocialNetwork {
     }
 
     /**
-     * Метод интерфейса {@link CreateUser} создающий пользователя
+     * Метод для асинхронного создания пользователя
      *
-     * @param userTelegramId id пользователя в течлеграме
-     * @return нового пользователя, если создать пользователя не получается, тогда возвращается {@code null}
-     * @see VkAuth#createUser(String)
+     * @param userSystemId id пользователя в системе
+     * @return {@code CompletableFuture<User>}, который выполняет логику создания пользователя,
+     * посмотреть ее можно в метода {@link socialnetworks.vk.oAuth.VkAuth#createBotUser(String)}
      */
-    @Override
-    public User createUser(String userTelegramId) {
-        return oAuth.createUser(userTelegramId);
+    public CompletableFuture<BotUser> createBotUserAsync(String userSystemId) {
+        return CompletableFuture.supplyAsync(() -> oAuth.createBotUser(userSystemId));
     }
 
     /**
@@ -90,13 +89,13 @@ public class Vk extends AbstractSocialNetwork {
      * @param userReceivedGroupName Название группы
      * @param userCallingMethod     пользователь вызвавший метод
      * @return возвращает ссылку на группу в vk
-     * @throws NoGroupException возникает если не нашлась группа по заданной подстроке
-     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
+     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
-     * @see VkGroups#searchGroup(String, User)
+     * @see VkGroups#searchGroup(String, BotUser)
      */
     @Override
-    public String getGroupUrl(String userReceivedGroupName, User userCallingMethod)
+    public String getGroupUrl(String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         return VkConstants.VK_ADDRESS + groups.searchGroup(userReceivedGroupName, userCallingMethod).getScreenName();
     }
@@ -107,13 +106,13 @@ public class Vk extends AbstractSocialNetwork {
      * @param userReceivedGroupName Название группы
      * @param userCallingMethod     пользователь вызвавший метод
      * @return возвращает id группы
-     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
-     * @throws NoGroupException возникает если не нашлась группа по заданной подстроке
-     * @see VkGroups#searchGroup(String, User)
+     * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
+     * @see VkGroups#searchGroup(String, BotUser)
      */
     @Override
-    public String getGroupId(String userReceivedGroupName, User userCallingMethod)
+    public String getGroupId(String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         return String.valueOf(groups.searchGroup(userReceivedGroupName, userCallingMethod).getId());
     }
@@ -127,14 +126,14 @@ public class Vk extends AbstractSocialNetwork {
      * {@link SubscribeStatus#SUBSCRIBED} - означает что пользователь успешно подписан,
      * {@link SubscribeStatus#ALREADY_SUBSCRIBED} - сообщает, что пользователь уже подписан на эту группу,
      * {@link SubscribeStatus#GROUP_IS_CLOSED} - сообщает, что невозможно подписаться, тк группа закрыта
-     * @throws NoGroupException возникает если не нашлась группа по заданной подстроке
-     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
+     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
-     * @see VkGroups#searchGroup(String, User)
+     * @see VkGroups#searchGroup(String, BotUser)
      * @see GroupsStorage#addInfoToGroup(String, String)
      */
     @Override
-    public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, User userCallingMethod)
+    public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
             throws SocialNetworkException, NoGroupException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
 
@@ -148,18 +147,18 @@ public class Vk extends AbstractSocialNetwork {
     }
 
     /**
-     * Метод отпичывающий пользователя от группы
+     * Метод отписывающий пользователя от группы
      *
-     * @param groupBase база данных
+     * @param groupBase             база данных
      * @param userReceivedGroupName название группы полученное от пользователя
-     * @param userCallingMethod пользователь вызвавший метод
+     * @param userCallingMethod     пользователь вызвавший метод
      * @return {@code true} если пользователь был отписан, {@code false} если пользователь не был отписан
-     * @throws NoGroupException         возникает если не нашлась группа по заданной подстроке
-     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
+     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
     @Override
-    public boolean unsubscribeFrom(GroupsStorage groupBase, String userReceivedGroupName, User userCallingMethod)
+    public boolean unsubscribeFrom(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
 
@@ -178,16 +177,16 @@ public class Vk extends AbstractSocialNetwork {
      * @param userReceivedGroupName - имя группы
      * @param userCallingMethod     - пользователь вызвавший метод
      * @return возвращает последние amountOfPosts постов
-     * @throws NoGroupException         возникает если не нашлась группа по заданной подстроке
-     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
+     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
-     * @throws IllegalArgumentException возникает при передаче кол-ва постов большего, чем можно получить(max 100).
-     *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
-     * @see VkGroups#searchGroup(String, User)
+     * @throws IllegalArgumentException   возникает при передаче кол-ва постов большего, чем можно получить(max 100).
+     *                                    Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
+     * @see VkGroups#searchGroup(String, BotUser)
      * @see VkWall#getPostsStrings(String, int, Actor)
      */
     @Override
-    public List<String> getLastPostsAsStrings(String userReceivedGroupName, int amountOfPosts, User userCallingMethod)
+    public List<String> getLastPostsAsStrings(String userReceivedGroupName, int amountOfPosts, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
         return wall.getPostsStrings(userFindGroup.getScreenName(), amountOfPosts, userCallingMethod);
@@ -201,13 +200,13 @@ public class Vk extends AbstractSocialNetwork {
      * @return список постов в группе в виде строк,
      * {@code Optional.empty()} возникает при ошибках обращения к vk api не связанных с самим api,
      * а также если не были найдены новые посты
-     * @throws SocialNetworkException возникает при ошибке обращения к vk api
+     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      * @see VkWall#getPosts(String, int, Actor)
      * @see VkPostsParser#parsePosts(List)
      */
     @Override
-    public Optional<List<String>> getNewPosts(GroupsStorage groupsStorage, String groupScreenName)
+    public Optional<List<String>> getNewPostsAsStrings(GroupsStorage groupsStorage, String groupScreenName)
             throws SocialNetworkException {
         final int amountOfPosts = 100;
         //TODO synchronize working with lastPostDate

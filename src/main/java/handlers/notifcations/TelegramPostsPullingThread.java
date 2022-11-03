@@ -39,17 +39,18 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * Метод логики выполняемой внутри {@code TelegramPostsPullingThread}
      *
      * @see GroupsStorage#getGroups()
-     * @see SocialNetwork#getNewPosts(GroupsStorage, String)
+     * @see SocialNetwork#getNewPostsAsStrings(GroupsStorage, String)
      * @see GroupsStorage#getSubscribedToGroupUsersId(String)
      */
     @Override
     public void run() {
         while (working.get()) {
             for (String groupScreenName : groupsBase.getGroups()) {
-                Optional<List<String>> threadFindNewPosts = Optional.empty();
+                Optional<List<String>> threadFindNewPosts;
                 try {
-                    threadFindNewPosts = socialNetwork.getNewPosts(groupsBase, groupScreenName);
-                } catch (SocialNetworkException ignored) {
+                    threadFindNewPosts = socialNetwork.getNewPostsAsStrings(groupsBase, groupScreenName);
+                } catch (SocialNetworkException e) {
+                    continue;
                 }
 
                 if (threadFindNewPosts.isPresent()) {

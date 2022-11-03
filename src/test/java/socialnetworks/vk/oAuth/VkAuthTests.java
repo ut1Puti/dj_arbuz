@@ -6,7 +6,7 @@ import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import httpserver.server.HttpServer;
 import org.junit.jupiter.api.Test;
-import user.User;
+import user.BotUser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,7 +60,7 @@ public class VkAuthTests {
      */
     @Test
     public void testCreateUserWithRejectionOfStates() {
-        User user = vkAuth.createUser("some telegram id");
+        BotUser user = vkAuth.createBotUser("some telegram id");
         assertNull(user);
     }
 }

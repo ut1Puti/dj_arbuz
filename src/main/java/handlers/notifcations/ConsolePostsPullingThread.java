@@ -44,10 +44,11 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
     public void run() {
         while (working.get()) {
             for (String groupScreenName : groupsBase.getUserSubscribedGroups(consoleBotUserId)) {
-                Optional<List<String>> threadNewPosts = Optional.empty();
+                Optional<List<String>> threadNewPosts;
                 try {
-                    threadNewPosts = socialNetwork.getNewPosts(groupsBase, groupScreenName);
-                } catch (SocialNetworkException ignored) {
+                    threadNewPosts = socialNetwork.getNewPostsAsStrings(groupsBase, groupScreenName);
+                } catch (SocialNetworkException e) {
+                    continue;
                 }
 
                 if (threadNewPosts.isPresent()) {

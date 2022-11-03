@@ -6,12 +6,9 @@ import com.vk.api.sdk.client.actors.Actor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import org.junit.jupiter.api.Test;
 import socialnetworks.socialnetwork.SocialNetworkException;
-import user.User;
+import user.BotUser;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Класс для тестирования класса для взаимодействия со стеной vk через vk api
@@ -42,9 +39,12 @@ public class VkWallTests {
     public void testAmountOfPostsMoreThanHundred() throws SocialNetworkException {
         int amountOfPostsMoreThanOneHundred = 101;
         String groupScreenName = "some not really interesting in this test name";
-        User user = new User(100, "accessToken", "telegramId");
-        assertEquals(
-                Optional.empty(), vkWall.getPostsStrings(groupScreenName, amountOfPostsMoreThanOneHundred, user)
+        BotUser user = new BotUser(100, "accessToken", "telegramId");
+        String expectedExceptionMessage = "Кол-во запрашиваемых постов превышает кол-во доступных к получению";
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> vkWall.getPostsStrings(groupScreenName, amountOfPostsMoreThanOneHundred, user),
+                expectedExceptionMessage
         );
     }
 
@@ -57,15 +57,13 @@ public class VkWallTests {
     public void testAmountOfPostsMoreThanOneHundredInGetPostsMethod() throws SocialNetworkException {
         int amountOfPostsMoreThanOneHundred = 101;
         String groupScreenName = "some not really interesting in this test name";
-        User user = new User(100, "accessToken", "telegramId");
+        BotUser user = new BotUser(100, "accessToken", "telegramId");
         String expectedExceptionMessage = "Кол-во запрашиваемых постов превышает кол-во доступных к получению";
-        try {
-            vkWall.getPosts(groupScreenName, amountOfPostsMoreThanOneHundred, user);
-        } catch (IllegalArgumentException e) {
-            assertEquals(expectedExceptionMessage, e.getMessage());
-            return;
-        }
-        throw new RuntimeException("Тест не пройден, тк не было получено и обработано исключение");
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> vkWall.getPosts(groupScreenName, amountOfPostsMoreThanOneHundred, user),
+                expectedExceptionMessage
+        );
     }
 
     /**
@@ -89,12 +87,10 @@ public class VkWallTests {
                 return null;
             }
         };
-        try {
-            vkWall.getPosts(groupScreenName, amountOfPostsMoreThanOneHundred, actor);
-        } catch (IllegalArgumentException e) {
-            assertEquals(exrectedException, e.getMessage());
-            return;
-        }
-        fail();
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> vkWall.getPosts(groupScreenName, amountOfPostsMoreThanOneHundred, actor),
+                exrectedException
+        );
     }
 }

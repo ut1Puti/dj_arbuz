@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class UserTests {
+public class BotUserTests {
     /**
      * Поле id тестового пользователя
      */
@@ -25,7 +25,7 @@ public class UserTests {
     /**
      * Поле тестового пользователя
      */
-    private final User user = new User(userId, accessToken, userTelegramId);
+    private final BotUser user = new BotUser(userId, accessToken, userTelegramId);
 
     /**
      * Метод тестирующий получение telegram id пользователя

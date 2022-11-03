@@ -1,9 +1,10 @@
 package handlers.messages;
 
-import user.CreateUser;
+import user.BotUser;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Класс ответов обработчика сообщений
@@ -24,7 +25,7 @@ public class MessageHandlerResponse {
     /**
      * Поле содержащее интерфейс для создания или обновления пользователя
      */
-    private final CreateUser updateUser;
+    private final CompletableFuture<BotUser> updateUser;
     /**
      * Поле со списком постов в виде строк
      */
@@ -37,7 +38,7 @@ public class MessageHandlerResponse {
      * @param updateUser    интерфейс для обновления пользователя
      * @param postsMessages список постов в виде строк
      */
-    private MessageHandlerResponse(String userSendResponseId, String textMessage, CreateUser updateUser, List<String> postsMessages) {
+    private MessageHandlerResponse(String userSendResponseId, String textMessage, CompletableFuture<BotUser> updateUser, List<String> postsMessages) {
         this.userSendResponseId = userSendResponseId;
         this.textMessage = textMessage;
         this.updateUser = updateUser;
@@ -118,7 +119,7 @@ public class MessageHandlerResponse {
      *
      * @return интерфейс для обновления или создания пользователя
      */
-    public CreateUser getUpdateUser() {
+    public CompletableFuture<BotUser> getUpdateUser() {
         return updateUser;
     }
 
@@ -169,7 +170,7 @@ public class MessageHandlerResponse {
         /**
          * Поле содержащее интерфейс для создания или обновления пользователя
          */
-        private CreateUser updateUser;
+        private CompletableFuture<BotUser> updateUser = null;
         /**
          * Поле со списком постов в виде строк
          */
@@ -194,7 +195,7 @@ public class MessageHandlerResponse {
          * @return этот же {@code Builder}
          * @see MessageHandlerResponseBuilder#updateUser
          */
-        public MessageHandlerResponseBuilder updateUser(CreateUser updateUser) {
+        public MessageHandlerResponseBuilder updateUser(CompletableFuture<BotUser> updateUser) {
             this.updateUser = updateUser;
             return this;
         }
@@ -215,7 +216,7 @@ public class MessageHandlerResponse {
          * Метод строящий новый ответ обработчика
          *
          * @return новый экземпляр {@code MessageExecutorResponse}
-         * @see MessageHandlerResponse#MessageHandlerResponse(String, String, CreateUser, List)
+         * @see MessageHandlerResponse#MessageHandlerResponse(String, String, CompletableFuture, List)
          */
         public MessageHandlerResponse build(String userSendResponseId) {
             return new MessageHandlerResponse(userSendResponseId, textMessage, updateUser, postsMessages);

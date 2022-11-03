@@ -3,7 +3,7 @@ package socialnetworks.socialnetwork.groups;
 import com.vk.api.sdk.objects.groups.Group;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
-import user.User;
+import user.BotUser;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public interface SocialNetworkGroups {
      * @throws NoGroupException возникает если не нашлось групп по заданной подстроке
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      */
-    List<Group> searchGroups(String userReceivedGroupName, User userCallingMethod)
+    List<Group> searchGroups(String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**
@@ -38,6 +38,6 @@ public interface SocialNetworkGroups {
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    Group searchGroup(String userReceivedGroupName, User userCallingMethod)
+    Group searchGroup(String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 }

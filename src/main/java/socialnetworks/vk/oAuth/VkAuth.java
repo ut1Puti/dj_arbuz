@@ -7,7 +7,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import httpserver.server.HttpServer;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuth;
-import user.User;
+import user.BotUser;
 
 /**
  * Класс для аутентификации пользователей
@@ -89,7 +89,7 @@ public class VkAuth implements SocialNetworkAuth {
      * @see VkAuthConfiguration#REDIRECT_URL
      */
     @Override
-    public User createUser(String systemUserId) {
+    public BotUser createBotUser(String systemUserId) {
         String httpRequestGetParameters = httpServer.getHttpRequestParameters();
 
         if (httpRequestGetParameters == null) {
@@ -104,7 +104,7 @@ public class VkAuth implements SocialNetworkAuth {
                             authConfiguration.REDIRECT_URL,
                             authCode)
                     .execute();
-            return new User(authResponse.getUserId(), authResponse.getAccessToken(), systemUserId);
+            return new BotUser(authResponse.getUserId(), authResponse.getAccessToken(), systemUserId);
         } catch (ApiException | ClientException e) {
             return null;
         }

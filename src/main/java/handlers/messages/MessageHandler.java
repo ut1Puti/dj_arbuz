@@ -9,13 +9,13 @@ import database.UserStorage;
 import socialnetworks.socialnetwork.groups.NoGroupException;
 import socialnetworks.socialnetwork.groups.SubscribeStatus;
 import socialnetworks.vk.VkConstants;
-import user.User;
-import user.CreateUser;
+import user.BotUser;
 import handlers.messages.MessageHandlerResponse.MessageHandlerResponseBuilder;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Класс для обработки сообщений пользователей, а также создающий ответы на них
@@ -233,12 +233,12 @@ public class MessageHandler implements MessageHandleable {
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return ответ на команду /auth
      * @see SocialNetwork#getAuthUrl()
-     * @see SocialNetwork#createUser(String)
+     * @see SocialNetwork#createBotUserAsync(String)
      * @see MessageHandler#AUTH_ERROR
      * @see MessageHandlerResponse#newBuilder()
      * @see BotTextResponse#AUTH_GO_VIA_LINK
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
-     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#updateUser(CreateUser)
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#updateUser(CompletableFuture) 
      */
     private MessageHandlerResponse getAuthResponse(String userSendResponseId) {
         String authURL = socialNetwork.getAuthUrl();
@@ -249,7 +249,7 @@ public class MessageHandler implements MessageHandleable {
 
         return MessageHandlerResponse.newBuilder()
                 .textMessage(BotTextResponse.AUTH_GO_VIA_LINK + authURL)
-                .updateUser(socialNetwork)
+                .updateUser(socialNetwork.createBotUserAsync(userSendResponseId))
                 .build(userSendResponseId);
     }
 
@@ -277,7 +277,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName имя группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return ссылку на верифицированную группу если такая нашлась
-     * @see SocialNetwork#getGroupUrl(String, User)
+     * @see SocialNetwork#getGroupUrl(String, BotUser)
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
      */
@@ -287,7 +287,7 @@ public class MessageHandler implements MessageHandleable {
             return NOT_AUTHED_USER.build(userSendResponseId);
         }
 
-        User userCallingMethod = usersBase.getUser(userSendResponseId);
+        BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
 
         try {
             return MessageHandlerResponse.newBuilder()
@@ -306,7 +306,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName имя группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return id верифицированной группы если такая нашлась
-     * @see SocialNetwork#getGroupId(String, User)
+     * @see SocialNetwork#getGroupId(String, BotUser)
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
      */
@@ -316,7 +316,7 @@ public class MessageHandler implements MessageHandleable {
             return NOT_AUTHED_USER.build(userSendResponseId);
         }
 
-        User userCallingMethod = usersBase.getUser(userSendResponseId);
+        BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
 
         try {
             return MessageHandlerResponse.newBuilder()
@@ -335,7 +335,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName Название группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return возвращает ответ содержащий информацию о статусе подписки пользователя
-     * @see SocialNetwork#subscribeTo(GroupsStorage, String, User)
+     * @see SocialNetwork#subscribeTo(GroupsStorage, String, BotUser)
      * @see SubscribeStatus#getSubscribeMessage()
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
@@ -346,7 +346,7 @@ public class MessageHandler implements MessageHandleable {
             return NOT_AUTHED_USER.build(userSendResponseId);
         }
 
-        User userCallingMethod = usersBase.getUser(userSendResponseId);
+        BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
 
         try {
             return MessageHandlerResponse.newBuilder()
@@ -367,7 +367,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName название группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return ответ с сообщением о статусе отписки пользователя
-     * @see SocialNetwork#unsubscribeFrom(GroupsStorage, String, User)
+     * @see SocialNetwork#unsubscribeFrom(GroupsStorage, String, BotUser)
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
      */
@@ -377,7 +377,7 @@ public class MessageHandler implements MessageHandleable {
             return NOT_AUTHED_USER.build(userSendResponseId);
         }
 
-        User userCallingMethod = usersBase.getUser(userSendResponseId);
+        BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
 
         try {
             boolean isUnsubscribed = socialNetwork.unsubscribeFrom(groupsBase, userReceivedGroupName, userCallingMethod);
@@ -406,7 +406,7 @@ public class MessageHandler implements MessageHandleable {
             return NOT_AUTHED_USER.build(userSendResponseId);
         }
 
-        User userCallingMethod = usersBase.getUser(userSendResponseId);
+        BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
         Set<String> userSubscribedGroupsName = groupsBase.getUserSubscribedGroups(userCallingMethod.getTelegramId());
 
         if (userSubscribedGroupsName.isEmpty()) {
@@ -428,7 +428,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName имя группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return текст постов, ссылки на изображения в них, а также ссылки
-     * @see SocialNetwork#getLastPostsAsStrings(String, int, User)
+     * @see SocialNetwork#getLastPostsAsStrings(String, int, BotUser)
      * @see MessageHandler#DEFAULT_POST_NUMBER
      * @see MessageHandler#NO_POSTS_IN_GROUP
      * @see MessageHandlerResponse#newBuilder()
@@ -441,7 +441,7 @@ public class MessageHandler implements MessageHandleable {
             return NOT_AUTHED_USER.build(userSendResponseId);
         }
 
-        User userCallingMethod = usersBase.getUser(userSendResponseId);
+        BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
 
         List<String> groupFindPosts;
         try {

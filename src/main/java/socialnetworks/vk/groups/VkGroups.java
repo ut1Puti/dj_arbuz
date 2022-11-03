@@ -14,7 +14,7 @@ import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.groups.NoGroupException;
 import socialnetworks.socialnetwork.groups.SocialNetworkGroups;
 import socialnetworks.vk.VkConstants;
-import user.User;
+import user.BotUser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +54,7 @@ public class VkGroups implements SocialNetworkGroups {
      * @see com.vk.api.sdk.actions.Groups#search(UserActor, String)
      */
     @Override
-    public List<Group> searchGroups(String userReceivedGroupName, User userCallingMethod)
+    public List<Group> searchGroups(String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException, SocialNetworkAuthException {
         List<Group> userFindGroups;
         try {
@@ -85,11 +85,11 @@ public class VkGroups implements SocialNetworkGroups {
      * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке, совпадающих хотя бы на 50%
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
-     * @see VkGroups#searchGroups(String, User)
-     * @see VkGroups#chooseGroup(List, String, User)
+     * @see VkGroups#searchGroups(String, BotUser)
+     * @see VkGroups#chooseGroup(List, String, BotUser)
      */
     @Override
-    public Group searchGroup(String userReceivedGroupName, User userCallingMethod)
+    public Group searchGroup(String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         List<Group> userFindGroups = searchGroups(userReceivedGroupName, userCallingMethod);
         Group groupWithSimilarName = chooseGroup(userFindGroups, userReceivedGroupName, userCallingMethod);
@@ -113,7 +113,7 @@ public class VkGroups implements SocialNetworkGroups {
      * @see com.vk.api.sdk.actions.Groups#getByIdObjectLegacy(UserActor)
      * @see VkGroups#isNameDifferent(String, String)
      */
-    private Group chooseGroup(List<Group> userFindGroups, String userReceivedGroupName, User userCallingMethod)
+    private Group chooseGroup(List<Group> userFindGroups, String userReceivedGroupName, BotUser userCallingMethod)
             throws SocialNetworkException {
         int maxMembersCount = Integer.MIN_VALUE;
         Group resultGroup = null;

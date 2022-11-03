@@ -107,6 +107,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
             throw new RuntimeException("Не удалось настроить сервер");
         }
 
+        httpServer.start();
         SocialNetwork vk = new Vk();
         UserStorage userStorage = UserStorage.getInstance();
         GroupsStorage groupsStorage = GroupsStorage.getInstance();

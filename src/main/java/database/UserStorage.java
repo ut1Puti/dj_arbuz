@@ -2,7 +2,7 @@ package database;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import user.User;
+import user.BotUser;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class UserStorage {
-    private Map<String, User> usersBase;
+    private Map<String, BotUser> usersBase;
     private static UserStorage userStorage = null;
 
     /**
@@ -20,7 +20,7 @@ public class UserStorage {
      * @param userData - данные юзера
      * @return
      */
-    public boolean addInfoUser(String user, User userData) {
+    public boolean addInfoUser(String user, BotUser userData) {
         usersBase.put(user, userData);
         return true;
     }
@@ -50,7 +50,7 @@ public class UserStorage {
             try {
                 String json = scanner.nextLine();
                 Gson jsonFile = new Gson();
-                usersBase = jsonFile.fromJson(json, new TypeToken<Map<String, User>>() {
+                usersBase = jsonFile.fromJson(json, new TypeToken<Map<String, BotUser>>() {
                 }.getType());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -93,7 +93,7 @@ public class UserStorage {
      * @param user - ключ с айди юзера в телеграмме
      * @return подписки на группы
      */
-    public User getUser(String user) {
+    public BotUser getUser(String user) {
         return usersBase.get(user);
     }
 }

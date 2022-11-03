@@ -1,11 +1,11 @@
 package handlers.messages;
 
 import org.junit.jupiter.api.Test;
-import user.CreateUser;
-import user.User;
+import user.BotUser;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,6 +33,7 @@ public class MessageHandlerResponseTests {
         assertNull(response.getPostsMessages());
         assertFalse((response.hasUpdateUser()));
         assertNull(response.getUpdateUser());
+        assertEquals(testUserId, response.getUserSendResponseId());
     }
     /**
      * Метод тестирующий методы связанные с текстовым сообщением от бота
@@ -47,6 +48,7 @@ public class MessageHandlerResponseTests {
         assertNull(response.getPostsMessages());
         assertFalse((response.hasUpdateUser()));
         assertNull(response.getUpdateUser());
+        assertEquals(testUserId, response.getUserSendResponseId());
     }
 
     /**
@@ -54,19 +56,16 @@ public class MessageHandlerResponseTests {
      */
     @Test
     public void testUpdateUserConstructorsAndSettersAndGetters() {
-        CreateUser createUser = new CreateUser() {
-            @Override
-            public User createUser(String systemUserId) {
-                return null;
-            }
-        };
-        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().updateUser(createUser).build(testUserId);
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder()
+                .updateUser(CompletableFuture.supplyAsync(() -> new BotUser(100, "accessToken", testUserId)))
+                .build(testUserId);
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
         assertNull(response.getPostsMessages());
         assertTrue((response.hasUpdateUser()));
         assertNotNull(response.getUpdateUser());
+        assertEquals(testUserId, response.getUserSendResponseId());
     }
 
     /**
@@ -83,5 +82,6 @@ public class MessageHandlerResponseTests {
         assertEquals(newPosts, response.getPostsMessages());
         assertFalse((response.hasUpdateUser()));
         assertNull(response.getUpdateUser());
+        assertEquals(testUserId, response.getUserSendResponseId());
     }
 }

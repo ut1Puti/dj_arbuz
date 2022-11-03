@@ -33,7 +33,7 @@ public abstract class PostsPullingThread extends StoppableThread {
      * @param groupsStorage база данных групп на которые оформлена подписка
      * @param socialNetwork интерфейс реализующий доступ к необходимым методам социальной сети
      */
-    public PostsPullingThread(GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
+    protected PostsPullingThread(GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
         this.groupsBase = groupsStorage;
         this.socialNetwork = socialNetwork;
         this.setDaemon(true);
