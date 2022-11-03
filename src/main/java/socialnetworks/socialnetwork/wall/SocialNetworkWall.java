@@ -13,7 +13,7 @@ import java.util.List;
  * @author Кедровских Олег
  * @version 1.0
  */
-public interface SocialNetworkWall {
+public interface SocialNetworkWall<P, A> {
     /**
      * Метод для получения {@code amountOfPosts} постов из группы в социальной сети в виде строк
      *
@@ -25,7 +25,7 @@ public interface SocialNetworkWall {
      * @throws SocialNetworkException     возникает при ошибке обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    List<String> getPostsStrings(String groupScreenName, int amountOfPosts, Actor userCallingMethod)
+    List<String> getPostsStrings(String groupScreenName, int amountOfPosts, A userCallingMethod)
             throws SocialNetworkException, SocialNetworkAuthException;
 
     /**
@@ -45,6 +45,6 @@ public interface SocialNetworkWall {
      *                                    параметры(например vk api позволяет получить только 100 постов за один запрос, соответственно если {@code amountOfPosts}
      *                                    будет больше 100, то должно возникнуть это исключение)
      */
-    List<WallpostFull> getPosts(String groupScreenName, int amountOfPosts, Actor userCallingMethod)
+    List<P> getPosts(String groupScreenName, int amountOfPosts, A userCallingMethod)
             throws SocialNetworkException, SocialNetworkAuthException;
 }

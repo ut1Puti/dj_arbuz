@@ -27,7 +27,7 @@ import java.util.Map;
  * @version 1.0
  * @see SocialNetworkGroups
  */
-public class VkGroups implements SocialNetworkGroups {
+public class VkGroups implements SocialNetworkGroups<Group, BotUser> {
     /**
      * Поле класс позволяющего работать с vk api
      */

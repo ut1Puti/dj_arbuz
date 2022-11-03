@@ -3,7 +3,7 @@ package bots.console;
 import bots.BotMessageExecutable;
 import database.GroupsStorage;
 import database.UserStorage;
-import handlers.messages.ConsoleMessageExecutor;
+import handlers.messages.ConsoleMessageSender;
 import handlers.messages.MessageHandleable;
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerResponse;
@@ -45,15 +45,15 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
     /**
      * Поле класса-отправителя сообщений пользователю
      *
-     * @see ConsoleMessageExecutor
+     * @see ConsoleMessageSender
      */
-    private final ConsoleMessageExecutor messageExecutor;
+    private final ConsoleMessageSender messageExecutor;
     /**
      * Поле класса получающего новые посты
      *
      * @see ConsolePostsPullingThread
      */
-    private final ConsolePostsPullingThread consolePostsPullingThread;
+    private final ConsolePostsPullingThread notificationPullingThread;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -64,9 +64,9 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
      */
     public ConsoleBot(UserStorage userStorage, GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
         this.userBase = userStorage;
+        this.notificationPullingThread = new ConsolePostsPullingThread(defaultConsoleUserId, groupsStorage, socialNetwork);
         this.messageHandler = new MessageHandler(groupsStorage, userStorage, socialNetwork);
-        this.messageExecutor = new ConsoleMessageExecutor(this);
-        this.consolePostsPullingThread = new ConsolePostsPullingThread(defaultConsoleUserId, groupsStorage, socialNetwork);
+        this.messageExecutor = new ConsoleMessageSender(this, notificationPullingThread);
     }
 
     public static void main(String[] args) {
@@ -98,17 +98,11 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
      * @see StoppableThread#run()
      * @see MessageHandler#handleMessage(String, String, StoppableByUser)
      * @see ConsolePostsPullingThread#start()
-     * @see MessageHandlerResponse#hasTextMessage()
-     * @see MessageHandlerResponse#getTextMessage()
-     * @see MessageHandlerResponse#hasPostsMessages()
-     * @see MessageHandlerResponse#getPostsMessages()
-     * @see MessageHandlerResponse#hasUpdateUser()
-     * @see MessageHandlerResponse#getUpdateUser()
      * @see ConsolePostsPullingThread#stopWithInterrupt()
      */
     @Override
     public void run() {
-        consolePostsPullingThread.start();
+        notificationPullingThread.start();
         Scanner userInput = new Scanner(System.in);
         while (working.get()) {
 
@@ -117,14 +111,10 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
                 messageExecutor.executeMessage(response, userBase);
             }
 
-            if (consolePostsPullingThread.hasNewPosts()) {
-                consolePostsPullingThread.getNewPosts().forEach(System.out::println);
-            }
-
         }
         working.set(false);
         userInput.close();
-        consolePostsPullingThread.stopWithInterrupt();
+        notificationPullingThread.stopWithInterrupt();
     }
 
     /**

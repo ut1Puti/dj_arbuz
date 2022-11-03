@@ -9,13 +9,13 @@ import user.BotUser;
  * @author Кедровских Олег
  * @version 1.0
  */
-public interface SocialNetworkAuth {
+public interface SocialNetworkAuth<S, U> {
     /**
      * Метод для создания пользователя приложения социальной сети
      *
      * @return пользователя приложения социальной сети
      */
-    ServiceActor createAppActor();
+    S createAppActor();
 
     /**
      * Метод создающий пользователя, имеющего id в системе
@@ -25,7 +25,7 @@ public interface SocialNetworkAuth {
      * token - ключ доступа к api социальной сети с использованием аккаунта пользователя,
      * либо же {@code null} если не удается создать пользователя по какой-то причине
      */
-    BotUser createBotUser(String userIdInBotSystem);
+    U createBotUser(String userIdInBotSystem);
 
     /**
      * Метод возвращающий ссылку для аутентификации в социальной сети

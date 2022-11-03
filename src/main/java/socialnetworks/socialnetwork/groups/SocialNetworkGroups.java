@@ -13,7 +13,7 @@ import java.util.List;
  * @author Кедровских Олег
  * @version 1.0
  */
-public interface SocialNetworkGroups {
+public interface SocialNetworkGroups<G, U> {
     /**
      * Метод для получения групп в социальной сети, по подстроке полученной от пользователя
      *
@@ -23,7 +23,7 @@ public interface SocialNetworkGroups {
      * @throws NoGroupException возникает если не нашлось групп по заданной подстроке
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      */
-    List<Group> searchGroups(String userReceivedGroupName, BotUser userCallingMethod)
+    List<G> searchGroups(String userReceivedGroupName, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**
@@ -38,6 +38,6 @@ public interface SocialNetworkGroups {
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    Group searchGroup(String userReceivedGroupName, BotUser userCallingMethod)
+    G searchGroup(String userReceivedGroupName, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 }

@@ -35,7 +35,7 @@ import java.util.concurrent.CompletableFuture;
  * @version 2.2
  * @see SocialNetwork
  */
-public class Vk extends AbstractSocialNetwork {
+public class Vk extends AbstractSocialNetwork<Group, WallpostFull, BotUser, ServiceActor, Actor> {
     /**
      * Поле клиента для соединения с vk api
      */

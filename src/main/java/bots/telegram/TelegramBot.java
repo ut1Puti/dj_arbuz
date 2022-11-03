@@ -5,7 +5,7 @@ import database.GroupsStorage;
 import handlers.messages.MessageHandleable;
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerResponse;
-import handlers.messages.TelegramMessageExecutor;
+import handlers.messages.TelegramMessageSender;
 import handlers.notifcations.TelegramPostsPullingThread;
 import httpserver.server.HttpServer;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -54,9 +54,9 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
     /**
      * Поле класса-отправителя сообщений пользователю
      *
-     * @see TelegramMessageExecutor
+     * @see TelegramMessageSender
      */
-    private final TelegramMessageExecutor messageExecutor;
+    private final TelegramMessageSender messageExecutor;
     /**
      * Поле класса получающего новые посты из групп в базе данных
      *
@@ -86,7 +86,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        messageExecutor = new TelegramMessageExecutor(this);
+        messageExecutor = new TelegramMessageSender(this);
         telegramPostsPullingThread = new TelegramPostsPullingThread(this, groupsStorage, socialNetwork);
         telegramPostsPullingThread.start();
         KeyboardRow rowFirst = new KeyboardRow();

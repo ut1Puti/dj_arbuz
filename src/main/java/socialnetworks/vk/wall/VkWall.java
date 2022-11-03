@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @see SocialNetworkWall
  */
-public class VkWall implements SocialNetworkWall {
+public class VkWall implements SocialNetworkWall<WallpostFull, Actor> {
     /**
      * Поле регулярного выражения для поиска id группы в
      */

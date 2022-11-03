@@ -7,14 +7,15 @@ import bots.telegram.TelegramBot;
  *
  * @author Кедровских Олег
  * @version 1.0
+ * @see MessageSender
  */
-public class TelegramMessageExecutor extends MessageExecutor {
+public class TelegramMessageSender extends MessageSender {
     /**
      * Конструктор - создает экземпляр класса
      *
      * @param telegramBot бот, от имени которого будет отправлено сообщение
      */
-    public TelegramMessageExecutor(TelegramBot telegramBot) {
+    public TelegramMessageSender(TelegramBot telegramBot) {
         super(telegramBot);
     }
 }

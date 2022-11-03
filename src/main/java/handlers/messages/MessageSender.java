@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class MessageExecutor implements MessageExecutable {
+abstract class MessageSender {
     /**
      * Поле бота, от имени которого будут отправлены сообщения
      *
@@ -26,7 +26,7 @@ public class MessageExecutor implements MessageExecutable {
      *
      * @param responseSendingBot бот, от имени которого будет отправлено сообщение
      */
-    protected MessageExecutor(BotMessageExecutable responseSendingBot) {
+    protected MessageSender(BotMessageExecutable responseSendingBot) {
         this.responseSendingBot = responseSendingBot;
     }
 
@@ -65,5 +65,15 @@ public class MessageExecutor implements MessageExecutable {
             userBase.addInfoUser(userSendResponseId, currentUser);
         }
 
+    }
+
+    /**
+     * Метод для отправки единичного сообщения пользователю
+     *
+     * @param userSendResponseId id пользователя, которому будет отправлено сообщение
+     * @param userSendText текст сообщения, которое будет отправлено пользователю
+     */
+    public void executeSingleMessage(String userSendResponseId, String userSendText) {
+        responseSendingBot.execute(userSendResponseId, userSendText);
     }
 }

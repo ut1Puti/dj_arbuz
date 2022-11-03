@@ -4,7 +4,6 @@ import database.GroupsStorage;
 import socialnetworks.socialnetwork.groups.NoGroupException;
 import socialnetworks.socialnetwork.groups.SubscribeStatus;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
-import user.BotUser;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
  * @author Кедровсикх Олег
  * @version 1.0
  */
-public interface SocialNetwork {
+public interface SocialNetwork<U> {
     /**
      * Метод получающий ссылку для аутентификации пользователя с помощью социальной сети
      *
@@ -30,7 +29,7 @@ public interface SocialNetwork {
      * @param userId id пользователя в системе
      * @return {@code CompletableFuture<User>}, который выполняет логику создания пользователя
      */
-    CompletableFuture<BotUser> createBotUserAsync(String userId);
+    CompletableFuture<U> createBotUserAsync(String userId);
 
     /**
      * Метод получающий ссылку на группу, найденную по подстроке полученной от пользователя
@@ -42,7 +41,7 @@ public interface SocialNetwork {
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    String getGroupUrl(String userReceivedGroupName, BotUser userCallingMethod)
+    String getGroupUrl(String userReceivedGroupName, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**
@@ -55,7 +54,7 @@ public interface SocialNetwork {
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    String getGroupId(String userReceivedGroupName, BotUser userCallingMethod)
+    String getGroupId(String userReceivedGroupName, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**
@@ -72,7 +71,7 @@ public interface SocialNetwork {
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    SubscribeStatus subscribeTo(GroupsStorage groupsStorage, String userReceivedGroupName, BotUser userCallingMethod)
+    SubscribeStatus subscribeTo(GroupsStorage groupsStorage, String userReceivedGroupName, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**
@@ -87,7 +86,7 @@ public interface SocialNetwork {
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    boolean unsubscribeFrom(GroupsStorage groupsStorage, String userReceivedGroupName, BotUser userCallingMethod)
+    boolean unsubscribeFrom(GroupsStorage groupsStorage, String userReceivedGroupName, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**
@@ -101,7 +100,7 @@ public interface SocialNetwork {
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    List<String> getLastPostsAsStrings(String userReceivedGroupName, int amountOfPosts, BotUser userCallingMethod)
+    List<String> getLastPostsAsStrings(String userReceivedGroupName, int amountOfPosts, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**

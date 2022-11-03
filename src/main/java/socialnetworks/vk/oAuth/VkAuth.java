@@ -16,7 +16,7 @@ import user.BotUser;
  * @version 1.2
  * @see SocialNetworkAuth
  */
-public class VkAuth implements SocialNetworkAuth {
+public class VkAuth implements SocialNetworkAuth<ServiceActor, BotUser> {
     /**
      * Поле класс позволяющего работать с vk api
      *
