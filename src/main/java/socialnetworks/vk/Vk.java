@@ -10,6 +10,7 @@ import com.vk.api.sdk.objects.groups.GroupIsClosed;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.GroupsStorage;
 import httpserver.server.HttpServer;
+import socialnetworks.socialnetwork.AbstractSocialNetwork;
 import socialnetworks.socialnetwork.groups.NoGroupException;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
 import socialnetworks.vk.groups.VkGroups;
@@ -34,19 +35,15 @@ import java.util.Optional;
  * @version 2.2
  * @see SocialNetwork
  */
-public class Vk implements SocialNetwork {
+public class Vk extends AbstractSocialNetwork {
     /**
-     * Поле класса для взаимодействия с группами через vk api
+     * Поле клиента для соединения с vk api
      */
-    private final VkGroups groups;
+    private static final TransportClient transportClient = new HttpTransportClient();
     /**
-     * Поле класс для взаимодействия со стеной вк
+     * Поле для взаимодействия с vk java sdk
      */
-    private final VkWall wall;
-    /**
-     * Поле для аутентификации через vk
-     */
-    private final VkAuth oAuth;
+    private static final VkApiClient vkApiClient = new VkApiClient(transportClient);
     /**
      * Поле пользователя приложения в vk
      */
@@ -54,15 +51,13 @@ public class Vk implements SocialNetwork {
 
     /**
      * Конструктор - создает экземпляр класса
-     *
-     * @param vkAppConfigurationJsonFilePath путь до файла с конфигурацией приложения в vk
      */
     public Vk() {
-        TransportClient transportClient = new HttpTransportClient();
-        VkApiClient vkApiClient = new VkApiClient(transportClient);
-        this.groups = new VkGroups(vkApiClient);
-        this.wall = new VkWall(vkApiClient);
-        this.oAuth = new VkAuth(vkApiClient, HttpServer.getInstance(), "src/main/resources/anonsrc/vk_config.json");
+        super(
+                new VkAuth(vkApiClient, HttpServer.getInstance(), "src/main/resources/anonsrc/vk_config.json"),
+                new VkGroups(vkApiClient),
+                new VkWall(vkApiClient)
+        );
         vkApp = oAuth.createAppActor();
     }
 
@@ -189,13 +184,13 @@ public class Vk implements SocialNetwork {
      * @throws IllegalArgumentException возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                  Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
      * @see VkGroups#searchGroup(String, User)
-     * @see VkWall#getLastPostsStrings(String, int, Actor)
+     * @see VkWall#getPostsStrings(String, int, Actor)
      */
     @Override
-    public Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCallingMethod)
+    public List<String> getLastPostsAsStrings(String userReceivedGroupName, int amountOfPosts, User userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
-        return wall.getLastPostsStrings(userFindGroup.getScreenName(), amountOfPosts, userCallingMethod);
+        return wall.getPostsStrings(userFindGroup.getScreenName(), amountOfPosts, userCallingMethod);
     }
 
     /**
@@ -239,7 +234,7 @@ public class Vk implements SocialNetwork {
 
         }
         groupsStorage.updateGroupLastPost(groupScreenName, newLastPostDate);
-        List<String> groupsFromDataBaseFindPosts = VkPostsParser.parsePosts(appFindPosts);
-        return groupsFromDataBaseFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupsFromDataBaseFindPosts);
+        List<String> vkParsedPosts = VkPostsParser.parsePosts(appFindPosts);
+        return vkParsedPosts.isEmpty() ? Optional.empty() : Optional.of(vkParsedPosts);
     }
 }

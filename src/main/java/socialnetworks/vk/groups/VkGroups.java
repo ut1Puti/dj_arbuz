@@ -45,12 +45,12 @@ public class VkGroups implements SocialNetworkGroups {
     /**
      * Метод, который ищет все группы по запросу
      *
-     * @param userReceivedGroupName - запрос
-     * @param userCallingMethod     - пользователь сделавший запрос
+     * @param userReceivedGroupName запрос
+     * @param userCallingMethod     пользователь сделавший запрос
      * @return список групп полученных по запросу
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
-     * @throws NoGroupException           - возникает если не нашлась группа по заданной подстроке
+     * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
      * @see com.vk.api.sdk.actions.Groups#search(UserActor, String)
      */
     @Override
@@ -82,7 +82,7 @@ public class VkGroups implements SocialNetworkGroups {
      * @param userCallingMethod     - пользователь сделавший запрос
      * @return группу с наибольшим числом подписчиков, среди групп с названием совпадающим хотя бы на 50%, относительно
      * заданной пользователем строки, если таких групп не нашлось, кидает {@code NoGroupException}
-     * @throws NoGroupException           - возникает если не нашлась группа по заданной подстроке
+     * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке, совпадающих хотя бы на 50%
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
      * @see VkGroups#searchGroups(String, User)

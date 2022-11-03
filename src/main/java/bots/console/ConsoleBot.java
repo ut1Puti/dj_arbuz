@@ -1,9 +1,12 @@
 package bots.console;
 
 import bots.BotMessageExecutable;
-import handlers.messages.*;
 import database.GroupsStorage;
 import database.UserStorage;
+import handlers.messages.ConsoleMessageExecutor;
+import handlers.messages.MessageHandleable;
+import handlers.messages.MessageHandler;
+import handlers.messages.MessageHandlerResponse;
 import handlers.notifcations.ConsolePostsPullingThread;
 import bots.StoppableByUser;
 import httpserver.server.HttpServer;
@@ -22,6 +25,7 @@ import java.util.Scanner;
  * @see StoppableByUser
  */
 public class ConsoleBot extends StoppableThread implements StoppableByUser, BotMessageExecutable {
+
     /**
      * Поле id пользователя консольной версии бота
      */
@@ -52,8 +56,6 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
     private final ConsolePostsPullingThread consolePostsPullingThread;
 
     /**
-     *
-     *
      * @param userStorage
      * @param groupsStorage
      * @param socialNetwork
@@ -62,9 +64,7 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
         this.userBase = userStorage;
         this.messageHandler = new MessageHandler(groupsStorage, userStorage, socialNetwork);
         this.messageExecutor = new ConsoleMessageExecutor(this);
-        this.consolePostsPullingThread = new ConsolePostsPullingThread(
-                defaultConsoleUserId, groupsStorage, socialNetwork
-        );
+        this.consolePostsPullingThread = new ConsolePostsPullingThread(defaultConsoleUserId, groupsStorage, socialNetwork);
     }
 
     public static void main(String[] args) {
@@ -74,12 +74,16 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
             throw new RuntimeException("Не удалось настроить сервер");
         }
 
+        httpServer.start();
+
         SocialNetwork vk = new Vk();
         UserStorage userStorage = UserStorage.getInstance();
         GroupsStorage groupsStorage = GroupsStorage.getInstance();
         ConsoleBot consoleBot = new ConsoleBot(userStorage, groupsStorage, vk);
         consoleBot.start();
-        while (consoleBot.isWorking()) Thread.onSpinWait();
+        while (consoleBot.isWorking()) {
+            Thread.onSpinWait();
+        }
         consoleBot.stopWithInterrupt();
         httpServer.stop();
         userStorage.saveToJsonFile();
@@ -107,9 +111,7 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
         while (working.get()) {
 
             if (userInput.hasNextLine()) {
-                MessageHandlerResponse response = messageHandler.handleMessage(
-                        userInput.nextLine(), defaultConsoleUserId, this
-                );
+                MessageHandlerResponse response = messageHandler.handleMessage(userInput.nextLine(), defaultConsoleUserId, this);
                 messageExecutor.executeMessage(response, userBase);
             }
 

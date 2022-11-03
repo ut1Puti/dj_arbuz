@@ -41,7 +41,7 @@ public class MessageHandler implements MessageHandleable {
     /**
      * Поле сообщения при ошибке аутентификации пользователя
      *
-     * @see MessageHandlerResponse
+     * @see MessageHandlerResponseBuilder
      * @see BotTextResponse#AUTH_ERROR
      */
     private static final MessageHandlerResponseBuilder AUTH_ERROR = MessageHandlerResponse.newBuilder()
@@ -49,7 +49,7 @@ public class MessageHandler implements MessageHandleable {
     /**
      * Поле help сообщения бота
      *
-     * @see MessageHandlerResponse
+     * @see MessageHandlerResponseBuilder
      * @see BotTextResponse#HELP_INFO
      */
     private static final MessageHandlerResponseBuilder HELP_INFO = MessageHandlerResponse.newBuilder()
@@ -57,7 +57,7 @@ public class MessageHandler implements MessageHandleable {
     /**
      * Поле сообщения о получении неизвестной команды
      *
-     * @see MessageHandlerResponse
+     * @see MessageHandlerResponseBuilder
      * @see BotTextResponse#UNKNOWN_COMMAND
      */
     private static final MessageHandlerResponseBuilder UNKNOWN_COMMAND = MessageHandlerResponse.newBuilder()
@@ -65,7 +65,7 @@ public class MessageHandler implements MessageHandleable {
     /**
      * Поле сообщения с текстом, в котором говориться, что пользователь не аутентифицировался в социальной сети
      *
-     * @see MessageHandlerResponse
+     * @see MessageHandlerResponseBuilder
      * @see BotTextResponse#NOT_AUTHED_USER
      */
     private static final MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
@@ -73,7 +73,7 @@ public class MessageHandler implements MessageHandleable {
     /**
      * Поле сообщения с текстом, в котором говориться, что не нашлось постов в группе
      *
-     * @see MessageHandlerResponse
+     * @see MessageHandlerResponseBuilder
      * @see BotTextResponse#NO_POSTS_IN_GROUP
      */
     private static final MessageHandlerResponseBuilder NO_POSTS_IN_GROUP = MessageHandlerResponse.newBuilder()
@@ -81,7 +81,7 @@ public class MessageHandler implements MessageHandleable {
     /**
      * Поле сообщения с текстом, в котором говориться, что пользователь быд отписан от группы
      *
-     * @see MessageHandlerResponse
+     * @see MessageHandlerResponseBuilder
      * @see BotTextResponse#UNSUBSCRIBED
      */
     private static final MessageHandlerResponseBuilder UNSUBSCRIBED = MessageHandlerResponse.newBuilder()
@@ -89,7 +89,7 @@ public class MessageHandler implements MessageHandleable {
     /**
      * Поле сообщения с текстом, в котором говориться, что пользователь не был подписчиком группы
      *
-     * @see MessageHandlerResponse
+     * @see MessageHandlerResponseBuilder
      * @see BotTextResponse#NOT_SUBSCRIBER
      */
     private static final MessageHandlerResponseBuilder NOT_SUBSCRIBER = MessageHandlerResponse.newBuilder()
@@ -97,7 +97,7 @@ public class MessageHandler implements MessageHandleable {
     /**
      * Поле сообщения с текстом, в котором говориться, что пользователь не подписан ни на одну группу
      *
-     * @see MessageHandlerResponse
+     * @see MessageHandlerResponseBuilder
      * @see BotTextResponse#NO_SUBSCRIBED_GROUPS
      */
     private static final MessageHandlerResponseBuilder NO_SUBSCRIBED_GROUPS = MessageHandlerResponse.newBuilder()
@@ -294,7 +294,9 @@ public class MessageHandler implements MessageHandleable {
                     .textMessage(socialNetwork.getGroupUrl(userReceivedGroupName, userCallingMethod))
                     .build(userSendResponseId);
         } catch (NoGroupException | SocialNetworkException e) {
-            return MessageHandlerResponse.newBuilder().textMessage(e.getMessage()).build(userSendResponseId);
+            return MessageHandlerResponse.newBuilder()
+                    .textMessage(e.getMessage())
+                    .build(userSendResponseId);
         }
     }
 
@@ -321,7 +323,9 @@ public class MessageHandler implements MessageHandleable {
                     .textMessage(socialNetwork.getGroupId(userReceivedGroupName, userCallingMethod))
                     .build(userSendResponseId);
         } catch (NoGroupException | SocialNetworkException e) {
-            return MessageHandlerResponse.newBuilder().textMessage(e.getMessage()).build(userSendResponseId);
+            return MessageHandlerResponse.newBuilder()
+                    .textMessage(e.getMessage())
+                    .build(userSendResponseId);
         }
     }
 
@@ -351,7 +355,9 @@ public class MessageHandler implements MessageHandleable {
                             .getSubscribeMessage())
                     .build(userSendResponseId);
         } catch (NoGroupException | SocialNetworkException e) {
-            return MessageHandlerResponse.newBuilder().textMessage(e.getMessage()).build(userSendResponseId);
+            return MessageHandlerResponse.newBuilder()
+                    .textMessage(e.getMessage())
+                    .build(userSendResponseId);
         }
     }
 
@@ -382,7 +388,9 @@ public class MessageHandler implements MessageHandleable {
 
             return NOT_SUBSCRIBER.build(userSendResponseId);
         } catch (NoGroupException | SocialNetworkException e) {
-            return MessageHandlerResponse.newBuilder().textMessage(e.getMessage()).build(userSendResponseId);
+            return MessageHandlerResponse.newBuilder()
+                    .textMessage(e.getMessage())
+                    .build(userSendResponseId);
         }
     }
 
@@ -420,7 +428,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName имя группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return текст постов, ссылки на изображения в них, а также ссылки
-     * @see SocialNetwork#getLastPosts(String, int, User)
+     * @see SocialNetwork#getLastPostsAsStrings(String, int, User)
      * @see MessageHandler#DEFAULT_POST_NUMBER
      * @see MessageHandler#NO_POSTS_IN_GROUP
      * @see MessageHandlerResponse#newBuilder()
@@ -435,14 +443,23 @@ public class MessageHandler implements MessageHandleable {
 
         User userCallingMethod = usersBase.getUser(userSendResponseId);
 
+        List<String> groupFindPosts;
         try {
-            return MessageHandlerResponse.newBuilder()
-                    .postsText(socialNetwork.getLastPosts(userReceivedGroupName, DEFAULT_POST_NUMBER, userCallingMethod).orElseThrow())
-                    .build(userSendResponseId);
+            groupFindPosts = socialNetwork.getLastPostsAsStrings(userReceivedGroupName, DEFAULT_POST_NUMBER, userCallingMethod);
         } catch (NoSuchElementException e) {
             return NO_POSTS_IN_GROUP.build(userSendResponseId);
         } catch (NoGroupException | SocialNetworkException e) {
-            return MessageHandlerResponse.newBuilder().textMessage(e.getMessage()).build(userSendResponseId);
+            return MessageHandlerResponse.newBuilder()
+                    .textMessage(e.getMessage())
+                    .build(userSendResponseId);
         }
+
+        if (groupFindPosts.isEmpty()) {
+            return NO_POSTS_IN_GROUP.build(userSendResponseId);
+        }
+
+        return MessageHandlerResponse.newBuilder()
+                .postsText(groupFindPosts)
+                .build(userSendResponseId);
     }
 }

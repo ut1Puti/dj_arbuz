@@ -89,13 +89,12 @@ public interface SocialNetwork extends CreateUser {
      * @param userReceivedGroupName подстрока полученная от пользователя
      * @param amountOfPosts кол-во постов, которые запросили в социальной сети
      * @param userCallingMethod пользователь вызвавший метод
-     * @return {@code amountOfPosts} постов в виде строк,
-     * {@code Optional.empty()} если возникли ошибки обращения к api не связанные с самим api или если посты не были найдены
+     * @return {@code amountOfPosts} постов в виде строк
      * @throws NoGroupException возникает если группа по заданной подстроке не была найдена
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    Optional<List<String>> getLastPosts(String userReceivedGroupName, int amountOfPosts, User userCallingMethod)
+    List<String> getLastPostsAsStrings(String userReceivedGroupName, int amountOfPosts, User userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**

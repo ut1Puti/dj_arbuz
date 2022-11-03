@@ -12,7 +12,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * Класс получающий обновления постов в группах для консольного пользователя
  *
  * @author Кедровских Олег
- * @version 1.3
+ * @version 1.7
  * @see PostsPullingThread
  */
 public class ConsolePostsPullingThread extends PostsPullingThread {
@@ -43,30 +43,33 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
     @Override
     public void run() {
         while (working.get()) {
-            try {
-                for (String groupScreenName : groupsBase.getUserSubscribedGroups(consoleBotUserId)) {
-                    Optional<List<String>> threadNewPosts = socialNetwork.getNewPosts(groupsBase, groupScreenName);
-
-                    if (threadNewPosts.isPresent()) {
-                        List<String> threadFindNewPosts = threadNewPosts.get();
-                        for (int i = 0; i < threadFindNewPosts.size(); i++) {
-                            try {
-                                synchronized (newPostsQueue) {
-                                    newPostsQueue.add(threadFindNewPosts.get(i));
-                                    continue;
-                                }
-                            } catch (IllegalStateException ignored) {
-                            }
-                            i--;
-                        }
-                    }
-
+            for (String groupScreenName : groupsBase.getUserSubscribedGroups(consoleBotUserId)) {
+                Optional<List<String>> threadNewPosts = Optional.empty();
+                try {
+                    threadNewPosts = socialNetwork.getNewPosts(groupsBase, groupScreenName);
+                } catch (SocialNetworkException ignored) {
                 }
+
+                if (threadNewPosts.isPresent()) {
+                    List<String> threadFindNewPosts = threadNewPosts.get();
+                    for (int i = 0; i < threadFindNewPosts.size(); i++) {
+                        try {
+                            synchronized (newPostsQueue) {
+                                newPostsQueue.add(threadFindNewPosts.get(i));
+                                continue;
+                            }
+                        } catch (IllegalStateException ignored) {
+                        }
+                        i--;
+                    }
+                }
+
+            }
+            try {
                 final int oneHourInMilliseconds = 360000;
                 Thread.sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
-            } catch (SocialNetworkException ignored) {
             }
         }
         working.set(false);

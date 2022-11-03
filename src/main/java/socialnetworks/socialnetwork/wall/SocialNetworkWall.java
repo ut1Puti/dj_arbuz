@@ -4,10 +4,8 @@ import com.vk.api.sdk.client.actors.Actor;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
 import socialnetworks.socialnetwork.SocialNetworkException;
-import user.User;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Интерфейс для взаимодействия со стенами социальных сетей
@@ -22,13 +20,12 @@ public interface SocialNetworkWall {
      * @param groupScreenName   имя группы в социальной сети
      * @param amountOfPosts     кол-во постов которое необходимо получить
      * @param userCallingMethod пользователь вызвавший метод
-     * @return список строк, каждая из которых представляет собой распаршенный пост, если возникли ошибки обращения к api
-     * не связанные с самим api, тогда возвращается {@code Optional.empty()}, также {@code Optional.empty()}
-     * возвращается если не было найдено новых постов
+     * @return список строк, каждая из которых представляет собой распаршенный пост, метод не может возвращать {@code null},
+     * при необходимости вернуть {@code null} создавайте пустой лист
      * @throws SocialNetworkException     возникает при ошибке обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    Optional<List<String>> getLastPostsStrings(String groupScreenName, int amountOfPosts, Actor userCallingMethod)
+    List<String> getPostsStrings(String groupScreenName, int amountOfPosts, Actor userCallingMethod)
             throws SocialNetworkException, SocialNetworkAuthException;
 
     /**
@@ -39,7 +36,8 @@ public interface SocialNetworkWall {
      * @param amountOfPosts     кол-во запрашиваемых постов
      * @param userCallingMethod пользователь вызвавший метод
      * @return посты из группы в социальной сети представленные списком объектов,
-     * которые представляют реализацию постов в реализации api
+     * которые представляют реализацию постов в реализации api, метод не может возвращать {@code null},
+     * при необходимости вернуть {@code null} создавайте пустой лист
      * @throws SocialNetworkException     возникает при ошибке обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      * @throws IllegalArgumentException   должен возникать в ситуациях когда параметры переданные в метод не соответствуют

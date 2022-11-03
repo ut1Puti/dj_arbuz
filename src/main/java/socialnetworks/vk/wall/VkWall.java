@@ -15,8 +15,9 @@ import socialnetworks.socialnetwork.wall.SocialNetworkWall;
 import socialnetworks.vk.VkConstants;
 import user.User;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 /**
  * Класс для взаимодействия с постами на стене в vk
@@ -47,25 +48,19 @@ public class VkWall implements SocialNetworkWall {
      * @param groupScreenName   имя группы
      * @param userCallingMethod пользователь вызвавший метод, доступные пользователи
      *                          {@link User}, {@link UserActor}, {@link ServiceActor}
-     * @return текст указанного кол-ва постов, а также ссылки на другие группы, указанные в посте, и ссылки на посты,
-     * {@code Optional.empty()} возникает при ошибках обращения к vk api
-     * не связанных с самим api, а также в группе с указанным именем не было найдено постов
+     * @return текст указанного кол-ва постов, а также ссылки на другие группы, указанные в посте, и ссылки на посты
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
+     * @throws IllegalArgumentException если пользователь от имени которого был отправлен запрос не имеет доступа к этому методу,
+     * а также если было запрошено больше 100 постов
      * @see VkWall#getPosts(String, int, Actor)
      * @see VkPostsParser#parsePosts(List)
      */
     @Override
-    public Optional<List<String>> getLastPostsStrings(String groupScreenName, int amountOfPosts, Actor userCallingMethod)
+    public List<String> getPostsStrings(String groupScreenName, int amountOfPosts, Actor userCallingMethod)
             throws SocialNetworkException, SocialNetworkAuthException {
-        List<WallpostFull> userFindGroupPosts;
-        try {
-            userFindGroupPosts = getPosts(groupScreenName, amountOfPosts, userCallingMethod);
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-        List<String> groupFindPosts = VkPostsParser.parsePosts(userFindGroupPosts);
-        return groupFindPosts.isEmpty() ? Optional.empty() : Optional.of(groupFindPosts);
+        List<WallpostFull> groupFindPosts = getPosts(groupScreenName, amountOfPosts, userCallingMethod);
+        return VkPostsParser.parsePosts(groupFindPosts);
     }
 
     /**
@@ -93,24 +88,25 @@ public class VkWall implements SocialNetworkWall {
             throw new IllegalArgumentException("Кол-во запрашиваемых постов превышает кол-во доступных к получению");
         }
 
+        List<WallpostFull> groupScreenNameFindPosts = null;
         try {
 
             if (userCalledMethod instanceof User) {
-                return vkApiClient.wall().get((User) userCalledMethod)
+                groupScreenNameFindPosts = vkApiClient.wall().get((User) userCalledMethod)
                         .domain(groupScreenName)
                         .offset(VkConstants.DEFAULT_OFFSET).count(amountOfPosts)
                         .execute().getItems();
             }
 
             if (userCalledMethod instanceof UserActor) {
-                return vkApiClient.wall().get((UserActor) userCalledMethod)
+                groupScreenNameFindPosts = vkApiClient.wall().get((UserActor) userCalledMethod)
                         .domain(groupScreenName)
                         .offset(VkConstants.DEFAULT_OFFSET).count(amountOfPosts)
                         .execute().getItems();
             }
 
             if (userCalledMethod instanceof ServiceActor) {
-                return vkApiClient.wall().get((ServiceActor) userCalledMethod)
+                groupScreenNameFindPosts = vkApiClient.wall().get((ServiceActor) userCalledMethod)
                         .domain(groupScreenName)
                         .offset(VkConstants.DEFAULT_OFFSET).count(amountOfPosts)
                         .execute().getItems();
@@ -122,6 +118,30 @@ public class VkWall implements SocialNetworkWall {
             throw new SocialNetworkException(BotTextResponse.VK_API_ERROR, e);
         }
 
-        throw new IllegalArgumentException("Этот пользователь не имеет доступа к этому методу");
+        if (groupScreenNameFindPosts == null) {
+            throw new IllegalArgumentException("Этот пользователь не имеет доступа к этому методу");
+        }
+
+        if (!groupScreenNameFindPosts.isEmpty()) {
+
+            if (isUserPosts(groupScreenNameFindPosts, userCalledMethod)) {
+                return new ArrayList<>();
+            }
+
+        }
+
+        return groupScreenNameFindPosts;
+    }
+
+    /**
+     * Метод определяющий являются ли найденные посты, постами со страницы пользователя
+     *
+     * @param groupFindPosts найденные по подстроке посты
+     * @param userCalledMethod пользователь вызвавший метод
+     * @return {@code true} если id владельца постов и пользователя запросивших их не совпадают,
+     * {@code false} если id владельца постов и пользователя запросивших их совпадают
+     */
+    private boolean isUserPosts(List<WallpostFull> groupFindPosts, Actor userCalledMethod) {
+        return Objects.equals(groupFindPosts.get(VkConstants.FIRST_ELEMENT_INDEX).getOwnerId(), userCalledMethod.getId());
     }
 }

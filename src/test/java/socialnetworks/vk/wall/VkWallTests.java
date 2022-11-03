@@ -3,17 +3,12 @@ package socialnetworks.vk.wall;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.Actor;
-import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import database.GroupsStorage;
-import socialnetworks.vk.oAuth.VkAuth;
-import httpserver.server.HttpServer;
 import org.junit.jupiter.api.Test;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import user.User;
 
 import java.util.Optional;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -49,7 +44,7 @@ public class VkWallTests {
         String groupScreenName = "some not really interesting in this test name";
         User user = new User(100, "accessToken", "telegramId");
         assertEquals(
-                Optional.empty(), vkWall.getLastPostsStrings(groupScreenName, amountOfPostsMoreThanOneHundred, user)
+                Optional.empty(), vkWall.getPostsStrings(groupScreenName, amountOfPostsMoreThanOneHundred, user)
         );
     }
 

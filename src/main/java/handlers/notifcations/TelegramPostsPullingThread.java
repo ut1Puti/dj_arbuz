@@ -4,8 +4,6 @@ import bots.telegram.TelegramBot;
 import database.GroupsStorage;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.SocialNetwork;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +12,7 @@ import java.util.Optional;
  * Класс получающий новые посты для телеграма
  *
  * @author Кедровских Олег
- * @version 1.3
+ * @version 1.7
  * @see PostsPullingThread
  */
 public class TelegramPostsPullingThread extends PostsPullingThread {
@@ -28,7 +26,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param telegramBot телеграмм бот
+     * @param telegramBot   телеграмм бот
      * @param groupsStorage база данных групп на которые оформлена подписка
      * @param socialNetwork социальная сети реализующая необходимые для работы методы
      */
@@ -47,28 +45,27 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
     @Override
     public void run() {
         while (working.get()) {
-            try {
-                for (String groupScreenName : groupsBase.getGroups()) {
-                    Optional<List<String>> threadFindNewPosts = socialNetwork.getNewPosts(groupsBase, groupScreenName);
+            for (String groupScreenName : groupsBase.getGroups()) {
+                Optional<List<String>> threadFindNewPosts = Optional.empty();
+                try {
+                    threadFindNewPosts = socialNetwork.getNewPosts(groupsBase, groupScreenName);
+                } catch (SocialNetworkException ignored) {
+                }
 
-                    if (threadFindNewPosts.isPresent()) {
-                        for (String postsAttachments : threadFindNewPosts.get()) {
-                            for (String userId : groupsBase.getSubscribedToGroupUsersId(groupScreenName)) {
-                                SendMessage message = new SendMessage(userId, postsAttachments);
-                                try {
-                                    telegramBot.execute(message);
-                                } catch (TelegramApiException ignored) {
-                                }
-                            }
+                if (threadFindNewPosts.isPresent()) {
+                    for (String newPostText : threadFindNewPosts.get()) {
+                        for (String userSendNewPostId : groupsBase.getSubscribedToGroupUsersId(groupScreenName)) {
+                            telegramBot.execute(userSendNewPostId, newPostText);
                         }
                     }
-
                 }
+
+            }
+            try {
                 final int oneHourInMilliseconds = 3600000;
                 Thread.sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
-            } catch (SocialNetworkException ignored) {
             }
         }
         working.set(false);
@@ -78,7 +75,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * Метод проверяющий наличие новых постов
      *
      * @throws UnsupportedOperationException - возникает тк эта операция не нужна в этой реализации класса,
-     * поэтому он не реализован
+     *                                       поэтому он не реализован
      */
     @Override
     public boolean hasNewPosts() {
@@ -91,7 +88,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * Метод получающий новые посты
      *
      * @throws UnsupportedOperationException - возникает тк эта операция не нужна в этой реализации класса,
-     * поэтому он не реализован
+     *                                       поэтому он не реализован
      */
     @Override
     public List<String> getNewPosts() {
