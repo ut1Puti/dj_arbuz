@@ -56,7 +56,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
                 if (threadFindNewPosts.isPresent()) {
                     for (String newPostText : threadFindNewPosts.get()) {
                         for (String userSendNewPostId : groupsBase.getSubscribedToGroupUsersId(groupScreenName)) {
-                            telegramBot.execute(userSendNewPostId, newPostText);
+                            telegramBot.send(userSendNewPostId, newPostText);
                         }
                     }
                 }

@@ -2,6 +2,8 @@ package handlers.messages;
 
 import bots.console.ConsoleBot;
 import database.UserStorage;
+import handlers.messages.AbstractMessageSender;
+import handlers.messages.MessageHandlerResponse;
 import handlers.notifcations.ConsolePostsPullingThread;
 
 /**
@@ -9,9 +11,9 @@ import handlers.notifcations.ConsolePostsPullingThread;
  *
  * @author Кедровских Олег
  * @version 1.0
- * @see MessageSender
+ * @see AbstractMessageSender
  */
-public class ConsoleMessageSender extends MessageSender {
+public class ConsoleMessageSender extends AbstractMessageSender {
     /**
      * Поле потока, получающего новые посты для консольного бота
      *
@@ -23,26 +25,27 @@ public class ConsoleMessageSender extends MessageSender {
      * Конструктор - создает экземпляр класса
      *
      * @param consoleBot бот, от имени которого будет отправлено сообщение
+     * @param userStorage хранилище пользователей
+     * @param notificationPullingThread поток получающий новые посты в группах
      */
-    public ConsoleMessageSender(ConsoleBot consoleBot, ConsolePostsPullingThread notificationPullingThread) {
-        super(consoleBot);
+    public ConsoleMessageSender(ConsoleBot consoleBot, UserStorage userStorage, ConsolePostsPullingThread notificationPullingThread) {
+        super(consoleBot, userStorage);
         this.notificationPullingThread = notificationPullingThread;
     }
 
     /**
      * Метод для отправки сообщений пользователю
      *
-     * @param response ответ бота, который необходимо отправить пользователю
-     * @param userBase база данных пользователей
+     * @param userSendResponse ответ бота, который необходимо отправить пользователю
      */
     @Override
-    public void executeMessage(MessageHandlerResponse response, UserStorage userBase) {
-        super.executeMessage(response, userBase);
-        String userSendResponseId = response.getUserSendResponseId();
+    public void sendResponse(MessageHandlerResponse userSendResponse) {
+        super.sendResponse(userSendResponse);
+        String userSendResponseId = userSendResponse.getUserSendResponseId();
 
         if (notificationPullingThread.hasNewPosts()) {
             for (String newPostText : notificationPullingThread.getNewPosts()) {
-                this.executeSingleMessage(userSendResponseId, newPostText);
+                this.sendSingleMessage(userSendResponseId, newPostText);
             }
         }
 

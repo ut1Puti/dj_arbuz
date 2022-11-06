@@ -13,5 +13,5 @@ public interface BotMessageExecutable {
      * @param userSendResponseId  id пользователя, которому будет отправлено сообщение, в системе
      * @param responseSendMessage текст сообщения, который должен быть отправлен пользователю
      */
-    void execute(String userSendResponseId, String responseSendMessage);
+    void send(String userSendResponseId, String responseSendMessage);
 }

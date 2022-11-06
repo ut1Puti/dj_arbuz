@@ -3,9 +3,9 @@ package handlers.notifcations;
 import database.GroupsStorage;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.SocialNetwork;
-;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**

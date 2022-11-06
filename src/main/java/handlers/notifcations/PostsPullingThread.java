@@ -1,6 +1,7 @@
 package handlers.notifcations;
 
 import database.GroupsStorage;
+import socialnetworks.socialnetwork.AbstractSocialNetwork;
 import socialnetworks.socialnetwork.SocialNetwork;
 import stoppable.StoppableThread;
 

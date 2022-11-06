@@ -1,7 +1,5 @@
 package socialnetworks.socialnetwork.wall;
 
-import com.vk.api.sdk.client.actors.Actor;
-import com.vk.api.sdk.objects.wall.WallpostFull;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
 import socialnetworks.socialnetwork.SocialNetworkException;
 
@@ -10,6 +8,8 @@ import java.util.List;
 /**
  * Интерфейс для взаимодействия со стенами социальных сетей
  *
+ * @param <P> параметр типа данных, который используется для представления поста со стены в социальной сети
+ * @param <A> параметр типа данных используемого в качестве пользователя
  * @author Кедровских Олег
  * @version 1.0
  */

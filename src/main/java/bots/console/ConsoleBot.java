@@ -1,17 +1,10 @@
 package bots.console;
 
 import bots.BotMessageExecutable;
-import database.GroupsStorage;
-import database.UserStorage;
-import handlers.messages.ConsoleMessageSender;
-import handlers.messages.MessageHandleable;
 import handlers.messages.MessageHandler;
-import handlers.messages.MessageHandlerResponse;
 import handlers.notifcations.ConsolePostsPullingThread;
 import bots.StoppableByUser;
 import httpserver.server.HttpServer;
-import socialnetworks.socialnetwork.SocialNetwork;
-import socialnetworks.vk.Vk;
 import stoppable.StoppableThread;
 
 import java.util.Scanner;
@@ -25,48 +18,23 @@ import java.util.Scanner;
  * @see StoppableByUser
  */
 public class ConsoleBot extends StoppableThread implements StoppableByUser, BotMessageExecutable {
-
     /**
      * Поле id пользователя консольной версии бота
      */
-    private final String defaultConsoleUserId = "consoleUser";
+    private static final String defaultConsoleUserId = "consoleUser";
     /**
-     * Поле хранящее пользователя пользующегося ботом
+     * Поле класса исполняющего команды полученные от пользователя
      *
-     * @see UserStorage
+     * @see ConsoleMessageExecutor
      */
-    private final UserStorage userBase;
-    /**
-     * Поле обработчика сообщений пользователя
-     *
-     * @see MessageHandleable
-     */
-    private final MessageHandleable messageHandler;
-    /**
-     * Поле класса-отправителя сообщений пользователю
-     *
-     * @see ConsoleMessageSender
-     */
-    private final ConsoleMessageSender messageExecutor;
-    /**
-     * Поле класса получающего новые посты
-     *
-     * @see ConsolePostsPullingThread
-     */
-    private final ConsolePostsPullingThread notificationPullingThread;
+    private final ConsoleMessageExecutor messageExecutor;
 
     /**
      * Конструктор - создает экземпляр класса
-     *
-     * @param userStorage   база данных пользователей
-     * @param groupsStorage база данных групп
-     * @param socialNetwork социальная сеть с которой будет работать бот
      */
-    public ConsoleBot(UserStorage userStorage, GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
-        this.userBase = userStorage;
-        this.notificationPullingThread = new ConsolePostsPullingThread(defaultConsoleUserId, groupsStorage, socialNetwork);
-        this.messageHandler = new MessageHandler(groupsStorage, userStorage, socialNetwork);
-        this.messageExecutor = new ConsoleMessageSender(this, notificationPullingThread);
+    public ConsoleBot() {
+        super(defaultConsoleUserId);
+        messageExecutor = new ConsoleMessageExecutor(this);
     }
 
     public static void main(String[] args) {
@@ -78,18 +46,13 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
 
         httpServer.start();
 
-        SocialNetwork vk = new Vk();
-        UserStorage userStorage = UserStorage.getInstance();
-        GroupsStorage groupsStorage = GroupsStorage.getInstance();
-        ConsoleBot consoleBot = new ConsoleBot(userStorage, groupsStorage, vk);
+        ConsoleBot consoleBot = new ConsoleBot();
         consoleBot.start();
         while (consoleBot.isWorking()) {
             Thread.onSpinWait();
         }
         consoleBot.stopWithInterrupt();
         httpServer.stop();
-        userStorage.saveToJsonFile();
-        groupsStorage.saveToJsonFile();
     }
 
     /**
@@ -102,19 +65,18 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
      */
     @Override
     public void run() {
-        notificationPullingThread.start();
+        messageExecutor.start();
         Scanner userInput = new Scanner(System.in);
         while (working.get()) {
 
             if (userInput.hasNextLine()) {
-                MessageHandlerResponse response = messageHandler.handleMessage(userInput.nextLine(), defaultConsoleUserId, this);
-                messageExecutor.executeMessage(response, userBase);
+                messageExecutor.executeTextMessage(userInput.nextLine(), defaultConsoleUserId, this);
             }
 
         }
         working.set(false);
         userInput.close();
-        notificationPullingThread.stopWithInterrupt();
+        messageExecutor.stop();
     }
 
     /**
@@ -124,7 +86,7 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
      * @param responseSendMessage сообщение, которое будет отправлено пользователю
      */
     @Override
-    public void execute(String userSendResponseId, String responseSendMessage) {
+    public void send(String userSendResponseId, String responseSendMessage) {
 
         if (!userSendResponseId.equals(defaultConsoleUserId)) {
             return;

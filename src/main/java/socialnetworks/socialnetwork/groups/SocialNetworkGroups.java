@@ -1,15 +1,15 @@
 package socialnetworks.socialnetwork.groups;
 
-import com.vk.api.sdk.objects.groups.Group;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
-import user.BotUser;
 
 import java.util.List;
 
 /**
  * Интерфейс для взаимодействия с группами в социальных сетях
  *
+ * @param <G> параметр типа данных используемый в качестве группы
+ * @param <U> параметр типа данных используемого в качестве пользователя
  * @author Кедровских Олег
  * @version 1.0
  */

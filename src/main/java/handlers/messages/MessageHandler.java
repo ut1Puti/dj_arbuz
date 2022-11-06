@@ -2,6 +2,7 @@ package handlers.messages;
 
 import bots.BotTextResponse;
 import bots.StoppableByUser;
+import socialnetworks.socialnetwork.AbstractSocialNetwork;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.SocialNetwork;
 import database.GroupsStorage;
@@ -171,18 +172,13 @@ public class MessageHandler implements MessageHandleable {
                 case "/stop" -> {
                     return getStopResponse(stoppableByUserThread, userSendResponseId);
                 }
+                case "/subscribe" -> {
+                    return getUserSubscribedGroupsLinks(userSendResponseId);
+                }
                 default -> {
-
-                    if (!commandAndArgs[COMMAND_INDEX].equals("/subscribed")) {
-                        return UNKNOWN_COMMAND.build(userSendResponseId);
-                    }
-
+                    return UNKNOWN_COMMAND.build(userSendResponseId);
                 }
             }
-        }
-
-        if (commandAndArgs[COMMAND_INDEX].equals("/subscribed")) {
-            return getUserSubscribedGroupsLinks(userSendResponseId);
         }
 
         if (isItSingleArgCommand(commandAndArgs)) {
@@ -232,8 +228,8 @@ public class MessageHandler implements MessageHandleable {
      *
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return ответ на команду /auth
-     * @see SocialNetwork#getAuthUrl()
-     * @see SocialNetwork#createBotUserAsync(String)
+     * @see AbstractSocialNetwork#getAuthUrl()
+     * @see AbstractSocialNetwork#createBotUserAsync(String)
      * @see MessageHandler#AUTH_ERROR
      * @see MessageHandlerResponse#newBuilder()
      * @see BotTextResponse#AUTH_GO_VIA_LINK
@@ -277,7 +273,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName имя группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return ссылку на верифицированную группу если такая нашлась
-     * @see SocialNetwork#getGroupUrl(String, BotUser)
+     * @see AbstractSocialNetwork#getGroupUrl(String, Object)
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
      */
@@ -306,7 +302,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName имя группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return id верифицированной группы если такая нашлась
-     * @see SocialNetwork#getGroupId(String, BotUser)
+     * @see AbstractSocialNetwork#getGroupId(String, Object)
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
      */
@@ -335,7 +331,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName Название группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return возвращает ответ содержащий информацию о статусе подписки пользователя
-     * @see SocialNetwork#subscribeTo(GroupsStorage, String, BotUser)
+     * @see AbstractSocialNetwork#subscribeTo(GroupsStorage, String, Object)
      * @see SubscribeStatus#getSubscribeMessage()
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
@@ -350,9 +346,7 @@ public class MessageHandler implements MessageHandleable {
 
         try {
             return MessageHandlerResponse.newBuilder()
-                    .textMessage(socialNetwork
-                            .subscribeTo(groupsBase, userReceivedGroupName, userCallingMethod)
-                            .getSubscribeMessage())
+                    .textMessage(socialNetwork.subscribeTo(groupsBase, userReceivedGroupName, userCallingMethod).getSubscribeMessage())
                     .build(userSendResponseId);
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageHandlerResponse.newBuilder()
@@ -367,7 +361,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName название группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return ответ с сообщением о статусе отписки пользователя
-     * @see SocialNetwork#unsubscribeFrom(GroupsStorage, String, BotUser)
+     * @see AbstractSocialNetwork#unsubscribeFrom(GroupsStorage, String, Object)
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
      */
@@ -428,7 +422,7 @@ public class MessageHandler implements MessageHandleable {
      * @param userReceivedGroupName имя группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return текст постов, ссылки на изображения в них, а также ссылки
-     * @see SocialNetwork#getLastPostsAsStrings(String, int, BotUser)
+     * @see AbstractSocialNetwork#getLastPostsAsStrings(String, int, Object)
      * @see MessageHandler#DEFAULT_POST_NUMBER
      * @see MessageHandler#NO_POSTS_IN_GROUP
      * @see MessageHandlerResponse#newBuilder()
