@@ -1,5 +1,6 @@
 package handlers.messages;
 
+import bots.BotMessageExecutable;
 import database.UserStorage;
 
 import java.util.function.BiConsumer;
@@ -17,7 +18,7 @@ public class TelegramMessageSender extends AbstractMessageSender {
      *
      * @param telegramBot бот, от имени которого будет отправлено сообщение
      */
-    public TelegramMessageSender(BiConsumer<String, String> telegramBot, UserStorage userStorage) {
+    public TelegramMessageSender(BotMessageExecutable telegramBot, UserStorage userStorage) {
         super(telegramBot, userStorage);
     }
 }

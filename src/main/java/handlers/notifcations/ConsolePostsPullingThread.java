@@ -51,6 +51,7 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
                     continue;
                 }
 
+                // проверяется наличие новых постов, могут отсутствовать по причине отсутствия новых постов или отсутствия группы в базе данных
                 if (threadNewPosts.isPresent()) {
                     List<String> threadFindNewPosts = threadNewPosts.get();
                     for (int i = 0; i < threadFindNewPosts.size(); i++) {

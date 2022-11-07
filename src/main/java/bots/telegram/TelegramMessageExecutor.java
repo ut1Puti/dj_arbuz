@@ -50,16 +50,7 @@ public final class TelegramMessageExecutor {
         GroupsStorage groupsStorage = GroupsStorage.getInstance();
         Vk vk = new Vk();
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
-        BiConsumer<String, String> consumer = new BiConsumer<String, String>() {
-            @Override
-            public void accept(String s, String s2) {
-                SendMessage sendMessage = new SendMessage(s, s2);
-                try {
-                    telegramBot.execute(sendMessage);
-                } catch (TelegramApiException ignore) {}
-            }
-        };
-        messageSender = new TelegramMessageSender(consumer, userStorage);
+        messageSender = new TelegramMessageSender(telegramBot, userStorage);
         notificationPullingThread = new TelegramPostsPullingThread(telegramBot, groupsStorage, vk);
     }
 

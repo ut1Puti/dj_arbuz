@@ -1,11 +1,11 @@
 package handlers.messages;
 
+import bots.BotMessageExecutable;
 import bots.BotTextResponse;
 import database.UserStorage;
 import user.BotUser;
 
 import java.util.concurrent.ExecutionException;
-import java.util.function.BiConsumer;
 
 /**
  * Класс-отправитель сообщений пользователям
@@ -18,7 +18,7 @@ abstract class AbstractMessageSender implements MessageSender {
      * Потребитель принимающий на вход id пользователя и строку содержащую сообщение,
      * которую необходимо отправить пользователю
      */
-    private final BiConsumer<String, String> consumer;
+    private final BotMessageExecutable messageSender;
     /**
      * Поле хранилища пользователей
      *
@@ -29,11 +29,11 @@ abstract class AbstractMessageSender implements MessageSender {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param consumer    реализация интерфейса, логика которой является логикой отправки сообщения пользователю
+     * @param messageSender    реализация интерфейса, логика которой является логикой отправки сообщения пользователю
      * @param userStorage хранилище пользователей
      */
-    protected AbstractMessageSender(BiConsumer<String, String> consumer, UserStorage userStorage) {
-        this.consumer = consumer;
+    protected AbstractMessageSender(BotMessageExecutable messageSender, UserStorage userStorage) {
+        this.messageSender = messageSender;
         this.userStorage = userStorage;
     }
 
@@ -47,12 +47,12 @@ abstract class AbstractMessageSender implements MessageSender {
         String userSendResponseId = userSendResponse.getUserSendResponseId();
 
         if (userSendResponse.hasTextMessage()) {
-            consumer.accept(userSendResponseId, userSendResponse.getTextMessage());
+            messageSender.send(userSendResponseId, userSendResponse.getTextMessage());
         }
 
         if (userSendResponse.hasPostsMessages()) {
             for (String postMessage : userSendResponse.getPostsMessages()) {
-                consumer.accept(userSendResponseId, postMessage);
+                messageSender.send(userSendResponseId, postMessage);
             }
         }
 
@@ -64,11 +64,11 @@ abstract class AbstractMessageSender implements MessageSender {
             }
 
             if (currentUser == null) {
-                consumer.accept(userSendResponseId, BotTextResponse.AUTH_ERROR);
+                messageSender.send(userSendResponseId, BotTextResponse.AUTH_ERROR);
                 return;
             }
 
-            consumer.accept(userSendResponseId, BotTextResponse.AUTH_SUCCESS);
+            messageSender.send(userSendResponseId, BotTextResponse.AUTH_SUCCESS);
             userStorage.addInfoUser(userSendResponseId, currentUser);
         }
 
@@ -82,6 +82,6 @@ abstract class AbstractMessageSender implements MessageSender {
      */
     @Override
     public void sendSingleMessage(String userSendResponseId, String userSendText) {
-        consumer.accept(userSendResponseId, userSendText);
+        messageSender.send(userSendResponseId, userSendText);
     }
 }

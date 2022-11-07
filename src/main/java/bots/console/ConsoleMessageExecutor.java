@@ -49,17 +49,7 @@ public final class ConsoleMessageExecutor {
         Vk vk = new Vk();
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
         notificationPullingThread = new ConsolePostsPullingThread(consoleBot.getName(), groupsStorage, vk);
-        BiConsumer<String, String> consumer = new BiConsumer<String, String>() {
-            @Override
-            public void accept(String s, String s2) {
-                if (!s.equals(consoleBot.getName())) {
-                    return;
-                }
-
-                System.out.println(s2);
-            }
-        };
-        messageSender = new ConsoleMessageSender(consumer, userStorage, notificationPullingThread);
+        messageSender = new ConsoleMessageSender(consoleBot, userStorage, notificationPullingThread);
     }
 
     /**

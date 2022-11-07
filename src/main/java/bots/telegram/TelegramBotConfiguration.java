@@ -81,6 +81,11 @@ public final class TelegramBotConfiguration {
         }
     }
 
+    /**
+     * Метод создающий объект класса из параметров окружения программы
+     *
+     * @return {@code TelegramBotConfiguration} с параметрами конфигрурации из локального окружения
+     */
     static TelegramBotConfiguration loadFromEnvVariables() {
         String telegramBotName = System.getenv("telegram_bot_name");
         String telegramBotToken = System.getenv("telegram_bot_token");
@@ -108,7 +113,7 @@ public final class TelegramBotConfiguration {
      * Метод проверяющий равенство {@code obj} и {@code TelegramBotConfiguration}
      *
      * @param obj - сравниваемый объект
-     * @return true если объекты равны по полям, false если объекты не равны по полям
+     * @return {@code true} если объекты равны по полям, {@code false} если объекты не равны по полям
      */
     @Override
     public boolean equals(Object obj) {

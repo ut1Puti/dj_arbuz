@@ -70,7 +70,7 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
         while (working.get()) {
 
             if (userInput.hasNextLine()) {
-                messageExecutor.executeTextMessage(userInput.nextLine(), defaultConsoleUserId, this);
+                messageExecutor.executeTextMessage(defaultConsoleUserId, userInput.nextLine(), this);
             }
 
         }

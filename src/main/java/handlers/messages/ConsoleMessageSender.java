@@ -1,5 +1,7 @@
 package handlers.messages;
 
+import bots.console.ConsoleBot;
+import bots.telegram.TelegramBot;
 import database.UserStorage;
 import handlers.notifcations.ConsolePostsPullingThread;
 
@@ -23,12 +25,12 @@ public class ConsoleMessageSender extends AbstractMessageSender {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param senderTask
+     * @param consoleBot
      * @param userStorage хранилище пользователей
      * @param notificationPullingThread поток получающий новые посты в группах
      */
-    public ConsoleMessageSender(BiConsumer<String, String> senderTask, UserStorage userStorage, ConsolePostsPullingThread notificationPullingThread) {
-        super(senderTask, userStorage);
+    public ConsoleMessageSender(ConsoleBot consoleBot, UserStorage userStorage, ConsolePostsPullingThread notificationPullingThread) {
+        super(consoleBot, userStorage);
         this.notificationPullingThread = notificationPullingThread;
     }
 

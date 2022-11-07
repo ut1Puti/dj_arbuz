@@ -54,6 +54,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
                     continue;
                 }
 
+                // проверяется наличие новых постов, могут отсутствовать по причине отсутствия новых постов или отсутствия группы в базе данных
                 if (threadFindNewPosts.isPresent()) {
                     for (String newPostText : threadFindNewPosts.get()) {
                         for (String userSendNewPostId : groupsBase.getSubscribedToGroupUsersId(groupScreenName)) {
