@@ -8,7 +8,11 @@ import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerResponse;
 import handlers.messages.TelegramMessageSender;
 import handlers.notifcations.TelegramPostsPullingThread;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import socialnetworks.vk.Vk;
+
+import java.util.function.BiConsumer;
 
 /**
  * Класс исполнителя сообщений пользователя телеграм бота
@@ -16,7 +20,7 @@ import socialnetworks.vk.Vk;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class TelegramMessageExecutor {
+public final class TelegramMessageExecutor {
     /**
      * Поле обработчика сообщений пользователя
      *
@@ -46,7 +50,16 @@ public class TelegramMessageExecutor {
         GroupsStorage groupsStorage = GroupsStorage.getInstance();
         Vk vk = new Vk();
         messageHandler = new MessageHandler(groupsStorage, userStorage, vk);
-        messageSender = new TelegramMessageSender(telegramBot, userStorage);
+        BiConsumer<String, String> consumer = new BiConsumer<String, String>() {
+            @Override
+            public void accept(String s, String s2) {
+                SendMessage sendMessage = new SendMessage(s, s2);
+                try {
+                    telegramBot.execute(sendMessage);
+                } catch (TelegramApiException ignore) {}
+            }
+        };
+        messageSender = new TelegramMessageSender(consumer, userStorage);
         notificationPullingThread = new TelegramPostsPullingThread(telegramBot, groupsStorage, vk);
     }
 

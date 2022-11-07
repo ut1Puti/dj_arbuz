@@ -10,13 +10,15 @@ import handlers.messages.MessageHandlerResponse;
 import handlers.notifcations.ConsolePostsPullingThread;
 import socialnetworks.vk.Vk;
 
+import java.util.function.BiConsumer;
+
 /**
  * Класс исполнителя сообщений пользователя консольного бота
  *
  * @author Кедровских Олег
  * @version 1.0
  */
-public class ConsoleMessageExecutor {
+public final class ConsoleMessageExecutor {
     /**
      * Поле обработчика сообщений пользователя
      *
@@ -47,7 +49,17 @@ public class ConsoleMessageExecutor {
         Vk vk = new Vk();
         messageHandler = new MessageHandler(groupsStorage, userStorage, vk);
         notificationPullingThread = new ConsolePostsPullingThread(consoleBot.getName(), groupsStorage, vk);
-        messageSender = new ConsoleMessageSender(consoleBot, userStorage, notificationPullingThread);
+        BiConsumer<String, String> consumer = new BiConsumer<String, String>() {
+            @Override
+            public void accept(String s, String s2) {
+                if (!s.equals(consoleBot.getName())) {
+                    return;
+                }
+
+                System.out.println(s2);
+            }
+        };
+        messageSender = new ConsoleMessageSender(consumer, userStorage, notificationPullingThread);
     }
 
     /**

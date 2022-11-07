@@ -1,10 +1,9 @@
 package handlers.messages;
 
-import bots.console.ConsoleBot;
 import database.UserStorage;
-import handlers.messages.AbstractMessageSender;
-import handlers.messages.MessageHandlerResponse;
 import handlers.notifcations.ConsolePostsPullingThread;
+
+import java.util.function.BiConsumer;
 
 /**
  * Класс-отправитель сообщений консольного бота
@@ -24,12 +23,12 @@ public class ConsoleMessageSender extends AbstractMessageSender {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param consoleBot бот, от имени которого будет отправлено сообщение
+     * @param senderTask
      * @param userStorage хранилище пользователей
      * @param notificationPullingThread поток получающий новые посты в группах
      */
-    public ConsoleMessageSender(ConsoleBot consoleBot, UserStorage userStorage, ConsolePostsPullingThread notificationPullingThread) {
-        super(consoleBot, userStorage);
+    public ConsoleMessageSender(BiConsumer<String, String> senderTask, UserStorage userStorage, ConsolePostsPullingThread notificationPullingThread) {
+        super(senderTask, userStorage);
         this.notificationPullingThread = notificationPullingThread;
     }
 

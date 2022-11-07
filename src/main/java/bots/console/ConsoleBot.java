@@ -8,6 +8,7 @@ import httpserver.server.HttpServer;
 import stoppable.StoppableThread;
 
 import java.util.Scanner;
+import java.util.function.BiConsumer;
 
 /**
  * Класс потока обрабатывающего сообщения пользователя с консоли
