@@ -2,7 +2,6 @@ package socialnetworks.vk.oAuth;
 
 import com.google.gson.JsonSyntaxException;
 import loaders.gson.GsonLoader;
-import loaders.gson.GsonLoadable;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -13,7 +12,7 @@ import java.util.Objects;
  * @author Кедровских Олег
  * @version 2.0
  */
-public final class VkAuthConfiguration implements GsonLoadable {
+public final class VkAuthConfiguration {
     /**
      * Поле объекта, который выполняет чтение json файла и преобразования в объект
      *
@@ -68,7 +67,13 @@ public final class VkAuthConfiguration implements GsonLoadable {
      */
     static VkAuthConfiguration loadVkAuthConfigurationFromJson(String vkAuthConfigurationJsonFilePath) {
         try {
-            return VK_AUTH_CONFIGURATION_GSON_LOADER.loadFromJson(vkAuthConfigurationJsonFilePath);
+            VkAuthConfiguration loadedConf = VK_AUTH_CONFIGURATION_GSON_LOADER.loadFromJson(vkAuthConfigurationJsonFilePath);
+            if (loadedConf.APP_ID == null || loadedConf.AUTH_URL == null ||
+                    loadedConf.REDIRECT_URL == null || loadedConf.CLIENT_SECRET == null ||
+                    loadedConf.SERVICE_CLIENT_SECRET == null) {
+                throw new IOException("Поля объекта не могут быть null");
+            }
+            return loadedConf;
         } catch (IOException | JsonSyntaxException e) {
             throw new RuntimeException(e);
         }

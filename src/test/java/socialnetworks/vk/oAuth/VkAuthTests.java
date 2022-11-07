@@ -26,7 +26,7 @@ public class VkAuthTests {
      */
     private static final VkApiClient vk = new VkApiClient(transportClient);
     /**
-     *
+     * Поле сервера для авторизации пользователей
      */
     private static final HttpServer httpServer = HttpServer.getInstance();
     /**

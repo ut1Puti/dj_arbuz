@@ -15,7 +15,7 @@ import socialnetworks.socialnetwork.wall.SocialNetworkWall;
  * @author Кедровских Олег
  * @version 1.0
  */
-public abstract class AbstractSocialNetwork<G, P, U, S, A> implements SocialNetwork<U> {
+public abstract class AbstractSocialNetwork<G, P, U, S, A> implements SocialNetwork<P, U> {
     /**
      * Поле класс для авторизации в социальной сети
      *

@@ -12,7 +12,7 @@ import java.util.Scanner;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class GsonLoader<T extends GsonLoadable> {
+public class GsonLoader<T> {
     /**
      * Поле класса преобразовывающего объекты в json строки
      *

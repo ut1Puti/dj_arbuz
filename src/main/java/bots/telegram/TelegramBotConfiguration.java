@@ -2,7 +2,6 @@ package bots.telegram;
 
 import com.google.gson.JsonSyntaxException;
 import loaders.gson.GsonLoader;
-import loaders.gson.GsonLoadable;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -14,7 +13,7 @@ import java.util.Scanner;
  * @author Щёголев Андрей
  * @version 1.0
  */
-public final class TelegramBotConfiguration implements GsonLoadable {
+public final class TelegramBotConfiguration {
     /**
      * Поле объекта, который выполняет чтение json файла и преобразования в объект
      *

@@ -57,7 +57,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @see VkAuth#getAuthUrl()
      */
     @Override
-    public String getAuthUrl() {
+    public final String getAuthUrl() {
         return oAuth.getAuthUrl();
     }
 
@@ -84,7 +84,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @see VkGroups#searchGroup(String, BotUser)
      */
     @Override
-    public String getGroupUrl(String userReceivedGroupName, BotUser userCallingMethod)
+    public final String getGroupUrl(String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         return VkConstants.VK_ADDRESS + groups.searchGroup(userReceivedGroupName, userCallingMethod).getScreenName();
     }
@@ -101,7 +101,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @see VkGroups#searchGroup(String, BotUser)
      */
     @Override
-    public String getGroupId(String userReceivedGroupName, BotUser userCallingMethod)
+    public final String getGroupId(String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         return String.valueOf(groups.searchGroup(userReceivedGroupName, userCallingMethod).getId());
     }
@@ -122,7 +122,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @see GroupsStorage#addInfoToGroup(String, String)
      */
     @Override
-    public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
+    public final SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
             throws SocialNetworkException, NoGroupException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
 
@@ -147,7 +147,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
     @Override
-    public boolean unsubscribeFrom(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
+    public final boolean unsubscribeFrom(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
 
@@ -182,6 +182,23 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
     }
 
     /**
+     * Метод для получения постов из группы vk, посты представлены классом постов vk
+     *
+     * @param userReceivedGroupName подстрока полученная от пользователя
+     * @param amountOfPosts         кол-во постов, которые запросили в социальной сети
+     * @param userCalledMethod      пользователь вызвавший метод
+     * @return {@code amountOfPosts} постов в виде {@code WallpostFull}
+     * @throws NoGroupException           возникает если группа по заданной подстроке не была найдена
+     * @throws SocialNetworkException     возникает при ошибках обращения к api социальной сети
+     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
+     */
+    @Override
+    public List<WallpostFull> getLastPostsAsPosts(String userReceivedGroupName, int amountOfPosts, BotUser userCalledMethod) throws NoGroupException, SocialNetworkException {
+        Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCalledMethod);
+        return wall.getPosts(userFindGroup.getScreenName(), amountOfPosts, userCalledMethod);
+    }
+
+    /**
      * Метод для получения новых постов из группы в базе данных, а также обновляющий дату последнего поста
      *
      * @param groupsStorage   - база данных
@@ -195,7 +212,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @see VkPostsParser#parsePosts(List)
      */
     @Override
-    public Optional<List<String>> getNewPostsAsStrings(GroupsStorage groupsStorage, String groupScreenName)
+    public final Optional<List<String>> getNewPostsAsStrings(GroupsStorage groupsStorage, String groupScreenName)
             throws SocialNetworkException {
         final int amountOfPosts = 100;
         //TODO synchronize working with lastPostDate
