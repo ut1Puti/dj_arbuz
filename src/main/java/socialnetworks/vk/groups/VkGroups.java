@@ -12,7 +12,6 @@ import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.groups.NoGroupException;
-import socialnetworks.socialnetwork.groups.SocialNetworkGroups;
 import socialnetworks.vk.VkConstants;
 import user.BotUser;
 
@@ -25,9 +24,9 @@ import java.util.Map;
  *
  * @author Кедровских Олег
  * @version 1.0
- * @see SocialNetworkGroups
+ * @see AbstractVkGroups
  */
-public class VkGroups implements SocialNetworkGroups<Group, BotUser> {
+public class VkGroups extends AbstractVkGroups {
     /**
      * Поле класс позволяющего работать с vk api
      */

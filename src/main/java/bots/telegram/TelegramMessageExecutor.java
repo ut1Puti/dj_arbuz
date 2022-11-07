@@ -3,8 +3,8 @@ package bots.telegram;
 import bots.StoppableByUser;
 import database.GroupsStorage;
 import database.UserStorage;
-import handlers.messages.MessageHandleable;
 import handlers.messages.MessageHandler;
+import handlers.messages.MessageHandlerImpl;
 import handlers.messages.MessageHandlerResponse;
 import handlers.messages.TelegramMessageSender;
 import handlers.notifcations.TelegramPostsPullingThread;
@@ -24,9 +24,9 @@ public final class TelegramMessageExecutor {
     /**
      * Поле обработчика сообщений пользователя
      *
-     * @see MessageHandleable
+     * @see MessageHandler
      */
-    private final MessageHandleable messageHandler;
+    private final MessageHandler messageHandler;
     /**
      * Поле отправителя ответов пользователям
      *
@@ -49,7 +49,7 @@ public final class TelegramMessageExecutor {
         UserStorage userStorage = UserStorage.getInstance();
         GroupsStorage groupsStorage = GroupsStorage.getInstance();
         Vk vk = new Vk();
-        messageHandler = new MessageHandler(groupsStorage, userStorage, vk);
+        messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
         BiConsumer<String, String> consumer = new BiConsumer<String, String>() {
             @Override
             public void accept(String s, String s2) {

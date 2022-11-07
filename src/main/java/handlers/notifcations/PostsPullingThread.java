@@ -1,8 +1,7 @@
 package handlers.notifcations;
 
 import database.GroupsStorage;
-import socialnetworks.socialnetwork.AbstractSocialNetwork;
-import socialnetworks.socialnetwork.SocialNetwork;
+import socialnetworks.vk.Vk;
 import stoppable.StoppableThread;
 
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
  * Абстрактный класс потока получающего новые посты. Поток является потоком демоном
  *
  * @author Кедровских Олег
- * @version 1.3
+ * @version 2.0
  * @see StoppableThread
  */
 public abstract class PostsPullingThread extends StoppableThread {
@@ -24,19 +23,19 @@ public abstract class PostsPullingThread extends StoppableThread {
     /**
      * Поле обработчика обращений к vk api
      *
-     * @see SocialNetwork
+     * @see Vk
      */
-    protected final SocialNetwork socialNetwork;
+    protected final Vk socialNetwork;
 
     /**
      * Конструктор - создает экземпляр класса
      *
      * @param groupsStorage база данных групп на которые оформлена подписка
-     * @param socialNetwork интерфейс реализующий доступ к необходимым методам социальной сети
+     * @param vk            класс реализующий доступ к методам обработчика запросов к социальной сети
      */
-    protected PostsPullingThread(GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
+    protected PostsPullingThread(GroupsStorage groupsStorage, Vk vk) {
         this.groupsBase = groupsStorage;
-        this.socialNetwork = socialNetwork;
+        this.socialNetwork = vk;
         this.setDaemon(true);
     }
 

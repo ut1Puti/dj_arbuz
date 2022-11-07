@@ -2,7 +2,7 @@ package handlers.notifcations;
 
 import database.GroupsStorage;
 import socialnetworks.socialnetwork.SocialNetworkException;
-import socialnetworks.socialnetwork.SocialNetwork;
+import socialnetworks.vk.Vk;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +32,7 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
      * @param groupsStorage база данных групп на которые оформленна подписка
      * @param socialNetwork интерфейс социальной сети реализующий необходимые методы
      */
-    public ConsolePostsPullingThread(String consoleUserId, GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
+    public ConsolePostsPullingThread(String consoleUserId, GroupsStorage groupsStorage, Vk socialNetwork) {
         super(groupsStorage, socialNetwork);
         this.consoleBotUserId = consoleUserId;
     }

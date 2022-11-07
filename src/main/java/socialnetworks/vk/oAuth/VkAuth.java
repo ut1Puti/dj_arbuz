@@ -6,17 +6,16 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import httpserver.server.HttpServer;
-import socialnetworks.socialnetwork.oAuth.SocialNetworkAuth;
 import user.BotUser;
 
 /**
  * Класс для аутентификации пользователей
  *
  * @author Кедровских Олег
- * @version 1.2
- * @see SocialNetworkAuth
+ * @version 2.0
+ * @see AbstractVkAuth
  */
-public class VkAuth implements SocialNetworkAuth<ServiceActor, BotUser> {
+public class VkAuth extends AbstractVkAuth {
     /**
      * Поле класс позволяющего работать с vk api
      *

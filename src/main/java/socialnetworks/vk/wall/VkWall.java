@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
  *
  * @author Кедровских Олег
  * @version 1.0
- * @see SocialNetworkWall
+ * @see AbstractVkWall
  */
-public class VkWall implements SocialNetworkWall<WallpostFull, Actor> {
+public class VkWall extends AbstractVkWall {
     /**
      * Поле регулярного выражения для поиска id группы в
      */
@@ -81,7 +81,7 @@ public class VkWall implements SocialNetworkWall<WallpostFull, Actor> {
      * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
      * @throws IllegalArgumentException   возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                    Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
-     * @see VkWall#searchPostsInGroup(String, int, Actor) 
+     * @see VkWall#searchPostsInGroup(String, int, Actor)
      */
     @Override
     public List<WallpostFull> getPosts(String groupSearchString, int amountOfPosts, Actor userCalledMethod)

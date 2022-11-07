@@ -4,8 +4,8 @@ import bots.StoppableByUser;
 import database.GroupsStorage;
 import database.UserStorage;
 import handlers.messages.ConsoleMessageSender;
-import handlers.messages.MessageHandleable;
 import handlers.messages.MessageHandler;
+import handlers.messages.MessageHandlerImpl;
 import handlers.messages.MessageHandlerResponse;
 import handlers.notifcations.ConsolePostsPullingThread;
 import socialnetworks.vk.Vk;
@@ -22,9 +22,9 @@ public final class ConsoleMessageExecutor {
     /**
      * Поле обработчика сообщений пользователя
      *
-     * @see MessageHandleable
+     * @see MessageHandler
      */
-    private final MessageHandleable messageHandler;
+    private final MessageHandler messageHandler;
     /**
      * Поле отправителя ответов пользователям
      *
@@ -47,7 +47,7 @@ public final class ConsoleMessageExecutor {
         UserStorage userStorage = UserStorage.getInstance();
         GroupsStorage groupsStorage = GroupsStorage.getInstance();
         Vk vk = new Vk();
-        messageHandler = new MessageHandler(groupsStorage, userStorage, vk);
+        messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
         notificationPullingThread = new ConsolePostsPullingThread(consoleBot.getName(), groupsStorage, vk);
         BiConsumer<String, String> consumer = new BiConsumer<String, String>() {
             @Override

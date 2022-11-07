@@ -1,6 +1,5 @@
 package handlers.messages;
 
-import bots.BotMessageExecutable;
 import bots.BotTextResponse;
 import database.UserStorage;
 import user.BotUser;
@@ -16,7 +15,8 @@ import java.util.function.BiConsumer;
  */
 abstract class AbstractMessageSender implements MessageSender {
     /**
-     *
+     * Потребитель принимающий на вход id пользователя и строку содержащую сообщение,
+     * которую необходимо отправить пользователю
      */
     private final BiConsumer<String, String> consumer;
     /**
@@ -29,7 +29,7 @@ abstract class AbstractMessageSender implements MessageSender {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param consumer реализация интерфейса, логика которой является логикой отправки сообщения пользователю
+     * @param consumer    реализация интерфейса, логика которой является логикой отправки сообщения пользователю
      * @param userStorage хранилище пользователей
      */
     protected AbstractMessageSender(BiConsumer<String, String> consumer, UserStorage userStorage) {
@@ -78,7 +78,7 @@ abstract class AbstractMessageSender implements MessageSender {
      * Метод для отправки единичного сообщения пользователю
      *
      * @param userSendResponseId id пользователя, которому будет отправлено сообщение
-     * @param userSendText текст сообщения, которое будет отправлено пользователю
+     * @param userSendText       текст сообщения, которое будет отправлено пользователю
      */
     @Override
     public void sendSingleMessage(String userSendResponseId, String userSendText) {

@@ -4,6 +4,7 @@ import bots.telegram.TelegramBot;
 import database.GroupsStorage;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.SocialNetwork;
+import socialnetworks.vk.Vk;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * @param groupsStorage база данных групп на которые оформлена подписка
      * @param socialNetwork социальная сети реализующая необходимые для работы методы
      */
-    public TelegramPostsPullingThread(TelegramBot telegramBot, GroupsStorage groupsStorage, SocialNetwork socialNetwork) {
+    public TelegramPostsPullingThread(TelegramBot telegramBot, GroupsStorage groupsStorage, Vk socialNetwork) {
         super(groupsStorage, socialNetwork);
         this.telegramBot = telegramBot;
     }

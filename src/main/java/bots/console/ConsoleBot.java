@@ -1,14 +1,13 @@
 package bots.console;
 
 import bots.BotMessageExecutable;
-import handlers.messages.MessageHandler;
+import handlers.messages.MessageHandlerImpl;
 import handlers.notifcations.ConsolePostsPullingThread;
 import bots.StoppableByUser;
 import httpserver.server.HttpServer;
 import stoppable.StoppableThread;
 
 import java.util.Scanner;
-import java.util.function.BiConsumer;
 
 /**
  * Класс потока обрабатывающего сообщения пользователя с консоли
@@ -60,7 +59,7 @@ public class ConsoleBot extends StoppableThread implements StoppableByUser, BotM
      * Метод с логикой выполняемой внутри потока
      *
      * @see StoppableThread#run()
-     * @see MessageHandler#handleMessage(String, String, StoppableByUser)
+     * @see MessageHandlerImpl#handleMessage(String, String, StoppableByUser)
      * @see ConsolePostsPullingThread#start()
      * @see ConsolePostsPullingThread#stopWithInterrupt()
      */

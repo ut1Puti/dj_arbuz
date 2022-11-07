@@ -14,6 +14,13 @@ import java.util.Scanner;
  */
 public class HttpParser {
     /**
+     * Конструктор - приватный тк этот запрещено создавать экземпляры этого класса
+     */
+    private HttpParser() {
+        throw new IllegalStateException("Нельзя создавать этот класс");
+    }
+
+    /**
      * Метод парсящий запрос поступивший на сервер
      *
      * @param socketInputStream - поток данных с сокета
