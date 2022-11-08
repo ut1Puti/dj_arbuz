@@ -1,0 +1,11 @@
+1) Красивое ведение Git репозитория;
+2) Tests (Junit);
+3) Deploy (Heroku);
+4) Использование в проекте различных открытых API (https://spoonacular.com/food-api/docs#Search-Recipes-Complex);
+5) Работа с ORM Hibernate;
+6) Работа с реляционной СУБД (PostgreSQL, MSSQL);
+7) Добавление кэширования;
+8) Реализация гибкого логирования;
+9) Использование в проекте Spring Framework;
+10) Использование в проекте других JVM языков (Groovy/Kotlin);
+
