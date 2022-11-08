@@ -1,8 +1,9 @@
 package database;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import loaders.gson.GsonLoader;
 
+import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ public class GroupsStorage {
      * Поле хеш таблицы, где ключ - имя группы в социальной сети, значение - список пользователей
      */
     private Map<String, GroupRelatedData> groupsBase;
-    private static GroupsStorage groupsStorage = null;
+    private static GroupsStorage groupsStorage;
 
     /**
      * Метод для создания нового пользователя в наш класс
@@ -88,12 +89,10 @@ public class GroupsStorage {
      * Метод для сохранения хеш таблицы в виде файла с расширением json
      */
     public void saveToJsonFile() {
-        Gson gson = new Gson();
-        String json = gson.toJson(groupsBase);
+        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {}.getType();
+        GsonLoader<Map<String, GroupRelatedData>> groupStorageMapGsonLoader = new GsonLoader<>(groupStorageMapType);
         try {
-            FileWriter file = new FileWriter("src/main/resources/anonsrc/database_for_groups.json");
-            file.write(json);
-            file.close();
+            groupStorageMapGsonLoader.loadToJson("src/main/resources/anonsrc/database_for_groups.json", groupsBase);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -105,18 +104,10 @@ public class GroupsStorage {
      * @see GroupsStorage#saveToJsonFile()
      */
     public void returnStorageFromDatabase() {
+        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {}.getType();
+        GsonLoader<Map<String, GroupRelatedData>> loader = new GsonLoader<>(groupStorageMapType);
         try {
-            FileReader file = new FileReader("src/main/resources/anonsrc/database_for_groups.json");
-            Scanner scanner = new Scanner(file);
-            try {
-                String json = scanner.nextLine();
-                Gson jsonFile = new Gson();
-                groupsBase = jsonFile.fromJson(json, new TypeToken<Map<String, GroupRelatedData>>() {
-                }.getType());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-            file.close();
+            groupsBase = loader.loadFromJson("src/main/resources/anonsrc/database_for_groups.json");
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

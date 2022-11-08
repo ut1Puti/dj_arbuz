@@ -5,7 +5,6 @@ import loaders.gson.GsonLoader;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Scanner;
 
 /**
  * Класс хранящий конфигурацию телеграм бота
@@ -32,34 +31,6 @@ public final class TelegramBotConfiguration {
     private TelegramBotConfiguration(String botUserName, String telegramBotToken) {
         this.botUserName = botUserName;
         this.telegramBotToken = telegramBotToken;
-    }
-
-    /**
-     * Метод для создания json файла с конфигурацией телеграм юота
-     *
-     * @param args переменные запуска
-     */
-    public static void main(String[] args) {
-        Scanner userInput = new Scanner(System.in);
-        System.out.print("Введите токен бота: ");
-        String telegramBotToken = userInput.next();
-        System.out.print("Введите имя бота: ");
-        String telegramBotName = userInput.next();
-        TelegramBotConfiguration telegramBotConfiguration = new TelegramBotConfiguration(telegramBotName, telegramBotToken);
-        String telegramBotConfigurationJsonFilePath = "";
-        while (!telegramBotConfigurationJsonFilePath.matches(".*\\.json")) {
-            System.out.print("Введите путь, до json файла, в который будет сохранена конфигурация:");
-            telegramBotConfigurationJsonFilePath = userInput.next();
-        }
-        try {
-            GsonLoader<TelegramBotConfiguration> telegramBotConfigurationGsonLoader =
-                    new GsonLoader<>(TelegramBotConfiguration.class);
-            telegramBotConfigurationGsonLoader.loadToJson(telegramBotConfigurationJsonFilePath, telegramBotConfiguration);
-        } catch (IOException e) {
-            throw new RuntimeException("Не удалось сохранить конфигурацию в файл");
-        } finally {
-            userInput.close();
-        }
     }
 
     /**

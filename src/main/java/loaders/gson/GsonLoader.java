@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Scanner;
 
 /**
  * Класс для преобразования экземпляров классов в json строки
@@ -24,17 +24,17 @@ public class GsonLoader<T> {
      */
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     /**
-     * Поле класса, который преобразуем
+     * Поле типа, который преобразуем
      */
-    private final Class<T> jsonLoadingClass;
+    private final Type jsonLoadingType;
 
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param jsonLoadingClass класс, который будет обрабатываться экземпляром {@code GenericsGsonLoader}
+     * @param jsonLoadingType тип, который будет обрабатываться экземпляром {@code GenericsGsonLoader}
      */
-    public GsonLoader(Class<T> jsonLoadingClass) {
-        this.jsonLoadingClass = jsonLoadingClass;
+    public GsonLoader(Type jsonLoadingType) {
+        this.jsonLoadingType = jsonLoadingType;
     }
 
     /**
@@ -46,9 +46,9 @@ public class GsonLoader<T> {
      */
     public T loadFromJson(String pathToLoadObject) throws IOException {
         try (Reader fileReader = Files.newBufferedReader(Path.of(pathToLoadObject))) {
-            return GSON.fromJson(fileReader, jsonLoadingClass);
+            return GSON.fromJson(fileReader, jsonLoadingType);
         } catch (IOException e) {
-            throw new IOException(e);
+            throw e;
         }
     }
 
@@ -69,7 +69,7 @@ public class GsonLoader<T> {
         try (Writer fileWriter = Files.newBufferedWriter(Path.of(pathToSaveObject), StandardCharsets.UTF_8)) {
             fileWriter.write(json);
         } catch (IOException e) {
-            throw new IOException(e);
+            throw e;
         }
     }
 }

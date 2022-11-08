@@ -173,7 +173,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 case "/stop" -> {
                     return getStopResponse(stoppableByUserThread, userSendResponseId);
                 }
-                case "/subscribe" -> {
+                case "/subscribed" -> {
                     return getUserSubscribedGroupsLinks(userSendResponseId);
                 }
                 default -> {
