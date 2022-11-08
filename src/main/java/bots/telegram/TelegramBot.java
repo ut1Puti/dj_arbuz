@@ -1,16 +1,11 @@
 package bots.telegram;
 
-import bots.BotTextResponse;
-import bots.BotUtils;
+import bots.BotMessageExecutable;
+import httpserver.server.HttpServer;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import stoppable.Stoppable;
-import database.UserStorage;
-import handlers.messages.MessageHandler;
-import handlers.messages.MessageHandlerResponse;
-import handlers.notifcations.NotificationsPuller;
 import bots.StoppableByUser;
-import user.User;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -26,21 +21,27 @@ import java.util.List;
  * Класс для обработки сообщений, полученных из телеграммац
  *
  * @author Щёголев Андрей
- * @version 1.0
+ * @version 1.2
  */
-public class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser {
+public class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser, BotMessageExecutable {
     /**
-     * Поле класса получающего новые посты из групп в базе данных
-     */
-    private final NotificationsPuller notificationsPuller;
-    /**
-     * Поле класса содержашего конфигурацию телеграм бота
+     * Поле класса содержащего конфигурацию телеграм бота
+     *
+     * @see TelegramBotConfiguration
      */
     private final TelegramBotConfiguration telegramBotConfiguration;
+    private final TelegramMessageExecutor messageExecutor;
     /**
      * Поле кнопок в телеграмм
      */
     private final List<KeyboardRow> keyBoardRows = new ArrayList<>();
+
+    {
+        KeyboardRow rowFirst = new KeyboardRow();
+        rowFirst.add("/auth");
+        rowFirst.add("/help");
+        keyBoardRows.add(rowFirst);
+    }
 
     /**
      * Конструктор класса для инициализации бота и поля кнопок
@@ -52,22 +53,28 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         //TODO кнопки
         super();
         telegramBotConfiguration = TelegramBotConfiguration.loadTelegramBotConfigurationFromJson(tgConfigurationFilePath);
-        KeyboardRow rowFirst = new KeyboardRow();
-        rowFirst.add("/auth");
-        rowFirst.add("/help");
-        keyBoardRows.add(rowFirst);
-        notificationsPuller = new NotificationsPuller(this);
-        notificationsPuller.start();
+        messageExecutor = new TelegramMessageExecutor(this);
     }
 
     /**
-     * Основная логика работы бота
-     *
-     * @param args аргументы командной строки
+     * Конструктор - создает экземпляр класса
      */
+    public TelegramBot() {
+        super();
+        telegramBotConfiguration = TelegramBotConfiguration.loadFromEnvVariables();
+        messageExecutor = new TelegramMessageExecutor(this);
+    }
+
     public static void main(String[] args) {
-        BotUtils.initInstances();
-        TelegramBot telegramBot = new TelegramBot("src/main/resources/anonsrc/telegram_config.json");
+        HttpServer httpServer = HttpServer.getInstance();
+
+        if (httpServer == null) {
+            throw new RuntimeException("Не удалось настроить сервер");
+        }
+
+        httpServer.start();
+
+        TelegramBot telegramBot = new TelegramBot();
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(telegramBot);
@@ -76,7 +83,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         }
         while (telegramBot.isWorking()) Thread.onSpinWait();
         telegramBot.stopWithInterrupt();
-        BotUtils.stopInstances();
+        httpServer.stop();
         System.exit(0);
     }
 
@@ -109,73 +116,28 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
     @Override
     public void onUpdateReceived(Update update) {
 
-        if (update.hasMessage() && update.getMessage()
-                .hasText()) {
-            String messageUpdate = update.getMessage()
-                    .getText();
-            MessageHandlerResponse response = MessageHandler.executeMessage(
-                    messageUpdate, String.valueOf(update.getMessage()
-                            .getChatId()), this
-            );
-            if (response.hasTextMessage()) {
-                sendMessage(update, response);
-            }
-
-            if (response.hasPostsMessages()) {
-                for (String post : response.getPostsMessages()) {
-                    SendMessage message = new SendMessage();
-                    message.setText(post);
-                    message.setChatId(String.valueOf(update.getMessage()
-                            .getChatId()));
-                    try {
-                        execute(message);
-                    } catch (TelegramApiException ignored) {
-                    }
-                }
-            }
-
-            if (response.hasUpdateUser()) {
-                User user = response.getUpdateUser()
-                        .createUser(update.getMessage()
-                                .getChatId()
-                                .toString());
-
-                if (user == null) {
-                    SendMessage authErrorMessage = new SendMessage(update.getMessage()
-                            .getChatId()
-                            .toString(), BotTextResponse.AUTH_ERROR);
-                    try {
-                        execute(authErrorMessage);
-                    } catch (TelegramApiException ignored) {
-                    }
-                } else {
-                    UserStorage userBase = UserStorage.getInstance();
-                    userBase.addInfoUser(String.valueOf(update.getMessage()
-                            .getChatId()), user);
-                }
-
-            }
-
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            String userReceivedMessage = update.getMessage().getText();
+            String userReceivedMessageId = update.getMessage().getChatId().toString();
+            messageExecutor.executeUserMessage(userReceivedMessageId, userReceivedMessage, this);
         }
 
     }
 
     /**
-     * Метод для отправки сообщений
+     * Реализация интерфейса для отправки сообщения пользователю, отправляет сообщение пользователю в чат с ботом в телеграме
      *
-     * @param update   обновления, полученные с Телеграмма, когда какой-то пользователь написал боту
-     * @param response хранит в себе текст сообщения для отправки пользователю
+     * @param userSendResponseId  id пользователя, которому необходимо отправить сообщение
+     * @param responseSendMessage сообщение, которое будет отправлено пользователю
      */
-    private void sendMessage(Update update, MessageHandlerResponse response) {
-        SendMessage message = new SendMessage();
+    @Override
+    public void send(String userSendResponseId, String responseSendMessage) {
+        SendMessage sendMessage = new SendMessage(userSendResponseId, responseSendMessage);
         ReplyKeyboardMarkup keyBoardMarkup = new ReplyKeyboardMarkup();
         keyBoardMarkup.setKeyboard(keyBoardRows);
-        message.setReplyMarkup(keyBoardMarkup);
-        message.setChatId(String.valueOf(update.getMessage()
-                .getChatId()));
-        message.setText(response.getTextMessage());
+        sendMessage.setReplyMarkup(keyBoardMarkup);
         try {
-            execute(message);
+            execute(sendMessage);
         } catch (TelegramApiException ignored) {
         }
     }
@@ -196,7 +158,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
      */
     @Override
     public void stopWithInterrupt() {
-        notificationsPuller.stop();
+        messageExecutor.stop();
         exe.shutdownNow();
     }
 

@@ -1,100 +1,67 @@
 package handlers.messages;
 
-import user.CreateUser;
+import user.BotUser;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Класс ответов обработчика сообщений
  *
  * @author Кедровских Олег
- * @version 2.0
+ * @version 3.0
+ * @see MessageHandlerResponseBuilder
  */
 public class MessageHandlerResponse {
     /**
+     * Поле id пользователя которому будет отправлен ответ
+     */
+    private final String userSendResponseId;
+    /**
      * Поле текстового сообщения
      */
-    private String textMessage;
+    private final String textMessage;
     /**
      * Поле содержащее интерфейс для создания или обновления пользователя
      */
-    private CreateUser updateUser = null;
+    private final CompletableFuture<BotUser> updateUser;
     /**
      * Поле со списком постов в виде строк
      */
-    private List<String> postsMessages;
+    private final List<String> postsMessages;
 
     /**
-     * Конструктор - создание объекта с определенными параметрами
+     * Конструктор - создает экземпляр класса
      *
-     * @param textMessage - текстовое сообщение
-     * @param updateUser  - интерфейс для обновления или создания пользователя
-     * @param postsMessages - посты в виде строки
+     * @param textMessage   текст сообщения отправленного от бота пользователю
+     * @param updateUser    интерфейс для обновления пользователя
+     * @param postsMessages список постов в виде строк
      */
-    MessageHandlerResponse(String textMessage, CreateUser updateUser, List<String> postsMessages) {
+    private MessageHandlerResponse(String userSendResponseId, String textMessage, CompletableFuture<BotUser> updateUser, List<String> postsMessages) {
+        this.userSendResponseId = userSendResponseId;
         this.textMessage = textMessage;
         this.updateUser = updateUser;
         this.postsMessages = postsMessages;
     }
 
     /**
-     * Конструктор - создание объекта с определенными параметрами
+     * Метод создающий класс {@code builder}, который позволяет создавать экземпляр класса с определенными параметрами
      *
-     * @param textMessage - текстовое сообщение
-     * @param updateUser  - интерфейс для обновления или создания пользователя
+     * @return {@code builder} класса ответов обработчика
+     * @see MessageHandlerResponseBuilder
      */
-    MessageHandlerResponse(String textMessage, CreateUser updateUser) {
-        this.textMessage = textMessage;
-        this.updateUser = updateUser;
+    public static MessageHandlerResponseBuilder newBuilder() {
+        return new MessageHandlerResponseBuilder();
     }
 
     /**
-     * Конструктор - создание объекта с определенными параметрами
+     * Метод для получения id пользователя, которому будет отправлено сообщение
      *
-     * @param textMessage - текстовое сообщение
-     * @param postsMessages - посты в виде строки
+     * @return строку, содержащую id пользователя, которому будет отправлен ответ
      */
-    MessageHandlerResponse (String textMessage, List<String> postsMessages) {
-        this.textMessage = textMessage;
-        this.postsMessages = postsMessages;
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param updateUser - интерфейс для обновления или создания пользователя
-     * @param postsMessages - посты в виде строки
-     */
-    MessageHandlerResponse(CreateUser updateUser, List<String> postsMessages) {
-        this.updateUser = updateUser;
-        this.postsMessages = postsMessages;
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param textMessage - текстовое сообщение
-     */
-    MessageHandlerResponse(String textMessage) {
-        this.textMessage = textMessage;
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param updateUser - интерфейс для обновления или создания пользователя
-     */
-    MessageHandlerResponse(CreateUser updateUser) {
-        this.updateUser = updateUser;
-    }
-
-    /**
-     * Конструктор - создание объекта с определенными параметрами
-     *
-     * @param postsMessages - посты в виде строки
-     */
-    MessageHandlerResponse(List<String> postsMessages) {
-        this.postsMessages = postsMessages;
+    public String getUserSendResponseId() {
+        return userSendResponseId;
     }
 
     /**
@@ -118,8 +85,7 @@ public class MessageHandlerResponse {
     /**
      * Метод проверяющий наличие постов в ответе
      *
-     * @return true - если есть посты
-     * false - если нет постов
+     * @return {@code true} - если есть посты, {@code false} - если нет постов
      */
     public boolean hasPostsMessages() {
 
@@ -153,20 +119,138 @@ public class MessageHandlerResponse {
      *
      * @return интерфейс для обновления или создания пользователя
      */
-    public CreateUser getUpdateUser() {
+    public CompletableFuture<BotUser> getUpdateUser() {
         return updateUser;
     }
 
     /**
-     * Метод объединяющий сообщения разных ответов
+     * Метод создающий хэш класса
      *
-     * @param anotherHandlerResponse - другой ответ
-     * @return ответ вызвавший этот метод, с добавленным сообщением другого ответа
+     * @return хэш текущего класса
      */
-    MessageHandlerResponse appendTextMessage(MessageHandlerResponse anotherHandlerResponse) {
-        if (anotherHandlerResponse != null && anotherHandlerResponse.textMessage != null) {
-            this.textMessage = this.textMessage + "\n" + anotherHandlerResponse.textMessage;
+    @Override
+    public int hashCode() {
+        return Objects.hash(userSendResponseId, textMessage, postsMessages);
+    }
+
+    /**
+     * Метод проверяющий равен ли {@code obj} экземпляру {@code MessageHandlerResponse}
+     *
+     * @param obj объект с которым сравнивается {@code MessageHandlerResponse}
+     * @return {@code true} если равны, {@code false} если не равны
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
         }
-        return this;
+
+        if (!(obj instanceof MessageHandlerResponse otherMessageHandlerResponse)) {
+            return false;
+        }
+
+        return  Objects.equals(userSendResponseId, otherMessageHandlerResponse.userSendResponseId) &&
+                Objects.equals(textMessage, otherMessageHandlerResponse.textMessage) &&
+                Objects.equals(postsMessages, otherMessageHandlerResponse.postsMessages);
+    }
+
+    /**
+     * Класс {@code builder} для класса {@code MessageHandlerResponse}
+     *
+     * @author Кедровских Олег
+     * @version 1.0
+     * @see MessageHandlerResponse
+     */
+    public static class MessageHandlerResponseBuilder {
+        /**
+         * Поле текстового сообщения
+         */
+        private String textMessage;
+        /**
+         * Поле содержащее интерфейс для создания или обновления пользователя
+         */
+        private CompletableFuture<BotUser> updateUser = null;
+        /**
+         * Поле со списком постов в виде строк
+         */
+        private List<String> postsMessages;
+
+        /**
+         * Метод устанавливающий значение {@code testMessage}
+         *
+         * @param textMessage текстовое сообщения ответа
+         * @return этот же {@code Builder}
+         * @see MessageHandlerResponseBuilder#textMessage
+         */
+        public MessageHandlerResponseBuilder textMessage(String textMessage) {
+            this.textMessage = textMessage;
+            return this;
+        }
+
+        /**
+         * Метод устанавливающий значение {@code updateUser}
+         *
+         * @param updateUser Поле содержащее интерфейс для создания или обновления пользователя
+         * @return этот же {@code Builder}
+         * @see MessageHandlerResponseBuilder#updateUser
+         */
+        public MessageHandlerResponseBuilder updateUser(CompletableFuture<BotUser> updateUser) {
+            this.updateUser = updateUser;
+            return this;
+        }
+
+        /**
+         * Метод устанавливающий значение {@code postsText}
+         *
+         * @param postsText список постов в виде строк
+         * @return этот же {@code Builder}
+         * @see MessageHandlerResponseBuilder#postsMessages
+         */
+        public MessageHandlerResponseBuilder postsText(List<String> postsText) {
+            this.postsMessages = postsText;
+            return this;
+        }
+
+        /**
+         * Метод строящий новый ответ обработчика
+         *
+         * @return новый экземпляр {@code MessageExecutorResponse}
+         * @see MessageHandlerResponse#MessageHandlerResponse(String, String, CompletableFuture, List)
+         */
+        public MessageHandlerResponse build(String userSendResponseId) {
+            return new MessageHandlerResponse(userSendResponseId, textMessage, updateUser, postsMessages);
+        }
+
+        /**
+         * Метод создающий хэш класса
+         *
+         * @return хэш текущего класса
+         */
+        @Override
+        public int hashCode() {
+            return Objects.hash(textMessage, postsMessages);
+        }
+
+        /**
+         * Метод проверяющий равен ли {@code obj} экземпляру {@code MessageHandlerResponseBuilder}
+         *
+         * @param obj объект с которым сравнивается {@code MessageHandlerResponseBuilder}
+         * @return {@code true} если равны, {@code false} если не равны
+         */
+        @Override
+        public boolean equals(Object obj) {
+
+            if (this == obj) {
+                return true;
+            }
+
+            if (!(obj instanceof MessageHandlerResponseBuilder otherMessageHandlerResponseBuilder)) {
+                return false;
+            }
+
+            return  Objects.equals(textMessage, otherMessageHandlerResponseBuilder.textMessage) &&
+                    Objects.equals(postsMessages, otherMessageHandlerResponseBuilder.postsMessages);
+        }
     }
 }

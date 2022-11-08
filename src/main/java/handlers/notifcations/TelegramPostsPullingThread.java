@@ -1,11 +1,10 @@
 package handlers.notifcations;
 
 import bots.telegram.TelegramBot;
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
 import database.GroupsStorage;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import socialnetworks.socialnetwork.SocialNetworkException;
+import socialnetworks.socialnetwork.SocialNetwork;
+import socialnetworks.vk.Vk;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +13,7 @@ import java.util.Optional;
  * Класс получающий новые посты для телеграма
  *
  * @author Кедровских Олег
- * @version 1.0
+ * @version 1.7
  * @see PostsPullingThread
  */
 public class TelegramPostsPullingThread extends PostsPullingThread {
@@ -28,9 +27,12 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param telegramBot - телеграмм бот
+     * @param telegramBot   телеграмм бот
+     * @param groupsStorage база данных групп на которые оформлена подписка
+     * @param socialNetwork социальная сети реализующая необходимые для работы методы
      */
-    public TelegramPostsPullingThread(TelegramBot telegramBot) {
+    public TelegramPostsPullingThread(TelegramBot telegramBot, GroupsStorage groupsStorage, Vk socialNetwork) {
+        super(groupsStorage, socialNetwork);
         this.telegramBot = telegramBot;
     }
 
@@ -38,44 +40,45 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * Метод логики выполняемой внутри {@code TelegramPostsPullingThread}
      *
      * @see GroupsStorage#getGroups()
-     * @see handlers.vk.Vk#getNewPosts(GroupsStorage, String)
+     * @see SocialNetwork#getNewPostsAsStrings(GroupsStorage, String)
      * @see GroupsStorage#getSubscribedToGroupUsersId(String)
      */
     @Override
     public void run() {
-        while (working) {
-            try {
-                for (String groupScreenName : groupsBase.getGroups()) {
-                    Optional<List<String>> threadFindNewPosts = vk.getNewPosts(groupsBase, groupScreenName);
+        while (working.get()) {
+            for (String groupScreenName : groupsBase.getGroups()) {
+                Optional<List<String>> threadFindNewPosts;
+                try {
+                    threadFindNewPosts = socialNetwork.getNewPostsAsStrings(groupsBase, groupScreenName);
+                } catch (SocialNetworkException e) {
+                    continue;
+                }
 
-                    if (threadFindNewPosts.isPresent()) {
-                        for (String postsAttachments : threadFindNewPosts.get()) {
-                            for (String userId : groupsBase.getSubscribedToGroupUsersId(groupScreenName)) {
-                                SendMessage message = new SendMessage(userId, postsAttachments);
-                                try {
-                                    telegramBot.execute(message);
-                                } catch (TelegramApiException ignored) {
-                                }
-                            }
+                // проверяется наличие новых постов, могут отсутствовать по причине отсутствия новых постов или отсутствия группы в базе данных
+                if (threadFindNewPosts.isPresent()) {
+                    for (String newPostText : threadFindNewPosts.get()) {
+                        for (String userSendNewPostId : groupsBase.getSubscribedToGroupUsersId(groupScreenName)) {
+                            telegramBot.send(userSendNewPostId, newPostText);
                         }
                     }
-
                 }
+
+            }
+            try {
                 final int oneHourInMilliseconds = 3600000;
                 Thread.sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
-            } catch (ApiException | ClientException ignored) {
             }
         }
-        working = false;
+        working.set(false);
     }
 
     /**
      * Метод проверяющий наличие новых постов
      *
      * @throws UnsupportedOperationException - возникает тк эта операция не нужна в этой реализации класса,
-     * поэтому он не реализован
+     *                                       поэтому он не реализован
      */
     @Override
     public boolean hasNewPosts() {
@@ -88,7 +91,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * Метод получающий новые посты
      *
      * @throws UnsupportedOperationException - возникает тк эта операция не нужна в этой реализации класса,
-     * поэтому он не реализован
+     *                                       поэтому он не реализован
      */
     @Override
     public List<String> getNewPosts() {

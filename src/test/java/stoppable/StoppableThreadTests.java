@@ -25,8 +25,7 @@ public class StoppableThreadTests {
     @BeforeEach
     public void setUpStoppableThread() {
         stoppableThread = new StoppableThread(() -> {
-            stoppableThread.working = true;
-            while (stoppableThread.working);
+            while (stoppableThread.working.get()) Thread.onSpinWait();
         });
     }
 

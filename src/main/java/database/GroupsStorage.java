@@ -1,8 +1,9 @@
 package database;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import loaders.gson.GsonLoader;
 
+import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -21,21 +22,21 @@ import java.util.stream.Collectors;
  */
 public class GroupsStorage {
     /**
-     * Поле хеш таблицы, где ключ - айди группы, значение - список пользователей
+     * Поле хеш таблицы, где ключ - имя группы в социальной сети, значение - список пользователей
      */
     private Map<String, GroupRelatedData> groupsBase;
-    private static GroupsStorage groupsStorage = null;
+    private static GroupsStorage groupsStorage;
 
     /**
      * Метод для создания нового пользователя в наш класс
      *
-     * @param userId  -айди пользователя
-     * @param groupId - айди группы
+     * @param userId  id пользователя
+     * @param groupId имя группы
      */
     private void addNewGroup(String groupId, String userId) {
-        List<String> newList = new LinkedList<>();
+        List<String> newList = new ArrayList<>();
         newList.add(userId);
-        groupsBase.put(groupId, new GroupRelatedData(newList, (int)Instant.now().getEpochSecond()));
+        groupsBase.put(groupId, new GroupRelatedData(newList, Instant.now().getEpochSecond()));
     }
 
     /**
@@ -53,7 +54,7 @@ public class GroupsStorage {
     }
 
     /**
-     * метод для добавления информации где происходит ветвление на методы добавления старой/новой группы
+     * метод для добавления информации, где происходит ветвление на методы добавления старой/новой группы
      *
      * @param groupId - айди группы
      * @param userID  - айди пользователя
@@ -88,44 +89,62 @@ public class GroupsStorage {
      * Метод для сохранения хеш таблицы в виде файла с расширением json
      */
     public void saveToJsonFile() {
-        Gson gson = new Gson();
-        String json = gson.toJson(groupsBase);
+        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {}.getType();
+        GsonLoader<Map<String, GroupRelatedData>> groupStorageMapGsonLoader = new GsonLoader<>(groupStorageMapType);
         try {
-            FileWriter file = new FileWriter("src/main/resources/anonsrc/database_for_groups.json");
-            file.write(json);
-            file.close();
+            groupStorageMapGsonLoader.loadToJson("src/main/resources/anonsrc/database_for_groups.json", groupsBase);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
     /**
-     * Метод для возврата хеш таблицы с помощью созданнового json файла
+     * Метод для возврата хеш таблицы с помощью созданного json файла
      *
      * @see GroupsStorage#saveToJsonFile()
      */
     public void returnStorageFromDatabase() {
+        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {}.getType();
+        GsonLoader<Map<String, GroupRelatedData>> loader = new GsonLoader<>(groupStorageMapType);
         try {
-            FileReader file = new FileReader("src/main/resources/anonsrc/database_for_groups.json");
-            Scanner scanner = new Scanner(file);
-            try {
-                String json = scanner.nextLine();
-                Gson jsonFile = new Gson();
-                groupsBase = jsonFile.fromJson(json, new TypeToken<Map<String, GroupRelatedData>>() {
-                }.getType());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-            file.close();
+            groupsBase = loader.loadFromJson("src/main/resources/anonsrc/database_for_groups.json");
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    /**
+     * Метод для удаления пользователя из подписчика группы
+     *
+     * @param groupName название группы в базе данных
+     * @param userId    id пользователя
+     * @return {@code true} если пользователь был удален, {@code false} если пользователь не был удален
+     */
+    public boolean deleteInfoFromGroup(String groupName, String userId) {
+
+        if (!groupsBase.containsKey(groupName)) {
+            return false;
+        }
+
+        List<String> subscribedToGroupUsers = groupsBase.get(groupName).getSubscribedUsersId();
+
+        if (!subscribedToGroupUsers.contains(userId)) {
+            return false;
+        }
+
+        boolean isUnsubscribed = subscribedToGroupUsers.remove(userId);
+
+        if (isUnsubscribed && subscribedToGroupUsers.isEmpty()) {
+            groupsBase.remove(groupName);
+        }
+
+        return isUnsubscribed;
     }
 
     /**
      * Метод получающий все группы на которые оформлены подписки
      *
-     * @return группы на которые оформлены подписки
+     * @return неизменяемый набор коротких названий групп на которые оформлены подписки
      */
     public Set<String> getGroups() {
         return Set.copyOf(groupsBase.keySet());
@@ -135,16 +154,16 @@ public class GroupsStorage {
      * Метод получающий всех подписчиков определенной группы
      *
      * @param groupScreenName - короткое название группы
-     * @return подписчиков группы
+     * @return неизменяемый список подписчиков группы
      */
     public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
-        return groupsBase.get(groupScreenName).getSubscribedUsersId().stream().toList();
+        return List.copyOf(groupsBase.get(groupScreenName).getSubscribedUsersId());
     }
 
     /**
      * Метод получающий подписки пользователя
      *
-     * @param userId - id пользователя, подписки которого нужно получить
+     * @param userId id пользователя, подписки которого нужно получить
      * @return подписки пользователя
      */
     public Set<String> getUserSubscribedGroups(String userId) {
@@ -192,5 +211,13 @@ public class GroupsStorage {
      */
     public boolean containsGroup(String groupScreenName) {
         return groupsBase.containsKey(groupScreenName);
+    }
+
+    /**
+     * Метод очищающий хранилище подписок и сохраняющий его в файл
+     */
+    public void clear() {
+        saveToJsonFile();
+        groupsBase.clear();
     }
 }

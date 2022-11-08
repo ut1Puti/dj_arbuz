@@ -1,16 +1,18 @@
 package handlers.notifcations;
 
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;;
+import database.GroupsStorage;
+import socialnetworks.socialnetwork.SocialNetworkException;
+import socialnetworks.vk.Vk;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Класс получающий обновления постов в группах для консольного пользователя
  *
  * @author Кедровских Олег
- * @version 1.0
+ * @version 1.7
  * @see PostsPullingThread
  */
 public class ConsolePostsPullingThread extends PostsPullingThread {
@@ -26,9 +28,12 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param consoleUserId - id консольного пользователя в database
+     * @param consoleUserId id консольного пользователя в database
+     * @param groupsStorage база данных групп на которые оформленна подписка
+     * @param socialNetwork интерфейс социальной сети реализующий необходимые методы
      */
-    public ConsolePostsPullingThread(String consoleUserId) {
+    public ConsolePostsPullingThread(String consoleUserId, GroupsStorage groupsStorage, Vk socialNetwork) {
+        super(groupsStorage, socialNetwork);
         this.consoleBotUserId = consoleUserId;
     }
 
@@ -37,35 +42,39 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
      */
     @Override
     public void run() {
-        working = true;
-        while (working) {
-            try {
-                for (String groupScreenName : groupsBase.getUserSubscribedGroups(consoleBotUserId)) {
-                    Optional<List<String>> threadNewPosts = vk.getNewPosts(groupsBase, groupScreenName);
-
-                    if (threadNewPosts.isPresent()) {
-                        List<String> threadFindNewPosts = threadNewPosts.get();
-                        for (int i = 0; i < threadFindNewPosts.size(); i++) {
-                            try {
-                                synchronized (newPostsQueue) {
-                                    newPostsQueue.add(threadFindNewPosts.get(i));
-                                    continue;
-                                }
-                            } catch (IllegalStateException ignored) {
-                            }
-                            i--;
-                        }
-                    }
-
+        while (working.get()) {
+            for (String groupScreenName : groupsBase.getUserSubscribedGroups(consoleBotUserId)) {
+                Optional<List<String>> threadNewPosts;
+                try {
+                    threadNewPosts = socialNetwork.getNewPostsAsStrings(groupsBase, groupScreenName);
+                } catch (SocialNetworkException e) {
+                    continue;
                 }
+
+                // проверяется наличие новых постов, могут отсутствовать по причине отсутствия новых постов или отсутствия группы в базе данных
+                if (threadNewPosts.isPresent()) {
+                    List<String> threadFindNewPosts = threadNewPosts.get();
+                    for (int i = 0; i < threadFindNewPosts.size(); i++) {
+                        try {
+                            synchronized (newPostsQueue) {
+                                newPostsQueue.add(threadFindNewPosts.get(i));
+                                continue;
+                            }
+                        } catch (IllegalStateException ignored) {
+                        }
+                        i--;
+                    }
+                }
+
+            }
+            try {
                 final int oneHourInMilliseconds = 360000;
                 Thread.sleep(oneHourInMilliseconds);
             } catch (InterruptedException e) {
                 break;
-            } catch (ApiException | ClientException ignored) {
             }
         }
-        working = false;
+        working.set(false);
     }
 
     /**
