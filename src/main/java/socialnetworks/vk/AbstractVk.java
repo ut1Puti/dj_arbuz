@@ -122,7 +122,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @see GroupsStorage#addInfoToGroup(String, String)
      */
     @Override
-    public final SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
+    public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
             throws SocialNetworkException, NoGroupException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
 
@@ -147,7 +147,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
     @Override
-    public final boolean unsubscribeFrom(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
+    public boolean unsubscribeFrom(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
 
@@ -212,7 +212,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @see VkPostsParser#parsePosts(List)
      */
     @Override
-    public final Optional<List<String>> getNewPostsAsStrings(GroupsStorage groupsStorage, String groupScreenName)
+    public Optional<List<String>> getNewPostsAsStrings(GroupsStorage groupsStorage, String groupScreenName)
             throws SocialNetworkException {
         final int amountOfPosts = 100;
         //TODO synchronize working with lastPostDate

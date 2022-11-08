@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,7 +35,7 @@ public class AbstractVkTests {
     /**
      * Поле хранилища подписок на группы
      */
-    private GroupsStorage groupsStorage;
+    private final GroupsStorage groupsStorage = GroupsStorage.getInstance();
     /**
      * Поле тестовой реализации vk
      */
@@ -45,7 +46,7 @@ public class AbstractVkTests {
      */
     @BeforeEach
     public void setUpStorage() {
-        groupsStorage = GroupsStorage.getInstance();
+        groupsStorage.clear();
     }
 
     /**
@@ -271,8 +272,8 @@ public class AbstractVkTests {
     public void testGetLastPostsAsStringsFromExistGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
         String userReceivedGroupName = "Sqwore";
-        List<String> expectedPostsStrings = new ArrayList<>();
-        assertEquals(expectedPostsStrings, vk.getLastPostsAsStrings(userReceivedGroupName, 1, user));
+        List<String> notExpectedPostsStrings = new ArrayList<>();
+        assertNotEquals(notExpectedPostsStrings, vk.getLastPostsAsStrings(userReceivedGroupName, 1, user));
     }
 
     /**
@@ -318,8 +319,8 @@ public class AbstractVkTests {
     public void testGetLastPostsAsPostsFromExistGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
         String userReceivedGroupName = "Sqwore";
-        List<WallpostFull> expectedPostsStrings = new ArrayList<>();
-        assertEquals(expectedPostsStrings, vk.getLastPostsAsPosts(userReceivedGroupName, 1, user));
+        List<WallpostFull> notExpectedPostsStrings = new ArrayList<>();
+        assertNotEquals(notExpectedPostsStrings, vk.getLastPostsAsPosts(userReceivedGroupName, 1, user));
     }
 
     /**

@@ -221,4 +221,12 @@ public class GroupsStorage {
     public boolean containsGroup(String groupScreenName) {
         return groupsBase.containsKey(groupScreenName);
     }
+
+    /**
+     * Метод очищающий хранилище подписок и сохраняющий его в файл
+     */
+    public void clear() {
+        saveToJsonFile();
+        groupsBase.clear();
+    }
 }
