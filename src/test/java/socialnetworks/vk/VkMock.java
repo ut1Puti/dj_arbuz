@@ -11,6 +11,8 @@ class VkMock extends AbstractVk {
      * Конструктор - создает экземпляр класса
      */
     VkMock() {
-        super(new VkAuthMock(), new VkGroupsMock(), new VkWallMock());
+        super(new VkAuthMock(),
+                new VkGroupsMock("src/test/resources/vk_tests/groups.json"),
+                new VkWallMock("src/test/resources/vk_tests/posts.json"));
     }
 }

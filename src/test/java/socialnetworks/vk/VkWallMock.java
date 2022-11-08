@@ -2,11 +2,13 @@ package socialnetworks.vk;
 
 import com.vk.api.sdk.client.actors.Actor;
 import com.vk.api.sdk.objects.wall.WallpostFull;
+import loaders.gson.GsonLoader;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
 import socialnetworks.vk.wall.AbstractVkWall;
 import socialnetworks.vk.wall.VkPostsParser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +25,17 @@ class VkWallMock extends AbstractVkWall {
      * Поле map экранного имени группы и постов в ней
      */
     private final Map<String, List<WallpostFull>> testVkWallMap = new HashMap<>();
+
+    VkWallMock(String testWallDataJsonFilePath) {
+        GsonLoader<WallpostList> jsonLoader = new GsonLoader<>(WallpostList.class);
+        try {
+            WallpostList wallPosts = jsonLoader.loadFromJson(testWallDataJsonFilePath);
+            testVkWallMap.put("Sqwore", wallPosts);
+            testVkWallMap.put("no groups test", new ArrayList<>());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Метод для получения {@code amountOfPosts} постов в виде строк
@@ -73,4 +86,7 @@ class VkWallMock extends AbstractVkWall {
 
         return testVkWallMap.get(groupScreenName).stream().limit(amountOfPosts).toList();
     }
+}
+
+class WallpostList extends ArrayList<WallpostFull> {
 }

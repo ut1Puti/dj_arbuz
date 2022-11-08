@@ -15,13 +15,6 @@ import java.util.Scanner;
  */
 public final class TelegramBotConfiguration {
     /**
-     * Поле объекта, который выполняет чтение json файла и преобразования в объект
-     *
-     * @see GsonLoader
-     */
-    private static final GsonLoader<TelegramBotConfiguration> TELEGRAM_BOT_CONFIGURATION_GSON_LOADER =
-            new GsonLoader<>(TelegramBotConfiguration.class);
-    /**
      * Поле имени бота
      */
     final String botUserName;
@@ -59,7 +52,9 @@ public final class TelegramBotConfiguration {
             telegramBotConfigurationJsonFilePath = userInput.next();
         }
         try {
-            TELEGRAM_BOT_CONFIGURATION_GSON_LOADER.loadToJson(telegramBotConfigurationJsonFilePath, telegramBotConfiguration);
+            GsonLoader<TelegramBotConfiguration> telegramBotConfigurationGsonLoader =
+                    new GsonLoader<>(TelegramBotConfiguration.class);
+            telegramBotConfigurationGsonLoader.loadToJson(telegramBotConfigurationJsonFilePath, telegramBotConfiguration);
         } catch (IOException e) {
             throw new RuntimeException("Не удалось сохранить конфигурацию в файл");
         } finally {
@@ -75,7 +70,16 @@ public final class TelegramBotConfiguration {
      */
     static TelegramBotConfiguration loadTelegramBotConfigurationFromJson(String telegramBotConfigurationJsonFilePath) {
         try {
-            return TELEGRAM_BOT_CONFIGURATION_GSON_LOADER.loadFromJson(telegramBotConfigurationJsonFilePath);
+            GsonLoader<TelegramBotConfiguration> telegramBotConfigurationGsonLoader =
+                    new GsonLoader<>(TelegramBotConfiguration.class);
+            TelegramBotConfiguration telegramBotConfiguration =
+                    telegramBotConfigurationGsonLoader.loadFromJson(telegramBotConfigurationJsonFilePath);
+
+            if (telegramBotConfiguration.botUserName == null || telegramBotConfiguration.telegramBotToken == null) {
+                throw new RuntimeException("В переданном файл отсутствуют необходимые для запуска данные");
+            }
+
+            return telegramBotConfiguration;
         } catch (IOException | JsonSyntaxException e) {
             throw new RuntimeException(e);
         }

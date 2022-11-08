@@ -3,6 +3,7 @@ package socialnetworks.vk;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.GroupsStorage;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.groups.NoGroupException;
@@ -31,13 +32,21 @@ public class AbstractVkTests {
      */
     private final String userSystemId = "userId";
     /**
-     *
+     * Поле хранилища подписок на группы
      */
-    private final GroupsStorage groupsStorage = GroupsStorage.getInstance();
+    private GroupsStorage groupsStorage;
     /**
      * Поле тестовой реализации vk
      */
     private final AbstractVk vk = new VkMock();
+
+    /**
+     * Метод создающий новое хранилище перед каждым тестом
+     */
+    @BeforeEach
+    public void setUpStorage() {
+        groupsStorage = GroupsStorage.getInstance();
+    }
 
     /**
      * Метод тестирующий получение ссылки для аутентификации
@@ -79,8 +88,8 @@ public class AbstractVkTests {
     @Test
     public void testGetExistGroupUrl() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
-        assertEquals(VkConstants.VK_ADDRESS + "?screenName", vk.getGroupUrl(userReceivedGroupName, user));
+        String userReceivedGroupName = "Sqwore";
+        assertEquals(VkConstants.VK_ADDRESS + "sqwore", vk.getGroupUrl(userReceivedGroupName, user));
     }
 
     /**
@@ -109,8 +118,8 @@ public class AbstractVkTests {
     @Test
     public void testGetExistGroupId() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
-        assertEquals("?id", vk.getGroupId(userReceivedGroupName, user));
+        String userReceivedGroupName = "Sqwore";
+        assertEquals("188069740", vk.getGroupId(userReceivedGroupName, user));
     }
 
     /**
@@ -139,7 +148,7 @@ public class AbstractVkTests {
     @Test
     public void testSubscribeToNotSubscribedExistGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
+        String userReceivedGroupName = "Sqwore";
         assertEquals(SubscribeStatus.SUBSCRIBED, vk.subscribeTo(groupsStorage, userReceivedGroupName, user));
     }
 
@@ -169,7 +178,7 @@ public class AbstractVkTests {
     @Test
     public void testSubscribeToClosedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
+        String userReceivedGroupName = "Мемняя дыра, про мамку Щюклина";
         assertEquals(SubscribeStatus.GROUP_IS_CLOSED, vk.subscribeTo(groupsStorage, userReceivedGroupName, user));
     }
 
@@ -184,7 +193,8 @@ public class AbstractVkTests {
     @Test
     public void testSubscribeToSubscribedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
+        groupsStorage.addInfoToGroup("sqwore", userSystemId);
+        String userReceivedGroupName = "Sqwore";
         assertEquals(SubscribeStatus.ALREADY_SUBSCRIBED, vk.subscribeTo(groupsStorage, userReceivedGroupName, user));
     }
 
@@ -199,7 +209,8 @@ public class AbstractVkTests {
     @Test
     public void testUnsubscribeFromExistSubscribedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
+        groupsStorage.addInfoToGroup("sqwore", userSystemId);
+        String userReceivedGroupName = "Sqwore";
         assertTrue(vk.unsubscribeFrom(groupsStorage, userReceivedGroupName, user));
     }
 
@@ -229,7 +240,7 @@ public class AbstractVkTests {
     @Test
     public void testUnsubscribeFromClosedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
+        String userReceivedGroupName = "Мемняя дыра, про мамку Щюклина";
         assertFalse(vk.unsubscribeFrom(groupsStorage, userReceivedGroupName, user));
     }
 
@@ -244,7 +255,7 @@ public class AbstractVkTests {
     @Test
     public void testUnsubscribeFromExistNotSubscribedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
+        String userReceivedGroupName = "Sqwore";
         assertFalse(vk.unsubscribeFrom(groupsStorage, userReceivedGroupName, user));
     }
 
@@ -259,7 +270,7 @@ public class AbstractVkTests {
     @Test
     public void testGetLastPostsAsStringsFromExistGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
+        String userReceivedGroupName = "Sqwore";
         List<String> expectedPostsStrings = new ArrayList<>();
         assertEquals(expectedPostsStrings, vk.getLastPostsAsStrings(userReceivedGroupName, 1, user));
     }
@@ -290,7 +301,7 @@ public class AbstractVkTests {
     @Test
     public void testGetLastPostsAsStringsFromExistGroupWithNoPosts() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
+        String userReceivedGroupName = "no groups test";
         List<String> expectedPostsStrings = new ArrayList<>();
         assertEquals(expectedPostsStrings, vk.getLastPostsAsStrings(userReceivedGroupName, 1, user));
     }
@@ -306,7 +317,7 @@ public class AbstractVkTests {
     @Test
     public void testGetLastPostsAsPostsFromExistGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
+        String userReceivedGroupName = "Sqwore";
         List<WallpostFull> expectedPostsStrings = new ArrayList<>();
         assertEquals(expectedPostsStrings, vk.getLastPostsAsPosts(userReceivedGroupName, 1, user));
     }
@@ -337,23 +348,8 @@ public class AbstractVkTests {
     @Test
     public void testGetLastPostsAsPostsFromExistGroupWithNoPosts() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
+        String userReceivedGroupName = "no groups test";
         List<WallpostFull> expectedPostsStrings = new ArrayList<>();
         assertEquals(expectedPostsStrings, vk.getLastPostsAsPosts(userReceivedGroupName, 1, user));
-    }
-
-    /**
-     * Метод тестирующий получение новых постов в виде строк из группы
-     *
-     * @throws ExecutionException возникает при ошибках выполнения асинхронного создания пользователя
-     * @throws InterruptedException возникает при прерывании потока выполнения создания
-     * @throws SocialNetworkException возникает при ошибке обращения к vk api
-     */
-    @Test
-    public void testGetNewPostsAsStrings() throws ExecutionException, InterruptedException, SocialNetworkException {
-        BotUser user = vk.createBotUserAsync(userSystemId).get();
-        String userReceivedGroupName = "";
-        List<String> expectedNewPostsAsStrings = new ArrayList<>();
-        assertEquals(100, vk.getNewPostsAsStrings(groupsStorage, userReceivedGroupName).get().size());
     }
 }

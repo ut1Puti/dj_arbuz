@@ -1,8 +1,12 @@
 package loaders.gson;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Scanner;
 
 /**
@@ -18,7 +22,7 @@ public class GsonLoader<T> {
      *
      * @see Gson
      */
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     /**
      * Поле класса, который преобразуем
      */
@@ -41,10 +45,11 @@ public class GsonLoader<T> {
      * @throws IOException возникает при ошибках чтения файла
      */
     public T loadFromJson(String pathToLoadObject) throws IOException {
-        FileReader fileReader = new FileReader(pathToLoadObject);
-        Scanner scanner = new Scanner(fileReader);
-        String json = scanner.nextLine();
-        return GSON.fromJson(json, jsonLoadingClass);
+        try (Reader fileReader = Files.newBufferedReader(Path.of(pathToLoadObject))) {
+            return GSON.fromJson(fileReader, jsonLoadingClass);
+        } catch (IOException e) {
+            throw new IOException(e);
+        }
     }
 
     /**
@@ -61,9 +66,11 @@ public class GsonLoader<T> {
         }
 
         String json = GSON.toJson(objectToSave);
-        FileWriter file = new FileWriter(pathToSaveObject);
-        file.write(json);
-        file.close();
+        try (Writer fileWriter = Files.newBufferedWriter(Path.of(pathToSaveObject), StandardCharsets.UTF_8)) {
+            fileWriter.write(json);
+        } catch (IOException e) {
+            throw new IOException(e);
+        }
     }
 }
 

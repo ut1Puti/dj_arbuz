@@ -1,12 +1,15 @@
 package socialnetworks.vk;
 
 import com.vk.api.sdk.objects.groups.Group;
+import loaders.gson.GsonLoader;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.groups.NoGroupException;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
 import socialnetworks.vk.groups.AbstractVkGroups;
 import user.BotUser;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,17 @@ class VkGroupsMock extends AbstractVkGroups {
      */
     private final Map<String, List<Group>> testVkGroupsMap = new HashMap<>();
 
+    VkGroupsMock(String groupsTestDataJsonFilePath) {
+        GsonLoader<GroupList> jsonLoader = new GsonLoader<>(GroupList.class);
+        try {
+            GroupList groups = jsonLoader.loadFromJson(groupsTestDataJsonFilePath);
+            for (Group group : groups) {
+                testVkGroupsMap.put(group.getName(), List.of(group));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Метод получающий список найденных по подстроке групп
@@ -67,11 +81,14 @@ class VkGroupsMock extends AbstractVkGroups {
         List<Group> groups = searchGroups(userReceivedGroupName, userCallingMethod);
 
         for (Group group : groups) {
-            if (group.getScreenName().equals(userReceivedGroupName)) {
+            if (group.getName().equals(userReceivedGroupName)) {
                 return group;
             }
         }
 
         throw new NoGroupException(userReceivedGroupName);
     }
+}
+
+class GroupList extends ArrayList<Group> {
 }

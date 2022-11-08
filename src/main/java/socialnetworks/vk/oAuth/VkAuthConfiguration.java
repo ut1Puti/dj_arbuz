@@ -14,13 +14,6 @@ import java.util.Objects;
  */
 public final class VkAuthConfiguration {
     /**
-     * Поле объекта, который выполняет чтение json файла и преобразования в объект
-     *
-     * @see GsonLoader
-     */
-    private static final GsonLoader<VkAuthConfiguration> VK_AUTH_CONFIGURATION_GSON_LOADER =
-            new GsonLoader<>(VkAuthConfiguration.class);
-    /**
      * Поле ссылки для аутентификации
      */
     final String AUTH_URL;
@@ -67,7 +60,8 @@ public final class VkAuthConfiguration {
      */
     static VkAuthConfiguration loadVkAuthConfigurationFromJson(String vkAuthConfigurationJsonFilePath) {
         try {
-            VkAuthConfiguration loadedConf = VK_AUTH_CONFIGURATION_GSON_LOADER.loadFromJson(vkAuthConfigurationJsonFilePath);
+            GsonLoader<VkAuthConfiguration> vkAuthConfigurationGsonLoader = new GsonLoader<>(VkAuthConfiguration.class);
+            VkAuthConfiguration loadedConf = vkAuthConfigurationGsonLoader.loadFromJson(vkAuthConfigurationJsonFilePath);
             if (loadedConf.APP_ID == null || loadedConf.AUTH_URL == null ||
                     loadedConf.REDIRECT_URL == null || loadedConf.CLIENT_SECRET == null ||
                     loadedConf.SERVICE_CLIENT_SECRET == null) {
