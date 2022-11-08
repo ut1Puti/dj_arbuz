@@ -16,6 +16,8 @@ import com.vk.api.sdk.exceptions.ClientException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import com.vk.api.sdk.exceptions.ApiTokenExtensionRequiredException;
+import com.vk.api.sdk.objects.groups.Group;
 
 /**
  * Класс утилитных методов создающий ответы на сообщения пользователя
@@ -127,7 +129,7 @@ public class MessageHandler {
     /**
      * Метод проверяет есть ли аргументы в полученной команде
      *
-     * @param commandAndArgs - массив аргументов и комманд
+     * @param commandAndArgs - массив аргументов и команд
      * @return true - если нет аргументов, false - если есть аргументы
      */
     private static boolean isItNoArgCommand(String[] commandAndArgs) {

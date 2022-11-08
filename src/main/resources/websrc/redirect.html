@@ -1,51 +1,51 @@
 <!DOCTYPE html>
 <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="author" content="Кедровских Олег">
-        <title>Авторизация в боте</title>
-        <script async>
-            function redirect(){
-                window.location.href = "https://t.me/oop_urfu_bot";
-            }
-        </script>
-    </head>
-    <style>
-        *{
-            padding: 0;
-            margin: 0;
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Кедровских Олег">
+    <title>Авторизация в боте</title>
+    <script async>
+        function redirect(){
+            window.location.href = "https://t.me/oop_urfu_bot";
         }
-        body {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap:20px;
-        }
-        p:first-child {
-            font-size: 25px;
-            max-width: 600px;
-            display: flex;
-            align-items: center;
-            text-align: center;
-        }
-        p > input {
-            border: 0;
-            padding: 20px;
-            width: 180px;
-            margin: 0;
-            background: black;
-            color:#ffffff;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
-    <body>
-        <P>Вы успешно авторизовались!<br> Можете перейти по ссылке, чтоб продолжить взаимодействовать с ботом</P>
-        <p><input type='button' onclick = 'redirect()' value='bot redirect'/></p>
-    </body>
+    </script>
+</head>
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+    }
+    body {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap:20px;
+    }
+    p:first-child {
+        font-size: 25px;
+        max-width: 600px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+    }
+    p > input {
+        border: 0;
+        padding: 20px;
+        width: 180px;
+        margin: 0;
+        background: black;
+        color:#ffffff;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+<body>
+<P>Вы успешно авторизовались!<br> Можете перейти по ссылке, чтоб продолжить взаимодействовать с ботом</P>
+<p><input type='button' onclick = 'redirect()' value='bot redirect'/></p>
+</body>
 </html>
