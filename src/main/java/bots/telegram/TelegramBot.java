@@ -63,6 +63,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         super();
         telegramBotConfiguration = TelegramBotConfiguration.loadFromEnvVariables();
         messageExecutor = new TelegramMessageExecutor(this);
+        messageExecutor.start();
     }
 
     public static void main(String[] args) {
