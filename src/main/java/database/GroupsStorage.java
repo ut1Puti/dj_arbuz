@@ -25,6 +25,7 @@ public class GroupsStorage {
      * Поле хеш таблицы, где ключ - имя группы в социальной сети, значение - список пользователей
      */
     private Map<String, GroupRelatedData> groupsBase;
+    private final Object dataLock = new Object();
     private static GroupsStorage groupsStorage;
 
     /**
@@ -179,12 +180,14 @@ public class GroupsStorage {
      * @return дату последнего поста
      */
     public Optional<Long> getGroupLastPostDate(String groupScreenName) {
+        synchronized (dataLock) {
 
-        if (!groupsBase.containsKey(groupScreenName)) {
-            return Optional.empty();
+            if (!groupsBase.containsKey(groupScreenName)) {
+                return Optional.empty();
+            }
+
+            return Optional.of(groupsBase.get(groupScreenName).getLastPostDate());
         }
-
-        return Optional.of(groupsBase.get(groupScreenName).getLastPostDate());
     }
 
     /**
@@ -194,12 +197,19 @@ public class GroupsStorage {
      * @param newLastPostDate - новая дата последнего поста для группы
      */
     public void updateGroupLastPost(String groupScreenName, long newLastPostDate) {
+        synchronized (dataLock) {
 
-        if (!groupsBase.containsKey(groupScreenName)) {
-            return;
+            if (!groupsBase.containsKey(groupScreenName)) {
+                return;
+            }
+
+            if (newLastPostDate <= groupsBase.get(groupScreenName).getLastPostDate()) {
+                return;
+            }
+
+            GroupRelatedData newGroupData = groupsBase.get(groupScreenName).updateLastPostDate(newLastPostDate);
+            groupsBase.put(groupScreenName, newGroupData);
         }
-
-        groupsBase.get(groupScreenName).updateLastPostDate(newLastPostDate);
     }
 
     /**

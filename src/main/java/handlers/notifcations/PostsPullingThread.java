@@ -53,7 +53,6 @@ public abstract class PostsPullingThread extends StoppableThread {
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      */
     protected final Optional<List<String>> getNewPostsAsStrings(String groupScreenName) throws SocialNetworkException {
-        //TODO synchronize working with lastPostDate
         Optional<Long> optionalLastPostDate = groupsBase.getGroupLastPostDate(groupScreenName);
 
         if (optionalLastPostDate.isEmpty()) {

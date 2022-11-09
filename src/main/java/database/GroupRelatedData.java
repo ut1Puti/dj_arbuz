@@ -8,7 +8,7 @@ import java.util.Objects;
  * Класс хранящий данные о группе в базе данных
  *
  * @author Кедровских Олег
- * @version 1.0
+ * @version 1.5
  */
 class GroupRelatedData {
     /**
@@ -18,13 +18,14 @@ class GroupRelatedData {
     /**
      * Поле хранящее дату последнего поста
      */
-    private long lastPostDate = 0;
+    private final long lastPostDate;
 
     /**
-     * Констуктор - создает экземпляр класса
+     * Конструктор - создает экземпляр класса
      */
     GroupRelatedData() {
         this.subscribedUsersId = new ArrayList<>();
+        this.lastPostDate = 0;
     }
 
     /**
@@ -34,6 +35,7 @@ class GroupRelatedData {
      */
     GroupRelatedData(List<String> subscribedUsersId) {
         this.subscribedUsersId = subscribedUsersId;
+        this.lastPostDate = 0;
     }
 
     /**
@@ -88,6 +90,10 @@ class GroupRelatedData {
         subscribedUsersId.add(newSubscriberId);
     }
 
+    private List<String> copySubscribersId() {
+        return subscribedUsersId.stream().toList();
+    }
+
     /**
      * Метод добавляющий новых подписчиков
      *
@@ -103,8 +109,8 @@ class GroupRelatedData {
      *
      * @param newLastPostDate - новая дата последнего поста
      */
-    void updateLastPostDate(long newLastPostDate) {
-        this.lastPostDate = newLastPostDate;
+    GroupRelatedData updateLastPostDate(long newLastPostDate) {
+        return new GroupRelatedData(this.subscribedUsersId, newLastPostDate);
     }
 
     /**
