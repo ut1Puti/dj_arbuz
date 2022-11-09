@@ -2,6 +2,7 @@
 target
 .idea/
 .fleet/
+lib/
 
 #игнорируемые файлы ide
 .idea/*.xml
