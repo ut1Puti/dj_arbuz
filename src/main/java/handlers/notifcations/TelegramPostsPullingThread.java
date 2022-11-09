@@ -1,11 +1,15 @@
 package handlers.notifcations;
 
 import bots.telegram.TelegramBot;
+import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.GroupsStorage;
+import org.checkerframework.checker.units.qual.A;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.SocialNetwork;
 import socialnetworks.vk.Vk;
+import socialnetworks.vk.wall.VkPostsParser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +44,6 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * Метод логики выполняемой внутри {@code TelegramPostsPullingThread}
      *
      * @see GroupsStorage#getGroups()
-     * @see SocialNetwork#getNewPostsAsStrings(GroupsStorage, String)
      * @see GroupsStorage#getSubscribedToGroupUsersId(String)
      */
     @Override
@@ -49,7 +52,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
             for (String groupScreenName : groupsBase.getGroups()) {
                 Optional<List<String>> threadFindNewPosts;
                 try {
-                    threadFindNewPosts = socialNetwork.getNewPostsAsStrings(groupsBase, groupScreenName);
+                    threadFindNewPosts = getNewPostsAsStrings(groupScreenName);
                 } catch (SocialNetworkException e) {
                     continue;
                 }

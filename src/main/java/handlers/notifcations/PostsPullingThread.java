@@ -1,10 +1,15 @@
 package handlers.notifcations;
 
+import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.GroupsStorage;
+import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.vk.Vk;
+import socialnetworks.vk.wall.VkPostsParser;
 import stoppable.StoppableThread;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Абстрактный класс потока получающего новые посты. Поток является потоком демоном
@@ -25,7 +30,7 @@ public abstract class PostsPullingThread extends StoppableThread {
      *
      * @see Vk
      */
-    protected final Vk socialNetwork;
+    protected final Vk vk;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -35,8 +40,46 @@ public abstract class PostsPullingThread extends StoppableThread {
      */
     protected PostsPullingThread(GroupsStorage groupsStorage, Vk vk) {
         this.groupsBase = groupsStorage;
-        this.socialNetwork = vk;
+        this.vk = vk;
         this.setDaemon(true);
+    }
+
+    /**
+     * Метод получающий новые посты из vk в виде строк
+     *
+     * @param groupScreenName название группы из базы данных
+     * @return {@code Optional.empty()} если не нашлось новых постов или группа отсутствует в базе данных,
+     * иначе возвращает {@code Optional.of(newPosts)}
+     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
+     */
+    protected final Optional<List<String>> getNewPostsAsStrings(String groupScreenName) throws SocialNetworkException {
+        //TODO synchronize working with lastPostDate
+        Optional<Long> optionalLastPostDate = groupsBase.getGroupLastPostDate(groupScreenName);
+
+        if (optionalLastPostDate.isEmpty()) {
+            return Optional.empty();
+        }
+
+        long lastPostDate = optionalLastPostDate.get();
+        long newLastPostDate = lastPostDate;
+        final int maxAmountOfPosts = 100;
+        List<WallpostFull> appFindPosts = new ArrayList<>();
+        for (WallpostFull appFindPost : vk.getLastPostAsPostsUnsafe(groupScreenName, maxAmountOfPosts)) {
+            int appFindPostDate = appFindPost.getDate();
+
+            if (appFindPostDate > lastPostDate) {
+                appFindPosts.add(appFindPost);
+
+                if (appFindPostDate > newLastPostDate) {
+                    newLastPostDate = appFindPostDate;
+                }
+
+            }
+
+        }
+        groupsBase.updateGroupLastPost(groupScreenName, newLastPostDate);
+        List<String> vkParsedPosts = VkPostsParser.parsePosts(appFindPosts);
+        return vkParsedPosts.isEmpty() ? Optional.empty() : Optional.of(vkParsedPosts);
     }
 
     /**

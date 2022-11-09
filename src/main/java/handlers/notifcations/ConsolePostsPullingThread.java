@@ -1,9 +1,12 @@
 package handlers.notifcations;
 
+import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.GroupsStorage;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.vk.Vk;
+import socialnetworks.vk.wall.VkPostsParser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -46,7 +49,7 @@ public class ConsolePostsPullingThread extends PostsPullingThread {
             for (String groupScreenName : groupsBase.getUserSubscribedGroups(consoleBotUserId)) {
                 Optional<List<String>> threadNewPosts;
                 try {
-                    threadNewPosts = socialNetwork.getNewPostsAsStrings(groupsBase, groupScreenName);
+                    threadNewPosts = getNewPostsAsStrings(groupScreenName);
                 } catch (SocialNetworkException e) {
                     continue;
                 }

@@ -117,18 +117,4 @@ public interface SocialNetwork<W, U> {
      */
     List<W> getLastPostsAsPosts(String userReceivedGroupName, int amountOfPosts, U userCalledMethod)
             throws NoGroupException, SocialNetworkException;
-
-    /**
-     * Метод получающий новые посты из социальной сети по данным из базы данных,
-     * а также обновляющая дату последних постов в базе данных
-     *
-     * @param groupsStorage   база данных из которой получаются данные, должна содержать дату последнего поста и название группы
-     * @param groupScreenName название группы, которая будет искаться в базе данных
-     * @return новые посты в виде строк
-     * {@code Optional.empty()} если возникли ошибки обращения к api не связанные с самим api или если посты не были найдены
-     * @throws SocialNetworkException     возникает при ошибках обращения к api социальной сети
-     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
-     */
-    Optional<List<String>> getNewPostsAsStrings(GroupsStorage groupsStorage, String groupScreenName)
-            throws SocialNetworkException;
 }

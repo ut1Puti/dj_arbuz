@@ -16,13 +16,10 @@ import socialnetworks.vk.groups.VkGroups;
 import socialnetworks.vk.oAuth.AbstractVkAuth;
 import socialnetworks.vk.oAuth.VkAuth;
 import socialnetworks.vk.wall.AbstractVkWall;
-import socialnetworks.vk.wall.VkPostsParser;
 import socialnetworks.vk.wall.VkWall;
 import user.BotUser;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -198,48 +195,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
         return wall.getPosts(userFindGroup.getScreenName(), amountOfPosts, userCalledMethod);
     }
 
-    /**
-     * Метод для получения новых постов из группы в базе данных, а также обновляющий дату последнего поста
-     *
-     * @param groupsStorage   - база данных
-     * @param groupScreenName - название группы в базе данных
-     * @return список постов в группе в виде строк,
-     * {@code Optional.empty()} возникает при ошибках обращения к vk api не связанных с самим api,
-     * а также если не были найдены новые посты
-     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
-     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
-     * @see VkWall#getPosts(String, int, Actor)
-     * @see VkPostsParser#parsePosts(List)
-     */
-    @Override
-    public Optional<List<String>> getNewPostsAsStrings(GroupsStorage groupsStorage, String groupScreenName)
-            throws SocialNetworkException {
-        final int amountOfPosts = 100;
-        //TODO synchronize working with lastPostDate
-        Optional<Long> optionalLastPostDate = groupsStorage.getGroupLastPostDate(groupScreenName);
-
-        if (optionalLastPostDate.isEmpty()) {
-            return Optional.empty();
-        }
-
-        long lastPostDate = optionalLastPostDate.get();
-        long newLastPostDate = lastPostDate;
-        List<WallpostFull> appFindPosts = new ArrayList<>();
-        for (WallpostFull appFindPost : wall.getPosts(groupScreenName, amountOfPosts, vkApp)) {
-            int appFindPostDate = appFindPost.getDate();
-
-            if (appFindPostDate > lastPostDate) {
-                appFindPosts.add(appFindPost);
-
-                if (appFindPostDate > newLastPostDate) {
-                    newLastPostDate = appFindPostDate;
-                }
-
-            }
-
-        }
-        groupsStorage.updateGroupLastPost(groupScreenName, newLastPostDate);
-        List<String> vkParsedPosts = VkPostsParser.parsePosts(appFindPosts);
-        return vkParsedPosts.isEmpty() ? Optional.empty() : Optional.of(vkParsedPosts);
+    public List<WallpostFull> getLastPostAsPostsUnsafe(String groupScreenName, int amountOfPosts) throws SocialNetworkException {
+        return wall.getPosts(groupScreenName, amountOfPosts, vkApp);
     }
 }
