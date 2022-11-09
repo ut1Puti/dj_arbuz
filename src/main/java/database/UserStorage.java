@@ -1,16 +1,16 @@
 package database;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import user.User;
+import com.google.gson.reflect.TypeToken;
+import loaders.gson.GsonLoader;
+import user.BotUser;
 
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.HashMap;
 
-public class UserStorage{
-    private Map<String, User> usersBase;
+public class UserStorage {
+    private Map<String, BotUser> usersBase;
     private static UserStorage userStorage = null;
 
     /**
@@ -18,9 +18,9 @@ public class UserStorage{
      *
      * @param user - айди юзера в телеграмме
      * @param userData - данные юзера
-     * @return
+     * @return {@code true}
      */
-    public boolean addInfoUser(String user, User userData) {
+    public boolean addInfoUser(String user, BotUser userData) {
         usersBase.put(user, userData);
         return true;
     }
@@ -29,12 +29,10 @@ public class UserStorage{
      * Метод для сохранения базы данных в json файл
      */
     public void saveToJsonFile() {
-        Gson gson = new Gson();
-        String json = gson.toJson(usersBase);
+        Type userStorageMapType = new TypeToken<Map<String, BotUser>>(){}.getType();
+        GsonLoader<Map<String, BotUser>> loader = new GsonLoader<>(userStorageMapType);
         try {
-            FileWriter file = new FileWriter("src/main/resources/anonsrc/database_for_users.json");
-            file.write(json);
-            file.close();
+            loader.loadToJson("src/main/resources/anonsrc/database_for_users.json", usersBase);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -44,17 +42,10 @@ public class UserStorage{
      * Метод для получения информации с json файла
      */
     public void returnStorageFromDatabase() {
+        Type userStorageMapType = new TypeToken<Map<String, BotUser>>(){}.getType();
+        GsonLoader<Map<String, BotUser>> loader = new GsonLoader<>(userStorageMapType);
         try {
-            FileReader file = new FileReader("src/main/resources/anonsrc/database_for_users.json");
-            Scanner scanner = new Scanner(file);
-            try {
-                String json = scanner.nextLine();
-                Gson jsonFile = new Gson();
-                usersBase = jsonFile.fromJson(json, new TypeToken<Map<String, User>>() {
-                }.getType());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            usersBase = loader.loadFromJson("src/main/resources/anonsrc/database_for_users.json");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -93,7 +84,7 @@ public class UserStorage{
      * @param user - ключ с айди юзера в телеграмме
      * @return подписки на группы
      */
-    public User getUser(String user) {
+    public BotUser getUser(String user) {
         return usersBase.get(user);
     }
 }

@@ -1,57 +1,64 @@
 package loaders.gson;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import java.io.*;
-import java.util.Scanner;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
- * Класс для преобразования объектов классов в json строки
+ * Класс для преобразования экземпляров классов в json строки
  *
+ * @param <T> тип объекта обрабатываемого классом
  * @author Кедровских Олег
  * @version 1.0
- * @param <T> тип объекта обрабатываемого классом
  */
-public class GsonLoader<T extends GsonLoadable> {
+public class GsonLoader<T> {
     /**
-     * Поле объекта преобразовывающего объекты в json строки
+     * Поле класса преобразовывающего объекты в json строки
      *
      * @see Gson
      */
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     /**
-     * Поле класс, который преобразуем
+     * Поле типа, который преобразуем
      */
-    private final Class<T> jsonLoadingClass;
+    private final Type jsonLoadingType;
 
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param jsonLoadingClass класс, который будет обрабатываться экземпляром {@code GenericsGsonLoader}
+     * @param jsonLoadingType тип, который будет обрабатываться экземпляром {@code GenericsGsonLoader}
      */
-    public GsonLoader(Class<T> jsonLoadingClass) {
-        this.jsonLoadingClass = jsonLoadingClass;
+    public GsonLoader(Type jsonLoadingType) {
+        this.jsonLoadingType = jsonLoadingType;
     }
 
     /**
-     * Метод превращающий прочитанную из json файла строку в экземпляр объекта типа {@code T}
+     * Метод превращающий прочитанную из json файла строку в экземпляр типа {@code T}
      *
      * @param pathToLoadObject - путь до json файла, из которого будет читать json строка
-     * @return объект типа {@code T} созданный из строки из переданного файла
+     * @return экземпляр типа {@code T} созданный из строки из переданного файла
      * @throws IOException возникает при ошибках чтения файла
      */
     public T loadFromJson(String pathToLoadObject) throws IOException {
-        FileReader fileReader = new FileReader(pathToLoadObject);
-        Scanner scanner = new Scanner(fileReader);
-        String json = scanner.nextLine();
-        return GSON.fromJson(json, jsonLoadingClass);
+        try (Reader fileReader = Files.newBufferedReader(Path.of(pathToLoadObject))) {
+            return GSON.fromJson(fileReader, jsonLoadingType);
+        } catch (IOException e) {
+            throw e;
+        }
     }
 
     /**
-     * Метод превращающий объект типа {@code T} в json строку и записывающий ее в файл
+     * Метод превращающий экземпляр типа {@code T} в json строку и записывающий ее в файл
      *
-     * @param pathToSaveObject - путь до json файла в который будет сохранен объект
-     * @param objectToSave - объект типа {@code T} который будет сохранен
+     * @param pathToSaveObject путь до json файла в который будет сохранен объект
+     * @param objectToSave     экземпляр типа {@code T} который будет сохранен
      * @throws IOException возникает при ошибках записи в файл
      */
     public void loadToJson(String pathToSaveObject, T objectToSave) throws IOException {
@@ -61,9 +68,11 @@ public class GsonLoader<T extends GsonLoadable> {
         }
 
         String json = GSON.toJson(objectToSave);
-        FileWriter file = new FileWriter(pathToSaveObject);
-        file.write(json);
-        file.close();
+        try (Writer fileWriter = Files.newBufferedWriter(Path.of(pathToSaveObject), StandardCharsets.UTF_8)) {
+            fileWriter.write(json);
+        } catch (IOException e) {
+            throw e;
+        }
     }
 }
 
