@@ -2,6 +2,8 @@ package hibernate.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "user_data", schema = "public", catalog = "users_database")
 public class UserData {
@@ -49,5 +51,18 @@ public class UserData {
 
     public void setCoveredAccessToken(String coveredAccessToken) {
         this.coveredAccessToken = coveredAccessToken;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserData userData = (UserData) o;
+        return Objects.equals(telegramId, userData.telegramId) && Objects.equals(userId, userData.userId) && Objects.equals(accessToken, userData.accessToken) && Objects.equals(coveredAccessToken, userData.coveredAccessToken);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(telegramId, userId, accessToken, coveredAccessToken);
     }
 }

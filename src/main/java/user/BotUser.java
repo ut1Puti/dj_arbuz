@@ -1,6 +1,7 @@
 package user;
 
 import com.vk.api.sdk.client.actors.UserActor;
+import hibernate.entity.UserData;
 
 /**
  * Класс пользователя
@@ -25,6 +26,10 @@ public class BotUser extends UserActor {
     public BotUser(Integer vkId, String accessToken, String telegramId) {
         super(vkId, accessToken);
         this.telegramId = telegramId;
+    }
+    public BotUser(UserData userData) {
+        super(userData.getUserId(), userData.getAccessToken());
+        this.telegramId = userData.getTelegramId();
     }
 
     /**

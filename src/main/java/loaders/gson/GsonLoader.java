@@ -54,6 +54,12 @@ public class GsonLoader<T> {
         }
     }
 
+    public String createToJsonString(T objectToString) {
+        return GSON.toJson(objectToString);
+    }
+    public T createFromJsonString(String jsonString) {
+        return GSON.fromJson(jsonString,jsonLoadingType);
+    }
     /**
      * Метод превращающий экземпляр типа {@code T} в json строку и записывающий ее в файл
      *
