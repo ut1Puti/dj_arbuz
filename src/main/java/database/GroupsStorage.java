@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @author Щёголев Андрей
  * @version 1.0
  */
-public class GroupsStorage {
+public class GroupsStorage implements GroupBase {
     /**
      * Поле хеш таблицы, где ключ - имя группы в социальной сети, значение - список пользователей
      */

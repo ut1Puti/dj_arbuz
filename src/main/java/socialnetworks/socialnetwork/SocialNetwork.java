@@ -1,5 +1,6 @@
 package socialnetworks.socialnetwork;
 
+import database.GroupBase;
 import database.GroupsStorage;
 import socialnetworks.socialnetwork.groups.NoGroupException;
 import socialnetworks.socialnetwork.groups.SubscribeStatus;
@@ -72,7 +73,7 @@ public interface SocialNetwork<W, U> {
      * @throws SocialNetworkException     возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    SubscribeStatus subscribeTo(GroupsStorage groupsStorage, String userReceivedGroupName, U userCallingMethod)
+    SubscribeStatus subscribeTo(GroupBase groupsStorage, String userReceivedGroupName, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**
@@ -87,7 +88,7 @@ public interface SocialNetwork<W, U> {
      * @throws SocialNetworkException     возникает при ошибках обращения к api социальной сети
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
-    boolean unsubscribeFrom(GroupsStorage groupsStorage, String userReceivedGroupName, U userCallingMethod)
+    boolean unsubscribeFrom(GroupBase groupsStorage, String userReceivedGroupName, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
 
     /**

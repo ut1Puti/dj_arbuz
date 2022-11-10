@@ -2,6 +2,7 @@ package handlers.notifcations;
 
 import bots.telegram.TelegramBot;
 import com.vk.api.sdk.objects.wall.WallpostFull;
+import database.GroupBase;
 import database.GroupsStorage;
 import org.checkerframework.checker.units.qual.A;
 import socialnetworks.socialnetwork.SocialNetworkException;
@@ -35,7 +36,7 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
      * @param groupsStorage база данных групп на которые оформлена подписка
      * @param socialNetwork социальная сети реализующая необходимые для работы методы
      */
-    public TelegramPostsPullingThread(TelegramBot telegramBot, GroupsStorage groupsStorage, Vk socialNetwork) {
+    public TelegramPostsPullingThread(TelegramBot telegramBot, GroupBase groupsStorage, Vk socialNetwork) {
         super(groupsStorage, socialNetwork);
         this.telegramBot = telegramBot;
     }

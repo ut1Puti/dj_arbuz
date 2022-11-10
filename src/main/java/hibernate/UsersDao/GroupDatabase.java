@@ -2,6 +2,7 @@ package hibernate.UsersDao;
 
 
 import com.google.common.reflect.TypeToken;
+import database.GroupBase;
 import hibernate.entity.GroupData;
 import hibernate.entity.UserData;
 import loaders.gson.GsonLoader;
@@ -12,12 +13,12 @@ import java.util.stream.Collectors;
 
 ;
 
-public class GroupDatabase {
+public class GroupDatabase implements GroupBase {
 
     final private GroupDao groupDao = new GroupDao();
 
     public boolean addInfoToGroup(String groupId, String userID) {
-        if (contains(groupId))
+        if (containsGroup(groupId))
             return addOldGroup(groupId, userID);
         return addNewGroup(groupId, userID);
     }
@@ -65,7 +66,7 @@ public class GroupDatabase {
 
     public boolean deleteInfoFromGroup(String groupName, String userId) {
 
-        if (!contains(groupName)) {
+        if (!containsGroup(groupName)) {
             return false;
         }
         GroupData groupData = groupDao.getGroup(groupName);
@@ -105,6 +106,11 @@ public class GroupDatabase {
         groupDao.updateGroup(groupData);
     }
 
+    @Override
+    public boolean containsGroup(String groupScreenName) {
+        return groupDao.getGroup(groupScreenName) != null;
+    }
+
     public Set<String> getGroups() {
         return groupDao.getAllGroups()
                        .stream()
@@ -121,9 +127,5 @@ public class GroupDatabase {
                        .filter(v -> getSubscribedGroup(v).contains(userId))
                        .map(GroupData::getGroupName)
                        .collect(Collectors.toSet());
-    }
-
-    private boolean contains(String group) {
-        return groupDao.getGroup(group) != null;
     }
 }

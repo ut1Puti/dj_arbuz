@@ -1,7 +1,9 @@
 package bots.telegram;
 
 import bots.StoppableByUser;
+import database.GroupBase;
 import database.GroupsStorage;
+import database.UserBase;
 import database.UserStorage;
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerImpl;
@@ -46,8 +48,8 @@ public final class TelegramMessageExecutor {
      * @param telegramBot экземпляр телеграм бота
      */
     public TelegramMessageExecutor(TelegramBot telegramBot) {
-        UserStorage userStorage = UserStorage.getInstance();
-        GroupsStorage groupsStorage = GroupsStorage.getInstance();
+        UserBase userStorage = UserStorage.getInstance();
+        GroupBase groupsStorage = GroupsStorage.getInstance();
         Vk vk = new Vk();
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
         messageSender = new TelegramMessageSender(telegramBot, userStorage);

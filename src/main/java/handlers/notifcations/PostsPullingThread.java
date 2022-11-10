@@ -1,6 +1,7 @@
 package handlers.notifcations;
 
 import com.vk.api.sdk.objects.wall.WallpostFull;
+import database.GroupBase;
 import database.GroupsStorage;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.vk.Vk;
@@ -22,9 +23,9 @@ public abstract class PostsPullingThread extends StoppableThread {
     /**
      * Поле хранилища групп
      *
-     * @see GroupsStorage
+     * @see GroupBase
      */
-    protected final GroupsStorage groupsBase;
+    protected final GroupBase groupsBase;
     /**
      * Поле обработчика обращений к vk api
      *
@@ -38,7 +39,7 @@ public abstract class PostsPullingThread extends StoppableThread {
      * @param groupsStorage база данных групп на которые оформлена подписка
      * @param vk            класс реализующий доступ к методам обработчика запросов к социальной сети
      */
-    protected PostsPullingThread(GroupsStorage groupsStorage, Vk vk) {
+    protected PostsPullingThread(GroupBase groupsStorage, Vk vk) {
         this.groupsBase = groupsStorage;
         this.vk = vk;
         this.setDaemon(true);

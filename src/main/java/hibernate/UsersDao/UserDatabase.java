@@ -1,9 +1,10 @@
 package hibernate.UsersDao;
 
+import database.UserBase;
 import hibernate.entity.UserData;
 import user.BotUser;
 
-public class UserDatabase {
+public class UserDatabase implements UserBase {
     private final UserDao userDao = new UserDao();
 
     public boolean addInfoUser(String userId, BotUser userData) {

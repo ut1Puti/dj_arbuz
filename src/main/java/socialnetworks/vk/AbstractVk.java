@@ -5,6 +5,7 @@ import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.GroupIsClosed;
 import com.vk.api.sdk.objects.wall.WallpostFull;
+import database.GroupBase;
 import database.GroupsStorage;
 import socialnetworks.socialnetwork.AbstractSocialNetwork;
 import socialnetworks.socialnetwork.SocialNetworkException;
@@ -119,7 +120,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @see GroupsStorage#addInfoToGroup(String, String)
      */
     @Override
-    public SubscribeStatus subscribeTo(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
+    public SubscribeStatus subscribeTo(GroupBase groupBase, String userReceivedGroupName, BotUser userCallingMethod)
             throws SocialNetworkException, NoGroupException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
 
@@ -144,7 +145,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
     @Override
-    public boolean unsubscribeFrom(GroupsStorage groupBase, String userReceivedGroupName, BotUser userCallingMethod)
+    public boolean unsubscribeFrom(GroupBase groupBase, String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
 
