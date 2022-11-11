@@ -2,8 +2,11 @@ package bots.telegram;
 
 import bots.BotMessageExecutable;
 import hibernate.entity.GroupData;
+import httpserver.server.HttpServer;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import stoppable.Stoppable;
 import bots.StoppableByUser;
 
@@ -66,25 +69,25 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
 
     public static void main(String[] args) {
         GroupData group = new GroupData();
-//        HttpServer httpServer = HttpServer.getInstance();
-//
-//        if (httpServer == null) {
-//            throw new RuntimeException("Не удалось настроить сервер");
-//        }
-//
-//        httpServer.start();
-//
-//        TelegramBot telegramBot = new TelegramBot();
-//        try {
-//            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-//            botsApi.registerBot(telegramBot);
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
-//        while (telegramBot.isWorking()) Thread.onSpinWait();
-//        telegramBot.stopWithInterrupt();
-//        httpServer.stop();
-//        System.exit(0);
+        HttpServer httpServer = HttpServer.getInstance();
+
+        if (httpServer == null) {
+            throw new RuntimeException("Не удалось настроить сервер");
+        }
+
+        httpServer.start();
+
+        TelegramBot telegramBot = new TelegramBot();
+        try {
+            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+            botsApi.registerBot(telegramBot);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        while (telegramBot.isWorking()) Thread.onSpinWait();
+        telegramBot.stopWithInterrupt();
+        httpServer.stop();
+        System.exit(0);
     }
 
     /**

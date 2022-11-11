@@ -9,7 +9,15 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 
+/**
+ * Репозиторий для взаимодействия с Entity классом и базой данных
+ */
 public class GroupDao {
+    /**
+     * Метод для сохранения класса группы в базе данных
+     * @param groupData - Entity класс
+     * @return логические выражения
+     */
     public boolean saveGroup(GroupData groupData) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory()
@@ -25,6 +33,12 @@ public class GroupDao {
         }
         return true;
     }
+
+    /**
+     * Метод для получения группы по её названию
+     * @param groupName имя группы
+     * @return Entity класс группы
+     */
     public GroupData getGroup(String groupName) {
         Transaction transaction = null;
         GroupData groupData = null;
@@ -42,6 +56,11 @@ public class GroupDao {
         return groupData;
     }
 
+    /**
+     * Метод для обновления группы в базе данных
+     * @param groupData Entity класс группы
+     * @return логическое выражение
+     */
     public boolean updateGroup(GroupData groupData) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory()
@@ -58,6 +77,10 @@ public class GroupDao {
         return true;
     }
 
+    /**
+     * Метод для удаления группы из базы данных
+     * @param groupId Entity класс группы
+     */
     public void deleteGroup(String groupId) {
         Transaction transaction = null;
         GroupData group = new GroupData();
@@ -73,6 +96,11 @@ public class GroupDao {
             }
         }
     }
+
+    /**
+     * Метод для получения всех групп в таблице базы данных
+     * @return Список Entity классов группы
+     */
     public List<GroupData> getAllGroups() {
         Transaction transaction = null;
         List<GroupData> groups = null;

@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 
+/**
+ * Entity класс для взаимодействия Hibernate ORM и PostgreSQL(таблица group_data)
+ */
 @Entity
 @Table(name = "group_data", schema = "public", catalog = "users_database")
 public class GroupData {
