@@ -37,24 +37,24 @@ public class GroupsStorage implements GroupBase {
     /**
      * Метод для создания нового пользователя в наш класс
      *
-     * @param userId  id пользователя
-     * @param groupId имя группы
+     * @param userSubscribedToGroupId id пользователя
+     * @param groupScreenName         короткое имя группы
      */
-    private void addNewGroup(String groupId, String userId) {
+    private void addNewGroup(String groupScreenName, String userSubscribedToGroupId) {
         List<String> newList = new ArrayList<>();
-        newList.add(userId);
-        groupsBase.put(groupId, new GroupRelatedData(newList, Instant.now().getEpochSecond()));
+        newList.add(userSubscribedToGroupId);
+        groupsBase.put(groupScreenName, new GroupRelatedData(newList, Instant.now().getEpochSecond()));
     }
 
     /**
      * Метод для добавления информации для имеющегося в базе группы
      *
-     * @param groupId - Айди группы
-     * @param userId  - Айди пользователя
+     * @param groupScreenName         короткое имя группы
+     * @param userSubscribedToGroupId id пользователя
      */
-    private boolean addOldGroup(String groupId, String userId) {
-        if (!groupsBase.get(groupId).contains(userId)) {
-            groupsBase.get(groupId).addNewSubscriber(userId);
+    private boolean addOldGroup(String groupScreenName, String userSubscribedToGroupId) {
+        if (!groupsBase.get(groupScreenName).contains(userSubscribedToGroupId)) {
+            groupsBase.get(groupScreenName).addNewSubscriber(userSubscribedToGroupId);
             return true;
         }
         return false;
@@ -63,17 +63,17 @@ public class GroupsStorage implements GroupBase {
     /**
      * метод для добавления информации, где происходит ветвление на методы добавления старой/новой группы
      *
-     * @param groupId - айди группы
-     * @param userID  - айди пользователя
+     * @param groupScreenName         короткое имя группы
+     * @param userSubscribedToGroupId id пользователя
      * @see GroupsStorage#addNewGroup(String, String)
      * @see GroupsStorage#addOldGroup(String, String)
      */
-    public boolean addInfoToGroup(String groupId, String userID) {
-        if (groupsBase.get(groupId) == null) {
-            addNewGroup(groupId, userID);
+    public boolean addInfoToGroup(String groupScreenName, String userSubscribedToGroupId) {
+        if (groupsBase.get(groupScreenName) == null) {
+            addNewGroup(groupScreenName, userSubscribedToGroupId);
             return true;
         } else {
-            return addOldGroup(groupId, userID);
+            return addOldGroup(groupScreenName, userSubscribedToGroupId);
         }
     }
 
@@ -125,26 +125,26 @@ public class GroupsStorage implements GroupBase {
     /**
      * Метод для удаления пользователя из подписчика группы
      *
-     * @param groupName название группы в базе данных
-     * @param userId    id пользователя
+     * @param groupScreenName         название группы в базе данных
+     * @param userSubscribedToGroupId id пользователя
      * @return {@code true} если пользователь был удален, {@code false} если пользователь не был удален
      */
-    public boolean deleteInfoFromGroup(String groupName, String userId) {
+    public boolean deleteInfoFromGroup(String groupScreenName, String userSubscribedToGroupId) {
 
-        if (!groupsBase.containsKey(groupName)) {
+        if (!groupsBase.containsKey(groupScreenName)) {
             return false;
         }
 
-        List<String> subscribedToGroupUsers = groupsBase.get(groupName).getSubscribedUsersId();
+        List<String> subscribedToGroupUsers = groupsBase.get(groupScreenName).getSubscribedUsersId();
 
-        if (!subscribedToGroupUsers.contains(userId)) {
+        if (!subscribedToGroupUsers.contains(userSubscribedToGroupId)) {
             return false;
         }
 
-        boolean isUnsubscribed = subscribedToGroupUsers.remove(userId);
+        boolean isUnsubscribed = subscribedToGroupUsers.remove(userSubscribedToGroupId);
 
         if (isUnsubscribed && subscribedToGroupUsers.isEmpty()) {
-            groupsBase.remove(groupName);
+            groupsBase.remove(groupScreenName);
         }
 
         return isUnsubscribed;

@@ -20,14 +20,14 @@ public class GroupDatabase implements GroupBase {
 
     /**
      * Метод для добавления подписки к группе
-     * @param groupId Айди группы
-     * @param userID Айди пользователя
+     * @param groupScreenName Айди группы
+     * @param userSubscribedToGroupId Айди пользователя
      * @return добавляется новая информация в Entity класс или же создается новый Entity класс
      */
-    public boolean addInfoToGroup(String groupId, String userID) {
-        if (containsGroup(groupId))
-            return addOldGroup(groupId, userID);
-        return addNewGroup(groupId, userID);
+    public boolean addInfoToGroup(String groupScreenName, String userSubscribedToGroupId) {
+        if (containsGroup(groupScreenName))
+            return addOldGroup(groupScreenName, userSubscribedToGroupId);
+        return addNewGroup(groupScreenName, userSubscribedToGroupId);
     }
 
     /**
@@ -89,18 +89,18 @@ public class GroupDatabase implements GroupBase {
 
     /**
      * Мето для удаления подписчика определенной группы
-     * @param groupName Айди группы
-     * @param userId Айди юзера
+     * @param groupScreenName Айди группы
+     * @param userSubscribedToGroupId Айди юзера
      */
-    public boolean deleteInfoFromGroup(String groupName, String userId) {
+    public boolean deleteInfoFromGroup(String groupScreenName, String userSubscribedToGroupId) {
 
-        if (!containsGroup(groupName)) {
+        if (!containsGroup(groupScreenName)) {
             return false;
         }
-        GroupData groupData = groupDao.getGroup(groupName);
+        GroupData groupData = groupDao.getGroup(groupScreenName);
         List<String> subscribedToGroupUsers = getSubscribedGroup(groupData);
 
-        boolean isUnsubscribed = subscribedToGroupUsers.remove(userId);
+        boolean isUnsubscribed = subscribedToGroupUsers.remove(userSubscribedToGroupId);
         if (isUnsubscribed && subscribedToGroupUsers.isEmpty()) {
             groupDao.deleteGroup(groupData.getGroupName());
         } else {

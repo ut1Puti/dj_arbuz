@@ -17,12 +17,12 @@ public class UserStorage implements UserBase {
     /**
      * Метод для добавления информации в базу данных
      *
-     * @param user     id юзера в телеграмме
-     * @param userData данные юзера
+     * @param userId  id юзера в телеграмме
+     * @param botUser данные юзера
      * @return {@code true}
      */
-    public boolean addInfoUser(String user, BotUser userData) {
-        usersBase.put(user, userData);
+    public boolean addInfoUser(String userId, BotUser botUser) {
+        usersBase.put(userId, botUser);
         return true;
     }
 
@@ -78,17 +78,17 @@ public class UserStorage implements UserBase {
     /**
      * Метод для проверки ключей в базе
      */
-    public boolean contains(String user) {
-        return usersBase.containsKey(user);
+    public boolean contains(String userId) {
+        return usersBase.containsKey(userId);
     }
 
     /**
      * Метод для оплучения значения по ключу
      *
-     * @param user ключ с id юзера в телеграмме
+     * @param userId ключ с id юзера в телеграмме
      * @return подписки на группы
      */
-    public BotUser getUser(String user) {
-        return usersBase.get(user);
+    public BotUser getUser(String userId) {
+        return usersBase.get(userId);
     }
 }

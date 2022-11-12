@@ -2,10 +2,36 @@ package database;
 
 import user.BotUser;
 
+/**
+ * Интерфейс базы данных пользователей
+ *
+ * @author Кедровских Олег
+ * @version 1.0
+ */
 public interface UserBase {
-    boolean addInfoUser(String user, BotUser userData);
+    /**
+     * Метод добавляющий информацию о новых пользователях
+     *
+     * @param userId id пользователя
+     * @param botUser экземпляр класса пользователя
+     * @return {@code true} - если пользователь был успешно добавлен,
+     * {@code false} - если пользователь не был добавлен
+     */
+    boolean addInfoUser(String userId, BotUser botUser);
 
-    boolean contains(String user);
+    /**
+     * Метод проверяющий наличие пользователя в базе по id
+     *
+     * @param userId id пользователя
+     * @return {@code true} - если пользователь с таким id есть в базе, {@code false} - если пользователя нет в базе
+     */
+    boolean contains(String userId);
 
-    BotUser getUser(String user);
+    /**
+     * Метод получающий пользователя по id
+     *
+     * @param userId id пользователя
+     * @return экземпляр класса пользователя по id
+     */
+    BotUser getUser(String userId);
 }

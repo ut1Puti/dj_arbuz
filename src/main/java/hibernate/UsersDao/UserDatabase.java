@@ -14,13 +14,13 @@ public class UserDatabase implements UserBase {
     /**
      * Метод для добавления новой информации юзера
      * @param userId Айди юзера
-     * @param userData Данные юзера
+     * @param botUser Данные юзера
      */
-    public boolean addInfoUser(String userId, BotUser userData) {
+    public boolean addInfoUser(String userId, BotUser botUser) {
         UserData tempUser = new UserData();
         tempUser.setTelegramId(userId);
-        tempUser.setUserId(userData.getId());
-        tempUser.setAccessToken(userData.getAccessToken());
+        tempUser.setUserId(botUser.getId());
+        tempUser.setAccessToken(botUser.getAccessToken());
         userDao.updateUser(tempUser);
         return true;
     }
@@ -28,17 +28,17 @@ public class UserDatabase implements UserBase {
     /**
      * Метод для проверки наличия юзера в бд
      */
-    public boolean contains(String user) {
-        return userDao.getUser(user) != null;
+    public boolean contains(String userId) {
+        return userDao.getUser(userId) != null;
     }
 
     /**
      * Метод для получения юзера
-     * @param user айди юзера в телеграме
+     * @param userId айди юзера в телеграме
      * @return Entity класс юзера взятый из бд
      */
-    public BotUser getUser(String user) {
-        return new BotUser(userDao.getUser(user));
+    public BotUser getUser(String userId) {
+        return new BotUser(userDao.getUser(userId));
     }
 
 }
