@@ -2,6 +2,8 @@ package handlers.messages;
 
 import bots.BotTextResponse;
 import bots.StoppableByUser;
+import database.GroupBase;
+import database.UserBase;
 import socialnetworks.socialnetwork.AbstractSocialNetwork;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.socialnetwork.SocialNetwork;
@@ -109,13 +111,13 @@ public class MessageHandlerImpl implements MessageHandler {
      *
      * @see GroupsStorage
      */
-    private final GroupsStorage groupsBase;
+    private final GroupBase groupsBase;
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
      * @see UserStorage
      */
-    private final UserStorage usersBase;
+    private final UserBase usersBase;
     /**
      * Поле класса для взаимодействия с api социальной сети
      *
@@ -130,7 +132,7 @@ public class MessageHandlerImpl implements MessageHandler {
      * @param usersBase  хранилище пользователей, которые аутентифицированы в социальной сети
      * @param vk         класс для взаимодействия с vk
      */
-    public MessageHandlerImpl(GroupsStorage groupsBase, UserStorage usersBase, Vk vk) {
+    public MessageHandlerImpl(GroupBase groupsBase, UserBase usersBase, Vk vk) {
         this.groupsBase = groupsBase;
         this.usersBase = usersBase;
         this.socialNetwork = vk;

@@ -1,18 +1,19 @@
 package bots.telegram;
 
 import bots.BotMessageExecutable;
+import hibernate.entity.GroupData;
 import httpserver.server.HttpServer;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import stoppable.Stoppable;
 import bots.StoppableByUser;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
     }
 
     public static void main(String[] args) {
+        GroupData group = new GroupData();
         HttpServer httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {
@@ -136,7 +138,6 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         SendMessage sendMessage = new SendMessage(userSendResponseId, responseSendMessage);
         ReplyKeyboardMarkup keyBoardMarkup = new ReplyKeyboardMarkup();
         keyBoardMarkup.setKeyboard(keyBoardRows);
-        sendMessage.setReplyMarkup(keyBoardMarkup);
         try {
             execute(sendMessage);
         } catch (TelegramApiException ignored) {

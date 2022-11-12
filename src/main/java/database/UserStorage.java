@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.HashMap;
 
-public class UserStorage {
+public class UserStorage implements UserBase {
     private Map<String, BotUser> usersBase;
     private static UserStorage userStorage = null;
 

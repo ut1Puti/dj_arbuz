@@ -2,6 +2,7 @@ package handlers.messages;
 
 import bots.BotMessageExecutable;
 import bots.BotTextResponse;
+import database.UserBase;
 import database.UserStorage;
 import user.BotUser;
 
@@ -24,7 +25,7 @@ abstract class AbstractMessageSender implements MessageSender {
      *
      * @see UserStorage
      */
-    private final UserStorage userStorage;
+    private final UserBase userStorage;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -32,7 +33,7 @@ abstract class AbstractMessageSender implements MessageSender {
      * @param messageSender    реализация интерфейса, логика которой является логикой отправки сообщения пользователю
      * @param userStorage хранилище пользователей
      */
-    protected AbstractMessageSender(BotMessageExecutable messageSender, UserStorage userStorage) {
+    protected AbstractMessageSender(BotMessageExecutable messageSender, UserBase userStorage) {
         this.messageSender = messageSender;
         this.userStorage = userStorage;
     }

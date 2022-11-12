@@ -1,13 +1,17 @@
 package bots.telegram;
 
 import bots.StoppableByUser;
+import database.GroupBase;
 import database.GroupsStorage;
+import database.UserBase;
 import database.UserStorage;
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerImpl;
 import handlers.messages.MessageHandlerResponse;
 import handlers.messages.TelegramMessageSender;
 import handlers.notifcations.TelegramPostsPullingThread;
+import hibernate.UsersDao.GroupDatabase;
+import hibernate.UsersDao.UserDatabase;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import socialnetworks.vk.Vk;
@@ -46,8 +50,8 @@ public final class TelegramMessageExecutor {
      * @param telegramBot экземпляр телеграм бота
      */
     public TelegramMessageExecutor(TelegramBot telegramBot) {
-        UserStorage userStorage = UserStorage.getInstance();
-        GroupsStorage groupsStorage = GroupsStorage.getInstance();
+        UserBase userStorage = new UserDatabase();
+        GroupBase groupsStorage = new GroupDatabase();
         Vk vk = new Vk();
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
         messageSender = new TelegramMessageSender(telegramBot, userStorage);
