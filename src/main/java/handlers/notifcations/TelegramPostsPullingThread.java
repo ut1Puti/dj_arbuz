@@ -1,16 +1,11 @@
 package handlers.notifcations;
 
 import bots.telegram.TelegramBot;
-import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.GroupBase;
 import database.GroupsStorage;
-import org.checkerframework.checker.units.qual.A;
 import socialnetworks.socialnetwork.SocialNetworkException;
-import socialnetworks.socialnetwork.SocialNetwork;
 import socialnetworks.vk.Vk;
-import socialnetworks.vk.wall.VkPostsParser;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

@@ -49,22 +49,34 @@ public class GsonLoader<T> {
     public T loadFromJson(String pathToLoadObject) throws IOException {
         try (Reader fileReader = Files.newBufferedReader(Path.of(pathToLoadObject))) {
             return GSON.fromJson(fileReader, jsonLoadingType);
-        } catch (IOException e) {
-            throw e;
         }
     }
 
+    /**
+     * Метод для превращения json строки объекта
+     *
+     * @param objectToString объект, который превратиться в json строку
+     * @return json строку объекта
+     */
     public String createToJsonString(T objectToString) {
         return GSON.toJson(objectToString);
     }
-    public T createFromJsonString(String jsonString) {
-        return GSON.fromJson(jsonString,jsonLoadingType);
-    }
+
     /**
-     * Метод превращающий экземпляр типа {@code T} в json строку и записывающий ее в файл
+     * Метод превращающий json строку в объект
      *
-     * @param pathToSaveObject путь до json файла в который будет сохранен объект
-     * @param objectToSave     экземпляр типа {@code T} который будет сохранен
+     * @param jsonString json строка объекта
+     * @return объект построенный по json строке
+     */
+    public T createFromJsonString(String jsonString) {
+        return GSON.fromJson(jsonString, jsonLoadingType);
+    }
+
+    /**
+     * Метод превращающий объект типа {@code T} в json строку и записывающий ее в файл
+     *
+     * @param pathToSaveObject - путь до json файла в который будет сохранен объект
+     * @param objectToSave     - объект типа {@code T} который будет сохранен
      * @throws IOException возникает при ошибках записи в файл
      */
     public void loadToJson(String pathToSaveObject, T objectToSave) throws IOException {
@@ -76,8 +88,6 @@ public class GsonLoader<T> {
         String json = GSON.toJson(objectToSave);
         try (Writer fileWriter = Files.newBufferedWriter(Path.of(pathToSaveObject), StandardCharsets.UTF_8)) {
             fileWriter.write(json);
-        } catch (IOException e) {
-            throw e;
         }
     }
 }

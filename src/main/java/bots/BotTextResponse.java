@@ -73,6 +73,7 @@ public class BotTextResponse {
      */
     public static final String GROUP_IS_CLOSED = "Не могу подписать так как группа закрыта";
     /**
+     * <<<<<<< HEAD
      * Поле сообщения, о том что пользователь был успешно отписан от группы
      */
     public static final String UNSUBSCRIBED = "Вы были отписаны от группы";

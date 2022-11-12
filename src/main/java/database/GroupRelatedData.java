@@ -15,6 +15,7 @@ class GroupRelatedData {
      * Поле хранящее подписанных пользователей
      */
     private final List<String> subscribedUsersId;
+
     /**
      * Поле хранящее дату последнего поста
      */
@@ -29,7 +30,7 @@ class GroupRelatedData {
     }
 
     /**
-     * Констуктор - создает экземпляр класса
+     * Конструктор - создает экземпляр класса
      *
      * @param subscribedUsersId - подписанные пользователи
      */
@@ -39,7 +40,7 @@ class GroupRelatedData {
     }
 
     /**
-     * Констуктор - создает экземпляр класса
+     * Конструктор - создает экземпляр класса
      *
      * @param lastPostDate - дата последнего поста полученного в группе
      */
@@ -49,7 +50,7 @@ class GroupRelatedData {
     }
 
     /**
-     * Констуктор - создает экземпляр класса
+     * Конструктор - создает экземпляр класса
      *
      * @param subscribedUsersId - подписанные пользователи
      * @param lastPostDate      - дата последнего поста полученного в группе
@@ -88,10 +89,6 @@ class GroupRelatedData {
         }
 
         subscribedUsersId.add(newSubscriberId);
-    }
-
-    private List<String> copySubscribersId() {
-        return subscribedUsersId.stream().toList();
     }
 
     /**

@@ -1,7 +1,6 @@
 package bots.telegram;
 
 import bots.BotMessageExecutable;
-import hibernate.entity.GroupData;
 import httpserver.server.HttpServer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -32,6 +31,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
      */
     private final TelegramBotConfiguration telegramBotConfiguration;
     private final TelegramMessageExecutor messageExecutor;
+
     /**
      * Поле кнопок в телеграмм
      */
@@ -68,7 +68,6 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
     }
 
     public static void main(String[] args) {
-        GroupData group = new GroupData();
         HttpServer httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {

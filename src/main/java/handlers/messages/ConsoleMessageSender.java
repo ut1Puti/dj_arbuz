@@ -1,11 +1,8 @@
 package handlers.messages;
 
 import bots.console.ConsoleBot;
-import bots.telegram.TelegramBot;
 import database.UserStorage;
 import handlers.notifcations.ConsolePostsPullingThread;
-
-import java.util.function.BiConsumer;
 
 /**
  * Класс-отправитель сообщений консольного бота
@@ -25,7 +22,7 @@ public class ConsoleMessageSender extends AbstractMessageSender {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param consoleBot
+     * @param consoleBot консольный бот
      * @param userStorage хранилище пользователей
      * @param notificationPullingThread поток получающий новые посты в группах
      */

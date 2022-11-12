@@ -2,7 +2,6 @@ package handlers.notifcations;
 
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.GroupBase;
-import database.GroupsStorage;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.vk.Vk;
 import socialnetworks.vk.wall.VkPostsParser;
@@ -51,7 +50,7 @@ public abstract class PostsPullingThread extends StoppableThread {
      * @param groupScreenName название группы из базы данных
      * @return {@code Optional.empty()} если не нашлось новых постов или группа отсутствует в базе данных,
      * иначе возвращает {@code Optional.of(newPosts)}
-     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
+     * @throws SocialNetworkException возникает при ошибке обращения к vk api
      */
     protected final Optional<List<String>> getNewPostsAsStrings(String groupScreenName) throws SocialNetworkException {
         Optional<Long> optionalLastPostDate = groupsBase.getGroupLastPostDate(groupScreenName);

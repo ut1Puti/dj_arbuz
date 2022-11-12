@@ -1,13 +1,11 @@
 package socialnetworks.socialnetwork;
 
 import database.GroupBase;
-import database.GroupsStorage;
 import socialnetworks.socialnetwork.groups.NoGroupException;
 import socialnetworks.socialnetwork.groups.SubscribeStatus;
 import socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**

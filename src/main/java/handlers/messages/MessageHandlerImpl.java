@@ -334,7 +334,7 @@ public class MessageHandlerImpl implements MessageHandler {
      * @param userReceivedGroupName Название группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return возвращает ответ содержащий информацию о статусе подписки пользователя
-     * @see AbstractSocialNetwork#subscribeTo(GroupsStorage, String, Object)
+     * @see AbstractSocialNetwork#subscribeTo(GroupBase, String, Object)
      * @see SubscribeStatus#getSubscribeMessage()
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
@@ -364,7 +364,7 @@ public class MessageHandlerImpl implements MessageHandler {
      * @param userReceivedGroupName название группы
      * @param userSendResponseId    id пользователю, которому будет отправлен ответ
      * @return ответ с сообщением о статусе отписки пользователя
-     * @see AbstractSocialNetwork#unsubscribeFrom(GroupsStorage, String, Object)
+     * @see AbstractSocialNetwork#unsubscribeFrom(GroupBase, String, Object)
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
      */

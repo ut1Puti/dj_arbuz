@@ -25,7 +25,7 @@ public final class TelegramBotConfiguration {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param botUserName имя бота
+     * @param botUserName      имя бота
      * @param telegramBotToken токен доступа бота к telegram api
      */
     private TelegramBotConfiguration(String botUserName, String telegramBotToken) {
@@ -57,6 +57,7 @@ public final class TelegramBotConfiguration {
     }
 
     /**
+     * <<<<<<< HEAD
      * Метод создающий объект класса из параметров окружения программы
      *
      * @return {@code TelegramBotConfiguration} с параметрами конфигрурации из локального окружения

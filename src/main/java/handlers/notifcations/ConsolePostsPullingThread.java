@@ -1,14 +1,12 @@
 package handlers.notifcations;
 
-import com.vk.api.sdk.objects.wall.WallpostFull;
 import database.GroupsStorage;
 import socialnetworks.socialnetwork.SocialNetworkException;
 import socialnetworks.vk.Vk;
-import socialnetworks.vk.wall.VkPostsParser;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**

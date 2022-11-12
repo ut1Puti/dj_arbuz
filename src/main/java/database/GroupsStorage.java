@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import loaders.gson.GsonLoader;
 
 import java.lang.reflect.Type;
+
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,12 @@ public class GroupsStorage implements GroupBase {
      * Поле хеш таблицы, где ключ - имя группы в социальной сети, значение - список пользователей
      */
     private Map<String, GroupRelatedData> groupsBase;
+
+    /**
+     * Поле блокировки обновления даты последнего поста
+     */
     private final Object dataLock = new Object();
+
     private static GroupsStorage groupsStorage;
 
     /**
@@ -90,7 +96,8 @@ public class GroupsStorage implements GroupBase {
      * Метод для сохранения хеш таблицы в виде файла с расширением json
      */
     public void saveToJsonFile() {
-        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {}.getType();
+        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {
+        }.getType();
         GsonLoader<Map<String, GroupRelatedData>> groupStorageMapGsonLoader = new GsonLoader<>(groupStorageMapType);
         try {
             groupStorageMapGsonLoader.loadToJson("src/main/resources/anonsrc/database_for_groups.json", groupsBase);
@@ -105,7 +112,8 @@ public class GroupsStorage implements GroupBase {
      * @see GroupsStorage#saveToJsonFile()
      */
     public void returnStorageFromDatabase() {
-        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {}.getType();
+        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {
+        }.getType();
         GsonLoader<Map<String, GroupRelatedData>> loader = new GsonLoader<>(groupStorageMapType);
         try {
             groupsBase = loader.loadFromJson("src/main/resources/anonsrc/database_for_groups.json");

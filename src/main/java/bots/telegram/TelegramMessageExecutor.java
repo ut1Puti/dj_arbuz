@@ -2,9 +2,7 @@ package bots.telegram;
 
 import bots.StoppableByUser;
 import database.GroupBase;
-import database.GroupsStorage;
 import database.UserBase;
-import database.UserStorage;
 import handlers.messages.MessageHandler;
 import handlers.messages.MessageHandlerImpl;
 import handlers.messages.MessageHandlerResponse;
@@ -12,11 +10,7 @@ import handlers.messages.TelegramMessageSender;
 import handlers.notifcations.TelegramPostsPullingThread;
 import hibernate.UsersDao.GroupDatabase;
 import hibernate.UsersDao.UserDatabase;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import socialnetworks.vk.Vk;
-
-import java.util.function.BiConsumer;
 
 /**
  * Класс исполнителя сообщений пользователя телеграм бота
@@ -68,8 +62,8 @@ public final class TelegramMessageExecutor {
     /**
      * Метод исполняющий текстовое сообщение пользователя
      *
-     * @param userReceivedId id пользователя от которого было получено сообщение
-     * @param userReceivedMessage полученное от пользователя сообщение
+     * @param userReceivedId        id пользователя от которого было получено сообщение
+     * @param userReceivedMessage   полученное от пользователя сообщение
      * @param stoppableByUserThread поток из которого было получено сообщение
      */
     public void executeUserMessage(String userReceivedId, String userReceivedMessage, StoppableByUser stoppableByUserThread) {
@@ -82,7 +76,5 @@ public final class TelegramMessageExecutor {
      */
     public void stop() {
         notificationPullingThread.stopWithInterrupt();
-        UserStorage.getInstance().saveToJsonFile();
-        GroupsStorage.getInstance().saveToJsonFile();
     }
 }

@@ -124,6 +124,7 @@ public class MessageHandlerResponse {
     }
 
     /**
+     * <<<<<<< HEAD
      * Метод создающий хэш класса
      *
      * @return хэш текущего класса
@@ -150,7 +151,7 @@ public class MessageHandlerResponse {
             return false;
         }
 
-        return  Objects.equals(userSendResponseId, otherMessageHandlerResponse.userSendResponseId) &&
+        return Objects.equals(userSendResponseId, otherMessageHandlerResponse.userSendResponseId) &&
                 Objects.equals(textMessage, otherMessageHandlerResponse.textMessage) &&
                 Objects.equals(postsMessages, otherMessageHandlerResponse.postsMessages);
     }
@@ -249,7 +250,7 @@ public class MessageHandlerResponse {
                 return false;
             }
 
-            return  Objects.equals(textMessage, otherMessageHandlerResponseBuilder.textMessage) &&
+            return Objects.equals(textMessage, otherMessageHandlerResponseBuilder.textMessage) &&
                     Objects.equals(postsMessages, otherMessageHandlerResponseBuilder.postsMessages);
         }
     }

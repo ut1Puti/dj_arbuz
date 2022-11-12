@@ -132,6 +132,7 @@ public class StoppableThread extends Thread implements Stoppable {
     }
 
     /**
+<<<<<<< HEAD
      * Метод выполняющий логику выполняемую внутри потока, наследники должны иметь внутри себя цикл
      * {@code while(working.get) {some logic that Thread do} working.set(false);}, этот цикл реализует бесконечный цикл
      * внутри которого будет исполняться логика потока
