@@ -65,8 +65,8 @@ public class GroupRelatedDataTests {
     public void testUpdateLastPostDate() {
         Random random = new Random();
         int lastPostDate = random.nextInt();
-        groupRelatedData.updateLastPostDate(lastPostDate);
-        assertEquals(lastPostDate, groupRelatedData.getLastPostDate());
+        GroupRelatedData newGroupData = groupRelatedData.updateLastPostDate(lastPostDate);
+        assertEquals(lastPostDate, newGroupData.getLastPostDate());
     }
 
     /**

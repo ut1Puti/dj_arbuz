@@ -1,6 +1,7 @@
 package bots.telegram;
 
 import bots.BotMessageExecutable;
+import hibernate.HibernateUtil;
 import httpserver.server.HttpServer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -86,6 +87,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
         while (telegramBot.isWorking()) Thread.onSpinWait();
         telegramBot.stopWithInterrupt();
         httpServer.stop();
+        HibernateUtil.getSessionFactory().close();
         System.exit(0);
     }
 
