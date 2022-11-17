@@ -4,6 +4,8 @@ import bots.BotMessageExecutable;
 import bots.BotTextResponse;
 import database.UserBase;
 import database.UserStorage;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import user.BotUser;
 
 import java.util.concurrent.ExecutionException;
@@ -14,6 +16,7 @@ import java.util.concurrent.ExecutionException;
  * @author Кедровских Олег
  * @version 1.0
  */
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 abstract class AbstractMessageSender implements MessageSender {
     /**
      * Потребитель принимающий на вход id пользователя и строку содержащую сообщение,
@@ -26,17 +29,6 @@ abstract class AbstractMessageSender implements MessageSender {
      * @see UserStorage
      */
     private final UserBase userStorage;
-
-    /**
-     * Конструктор - создает экземпляр класса
-     *
-     * @param messageSender    реализация интерфейса, логика которой является логикой отправки сообщения пользователю
-     * @param userStorage хранилище пользователей
-     */
-    protected AbstractMessageSender(BotMessageExecutable messageSender, UserBase userStorage) {
-        this.messageSender = messageSender;
-        this.userStorage = userStorage;
-    }
 
     /**
      * Реализация метод, который отправляет сообщения пользователям

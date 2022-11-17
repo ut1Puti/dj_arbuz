@@ -1,9 +1,13 @@
 package handlers.messages;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import user.BotUser;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -13,37 +17,28 @@ import java.util.concurrent.CompletableFuture;
  * @version 3.0
  * @see MessageHandlerResponseBuilder
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(exclude = {"updateUser"})
 public class MessageHandlerResponse {
     /**
      * Поле id пользователя которому будет отправлен ответ
      */
+    @Getter
     private final String userSendResponseId;
     /**
      * Поле текстового сообщения
      */
+    @Getter
     private final String textMessage;
     /**
      * Поле содержащее интерфейс для создания или обновления пользователя
      */
+    @Getter
     private final CompletableFuture<BotUser> updateUser;
     /**
      * Поле со списком постов в виде строк
      */
     private final List<String> postsMessages;
-
-    /**
-     * Конструктор - создает экземпляр класса
-     *
-     * @param textMessage   текст сообщения отправленного от бота пользователю
-     * @param updateUser    интерфейс для обновления пользователя
-     * @param postsMessages список постов в виде строк
-     */
-    private MessageHandlerResponse(String userSendResponseId, String textMessage, CompletableFuture<BotUser> updateUser, List<String> postsMessages) {
-        this.userSendResponseId = userSendResponseId;
-        this.textMessage = textMessage;
-        this.updateUser = updateUser;
-        this.postsMessages = postsMessages;
-    }
 
     /**
      * Метод создающий класс {@code builder}, который позволяет создавать экземпляр класса с определенными параметрами
@@ -56,30 +51,12 @@ public class MessageHandlerResponse {
     }
 
     /**
-     * Метод для получения id пользователя, которому будет отправлено сообщение
-     *
-     * @return строку, содержащую id пользователя, которому будет отправлен ответ
-     */
-    public String getUserSendResponseId() {
-        return userSendResponseId;
-    }
-
-    /**
      * Метод проверяющий наличие текстового сообщения
      *
      * @return наличие текстовое сообщение
      */
     public boolean hasTextMessage() {
         return textMessage != null;
-    }
-
-    /**
-     * Метод возвращающий текстовое сообщение
-     *
-     * @return текстовое сообщение
-     */
-    public String getTextMessage() {
-        return textMessage;
     }
 
     /**
@@ -102,7 +79,7 @@ public class MessageHandlerResponse {
      * @return список постов
      */
     public List<String> getPostsMessages() {
-        return postsMessages;
+        return List.copyOf(postsMessages);
     }
 
     /**
@@ -115,54 +92,14 @@ public class MessageHandlerResponse {
     }
 
     /**
-     * Метод возвращающий интерфейс для обновления или создания пользователя
-     *
-     * @return интерфейс для обновления или создания пользователя
-     */
-    public CompletableFuture<BotUser> getUpdateUser() {
-        return updateUser;
-    }
-
-    /**
-     * <<<<<<< HEAD
-     * Метод создающий хэш класса
-     *
-     * @return хэш текущего класса
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(userSendResponseId, textMessage, postsMessages);
-    }
-
-    /**
-     * Метод проверяющий равен ли {@code obj} экземпляру {@code MessageHandlerResponse}
-     *
-     * @param obj объект с которым сравнивается {@code MessageHandlerResponse}
-     * @return {@code true} если равны, {@code false} если не равны
-     */
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj) {
-            return true;
-        }
-
-        if (!(obj instanceof MessageHandlerResponse otherMessageHandlerResponse)) {
-            return false;
-        }
-
-        return Objects.equals(userSendResponseId, otherMessageHandlerResponse.userSendResponseId) &&
-                Objects.equals(textMessage, otherMessageHandlerResponse.textMessage) &&
-                Objects.equals(postsMessages, otherMessageHandlerResponse.postsMessages);
-    }
-
-    /**
      * Класс {@code builder} для класса {@code MessageHandlerResponse}
      *
      * @author Кедровских Олег
      * @version 1.0
      * @see MessageHandlerResponse
      */
+    @NoArgsConstructor
+    @EqualsAndHashCode(exclude = {"updateUser"})
     public static class MessageHandlerResponseBuilder {
         /**
          * Поле текстового сообщения
@@ -221,37 +158,6 @@ public class MessageHandlerResponse {
          */
         public MessageHandlerResponse build(String userSendResponseId) {
             return new MessageHandlerResponse(userSendResponseId, textMessage, updateUser, postsMessages);
-        }
-
-        /**
-         * Метод создающий хэш класса
-         *
-         * @return хэш текущего класса
-         */
-        @Override
-        public int hashCode() {
-            return Objects.hash(textMessage, postsMessages);
-        }
-
-        /**
-         * Метод проверяющий равен ли {@code obj} экземпляру {@code MessageHandlerResponseBuilder}
-         *
-         * @param obj объект с которым сравнивается {@code MessageHandlerResponseBuilder}
-         * @return {@code true} если равны, {@code false} если не равны
-         */
-        @Override
-        public boolean equals(Object obj) {
-
-            if (this == obj) {
-                return true;
-            }
-
-            if (!(obj instanceof MessageHandlerResponseBuilder otherMessageHandlerResponseBuilder)) {
-                return false;
-            }
-
-            return Objects.equals(textMessage, otherMessageHandlerResponseBuilder.textMessage) &&
-                    Objects.equals(postsMessages, otherMessageHandlerResponseBuilder.postsMessages);
         }
     }
 }

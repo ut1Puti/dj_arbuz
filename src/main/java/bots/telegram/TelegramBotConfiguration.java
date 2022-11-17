@@ -2,6 +2,9 @@ package bots.telegram;
 
 import com.google.gson.JsonSyntaxException;
 import loaders.gson.GsonLoader;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -12,6 +15,8 @@ import java.util.Objects;
  * @author Щёголев Андрей
  * @version 1.0
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode
 public final class TelegramBotConfiguration {
     /**
      * Поле имени бота
@@ -21,17 +26,6 @@ public final class TelegramBotConfiguration {
      * Поле токена доступа бота, к telegram api
      */
     final String telegramBotToken;
-
-    /**
-     * Конструктор - создает экземпляр класса
-     *
-     * @param botUserName      имя бота
-     * @param telegramBotToken токен доступа бота к telegram api
-     */
-    private TelegramBotConfiguration(String botUserName, String telegramBotToken) {
-        this.botUserName = botUserName;
-        this.telegramBotToken = telegramBotToken;
-    }
 
     /**
      * Метод загружающий объект класса из json файла
@@ -73,36 +67,5 @@ public final class TelegramBotConfiguration {
         }
 
         return new TelegramBotConfiguration(telegramBotName, telegramBotToken);
-    }
-
-    /**
-     * Метод вычисляющий хэш экземляра класса
-     *
-     * @return хэш экземпляра
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(telegramBotToken, botUserName);
-    }
-
-    /**
-     * Метод проверяющий равенство {@code obj} и {@code TelegramBotConfiguration}
-     *
-     * @param obj - сравниваемый объект
-     * @return {@code true} если объекты равны по полям, {@code false} если объекты не равны по полям
-     */
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj) {
-            return true;
-        }
-
-        if (!(obj instanceof TelegramBotConfiguration anotherTelegramBotConfiguration)) {
-            return false;
-        }
-
-        return Objects.equals(botUserName, anotherTelegramBotConfiguration.botUserName) &&
-                Objects.equals(telegramBotToken, anotherTelegramBotConfiguration.telegramBotToken);
     }
 }

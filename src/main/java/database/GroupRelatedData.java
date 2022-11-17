@@ -1,5 +1,9 @@
 package database;
 
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +14,7 @@ import java.util.Objects;
  * @author Кедровских Олег
  * @version 1.5
  */
+@EqualsAndHashCode
 class GroupRelatedData {
     /**
      * Поле хранящее подписанных пользователей
@@ -19,6 +24,7 @@ class GroupRelatedData {
     /**
      * Поле хранящее дату последнего поста
      */
+    @Getter(AccessLevel.PACKAGE)
     private final long lastPostDate;
 
     /**
@@ -66,16 +72,7 @@ class GroupRelatedData {
      * @return список подписанных пользователей
      */
     List<String> getSubscribedUsersId() {
-        return subscribedUsersId;
-    }
-
-    /**
-     * Метод получающий дату последнего поста
-     *
-     * @return дату последнего поста
-     */
-    long getLastPostDate() {
-        return lastPostDate;
+        return List.copyOf(subscribedUsersId);
     }
 
     /**
@@ -119,35 +116,5 @@ class GroupRelatedData {
      */
     boolean contains(String subscriberId) {
         return subscribedUsersId.contains(subscriberId);
-    }
-
-    /**
-     * Метод вычисляющий хэш экземляра класса
-     *
-     * @return хэш экземпляра
-     */
-    @Override
-    public int hashCode() {
-        return subscribedUsersId.hashCode();
-    }
-
-    /**
-     * Метод проверяющий равенство {@code obj} и {@code GroupRelatedData}
-     *
-     * @param obj - сравниваемый объект
-     * @return true если объекты равны по полям, false если объекты не равны по полям
-     */
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj) {
-            return true;
-        }
-
-        if (!(obj instanceof GroupRelatedData anotherGroupRelatedData)) {
-            return false;
-        }
-
-        return Objects.equals(subscribedUsersId, anotherGroupRelatedData.subscribedUsersId);
     }
 }

@@ -3,7 +3,6 @@ package hibernate.UsersDao;
 import hibernate.HibernateUtil;
 import org.hibernate.Session;
 import hibernate.entity.UserData;
-import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 /**
@@ -22,9 +21,11 @@ public class UserDao {
             session.save(user);
             transaction.commit();
         } catch (Exception e) {
+
             if (transaction != null) {
                 transaction.rollback();
             }
+
         }
     }
 
@@ -79,7 +80,7 @@ public class UserDao {
      */
     public void deleteUser(String id) {
         Transaction transaction = null;
-        UserData user = new UserData();
+        UserData user;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             user = session.get(UserData.class, id);
