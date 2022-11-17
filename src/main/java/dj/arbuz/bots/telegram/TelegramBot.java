@@ -137,10 +137,8 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
      */
     @Override
     public void send(String userSendResponseId, String responseSendMessage) {
-        SendMessage sendMessage = new SendMessage();
+        SendMessage sendMessage = new SendMessage(userSendResponseId, TelegramMessageParser.parseMessageTextToHtml(responseSendMessage));
         sendMessage.setParseMode(ParseMode.HTML);
-        sendMessage.setText(TelegramMessageParser.parseMessageTextToHtml(responseSendMessage));
-        sendMessage.setChatId(userSendResponseId);
         ReplyKeyboardMarkup keyBoardMarkup = new ReplyKeyboardMarkup();
         keyBoardMarkup.setKeyboard(keyBoardRows);
         try {
