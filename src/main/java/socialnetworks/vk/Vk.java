@@ -16,7 +16,7 @@ import socialnetworks.vk.wall.VkWall;
  * @version 3.0
  * @see AbstractVk
  */
-public class Vk extends AbstractVk {
+public final class Vk extends AbstractVk {
     /**
      * Поле клиента для соединения с vk api
      */

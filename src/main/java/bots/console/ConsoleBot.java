@@ -17,7 +17,7 @@ import java.util.Scanner;
  * @see StoppableThread
  * @see StoppableByUser
  */
-public class ConsoleBot extends StoppableThread implements StoppableByUser, BotMessageExecutable {
+public final class ConsoleBot extends StoppableThread implements StoppableByUser, BotMessageExecutable {
     /**
      * Поле id пользователя консольной версии бота
      */

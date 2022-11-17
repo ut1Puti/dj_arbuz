@@ -10,7 +10,7 @@ import database.UserBase;
  * @version 1.0
  * @see AbstractMessageSender
  */
-public class TelegramMessageSender extends AbstractMessageSender {
+public final class TelegramMessageSender extends AbstractMessageSender {
     /**
      * Конструктор - создает экземпляр класса
      *

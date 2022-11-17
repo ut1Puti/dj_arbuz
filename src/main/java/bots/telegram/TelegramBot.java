@@ -4,6 +4,7 @@ import bots.BotMessageExecutable;
 import hibernate.HibernateUtil;
 import httpserver.server.HttpServer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
@@ -24,7 +25,7 @@ import java.util.List;
  * @author Щёголев Андрей
  * @version 1.2
  */
-public class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser, BotMessageExecutable {
+public final class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser, BotMessageExecutable {
     /**
      * Поле класса содержащего конфигурацию телеграм бота
      *
@@ -136,7 +137,8 @@ public class TelegramBot extends TelegramLongPollingBot implements Stoppable, St
      */
     @Override
     public void send(String userSendResponseId, String responseSendMessage) {
-        SendMessage sendMessage = new SendMessage(userSendResponseId, responseSendMessage);
+        SendMessage sendMessage = new SendMessage(userSendResponseId, TelegramMessageParser.parseMessageTextToHtml(responseSendMessage));
+        sendMessage.setParseMode(ParseMode.HTML);
         ReplyKeyboardMarkup keyBoardMarkup = new ReplyKeyboardMarkup();
         keyBoardMarkup.setKeyboard(keyBoardRows);
         try {

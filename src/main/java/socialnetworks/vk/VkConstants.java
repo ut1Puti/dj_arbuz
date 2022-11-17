@@ -6,7 +6,14 @@ package socialnetworks.vk;
  * @author Кедровских Олег
  * @version 2.0
  */
-public class VkConstants {
+public final class VkConstants {
+    /**
+     * Конструктор - приватный тк этот запрещено создавать экземпляры этого класса
+     */
+    private VkConstants() {
+        throw new IllegalStateException("Нельзя создавать этот класс");
+    }
+
     /**
      * Поле содерщащее адрес vk
      */

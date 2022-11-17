@@ -7,7 +7,14 @@ package bots;
  * @author Щеголев Андрей
  * @version 2.0
  */
-public class BotTextResponse {
+public final class BotTextResponse {
+    /**
+     * Конструктор - приватный тк этот запрещено создавать экземпляры этого класса
+     */
+    private BotTextResponse() {
+        throw new IllegalStateException("Нельзя создавать этот класс");
+    }
+
     /**
      * Поле сообщения о боте и его возможностях
      */

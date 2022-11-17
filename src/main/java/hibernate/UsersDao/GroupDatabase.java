@@ -25,8 +25,11 @@ public class GroupDatabase implements GroupBase {
      * @return добавляется новая информация в Entity класс или же создается новый Entity класс
      */
     public boolean addInfoToGroup(String groupScreenName, String userSubscribedToGroupId) {
-        if (containsGroup(groupScreenName))
+
+        if (containsGroup(groupScreenName)) {
             return addOldGroup(groupScreenName, userSubscribedToGroupId);
+        }
+
         return addNewGroup(groupScreenName, userSubscribedToGroupId);
     }
 
@@ -61,8 +64,7 @@ public class GroupDatabase implements GroupBase {
     private boolean addNewGroup(String groupId, String userId) {
         GroupData groupData = new GroupData();
         groupData.setGroupName(groupId);
-        groupData.setDateLastPost(Instant.now()
-                                         .getEpochSecond());
+        groupData.setDateLastPost(Instant.now().getEpochSecond());
         groupData.setUsers(saveSubscribers(List.of(userId)));
         return groupDao.saveGroup(groupData);
     }
@@ -75,15 +77,19 @@ public class GroupDatabase implements GroupBase {
      */
     private boolean addOldGroup(String groupId, String userId) {
         GroupData groupData = groupDao.getGroup(groupId);
+
         if (groupData == null) {
             return false;
         }
+
         List<String> users = getSubscribedGroup(groupData);
+
         if (!users.contains(userId)) {
             users.add(userId);
             groupData.setUsers(saveSubscribers(users));
             return groupDao.updateGroup(groupData);
         }
+
         return false;
     }
 
@@ -93,11 +99,12 @@ public class GroupDatabase implements GroupBase {
      * @param userSubscribedToGroupId Айди юзера
      */
     public boolean deleteInfoFromGroup(String groupScreenName, String userSubscribedToGroupId) {
+        GroupData groupData = groupDao.getGroup(groupScreenName);
 
-        if (!containsGroup(groupScreenName)) {
+        if (groupData == null) {
             return false;
         }
-        GroupData groupData = groupDao.getGroup(groupScreenName);
+
         List<String> subscribedToGroupUsers = getSubscribedGroup(groupData);
 
         boolean isUnsubscribed = subscribedToGroupUsers.remove(userSubscribedToGroupId);
@@ -117,9 +124,11 @@ public class GroupDatabase implements GroupBase {
      */
     public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
         GroupData groupData = groupDao.getGroup(groupScreenName);
+
         if (groupData == null) {
             return List.of();
         }
+
         return getSubscribedGroup(groupData);
     }
 
@@ -143,9 +152,11 @@ public class GroupDatabase implements GroupBase {
      */
     public void updateGroupLastPost(String groupScreenName, long newLastPostDate) {
         GroupData groupData = groupDao.getGroup(groupScreenName);
+
         if (groupData == null) {
             return;
         }
+
         groupData.setDateLastPost(newLastPostDate);
         groupDao.updateGroup(groupData);
     }
@@ -175,7 +186,6 @@ public class GroupDatabase implements GroupBase {
      * @param userId айди юзера
      */
     public Set<String> getUserSubscribedGroups(String userId) {
-
         return groupDao.getAllGroups()
                        .stream()
                        .filter(Objects::nonNull)
