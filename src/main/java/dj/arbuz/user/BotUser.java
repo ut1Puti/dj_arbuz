@@ -10,7 +10,7 @@ import dj.arbuz.database.hibernate.entity.UserData;
  * @version 1.0
  * @see UserActor
  */
-public class BotUser extends UserActor {
+public final class BotUser extends UserActor {
     /**
      * Поле id пользователя в телеграме
      */

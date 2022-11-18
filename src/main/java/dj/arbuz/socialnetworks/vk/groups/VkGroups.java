@@ -26,7 +26,7 @@ import java.util.Map;
  * @version 1.0
  * @see AbstractVkGroups
  */
-public class VkGroups extends AbstractVkGroups {
+public final class VkGroups extends AbstractVkGroups {
     /**
      * Поле класс позволяющего работать с vk api
      */

@@ -5,9 +5,13 @@ import org.hibernate.cfg.Configuration;
 
 import java.io.File;
 
-public class HibernateUtil {
+public final class HibernateUtil {
 
     private static final SessionFactory sessionFactory = buildSessionFactory();
+
+    private HibernateUtil() {
+        throw new IllegalStateException("Этот класс нельзя создать");
+    }
 
     private static SessionFactory buildSessionFactory() {
         try {

@@ -83,6 +83,6 @@ public class VkPostsParser {
      * @return строку указанного выше формата
      */
     private static String createGroupLinkAndScreenNameString(String groupId, String groupScreenName) {
-        return VkConstants.VK_ADDRESS + groupId + " (" + groupScreenName + ')';
+        return '[' + groupScreenName + "](" + VkConstants.VK_ADDRESS + groupId + ')';
     }
 }

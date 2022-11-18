@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @see AbstractVkWall
  */
-public class VkWall extends AbstractVkWall {
+public final class VkWall extends AbstractVkWall {
     /**
      * Поле регулярного выражения для поиска id группы в
      */

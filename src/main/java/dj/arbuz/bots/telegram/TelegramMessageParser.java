@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 
 public class TelegramMessageParser {
     /**
-     *
+     * Поле регулярного выражения для нахождения подстроки состоящей из ссылки на группу и ее названия
      */
-    private static final Pattern pattern = Pattern.compile("(?<link>https://vk.com/[\\d\\w]+) \\((?<name>[@а-яА-Я\\w\\s]+)\\)?");
+    private static final Pattern groupNameAndLinkRegex = Pattern.compile("\\[(?<name>[@а-яА-Я\\w\\s]+)]\\((?<link>https://vk.com/\\w+\\d+)\\)?");
 
     /**
      * Конструктор - приватный тк этот запрещено создавать экземпляры этого класса
@@ -17,27 +17,27 @@ public class TelegramMessageParser {
     }
 
     /**
+     * Метод, парсящий строку в html
      *
-     *
-     * @param parseString
-     * @return
+     * @param parseString строка, которую нужно распарсить
+     * @return строку распаршенную для работы в html
      */
     public static String parseMessageTextToHtml(String parseString) {
-        StringBuilder sb = new StringBuilder(parseString);
-        Matcher matcher = pattern.matcher(parseString);
-        while (matcher.find()) {
-            sb.replace(matcher.start(), sb.length(), matcher.replaceFirst(createInlineLink(matcher.group("link"), matcher.group("name"))));
-            matcher = pattern.matcher(sb);
+        StringBuilder parsedStringBuilder = new StringBuilder(parseString);
+        Matcher groupNameAndLinkMatcher = groupNameAndLinkRegex.matcher(parseString);
+        while (groupNameAndLinkMatcher.find()) {
+            parsedStringBuilder.replace(0, parsedStringBuilder.length(), groupNameAndLinkMatcher.replaceFirst(createInlineLink(groupNameAndLinkMatcher.group("link"), groupNameAndLinkMatcher.group("name"))));
+            groupNameAndLinkMatcher = groupNameAndLinkRegex.matcher(parsedStringBuilder);
         }
-        return sb.toString();
+        return parsedStringBuilder.toString();
     }
 
     /**
+     * Метод создающий inline url для html
      *
-     *
-     * @param groupLink
-     * @param groupScreenName
-     * @return
+     * @param groupLink ссылка на группу
+     * @param groupScreenName короткое название группы
+     * @return строку, которая представляет собой inline ссылку на группу
      */
     private static String createInlineLink(String groupLink, String groupScreenName) {
         return "<a href=\"" + groupLink + "\">" + groupScreenName + "</a>";

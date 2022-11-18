@@ -15,7 +15,7 @@ import dj.arbuz.user.BotUser;
  * @version 2.0
  * @see AbstractVkAuth
  */
-public class VkAuth extends AbstractVkAuth {
+public final class VkAuth extends AbstractVkAuth {
     /**
      * Поле класс позволяющего работать с vk api
      *
