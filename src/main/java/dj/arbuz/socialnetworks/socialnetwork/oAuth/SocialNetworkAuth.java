@@ -31,5 +31,5 @@ public interface SocialNetworkAuth<S, U> {
      *
      * @return ссылку для аутентификации в социальной сети, если ссылка по какой-то причине отсутствует возвращает {@code null}
      */
-    String getAuthUrl();
+    String getAuthUrl(String userInSystemId);
 }

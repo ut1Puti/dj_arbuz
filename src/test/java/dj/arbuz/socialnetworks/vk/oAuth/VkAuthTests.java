@@ -51,8 +51,8 @@ public class VkAuthTests {
      */
     @Test
     public void testAuthUrl() {
-        String expectedAuthUrl = "https://oauth.vk.com/authorize?client_id=51434490&display=page&redirect_uri=http://localhost:8080/redirect.html&scope=270336&response_type=code&v=5.131";
-        String authUrl = vkAuth.getAuthUrl();
+        String expectedAuthUrl = "https://oauth.vk.com/authorize?client_id=51434490&display=page&redirect_uri=http://localhost:8080/redirect.html&scope=270336&response_type=code&v=5.131&state=1";
+        String authUrl = vkAuth.getAuthUrl("1");
         assertEquals(expectedAuthUrl, authUrl);
     }
 

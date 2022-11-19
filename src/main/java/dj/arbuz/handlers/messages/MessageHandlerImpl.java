@@ -230,7 +230,7 @@ public class MessageHandlerImpl implements MessageHandler {
      *
      * @param userSendResponseId id пользователю, которому будет отправлен ответ
      * @return ответ на команду /auth
-     * @see AbstractSocialNetwork#getAuthUrl()
+     * @see AbstractSocialNetwork#getAuthUrl(String)
      * @see AbstractSocialNetwork#createBotUserAsync(String)
      * @see MessageHandlerImpl#AUTH_ERROR
      * @see MessageHandlerResponse#newBuilder()
@@ -239,7 +239,7 @@ public class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#updateUser(CompletableFuture)
      */
     private MessageHandlerResponse getAuthResponse(String userSendResponseId) {
-        String authURL = socialNetwork.getAuthUrl();
+        String authURL = socialNetwork.getAuthUrl(userSendResponseId);
 
         if (authURL == null) {
             return AUTH_ERROR.build(userSendResponseId);

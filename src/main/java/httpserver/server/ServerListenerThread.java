@@ -10,8 +10,12 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -26,10 +30,7 @@ public class ServerListenerThread extends StoppableThread {
      * Поле серверного сокета, который слушает текущий поток
      */
     private final ServerSocket serverSocket;
-    /**
-     * Поле для синхронизации получения get параметров вне сервера
-     */
-    private final SynchronousQueue<String> getParameter = new SynchronousQueue<>();
+    private String next = "";
     /**
      * Поле времени ожидания получения get параметров
      */
@@ -40,7 +41,7 @@ public class ServerListenerThread extends StoppableThread {
      *
      * @param serverSocket - серверный сокет, который слушает поток
      */
-    public ServerListenerThread(ServerSocket serverSocket) {
+    public ServerListenerThread(ServerSocket serverSocket){
         this.serverSocket = serverSocket;
     }
 
@@ -57,47 +58,25 @@ public class ServerListenerThread extends StoppableThread {
     @Override
     public void run() {
         while (serverSocket.isBound() && working.get()) {
-            try {
-                Socket socket = serverSocket.accept();
+            try (Socket socket = serverSocket.accept()){
                 if (socket.isBound() && socket.isConnected()) {
-                    InputStream inputStream = null;
-                    OutputStream outputStream = null;
-                    try {
+                    try (InputStream inputStream = socket.getInputStream();
+                         OutputStream outputStream = socket.getOutputStream()) {
 
                         if (socket.isBound() && socket.isConnected()) {
-                            inputStream = socket.getInputStream();
-                            outputStream = socket.getOutputStream();
 
                             HttpRequest request = HttpParser.parseRequest(inputStream);
 
                             if (!request.getRequestTarget().getRequestTargetFile().isBlank()) {
-                                boolean isOffered = getParameter.offer(
-                                        request.getRequestTarget().getParameters(), oneMinute, TimeUnit.MINUTES
-                                );
-
-                                if (isOffered) {
-                                    sendFileFromServer(request.getRequestTarget().getRequestTargetFile(), outputStream);
-                                } else {
-                                    sendFileFromServer("/timeexpired.html", outputStream);
-                                }
+                                next = request.getRequestTarget().getParameters();
+                                sendFileFromServer(request.getRequestTarget().getRequestTargetFile(), outputStream);
                             } else {
                                 sendFileFromServer("/timeexpired.html", outputStream);
                             }
 
                         }
-                    } catch (IOException | HttpParserException e) {
-
-                        if (outputStream != null) {
-                            sendFileFromServer("/404.html", outputStream);
-                        }
-
-                        continue;
-                    } catch (InterruptedException ignored) {
-                        break;
+                    } catch (HttpParserException ignored) {
                     }
-                    HttpServerUtils.closeServerStream(outputStream);
-                    HttpServerUtils.closeServerStream(inputStream);
-                    HttpServerUtils.closeServerStream(socket);
                 }
             } catch (IOException e) {
                 break;
@@ -151,10 +130,6 @@ public class ServerListenerThread extends StoppableThread {
      * null если в течение 1 минуты параметры не пришли, или поток был прерван
      */
     public String getHttpRequestParameters() {
-        try {
-            return getParameter.poll(oneMinute, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            return null;
-        }
+        return next;
     }
 }

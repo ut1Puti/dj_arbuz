@@ -54,7 +54,7 @@ public class AbstractVkTests {
      */
     @Test
     public void testGetAuthUrl() {
-        assertEquals("AUTH_URL", vk.getAuthUrl());
+        assertEquals("AUTH_URL&state=a", vk.getAuthUrl("a"));
     }
 
     /**

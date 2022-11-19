@@ -21,7 +21,7 @@ public interface SocialNetwork<W, U> {
      *
      * @return ссылку для аутентификации пользователя, {@code null} если ссылка отсутствует
      */
-    String getAuthUrl();
+    String getAuthUrl(String userSystemId);
 
     /**
      * Метод для асинхронного создания пользователя

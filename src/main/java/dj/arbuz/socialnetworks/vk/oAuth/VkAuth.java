@@ -8,6 +8,12 @@ import com.vk.api.sdk.objects.UserAuthResponse;
 import httpserver.server.HttpServer;
 import dj.arbuz.user.BotUser;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Класс для аутентификации пользователей
  *
@@ -34,6 +40,7 @@ public final class VkAuth extends AbstractVkAuth {
      * @see VkAuthConfiguration
      */
     private final VkAuthConfiguration authConfiguration;
+    private final Pattern codeAndTelegramIdRegex = Pattern.compile("code=(?<code>.+)&state=(?<id>.+)");
 
     /**
      * Конструктор - создает экземпляр класса
@@ -70,8 +77,8 @@ public final class VkAuth extends AbstractVkAuth {
      * @see VkAuthConfiguration#AUTH_URL
      */
     @Override
-    public String getAuthUrl() {
-        return authConfiguration.AUTH_URL;
+    public String getAuthUrl(String userTelegramId) {
+        return authConfiguration.AUTH_URL + "&state=" + userTelegramId;
     }
 
     /**
@@ -82,20 +89,23 @@ public final class VkAuth extends AbstractVkAuth {
      * @return нового пользователя, null если возникли проблемы при обращении к серверу, при ошибках на сервере
      * или при ошибке обращения к vk api
      * @see HttpServer#getHttpRequestParameters()
-     * @see VkAuth#getAuthCodeFromHttpRequest(String)
+     * @see VkAuth#getCodeAndUserTelegramIfFromHttpGetParam(String)
      * @see VkAuthConfiguration#APP_ID
      * @see VkAuthConfiguration#CLIENT_SECRET
      * @see VkAuthConfiguration#REDIRECT_URL
      */
     @Override
     public BotUser createBotUser(String systemUserId) {
-        String httpRequestGetParameters = httpServer.getHttpRequestParameters();
+        String authCode = null;
+        while (authCode == null) {
+            String httpRequestGetParameters = httpServer.getHttpRequestParameters();
+            Pair<String> httpGetParam = getCodeAndUserTelegramIfFromHttpGetParam(httpRequestGetParameters);
 
-        if (httpRequestGetParameters == null) {
-            return null;
+            if (httpGetParam.userTelegramId.equals(systemUserId)) {
+                authCode = httpGetParam.authCode;
+            }
+
         }
-
-        String authCode = getAuthCodeFromHttpRequest(httpRequestGetParameters);
         try {
             UserAuthResponse authResponse = vkApiClient.oAuth().userAuthorizationCodeFlow(
                             authConfiguration.APP_ID,
@@ -115,19 +125,21 @@ public final class VkAuth extends AbstractVkAuth {
      * @param httpRequestGetParameters - get параметры отправленные на сервер
      * @return {@code code}
      */
-    private String getAuthCodeFromHttpRequest(String httpRequestGetParameters) {
-        final char newParameterStartSymbol = '&';
-        final String parameterName = "code=";
-        int startParameterValueIndex = httpRequestGetParameters.lastIndexOf(parameterName) + parameterName.length();
-        StringBuilder authCodeBuilder = new StringBuilder();
-        for (int i = startParameterValueIndex; i < httpRequestGetParameters.length(); i++) {
-
-            if (httpRequestGetParameters.charAt(i) == newParameterStartSymbol) {
-                break;
-            }
-
-            authCodeBuilder.append(httpRequestGetParameters.charAt(i));
+    private Pair<String> getCodeAndUserTelegramIfFromHttpGetParam(String httpRequestGetParameters) {
+        Matcher matcher = codeAndTelegramIdRegex.matcher(httpRequestGetParameters);
+        if (matcher.find()) {
+            return new Pair<>(matcher.group("code"), matcher.group("id"));
         }
-        return authCodeBuilder.toString();
+        return new Pair<>("", "");
+    }
+
+    /**
+     * Хранит элементы пары
+     *
+     * @param authCode  - первый элемент
+     * @param userTelegramId - второй элемент
+     * @param <T>    - тип хранимых элементов
+     */
+    private record Pair<T>(T authCode, T userTelegramId) {
     }
 }

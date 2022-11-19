@@ -53,7 +53,7 @@ class VkAuthMock extends AbstractVkAuth {
      * @return ссылку на страницу с авторизацией
      */
     @Override
-    public String getAuthUrl() {
+    public String getAuthUrl(String userTelegramId) {
         return authUrl;
     }
 }

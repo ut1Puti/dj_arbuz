@@ -7,6 +7,14 @@ import dj.arbuz.bots.StoppableByUser;
 import httpserver.server.HttpServer;
 import stoppable.StoppableThread;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Scanner;
 
 /**
@@ -37,7 +45,15 @@ public final class ConsoleBot extends StoppableThread implements StoppableByUser
         messageExecutor = new ConsoleMessageExecutor(this);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        PipedOutputStream b = new PipedOutputStream();
+        PipedInputStream a = new PipedInputStream(b);
+        String m = "message\n";
+        b.write(m.getBytes());
+        Scanner s = new Scanner(a);
+        System.out.println(s.nextLine());
+
+        System.out.println("here");
         HttpServer httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {

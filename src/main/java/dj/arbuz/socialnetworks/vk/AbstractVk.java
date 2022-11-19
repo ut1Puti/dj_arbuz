@@ -52,11 +52,11 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * Метод обертка возвращающий ссылку для аутентификации
      *
      * @return ссылку для аутентификации, если сервер недоступен, то эта ссылка {@code null}
-     * @see VkAuth#getAuthUrl()
+     * @see VkAuth#getAuthUrl(String)
      */
     @Override
-    public final String getAuthUrl() {
-        return oAuth.getAuthUrl();
+    public final String getAuthUrl(String userTelegramId) {
+        return oAuth.getAuthUrl(userTelegramId);
     }
 
     /**
@@ -67,6 +67,8 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * посмотреть ее можно в метода {@link VkAuth#createBotUser(String)}
      */
     public CompletableFuture<BotUser> createBotUserAsync(String userSystemId) {
+        System.out.println(oAuth.getAuthUrl(userSystemId));
+        oAuth.createBotUser(userSystemId);
         return CompletableFuture.supplyAsync(() -> oAuth.createBotUser(userSystemId));
     }
 
