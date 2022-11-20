@@ -67,7 +67,7 @@ public class ServerListeningThreadTests {
     public void testGetHttpRequestParameters() {
         String expectedHttpParameters = "code";
         ClientBuilder.newClient().target("http://localhost:8080/redirect.html?{parameters}")
-                .resolveTemplate("parameters", expectedHttpParameters).request().async().get();
+                .resolveTemplate("parameters", expectedHttpParameters).request().get();
         String httpParameters = serverListenerThread.getHttpRequestParameters();
         assertEquals(expectedHttpParameters, httpParameters);
     }

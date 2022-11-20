@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  bot:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+    volumes:
+      - ./scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"

@@ -67,8 +67,6 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * посмотреть ее можно в метода {@link VkAuth#createBotUser(String)}
      */
     public CompletableFuture<BotUser> createBotUserAsync(String userSystemId) {
-        System.out.println(oAuth.getAuthUrl(userSystemId));
-        oAuth.createBotUser(userSystemId);
         return CompletableFuture.supplyAsync(() -> oAuth.createBotUser(userSystemId));
     }
 

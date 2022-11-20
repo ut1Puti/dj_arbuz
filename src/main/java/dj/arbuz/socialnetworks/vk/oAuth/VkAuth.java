@@ -115,6 +115,7 @@ public final class VkAuth extends AbstractVkAuth {
                     .execute();
             return new BotUser(authResponse.getUserId(), authResponse.getAccessToken(), systemUserId);
         } catch (ApiException | ClientException e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }

@@ -45,15 +45,7 @@ public final class ConsoleBot extends StoppableThread implements StoppableByUser
         messageExecutor = new ConsoleMessageExecutor(this);
     }
 
-    public static void main(String[] args) throws IOException {
-        PipedOutputStream b = new PipedOutputStream();
-        PipedInputStream a = new PipedInputStream(b);
-        String m = "message\n";
-        b.write(m.getBytes());
-        Scanner s = new Scanner(a);
-        System.out.println(s.nextLine());
-
-        System.out.println("here");
+    public static void main(String[] args) {
         HttpServer httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {

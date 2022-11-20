@@ -57,6 +57,7 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
         super();
         telegramBotConfiguration = TelegramBotConfiguration.loadTelegramBotConfigurationFromJson(tgConfigurationFilePath);
         messageExecutor = new TelegramMessageExecutor(this);
+        //messageExecutor.start();
     }
 
     /**
@@ -69,7 +70,8 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
         messageExecutor.start();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RuntimeException {
+        HibernateUtil.getSessionFactory().openSession();
         HttpServer httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {
@@ -78,13 +80,14 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
 
         httpServer.start();
 
-        TelegramBot telegramBot = new TelegramBot();
+        TelegramBot telegramBot = new TelegramBot("src/main/resources/anonsrc/telegram_config.json");
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(telegramBot);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+        telegramBot.send("387209539", "hello");
         while (telegramBot.isWorking()) Thread.onSpinWait();
         telegramBot.stopWithInterrupt();
         httpServer.stop();
