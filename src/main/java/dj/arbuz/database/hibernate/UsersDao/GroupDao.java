@@ -5,7 +5,11 @@ import dj.arbuz.database.hibernate.entity.GroupData;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Репозиторий для взаимодействия с Entity классом и базой данных
@@ -18,8 +22,7 @@ public final class GroupDao {
      */
     public boolean saveGroup(GroupData groupData) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory()
-                                            .openSession()) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.save(groupData);
             transaction.commit();
@@ -119,5 +122,23 @@ public final class GroupDao {
 
         }
         return groups;
+    }
+
+    public Set<String> getAllGroupsScreenName() {
+        Transaction transaction = null;
+        List<String> groupsScreenName;
+        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            groupsScreenName = session.createQuery("select GroupData.groupName from GroupData", String.class).getResultList();
+            transaction.commit();
+            return new HashSet<>(groupsScreenName);
+        } catch (Exception e) {
+
+            if (transaction != null) {
+                transaction.rollback();
+            }
+
+            return new HashSet<>();
+        }
     }
 }

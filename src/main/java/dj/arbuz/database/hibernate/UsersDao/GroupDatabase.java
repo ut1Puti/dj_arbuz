@@ -2,8 +2,10 @@ package dj.arbuz.database.hibernate.UsersDao;
 
 
 import com.google.common.reflect.TypeToken;
+import com.vk.api.sdk.objects.users.User;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.hibernate.entity.GroupData;
+import dj.arbuz.database.hibernate.entity.UserData;
 import loaders.gson.GsonLoader;
 
 import java.time.Instant;
@@ -14,12 +16,15 @@ import java.util.stream.Collectors;
  * Класс для взаимодействия с репозиторием для групп и изменением данных в Entity классе
  */
 public final class GroupDatabase implements GroupBase {
-    /** Репозиторий группы**/
+    /**
+     * Репозиторий группы
+     **/
     private final GroupDao groupDao = new GroupDao();
 
     /**
      * Метод для добавления подписки к группе
-     * @param groupScreenName Айди группы
+     *
+     * @param groupScreenName         Айди группы
      * @param userSubscribedToGroupId Айди пользователя
      * @return добавляется новая информация в Entity класс или же создается новый Entity класс
      */
@@ -34,6 +39,7 @@ public final class GroupDatabase implements GroupBase {
 
     /**
      * Метод для получения всех подписчиков по определенной группе
+     *
      * @param groupData Entity класс групы
      * @return список пользователей в которых хранятся их айди в телеграме
      */
@@ -44,7 +50,8 @@ public final class GroupDatabase implements GroupBase {
     }
 
     /**
-     *  Метод для сохранения юзеров в виде JSON строки
+     * Метод для сохранения юзеров в виде JSON строки
+     *
      * @param groupData Список Entity классов групп
      * @return строка вида JSON файла
      */
@@ -56,8 +63,9 @@ public final class GroupDatabase implements GroupBase {
 
     /**
      * Мето для добавления новой группы
+     *
      * @param groupId Айди группы
-     * @param userId Айди юзера
+     * @param userId  Айди юзера
      * @return логическое выражение, сохранилось или нет
      */
     private boolean addNewGroup(String groupId, String userId) {
@@ -94,7 +102,8 @@ public final class GroupDatabase implements GroupBase {
 
     /**
      * Мето для удаления подписчика определенной группы
-     * @param groupScreenName Айди группы
+     *
+     * @param groupScreenName         Айди группы
      * @param userSubscribedToGroupId Айди юзера
      */
     public boolean deleteInfoFromGroup(String groupScreenName, String userSubscribedToGroupId) {
@@ -119,6 +128,7 @@ public final class GroupDatabase implements GroupBase {
 
     /**
      * Метод для поиска всех подписчков группы
+     *
      * @param groupScreenName айди группы
      */
     public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
@@ -133,6 +143,7 @@ public final class GroupDatabase implements GroupBase {
 
     /**
      * Метод получения даты последнего поста
+     *
      * @param groupScreenName айди группы
      */
     public Optional<Long> getGroupLastPostDate(String groupScreenName) {
@@ -146,6 +157,7 @@ public final class GroupDatabase implements GroupBase {
 
     /**
      * Мето для обновления даты последнего поста
+     *
      * @param groupScreenName айди группы
      * @param newLastPostDate новая дата последнего поста
      */
@@ -162,6 +174,7 @@ public final class GroupDatabase implements GroupBase {
 
     /**
      * Метод для проверки есть ли такая группа в базе данных
+     *
      * @param groupScreenName айди группы
      */
     @Override
@@ -174,22 +187,23 @@ public final class GroupDatabase implements GroupBase {
      */
     public Set<String> getGroups() {
         return groupDao.getAllGroups()
-                       .stream()
-                       .filter(Objects::nonNull)
-                       .map(GroupData::getGroupName)
-                       .collect(Collectors.toSet());
+                .stream()
+                .filter(Objects::nonNull)
+                .map(GroupData::getGroupName)
+                .collect(Collectors.toSet());
     }
 
     /**
      * Получение всех групп на которые подписан пользователь
+     *
      * @param userId айди юзера
      */
     public Set<String> getUserSubscribedGroups(String userId) {
         return groupDao.getAllGroups()
-                       .stream()
-                       .filter(Objects::nonNull)
-                       .filter(v -> getSubscribedGroup(v).contains(userId))
-                       .map(GroupData::getGroupName)
-                       .collect(Collectors.toSet());
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(v -> getSubscribedGroup(v).contains(userId))
+                .map(GroupData::getGroupName)
+                .collect(Collectors.toSet());
     }
 }

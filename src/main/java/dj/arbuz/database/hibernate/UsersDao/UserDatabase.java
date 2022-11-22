@@ -8,12 +8,15 @@ import dj.arbuz.user.BotUser;
  * Класс для работы с таблицей юзеров в бд
  */
 public final class UserDatabase implements UserBase {
-    /** Репозиторий для взаимодействия с таблицей юзеров **/
+    /**
+     * Репозиторий для взаимодействия с таблицей юзеров
+     **/
     private final UserDao userDao = new UserDao();
 
     /**
      * Метод для добавления новой информации юзера
-     * @param userId Айди юзера
+     *
+     * @param userId  Айди юзера
      * @param botUser Данные юзера
      */
     public boolean addInfoUser(String userId, BotUser botUser) {
@@ -33,11 +36,17 @@ public final class UserDatabase implements UserBase {
 
     /**
      * Метод для получения юзера
+     *
      * @param userId айди юзера в телеграме
      * @return Entity класс юзера взятый из бд
      */
     public BotUser getUser(String userId) {
-        return new BotUser(userDao.getUser(userId));
-    }
+        UserData userData = userDao.getUser(userId);
 
+        if (userData == null) {
+            return null;
+        }
+
+        return new BotUser(userData);
+    }
 }
