@@ -98,7 +98,7 @@ public final class VkAuth extends AbstractVkAuth {
     @Override
     public BotUser createBotUser(String systemUserId) {
         String authCode = null;
-        for (int i = 0; i < 36; i++) {
+        for (int codeRequestsCounter = 0; codeRequestsCounter < 60; codeRequestsCounter++) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
