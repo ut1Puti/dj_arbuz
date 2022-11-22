@@ -9,9 +9,6 @@ import httpserver.server.HttpServer;
 import dj.arbuz.user.BotUser;
 
 import java.nio.file.Path;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +38,9 @@ public final class VkAuth extends AbstractVkAuth {
      * @see VkAuthConfiguration
      */
     private final VkAuthConfiguration authConfiguration;
+    /**
+     * Регулярное выражение для поиска кода аутентификации с помощью oAuth 2.0 и id пользователя для которого был получен код
+     */
     private final Pattern codeAndTelegramIdRegex = Pattern.compile("code=(?<code>.+)&state=(?<id>.+)");
 
     /**
@@ -86,7 +86,7 @@ public final class VkAuth extends AbstractVkAuth {
      * Метод интерфейса CreateUser создающий пользователя.
      * Создается с помощью Vk Java SDK, получая код с сервера
      *
-     * @param systemUserId - id пользователя в системе
+     * @param userSystemId - id пользователя в системе
      * @return нового пользователя, null если возникли проблемы при обращении к серверу, при ошибках на сервере
      * или при ошибке обращения к vk api
      * @see HttpServer#getHttpRequestParameters()
@@ -96,23 +96,13 @@ public final class VkAuth extends AbstractVkAuth {
      * @see VkAuthConfiguration#REDIRECT_URL
      */
     @Override
-    public BotUser createBotUser(String systemUserId) {
-        String authCode = null;
-        for (int codeRequestsCounter = 0; codeRequestsCounter < 60; codeRequestsCounter++) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                return null;
-            }
+    public BotUser createBotUser(String userSystemId) {
+        String authCode = getAuthCodeFromHttpServer(userSystemId);
 
-            String httpRequestGetParameters = httpServer.getHttpRequestParameters();
-            Pair<String> httpGetParam = getCodeAndUserTelegramIfFromHttpGetParam(httpRequestGetParameters);
-
-            if (httpGetParam.userTelegramId.equals(systemUserId)) {
-                authCode = httpGetParam.authCode;
-                break;
-            }
+        if (authCode == null) {
+            return null;
         }
+
         try {
             UserAuthResponse authResponse = vkApiClient.oAuth().userAuthorizationCodeFlow(
                             authConfiguration.APP_ID,
@@ -120,11 +110,37 @@ public final class VkAuth extends AbstractVkAuth {
                             authConfiguration.REDIRECT_URL,
                             authCode)
                     .execute();
-            return new BotUser(authResponse.getUserId(), authResponse.getAccessToken(), systemUserId);
+            return new BotUser(authResponse.getUserId(), authResponse.getAccessToken(), userSystemId);
         } catch (ApiException | ClientException e) {
             System.out.println(e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Метод получающий код для аутентификации с помощью oAuth 2.0
+     *
+     * @param userSystemId id пользователя в системе
+     * @return строку кода для аутентификации с помощью oAuth 2.0, {@code null} если не была получен верный код
+     */
+    private String getAuthCodeFromHttpServer(String userSystemId) {
+        String authCode = null;
+        for (int codeRequestsCounter = 0; codeRequestsCounter < 60; codeRequestsCounter++) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                break;
+            }
+
+            String httpRequestGetParameters = httpServer.getHttpRequestParameters();
+            OAuthParams httpGetParam = getCodeAndUserTelegramIfFromHttpGetParam(httpRequestGetParameters);
+
+            if (httpGetParam.userTelegramId.equals(userSystemId)) {
+                authCode = httpGetParam.authCode;
+                break;
+            }
+        }
+        return authCode;
     }
 
     /**
@@ -133,21 +149,20 @@ public final class VkAuth extends AbstractVkAuth {
      * @param httpRequestGetParameters - get параметры отправленные на сервер
      * @return {@code code}
      */
-    private Pair<String> getCodeAndUserTelegramIfFromHttpGetParam(String httpRequestGetParameters) {
+    private OAuthParams getCodeAndUserTelegramIfFromHttpGetParam(String httpRequestGetParameters) {
         Matcher matcher = codeAndTelegramIdRegex.matcher(httpRequestGetParameters);
         if (matcher.find()) {
-            return new Pair<>(matcher.group("code"), matcher.group("id"));
+            return new OAuthParams(matcher.group("code"), matcher.group("id"));
         }
-        return new Pair<>("", "");
+        return new OAuthParams("", "");
     }
 
     /**
-     * Хранит элементы пары
+     * Хранит параметры для аутентификации с помощью oAuth 2.0
      *
-     * @param authCode  - первый элемент
-     * @param userTelegramId - второй элемент
-     * @param <T>    - тип хранимых элементов
+     * @param authCode       - код oAuth 2.0
+     * @param userTelegramId - id пользователя в телеграм
      */
-    private record Pair<T>(T authCode, T userTelegramId) {
+    private record OAuthParams(String authCode, String userTelegramId) {
     }
 }

@@ -6,18 +6,16 @@ import httpserver.parser.HttpParser;
 import httpserver.parser.HttpParserException;
 import stoppable.StoppableThread;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Класс слушающий новые сообщения поступающие сокету
@@ -30,7 +28,14 @@ public class ServerListenerThread extends StoppableThread {
      * Поле серверного сокета, который слушает текущий поток
      */
     private final ServerSocket serverSocket;
-    private String next = "";
+    /**
+     * Поле потока в который записываются полученные сервером get параметры http запроса
+     */
+    private final PipedOutputStream parametersOutputStream = new PipedOutputStream();
+    /**
+     * Поле reader'а читающего параметры полученных сервером get параметров http запросов
+     */
+    private final BufferedReader parametersReader;
     /**
      * Поле времени ожидания получения get параметров
      */
@@ -41,9 +46,11 @@ public class ServerListenerThread extends StoppableThread {
      *
      * @param serverSocket - серверный сокет, который слушает поток
      */
-    public ServerListenerThread(ServerSocket serverSocket){
+    public ServerListenerThread(ServerSocket serverSocket) throws IOException {
         this.serverSocket = serverSocket;
+        parametersReader = new BufferedReader(new InputStreamReader(new PipedInputStream(parametersOutputStream)));
     }
+
 
     /**
      * Метод реализующий логику выполняемую внутри потока
@@ -68,7 +75,8 @@ public class ServerListenerThread extends StoppableThread {
                             HttpRequest request = HttpParser.parseRequest(inputStream);
 
                             if (!request.getRequestTarget().getRequestTargetFile().isBlank()) {
-                                next = request.getRequestTarget().getParameters();
+                                parametersOutputStream.write((request.getRequestTarget().getParameters() + '\n').getBytes());
+                                parametersOutputStream.flush();
                                 sendFileFromServer(request.getRequestTarget().getRequestTargetFile(), outputStream);
                             } else {
                                 sendFileFromServer("/timeexpired.html", outputStream);
@@ -121,6 +129,8 @@ public class ServerListenerThread extends StoppableThread {
     public void stopWithInterrupt() {
         super.stopWithInterrupt();
         HttpServerUtils.closeServerStream(serverSocket);
+        HttpServerUtils.closeServerStream(parametersOutputStream);
+        HttpServerUtils.closeServerStream(parametersReader);
     }
 
     /**
@@ -130,6 +140,10 @@ public class ServerListenerThread extends StoppableThread {
      * null если в течение 1 минуты параметры не пришли, или поток был прерван
      */
     public String getHttpRequestParameters() {
-        return next;
+        try {
+            return parametersReader.readLine();
+        } catch (IOException e) {
+            return "";
+        }
     }
 }

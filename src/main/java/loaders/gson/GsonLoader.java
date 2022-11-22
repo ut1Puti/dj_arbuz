@@ -18,7 +18,7 @@ import java.nio.file.Path;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class GsonLoader<T> {
+public final class GsonLoader<T> {
     /**
      * Поле класса преобразовывающего объекты в json строки
      *
