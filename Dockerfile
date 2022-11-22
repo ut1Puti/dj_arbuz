@@ -7,5 +7,4 @@ COPY . /usr/dj_arbuz
 
 EXPOSE 8080
 
-ENTRYPOINT ["mvn", "compile"]
-CMD ["mvn", "exec:java"]
+ENTRYPOINT ["mvn", "exec:java"]
