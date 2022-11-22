@@ -61,8 +61,8 @@ abstract class AbstractMessageSender implements MessageSender {
                 return;
             }
 
-            messageSender.send(userSendResponseId, BotTextResponse.AUTH_SUCCESS);
             userStorage.addInfoUser(userSendResponseId, currentUser);
+            messageSender.send(userSendResponseId, BotTextResponse.AUTH_SUCCESS);
         }
 
     }

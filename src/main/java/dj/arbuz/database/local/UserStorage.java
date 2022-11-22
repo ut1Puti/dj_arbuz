@@ -1,6 +1,7 @@
 package dj.arbuz.database.local;
 
 import com.google.gson.reflect.TypeToken;
+import dj.arbuz.bots.ConfigPaths;
 import dj.arbuz.database.UserBase;
 import loaders.gson.GsonLoader;
 import dj.arbuz.user.BotUser;
@@ -35,7 +36,7 @@ public class UserStorage implements UserBase {
         }.getType();
         GsonLoader<Map<String, BotUser>> loader = new GsonLoader<>(userStorageMapType);
         try {
-            loader.loadToJson("src/main/resources/anonsrc/database_for_users.json", usersBase);
+            loader.loadToJson(LocalDatabasePaths.localUserDataBasePath, usersBase);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -49,7 +50,7 @@ public class UserStorage implements UserBase {
         }.getType();
         GsonLoader<Map<String, BotUser>> loader = new GsonLoader<>(userStorageMapType);
         try {
-            usersBase = loader.loadFromJson("src/main/resources/anonsrc/database_for_users.json");
+            usersBase = loader.loadFromJson(LocalDatabasePaths.localUserDataBasePath);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

@@ -1,5 +1,7 @@
 package dj.arbuz.socialnetworks.vk;
 
+import java.nio.file.Path;
+
 /**
  * Класс тестовой реализации vk
  *
@@ -12,7 +14,8 @@ class VkMock extends AbstractVk {
      */
     VkMock() {
         super(new VkAuthMock(),
-                new VkGroupsMock("src/test/resources/vk_tests/groups.json"),
-                new VkWallMock("src/test/resources/vk_tests/posts.json"));
+                new VkGroupsMock(Path.of("src/test/resources/vk_tests/groups.json")),
+                new VkWallMock(Path.of("src/test/resources/vk_tests/posts.json"))
+        );
     }
 }

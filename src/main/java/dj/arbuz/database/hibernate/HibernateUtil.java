@@ -15,7 +15,7 @@ public final class HibernateUtil {
 
     private static SessionFactory buildSessionFactory() {
         try {
-            return new Configuration().configure(new File("src/main/resources/anonsrc/hibernate.cfg.xml")).buildSessionFactory();
+            return new Configuration().configure(new File("src/main/resources/config/hibernate.cfg.xml")).buildSessionFactory();
         }
         catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);

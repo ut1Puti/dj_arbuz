@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Класс хранящий конфигурацию телеграм бота
@@ -32,7 +33,7 @@ public final class TelegramBotConfiguration {
      * @param telegramBotConfigurationJsonFilePath путь до json файла с конфигурацией бота
      * @return {@code TelegramBotConfiguration} с конфигурацией указанной в файле
      */
-    static TelegramBotConfiguration loadTelegramBotConfigurationFromJson(String telegramBotConfigurationJsonFilePath) {
+    static TelegramBotConfiguration loadTelegramBotConfigurationFromJson(Path telegramBotConfigurationJsonFilePath) {
         try {
             GsonLoader<TelegramBotConfiguration> telegramBotConfigurationGsonLoader =
                     new GsonLoader<>(TelegramBotConfiguration.class);

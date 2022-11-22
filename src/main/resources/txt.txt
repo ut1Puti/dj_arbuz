@@ -9,7 +9,4 @@
 9) Использование в проекте Spring Framework;
 10) Использование в проекте других JVM языков (Groovy/Kotlin);
 log4j
-git commit flag для коммита без add
-git tag
-git show
 foreign key - one to many

@@ -4,6 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import loaders.gson.GsonLoader;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Objects;
 
 /**
@@ -58,7 +59,7 @@ public final class VkAuthConfiguration {
      * @param vkAuthConfigurationJsonFilePath путь до json файла с конфигурацией приложения
      * @return {@code VkAuthConfiguration} на основе json файла
      */
-    static VkAuthConfiguration loadVkAuthConfigurationFromJson(String vkAuthConfigurationJsonFilePath) {
+    static VkAuthConfiguration loadVkAuthConfigurationFromJson(Path vkAuthConfigurationJsonFilePath) {
         try {
             GsonLoader<VkAuthConfiguration> vkAuthConfigurationGsonLoader = new GsonLoader<>(VkAuthConfiguration.class);
             VkAuthConfiguration loadedConf = vkAuthConfigurationGsonLoader.loadFromJson(vkAuthConfigurationJsonFilePath);

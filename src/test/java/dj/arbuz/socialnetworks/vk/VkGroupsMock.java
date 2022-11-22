@@ -9,6 +9,7 @@ import dj.arbuz.socialnetworks.vk.groups.AbstractVkGroups;
 import dj.arbuz.user.BotUser;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,7 @@ class VkGroupsMock extends AbstractVkGroups {
      */
     private final Map<String, List<Group>> testVkGroupsMap = new HashMap<>();
 
-    VkGroupsMock(String groupsTestDataJsonFilePath) {
+    VkGroupsMock(Path groupsTestDataJsonFilePath) {
         GsonLoader<GroupList> jsonLoader = new GsonLoader<>(GroupList.class);
         try {
             GroupList groups = jsonLoader.loadFromJson(groupsTestDataJsonFilePath);

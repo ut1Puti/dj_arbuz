@@ -109,7 +109,7 @@ public class GroupDao {
         List<GroupData> groups = null;
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            groups = session.createQuery("from GroupData",GroupData.class).list();
+            groups = session.createQuery("select a from GroupData a",GroupData.class).getResultList();
             transaction.commit();
         } catch (Exception e) {
 

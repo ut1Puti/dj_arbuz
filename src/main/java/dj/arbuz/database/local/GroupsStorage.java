@@ -1,6 +1,7 @@
 package dj.arbuz.database.local;
 
 import com.google.gson.reflect.TypeToken;
+import dj.arbuz.bots.ConfigPaths;
 import dj.arbuz.database.GroupBase;
 import loaders.gson.GsonLoader;
 
@@ -101,7 +102,7 @@ public class GroupsStorage implements GroupBase {
         }.getType();
         GsonLoader<Map<String, GroupRelatedData>> groupStorageMapGsonLoader = new GsonLoader<>(groupStorageMapType);
         try {
-            groupStorageMapGsonLoader.loadToJson("src/main/resources/anonsrc/database_for_groups.json", groupsBase);
+            groupStorageMapGsonLoader.loadToJson(LocalDatabasePaths.localGroupDataBasePath, groupsBase);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -117,7 +118,7 @@ public class GroupsStorage implements GroupBase {
         }.getType();
         GsonLoader<Map<String, GroupRelatedData>> loader = new GsonLoader<>(groupStorageMapType);
         try {
-            groupsBase = loader.loadFromJson("src/main/resources/anonsrc/database_for_groups.json");
+            groupsBase = loader.loadFromJson(LocalDatabasePaths.localGroupDataBasePath);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

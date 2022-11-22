@@ -8,6 +8,7 @@ import com.vk.api.sdk.objects.UserAuthResponse;
 import httpserver.server.HttpServer;
 import dj.arbuz.user.BotUser;
 
+import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +49,7 @@ public final class VkAuth extends AbstractVkAuth {
      * @param vkApiClient                    клиент vk
      * @param vkAppConfigurationJsonFilePath путь до json файла с конфигурацией
      */
-    public VkAuth(VkApiClient vkApiClient, HttpServer httpServer, String vkAppConfigurationJsonFilePath) {
+    public VkAuth(VkApiClient vkApiClient, HttpServer httpServer, Path vkAppConfigurationJsonFilePath) {
         this.vkApiClient = vkApiClient;
         this.httpServer = httpServer;
         this.authConfiguration = VkAuthConfiguration.loadVkAuthConfigurationFromJson(vkAppConfigurationJsonFilePath);

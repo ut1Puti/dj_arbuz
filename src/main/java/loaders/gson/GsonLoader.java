@@ -46,8 +46,8 @@ public class GsonLoader<T> {
      * @return экземпляр типа {@code T} созданный из строки из переданного файла
      * @throws IOException возникает при ошибках чтения файла
      */
-    public T loadFromJson(String pathToLoadObject) throws IOException {
-        try (Reader fileReader = Files.newBufferedReader(Path.of(pathToLoadObject))) {
+    public T loadFromJson(Path pathToLoadObject) throws IOException {
+        try (Reader fileReader = Files.newBufferedReader(pathToLoadObject)) {
             return GSON.fromJson(fileReader, jsonLoadingType);
         }
     }
@@ -79,14 +79,14 @@ public class GsonLoader<T> {
      * @param objectToSave     - объект типа {@code T} который будет сохранен
      * @throws IOException возникает при ошибках записи в файл
      */
-    public void loadToJson(String pathToSaveObject, T objectToSave) throws IOException {
+    public void loadToJson(Path pathToSaveObject, T objectToSave) throws IOException {
 
         if (objectToSave == null) {
             return;
         }
 
         String json = GSON.toJson(objectToSave);
-        try (Writer fileWriter = Files.newBufferedWriter(Path.of(pathToSaveObject), StandardCharsets.UTF_8)) {
+        try (Writer fileWriter = Files.newBufferedWriter(pathToSaveObject, StandardCharsets.UTF_8)) {
             fileWriter.write(json);
         }
     }

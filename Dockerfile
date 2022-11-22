@@ -1,11 +1,10 @@
 FROM maven:3.8.6-amazoncorretto-18
 
-RUN mkdir -p /usr/src/
-WORKDIR /usr/src/
+RUN mkdir -p /usr/dj_arbuz
+WORKDIR /usr/dj_arbuz
 
-COPY . /usr/src/
-ADD scripts/script.sh /docker-entrypoint-initdb.d/script.sh
+COPY . /usr/dj_arbuz
 
 EXPOSE 8080
 
-CMD ["mvn", "exec:java"]
+ENTRYPOINT ["mvn", "exec:java"]

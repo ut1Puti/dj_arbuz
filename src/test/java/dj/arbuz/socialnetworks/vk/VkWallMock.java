@@ -9,6 +9,7 @@ import dj.arbuz.socialnetworks.vk.wall.AbstractVkWall;
 import dj.arbuz.socialnetworks.vk.wall.VkPostsParser;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,7 @@ class VkWallMock extends AbstractVkWall {
      */
     private final Map<String, List<WallpostFull>> testVkWallMap = new HashMap<>();
 
-    VkWallMock(String testWallDataJsonFilePath) {
+    VkWallMock(Path testWallDataJsonFilePath) {
         GsonLoader<WallpostList> jsonLoader = new GsonLoader<>(WallpostList.class);
         try {
             WallpostList wallPosts = jsonLoader.loadFromJson(testWallDataJsonFilePath);

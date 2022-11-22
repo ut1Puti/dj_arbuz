@@ -54,6 +54,6 @@ class VkAuthMock extends AbstractVkAuth {
      */
     @Override
     public String getAuthUrl(String userTelegramId) {
-        return authUrl;
+        return authUrl + "&state=" + userTelegramId;
     }
 }

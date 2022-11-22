@@ -1,6 +1,7 @@
 package dj.arbuz.bots.telegram;
 
 import dj.arbuz.bots.BotMessageExecutable;
+import dj.arbuz.bots.ConfigPaths;
 import dj.arbuz.bots.StoppableByUser;
 import dj.arbuz.database.hibernate.HibernateUtil;
 import httpserver.server.HttpServer;
@@ -16,6 +17,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +54,7 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
      *
      * @param tgConfigurationFilePath путь до json файла с конфигурацией
      */
-    public TelegramBot(String tgConfigurationFilePath) {
+    public TelegramBot(Path tgConfigurationFilePath) {
         //TODO кнопки
         super();
         telegramBotConfiguration = TelegramBotConfiguration.loadTelegramBotConfigurationFromJson(tgConfigurationFilePath);
@@ -79,7 +81,7 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
 
         httpServer.start();
 
-        TelegramBot telegramBot = new TelegramBot("src/main/resources/anonsrc/telegram_config.json");
+        TelegramBot telegramBot = new TelegramBot(ConfigPaths.telegramConfigPath);
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(telegramBot);
