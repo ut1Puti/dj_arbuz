@@ -98,14 +98,20 @@ public final class VkAuth extends AbstractVkAuth {
     @Override
     public BotUser createBotUser(String systemUserId) {
         String authCode = null;
-        while (authCode == null) {
+        for (int i = 0; i < 36; i++) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                return null;
+            }
+
             String httpRequestGetParameters = httpServer.getHttpRequestParameters();
             Pair<String> httpGetParam = getCodeAndUserTelegramIfFromHttpGetParam(httpRequestGetParameters);
 
             if (httpGetParam.userTelegramId.equals(systemUserId)) {
                 authCode = httpGetParam.authCode;
+                break;
             }
-
         }
         try {
             UserAuthResponse authResponse = vkApiClient.oAuth().userAuthorizationCodeFlow(

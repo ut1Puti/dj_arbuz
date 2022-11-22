@@ -1,7 +1,6 @@
 package dj.arbuz.database.local;
 
 import com.google.gson.reflect.TypeToken;
-import dj.arbuz.bots.ConfigPaths;
 import dj.arbuz.database.GroupBase;
 import loaders.gson.GsonLoader;
 
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
  * @author Щёголев Андрей
  * @version 1.0
  */
-public class GroupsStorage implements GroupBase {
+public final class GroupsStorage implements GroupBase {
     /**
      * Поле хеш таблицы, где ключ - имя группы в социальной сети, значение - список пользователей
      */
@@ -102,7 +101,7 @@ public class GroupsStorage implements GroupBase {
         }.getType();
         GsonLoader<Map<String, GroupRelatedData>> groupStorageMapGsonLoader = new GsonLoader<>(groupStorageMapType);
         try {
-            groupStorageMapGsonLoader.loadToJson(LocalDatabasePaths.localGroupDataBasePath, groupsBase);
+            groupStorageMapGsonLoader.loadToJson(LocalDatabasePaths.LOCAL_GROUP_DATA_BASE_PATH, groupsBase);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -118,7 +117,7 @@ public class GroupsStorage implements GroupBase {
         }.getType();
         GsonLoader<Map<String, GroupRelatedData>> loader = new GsonLoader<>(groupStorageMapType);
         try {
-            groupsBase = loader.loadFromJson(LocalDatabasePaths.localGroupDataBasePath);
+            groupsBase = loader.loadFromJson(LocalDatabasePaths.LOCAL_GROUP_DATA_BASE_PATH);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

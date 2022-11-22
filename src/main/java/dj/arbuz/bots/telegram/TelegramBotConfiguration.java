@@ -51,7 +51,6 @@ public final class TelegramBotConfiguration {
     }
 
     /**
-     * <<<<<<< HEAD
      * Метод создающий объект класса из параметров окружения программы
      *
      * @return {@code TelegramBotConfiguration} с параметрами конфигрурации из локального окружения

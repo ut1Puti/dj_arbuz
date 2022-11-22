@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
  * @version 2.2
  * @see MessageHandler
  */
-public class MessageHandlerImpl implements MessageHandler {
+public final class MessageHandlerImpl implements MessageHandler {
     /**
      * Поле кол-ва запрашиваемых последних постов
      */

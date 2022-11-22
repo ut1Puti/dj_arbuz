@@ -7,7 +7,7 @@ import dj.arbuz.user.BotUser;
 /**
  * Класс для работы с таблицей юзеров в бд
  */
-public class UserDatabase implements UserBase {
+public final class UserDatabase implements UserBase {
     /** Репозиторий для взаимодействия с таблицей юзеров **/
     private final UserDao userDao = new UserDao();
 
@@ -21,8 +21,7 @@ public class UserDatabase implements UserBase {
         tempUser.setTelegramId(userId);
         tempUser.setUserId(botUser.getId());
         tempUser.setAccessToken(botUser.getAccessToken());
-        userDao.updateUser(tempUser);
-        return true;
+        return userDao.updateUser(tempUser);
     }
 
     /**

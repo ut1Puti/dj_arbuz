@@ -6,6 +6,7 @@ package dj.arbuz.bots;
  * @author Кедровских Олег
  * @version 1.0
  */
+@FunctionalInterface
 public interface BotMessageExecutable {
     /**
      * Метод отправляющий сообщение пользователю

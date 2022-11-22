@@ -11,7 +11,7 @@ import dj.arbuz.handlers.notifcations.ConsolePostsPullingThread;
  * @version 1.0
  * @see AbstractMessageSender
  */
-public class ConsoleMessageSender extends AbstractMessageSender {
+public final class ConsoleMessageSender extends AbstractMessageSender {
     /**
      * Поле потока, получающего новые посты для консольного бота
      *

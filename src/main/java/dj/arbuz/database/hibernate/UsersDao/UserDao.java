@@ -8,7 +8,7 @@ import org.hibernate.Transaction;
 /**
  * Класс для взаимодействия Entity класса юзера и базой данных
  */
-public class UserDao {
+public final class UserDao {
     /**
      * Мето для сохранения класса юзера в бд
      *
@@ -58,7 +58,7 @@ public class UserDao {
      *
      * @param user Entity класс юзера
      */
-    public void updateUser(UserData user) {
+    public boolean updateUser(UserData user) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -70,7 +70,9 @@ public class UserDao {
                 transaction.rollback();
             }
 
+            return false;
         }
+        return true;
     }
 
     /**

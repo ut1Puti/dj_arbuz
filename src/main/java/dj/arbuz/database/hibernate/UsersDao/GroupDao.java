@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Репозиторий для взаимодействия с Entity классом и базой данных
  */
-public class GroupDao {
+public final class GroupDao {
     /**
      * Метод для сохранения класса группы в базе данных
      * @param groupData - Entity класс

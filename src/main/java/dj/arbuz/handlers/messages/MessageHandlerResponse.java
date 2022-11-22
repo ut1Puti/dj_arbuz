@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(exclude = {"updateUser"})
-public class MessageHandlerResponse {
+public final class MessageHandlerResponse {
     /**
      * Поле id пользователя которому будет отправлен ответ
      */

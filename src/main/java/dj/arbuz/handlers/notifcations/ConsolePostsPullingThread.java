@@ -16,7 +16,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @version 1.7
  * @see PostsPullingThread
  */
-public class ConsolePostsPullingThread extends PostsPullingThread {
+public final class ConsolePostsPullingThread extends PostsPullingThread {
     /**
      * Поле хранящее новые посты
      */

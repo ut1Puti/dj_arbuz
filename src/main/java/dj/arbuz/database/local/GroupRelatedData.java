@@ -1,6 +1,7 @@
 package dj.arbuz.database.local;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * @version 1.5
  */
 @EqualsAndHashCode
-class GroupRelatedData {
+final class GroupRelatedData {
     /**
      * Поле хранящее подписанных пользователей
      */

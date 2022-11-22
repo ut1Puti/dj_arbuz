@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 /**
  * Класс для взаимодействия с репозиторием для групп и изменением данных в Entity классе
  */
-public class GroupDatabase implements GroupBase {
+public final class GroupDatabase implements GroupBase {
     /** Репозиторий группы**/
-    final private GroupDao groupDao = new GroupDao();
+    private final GroupDao groupDao = new GroupDao();
 
     /**
      * Метод для добавления подписки к группе

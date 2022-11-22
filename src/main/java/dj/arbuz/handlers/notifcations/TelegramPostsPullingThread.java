@@ -16,7 +16,7 @@ import java.util.Optional;
  * @version 1.7
  * @see PostsPullingThread
  */
-public class TelegramPostsPullingThread extends PostsPullingThread {
+public final class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Поле телеграмм бота
      *
