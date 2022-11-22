@@ -19,13 +19,17 @@ public class ConfigPaths {
     /**
      * Поле пути до файла с конфигурацией телеграма
      */
-    public static final Path TELEGRAM_CONFIG_PATH = Path.of("src", "main", "resources", "config", "telegram.cfg.json");
+    public static final Path TELEGRAM_CONFIG_PATH = Path.of("src", "main", "resources", "configs", "telegram.cfg.json");
     /**
      * Поле пути до файла с конфигурацией vk
      */
-    public static final Path VK_CONFIG_PATH = Path.of("src", "main", "resources", "config", "vk.cfg.json");
+    public static final Path VK_CONFIG_PATH = Path.of("src", "main", "resources", "configs", "vk.cfg.json");
     /**
-     * Поле пути до файла с конфигурацией hibernate
+     * Поле пути до файла с конфигурацией hibernate, при локальном запуске бд
      */
-    public static final String HIBERNATE_CONFIG_PATH_AS_STRING = "src/main/resources/config/hibernate.cfg.xml";
+    public static final String LOCAL_HIBERNATE_CONFIG_PATH_AS_STRING = "src/main/resources/configs/hibernate.cfg.xml";
+    /**
+     * Поле пути до файла с конфигурацией hibernate, при запуске бд в docker
+     */
+    public static final String DOCKER_HIBERNATE_CONFIG_PATH_AS_STRING = "src/main/resources/configs/hibernate.cfg.xml";
 }

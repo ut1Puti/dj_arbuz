@@ -7,13 +7,12 @@ lib/
 .fleet/
 
 #игнорируемые файлы ide
-.idea/*.xml
 *.iml
-*.xml
+pom.xml
 
 #игнорирование файла файловой системы mac os
 .DS_Store
 
 #игнорирование информации по конфигурации приложения
 anonsrc/
-config/
+configs/

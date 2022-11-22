@@ -19,7 +19,7 @@ public final class HibernateUtil {
 
     private static SessionFactory buildSessionFactory() {
         try {
-            return new Configuration().configure(new File(ConfigPaths.HIBERNATE_CONFIG_PATH_AS_STRING)).buildSessionFactory();
+            return new Configuration().configure(new File(ConfigPaths.LOCAL_HIBERNATE_CONFIG_PATH_AS_STRING)).buildSessionFactory();
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);
         }
