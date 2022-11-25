@@ -1,5 +1,5 @@
 #игнорируемые директории 
-target
+target/
 lib/
 postgres-data/
 
@@ -9,7 +9,6 @@ postgres-data/
 
 #игнорируемые файлы ide
 *.iml
-pom.xml
 
 #игнорирование файла файловой системы mac os
 .DS_Store

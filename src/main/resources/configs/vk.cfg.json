@@ -1,7 +1,0 @@
-{
-  "AUTH_URL":"redirect",
-  "APP_ID":0,
-  "CLIENT_SECRET":"client",
-  "SERVICE_CLIENT_SECRET":"service",
-  "REDIRECT_URL":"redirect"
-}
