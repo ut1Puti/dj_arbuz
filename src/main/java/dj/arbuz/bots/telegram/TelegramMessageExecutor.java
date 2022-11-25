@@ -3,13 +3,13 @@ package dj.arbuz.bots.telegram;
 import dj.arbuz.bots.StoppableByUser;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
+import dj.arbuz.database.hibernate.group.GroupService;
+import dj.arbuz.database.hibernate.user.UserService;
 import dj.arbuz.handlers.messages.MessageHandler;
 import dj.arbuz.handlers.messages.MessageHandlerImpl;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import dj.arbuz.handlers.messages.TelegramMessageSender;
 import dj.arbuz.handlers.notifcations.TelegramPostsPullingThread;
-import dj.arbuz.database.hibernate.UsersDao.GroupDatabase;
-import dj.arbuz.database.hibernate.UsersDao.UserDatabase;
 import dj.arbuz.socialnetworks.vk.Vk;
 
 /**
@@ -44,8 +44,8 @@ public final class TelegramMessageExecutor {
      * @param telegramBot экземпляр телеграм бота
      */
     public TelegramMessageExecutor(TelegramBot telegramBot) {
-        UserBase userStorage = new UserDatabase();
-        GroupBase groupsStorage = new GroupDatabase();
+        UserBase userStorage = new UserService();
+        GroupBase groupsStorage = new GroupService();
         Vk vk = new Vk();
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
         messageSender = new TelegramMessageSender(telegramBot, userStorage);

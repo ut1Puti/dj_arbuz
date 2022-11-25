@@ -76,7 +76,11 @@ public abstract class PostsPullingThread extends StoppableThread {
             }
 
         }
-        groupsBase.updateGroupLastPost(groupScreenName, newLastPostDate);
+
+        if (newLastPostDate != lastPostDate) {
+            groupsBase.updateGroupLastPost(groupScreenName, newLastPostDate);
+        }
+
         List<String> vkParsedPosts = VkPostsParser.parsePosts(appFindPosts);
         return vkParsedPosts.isEmpty() ? Optional.empty() : Optional.of(vkParsedPosts);
     }

@@ -69,7 +69,7 @@ public final class GroupsStorage implements GroupBase {
      * @see GroupsStorage#addNewGroup(String, String)
      * @see GroupsStorage#addOldGroup(String, String)
      */
-    public boolean addInfoToGroup(String groupScreenName, String userSubscribedToGroupId) {
+    public boolean addSubscriber(String groupScreenName, String userSubscribedToGroupId) {
         if (groupsBase.get(groupScreenName) == null) {
             addNewGroup(groupScreenName, userSubscribedToGroupId);
             return true;
@@ -130,7 +130,7 @@ public final class GroupsStorage implements GroupBase {
      * @param userSubscribedToGroupId id пользователя
      * @return {@code true} если пользователь был удален, {@code false} если пользователь не был удален
      */
-    public boolean deleteInfoFromGroup(String groupScreenName, String userSubscribedToGroupId) {
+    public boolean deleteSubscriber(String groupScreenName, String userSubscribedToGroupId) {
 
         if (!groupsBase.containsKey(groupScreenName)) {
             return false;

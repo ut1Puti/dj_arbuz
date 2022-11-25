@@ -17,7 +17,7 @@ public interface UserBase {
      * @return {@code true} - если пользователь был успешно добавлен,
      * {@code false} - если пользователь не был добавлен
      */
-    boolean addInfoUser(String userId, BotUser botUser);
+    boolean addUser(String userId, BotUser botUser);
 
     /**
      * Метод проверяющий наличие пользователя в базе по id

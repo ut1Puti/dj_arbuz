@@ -1,7 +1,6 @@
 package dj.arbuz.database.local;
 
 
-import dj.arbuz.database.local.UserStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import dj.arbuz.user.BotUser;
@@ -29,7 +28,7 @@ public class UserDataBaseTests {
     @Test
     public void testAddNewUser() {
         String telegramId = "some id";
-        userStorageTest.addInfoUser(telegramId, userTest);
+        userStorageTest.addUser(telegramId, userTest);
         assertEquals(userTest, userStorageTest.getUser(telegramId));
     }
 
@@ -40,8 +39,8 @@ public class UserDataBaseTests {
     public void testTwoUsersForOneId() {
         String telegramId = "some id";
         BotUser secondUser = new BotUser(150, "830", "second some text");
-        userStorageTest.addInfoUser(telegramId, userTest);
-        userStorageTest.addInfoUser(telegramId, secondUser);
+        userStorageTest.addUser(telegramId, userTest);
+        userStorageTest.addUser(telegramId, secondUser);
         assertEquals(secondUser, userStorageTest.getUser(telegramId));
     }
     /**
@@ -53,8 +52,8 @@ public class UserDataBaseTests {
         String telegramId2 = "some id2";
 
         BotUser secondUser = new BotUser(150, "830", "second some text");
-        userStorageTest.addInfoUser(telegramId1, userTest);
-        userStorageTest.addInfoUser(telegramId2, secondUser);
+        userStorageTest.addUser(telegramId1, userTest);
+        userStorageTest.addUser(telegramId2, secondUser);
         assertTrue(userTest.equals(userStorageTest.getUser(telegramId1)) && secondUser.equals(userStorageTest.getUser(telegramId2)));
     }
 

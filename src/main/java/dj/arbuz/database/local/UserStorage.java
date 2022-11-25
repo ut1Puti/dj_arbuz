@@ -22,7 +22,7 @@ public final class UserStorage implements UserBase {
      * @param botUser данные юзера
      * @return {@code true}
      */
-    public boolean addInfoUser(String userId, BotUser botUser) {
+    public boolean addUser(String userId, BotUser botUser) {
         usersBase.put(userId, botUser);
         return true;
     }

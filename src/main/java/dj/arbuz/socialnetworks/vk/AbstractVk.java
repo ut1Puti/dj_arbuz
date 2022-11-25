@@ -117,7 +117,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      * @see VkGroups#searchGroup(String, BotUser)
-     * @see GroupsStorage#addInfoToGroup(String, String)
+     * @see GroupsStorage#addSubscriber(String, String)
      */
     @Override
     public SubscribeStatus subscribeTo(GroupBase groupBase, String userReceivedGroupName, BotUser userCallingMethod)
@@ -129,7 +129,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
         }
 
         //TODO synchronize working with subscribers
-        boolean isSubscribed = groupBase.addInfoToGroup(userFindGroup.getScreenName(), userCallingMethod.getTelegramId());
+        boolean isSubscribed = groupBase.addSubscriber(userFindGroup.getScreenName(), userCallingMethod.getTelegramId());
         return isSubscribed ? SubscribeStatus.SUBSCRIBED : SubscribeStatus.ALREADY_SUBSCRIBED;
     }
 
@@ -154,7 +154,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
         }
 
         //TODO synchronize working with subscribers
-        return groupBase.deleteInfoFromGroup(userFindGroup.getScreenName(), userCallingMethod.getTelegramId());
+        return groupBase.deleteSubscriber(userFindGroup.getScreenName(), userCallingMethod.getTelegramId());
     }
 
     /**

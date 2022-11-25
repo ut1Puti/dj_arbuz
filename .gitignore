@@ -1,6 +1,7 @@
 #игнорируемые директории 
 target
 lib/
+postgres-data/
 
 #игнорируемые директории ide
 .idea/

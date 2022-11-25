@@ -194,7 +194,7 @@ public class AbstractVkTests {
     @Test
     public void testSubscribeToSubscribedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        groupsStorage.addInfoToGroup("sqwore", userSystemId);
+        groupsStorage.addSubscriber("sqwore", userSystemId);
         String userReceivedGroupName = "Sqwore";
         assertEquals(SubscribeStatus.ALREADY_SUBSCRIBED, vk.subscribeTo(groupsStorage, userReceivedGroupName, user));
     }
@@ -210,7 +210,7 @@ public class AbstractVkTests {
     @Test
     public void testUnsubscribeFromExistSubscribedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        groupsStorage.addInfoToGroup("sqwore", userSystemId);
+        groupsStorage.addSubscriber("sqwore", userSystemId);
         String userReceivedGroupName = "Sqwore";
         assertTrue(vk.unsubscribeFrom(groupsStorage, userReceivedGroupName, user));
     }

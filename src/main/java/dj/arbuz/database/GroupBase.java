@@ -19,7 +19,7 @@ public interface GroupBase {
      * @return {@code true} - если пользователь был добавлен в базу данных подписчиков группы,
      * {@code false} - если пользователь не был добавлен в базу данных
      */
-    boolean addInfoToGroup(String groupScreenName, String userSubscribedToGroupId);
+    boolean addSubscriber(String groupScreenName, String userSubscribedToGroupId);
 
     /**
      * Метод удаления пользователь из подписчиков группы
@@ -28,7 +28,7 @@ public interface GroupBase {
      * @param userSubscribedToGroupId id пользователя
      * @return {@code true} - если пользователь был удален, {@code false} - если пользователь не был удален
      */
-    boolean deleteInfoFromGroup(String groupScreenName, String userSubscribedToGroupId);
+    boolean deleteSubscriber(String groupScreenName, String userSubscribedToGroupId);
 
     /**
      * Метод получающий множество все групп из базы данных
