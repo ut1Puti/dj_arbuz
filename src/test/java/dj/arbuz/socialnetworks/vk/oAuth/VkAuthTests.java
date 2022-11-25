@@ -53,13 +53,4 @@ public class VkAuthTests {
         String authUrl = vkAuth.getAuthUrl("1");
         assertEquals(expectedAuthUrl, authUrl);
     }
-
-    /**
-     * Метод для тестирования случая при котором пользователь не согласился принимать разрешения доступа бота
-     */
-    @Test
-    public void testCreateUserWithRejectionOfStates() {
-        BotUser user = vkAuth.createBotUser("some telegram id");
-        assertNull(user);
-    }
 }

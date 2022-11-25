@@ -4,6 +4,9 @@ services:
   bot:
     build: .
     restart: always
+    container_name: dj_arbuz_telegram_bot
+    volumes:
+      - ./src/main/resources/configs:/usr/dj_arbuz/src/main/resources/configs
     ports:
       - "8080:8080"
     links:
@@ -13,13 +16,14 @@ services:
 
   postgres:
     image: postgres:15-alpine
+    container_name: dj_arbuz_postgres
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: utiputi
       POSTGRES_DB: users_database
     volumes:
-      - ./scripts:/docker-entrypoint-initdb.d
+      - ./src/main/resources/scripts/postgres:/docker-entrypoint-initdb.d
       - ./postgres-data:/var/lib/postgresql/data
     expose:
       - "5432"
