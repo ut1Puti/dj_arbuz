@@ -9,7 +9,7 @@ import org.hibernate.query.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserRepository extends EntityRepository<UserDto> {
+public final class UserRepository extends EntityRepository<UserDto> {
     public UserDto findByTelegramId(String searchUserTelegramId) {
         Transaction transaction = null;
         UserDto result;

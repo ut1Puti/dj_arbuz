@@ -42,8 +42,7 @@ public class GroupDto {
     @JoinTable(
             name = "subscribers",
             joinColumns = @JoinColumn(name = "group_name"),
-            inverseJoinColumns = @JoinColumn(name = "user_telegram_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "user_telegram_id"))
     private List<UserDto> subscribedUsers;
 
     public void addNewSubscriber(UserDto subscriber) {

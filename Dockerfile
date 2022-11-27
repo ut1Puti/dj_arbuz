@@ -6,7 +6,6 @@ WORKDIR /usr/dj_arbuz
 COPY ./src/main/resources/scripts/postgres /usr/dj_arbuz/src/main/resources/scripts/postgres
 COPY ./src/main/resources/scripts/run /usr/dj_arbuz/src/main/resources/scripts/run
 COPY ./src/main/java /usr/dj_arbuz/src/main/java
-COPY ./src/main/resources/configs /usr/dj_arbuz/src/main/resources/configs
 COPY ./src/main/resources/websrc /usr/dj_arbuz/src/main/resources/websrc
 COPY ./src/test/java /usr/dj_arbuz/src/test/java
 COPY ./src/test/resources/vk_tests /usr/dj_arbuz/src/test/resources/vk_tests

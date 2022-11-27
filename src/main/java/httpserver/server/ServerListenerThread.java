@@ -87,6 +87,7 @@ public class ServerListenerThread extends StoppableThread {
                     }
                 }
             } catch (IOException e) {
+                System.out.println(e.getMessage());
                 break;
             }
         }

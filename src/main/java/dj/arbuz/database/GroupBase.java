@@ -35,7 +35,7 @@ public interface GroupBase {
      *
      * @return множество групп из базы данных
      */
-    Set<String> getGroups();
+    Set<String> getGroupsScreenName();
 
     /**
      * Метод получающий список всех подписчиков группы

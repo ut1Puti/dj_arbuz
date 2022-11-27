@@ -156,7 +156,7 @@ public final class GroupsStorage implements GroupBase {
      *
      * @return неизменяемый набор коротких названий групп на которые оформлены подписки
      */
-    public Set<String> getGroups() {
+    public Set<String> getGroupsScreenName() {
         return Set.copyOf(groupsBase.keySet());
     }
 

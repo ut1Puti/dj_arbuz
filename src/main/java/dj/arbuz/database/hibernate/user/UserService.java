@@ -1,9 +1,12 @@
 package dj.arbuz.database.hibernate.user;
 
 import dj.arbuz.database.UserBase;
+import dj.arbuz.database.hibernate.group.GroupDto;
 import dj.arbuz.user.BotUser;
 
-public class UserService implements UserBase {
+import java.util.List;
+
+public final class UserService implements UserBase {
     private final UserRepository userRepository = new UserRepository();
 
     /**
@@ -50,5 +53,10 @@ public class UserService implements UserBase {
     public BotUser getUser(String userId) {
         UserDto userDto = userRepository.findByTelegramId(userId);
         return new BotUser(Math.toIntExact(userDto.getVkId()), userDto.getAccessToken(), userDto.getTelegramId());
+    }
+
+    public List<GroupDto> findUserSubscribedGroups(String userId) {
+        UserDto userDto = userRepository.findByTelegramId(userId);
+        return userDto.getSubscribedGroups();
     }
 }

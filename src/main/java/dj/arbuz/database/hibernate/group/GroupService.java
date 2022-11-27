@@ -6,13 +6,14 @@ import dj.arbuz.database.hibernate.user.UserService;
 import dj.arbuz.user.BotUser;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class GroupService implements GroupBase {
+public final class GroupService implements GroupBase {
     private final UserService userService = new UserService();
 
     private final GroupRepository groupRepository = new GroupRepository();
@@ -27,7 +28,7 @@ public class GroupService implements GroupBase {
      */
     @Override
     public boolean addSubscriber(String groupScreenName, String subscriberId) {
-        GroupDto dbSavedGroup = groupRepository.findByScreenName(groupScreenName);
+        GroupDto dbSavedGroup = groupRepository.getByScreenName(groupScreenName);
         BotUser subscriber = userService.getUser(subscriberId);
         UserDto subscriberDto = UserDto.builder()
                 .telegramId(subscriber.getTelegramId())
@@ -62,7 +63,7 @@ public class GroupService implements GroupBase {
      */
     @Override
     public boolean deleteSubscriber(String groupScreenName, String subscriberId) {
-        GroupDto dbSavedGroup = groupRepository.findByScreenName(groupScreenName);
+        GroupDto dbSavedGroup = groupRepository.getByScreenName(groupScreenName);
 
         if (dbSavedGroup == null) {
             return false;
@@ -89,11 +90,8 @@ public class GroupService implements GroupBase {
      * @return множество групп из базы данных
      */
     @Override
-    public Set<String> getGroups() {
-        return groupRepository.findAll().stream()
-                .filter(Objects::nonNull)
-                .map(GroupDto::getGroupName)
-                .collect(Collectors.toSet());
+    public Set<String> getGroupsScreenName() {
+        return new HashSet<>(groupRepository.findAllGroupsScreenName());
     }
 
     /**
@@ -104,11 +102,7 @@ public class GroupService implements GroupBase {
      */
     @Override
     public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
-        return groupRepository.findByScreenName(groupScreenName).getSubscribedUsers()
-                .stream()
-                .filter(Objects::nonNull)
-                .map(UserDto::getTelegramId)
-                .toList();
+        return groupRepository.findSubscribedUsersTelegramId(groupScreenName);
     }
 
     /**
@@ -119,7 +113,7 @@ public class GroupService implements GroupBase {
      */
     @Override
     public Set<String> getUserSubscribedGroups(String subscriberId) {
-         return groupRepository.findBySubscriberId(subscriberId)
+         return userService.findUserSubscribedGroups(subscriberId)
                  .stream()
                  .filter(Objects::nonNull)
                  .map(GroupDto::getGroupName)
@@ -135,7 +129,7 @@ public class GroupService implements GroupBase {
      */
     @Override
     public Optional<Long> getGroupLastPostDate(String groupScreenName) {
-        GroupDto dbSavedGroup = groupRepository.findByScreenName(groupScreenName);
+        GroupDto dbSavedGroup = groupRepository.getByScreenName(groupScreenName);
 
         if (dbSavedGroup == null) {
             return Optional.empty();
@@ -152,7 +146,7 @@ public class GroupService implements GroupBase {
      */
     @Override
     public void updateGroupLastPost(String groupScreenName, long newLastPostDate) {
-        GroupDto dbSavedGroup = groupRepository.findByScreenName(groupScreenName);
+        GroupDto dbSavedGroup = groupRepository.getByScreenName(groupScreenName);
 
         if (dbSavedGroup == null) {
             return;
@@ -170,6 +164,6 @@ public class GroupService implements GroupBase {
      */
     @Override
     public boolean containsGroup(String groupScreenName) {
-        return groupRepository.findByScreenName(groupScreenName) != null;
+        return groupRepository.getByScreenName(groupScreenName) != null;
     }
 }

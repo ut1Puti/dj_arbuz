@@ -9,7 +9,7 @@ import org.hibernate.cfg.Configuration;
 import java.io.File;
 import java.net.URL;
 
-public final class HibernateUtil {
+public class HibernateUtil {
 
     private static final SessionFactory sessionFactory = buildSessionFactory();
 

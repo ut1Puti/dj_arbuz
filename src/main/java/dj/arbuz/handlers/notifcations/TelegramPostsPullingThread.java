@@ -39,13 +39,13 @@ public final class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Метод логики выполняемой внутри {@code TelegramPostsPullingThread}
      *
-     * @see GroupsStorage#getGroups()
+     * @see GroupsStorage#getGroupsScreenName()
      * @see GroupsStorage#getSubscribedToGroupUsersId(String)
      */
     @Override
     public void run() {
         while (working.get()) {
-            for (String groupScreenName : groupsBase.getGroups()) {
+            for (String groupScreenName : groupsBase.getGroupsScreenName()) {
                 Optional<List<String>> threadFindNewPosts;
                 try {
                     threadFindNewPosts = getNewPostsAsStrings(groupScreenName);
