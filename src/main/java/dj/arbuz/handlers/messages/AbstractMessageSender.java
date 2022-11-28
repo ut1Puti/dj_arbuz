@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import dj.arbuz.user.BotUser;
 
 import java.util.concurrent.ExecutionException;
+import java.util.List;
 
 /**
  * Класс-отправитель сообщений пользователям
@@ -37,15 +38,19 @@ abstract class AbstractMessageSender implements MessageSender {
      */
     @Override
     public void sendResponse(MessageHandlerResponse userSendResponse) {
-        String userSendResponseId = userSendResponse.getUserSendResponseId();
+        List<String> usersSendMessageId = userSendResponse.getUsersSendResponseId();
 
         if (userSendResponse.hasTextMessage()) {
-            messageSender.send(userSendResponseId, userSendResponse.getTextMessage());
+            for (String userSendMessageId : usersSendMessageId) {
+                messageSender.send(userSendMessageId, userSendResponse.getTextMessage());
+            }
         }
 
         if (userSendResponse.hasPostsMessages()) {
             for (String postMessage : userSendResponse.getPostsMessages()) {
-                messageSender.send(userSendResponseId, postMessage);
+                for (String userSendMessageId : usersSendMessageId) {
+                    messageSender.send(userSendMessageId, postMessage);
+                }
             }
         }
 
@@ -56,12 +61,14 @@ abstract class AbstractMessageSender implements MessageSender {
             } catch (InterruptedException | ExecutionException ignored) {
             }
 
+            assert usersSendMessageId.size() == 1;
+
             if (currentUser == null) {
-                messageSender.send(userSendResponseId, BotTextResponse.AUTH_ERROR);
-            }else if (userStorage.addUser(userSendResponseId, currentUser)) {
-                messageSender.send(userSendResponseId, BotTextResponse.AUTH_SUCCESS);
+                messageSender.send(usersSendMessageId.get(0), BotTextResponse.AUTH_ERROR);
+            }else if (userStorage.addUser(usersSendMessageId.get(0), currentUser)) {
+                messageSender.send(usersSendMessageId.get(0), BotTextResponse.AUTH_SUCCESS);
             } else {
-                messageSender.send(userSendResponseId, BotTextResponse.AUTH_ERROR);
+                messageSender.send(usersSendMessageId.get(0), BotTextResponse.AUTH_ERROR);
             }
 
         }

@@ -4,6 +4,8 @@ import dj.arbuz.bots.console.ConsoleBot;
 import dj.arbuz.database.local.UserStorage;
 import dj.arbuz.handlers.notifcations.ConsolePostsPullingThread;
 
+import java.util.List;
+
 /**
  * Класс-отправитель сообщений консольного бота
  *
@@ -39,11 +41,13 @@ public final class ConsoleMessageSender extends AbstractMessageSender {
     @Override
     public void sendResponse(MessageHandlerResponse userSendResponse) {
         super.sendResponse(userSendResponse);
-        String userSendResponseId = userSendResponse.getUserSendResponseId();
+        List<String> usersSendResponseId = userSendResponse.getUsersSendResponseId();
 
         if (notificationPullingThread.hasNewPosts()) {
             for (String newPostText : notificationPullingThread.getNewPosts()) {
-                this.sendSingleMessage(userSendResponseId, newPostText);
+                for (String userSendResponseId : usersSendResponseId) {
+                    this.sendSingleMessage(userSendResponseId, newPostText);
+                }
             }
         }
 

@@ -166,7 +166,7 @@ public final class MessageHandlerImpl implements MessageHandler {
         if (isItNoArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
                 case "/help" -> {
-                    return HELP_INFO.build(userSendResponseId);
+                    return HELP_INFO.build(List.of(userSendResponseId));
                 }
                 case "/auth" -> {
                     return getAuthResponse(userSendResponseId);
@@ -178,13 +178,16 @@ public final class MessageHandlerImpl implements MessageHandler {
                     return getUserSubscribedGroupsLinks(userSendResponseId);
                 }
                 default -> {
-                    return UNKNOWN_COMMAND.build(userSendResponseId);
+                    return UNKNOWN_COMMAND.build(List.of(userSendResponseId));
                 }
             }
         }
 
         if (isItSingleArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
+                case "/post" -> {
+                    return postToAllUsers(commandAndArgs[ARG_INDEX], userSendResponseId);
+                }
                 case "/link" -> {
                     return getGroupUrl(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
@@ -202,7 +205,7 @@ public final class MessageHandlerImpl implements MessageHandler {
                 }
             }
         }
-        return UNKNOWN_COMMAND.build(userSendResponseId);
+        return UNKNOWN_COMMAND.build(List.of(userSendResponseId));
     }
 
     /**
@@ -242,13 +245,13 @@ public final class MessageHandlerImpl implements MessageHandler {
         String authURL = socialNetwork.getAuthUrl(userSendResponseId);
 
         if (authURL == null) {
-            return AUTH_ERROR.build(userSendResponseId);
+            return AUTH_ERROR.build(List.of(userSendResponseId));
         }
 
         return MessageHandlerResponse.newBuilder()
                 .textMessage(BotTextResponse.AUTH_GO_VIA_LINK + authURL)
                 .updateUser(socialNetwork.createBotUserAsync(userSendResponseId))
-                .build(userSendResponseId);
+                .build(List.of(userSendResponseId));
     }
 
     /**
@@ -262,11 +265,22 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
      */
-    private static MessageHandlerResponse getStopResponse(StoppableByUser stoppableByUserThread, String userSendResponseId) {
+    private MessageHandlerResponse getStopResponse(StoppableByUser stoppableByUserThread, String userSendResponseId) {
         stoppableByUserThread.stopByUser();
         return MessageHandlerResponse.newBuilder()
                 .textMessage(BotTextResponse.STOP_INFO)
-                .build(userSendResponseId);
+                .build(List.of(userSendResponseId));
+    }
+
+    /**
+     * Метод отправляющий сообщение всем пользователям
+     *
+     * @param usersSendMessage сообщение, которое будет отправлено пользователям
+     * @param userReceivedMessageId id пользователя от имени которого будет отправлено сообщение
+     * @return ответ содержащий сообщение верифицированного пользователя, от имени которого будет отправлено сообщение
+     */
+    private MessageHandlerResponse postToAllUsers(String usersSendMessage, String userReceivedMessageId) {
+        return MessageHandlerResponse.newBuilder().textMessage(usersSendMessage).build(usersBase.getAllUsersId());
     }
 
     /**
@@ -282,7 +296,7 @@ public final class MessageHandlerImpl implements MessageHandler {
     private MessageHandlerResponse getGroupUrl(String userReceivedGroupName, String userSendResponseId) {
 
         if (!usersBase.contains(userSendResponseId)) {
-            return NOT_AUTHED_USER.build(userSendResponseId);
+            return NOT_AUTHED_USER.build(List.of(userSendResponseId));
         }
 
         BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
@@ -290,11 +304,11 @@ public final class MessageHandlerImpl implements MessageHandler {
         try {
             return MessageHandlerResponse.newBuilder()
                     .textMessage(socialNetwork.getGroupUrl(userReceivedGroupName, userCallingMethod))
-                    .build(userSendResponseId);
+                    .build(List.of(userSendResponseId));
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageHandlerResponse.newBuilder()
                     .textMessage(e.getMessage())
-                    .build(userSendResponseId);
+                    .build(List.of(userSendResponseId));
         }
     }
 
@@ -311,7 +325,7 @@ public final class MessageHandlerImpl implements MessageHandler {
     private MessageHandlerResponse getGroupId(String userReceivedGroupName, String userSendResponseId) {
 
         if (!usersBase.contains(userSendResponseId)) {
-            return NOT_AUTHED_USER.build(userSendResponseId);
+            return NOT_AUTHED_USER.build(List.of(userSendResponseId));
         }
 
         BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
@@ -319,11 +333,11 @@ public final class MessageHandlerImpl implements MessageHandler {
         try {
             return MessageHandlerResponse.newBuilder()
                     .textMessage(socialNetwork.getGroupId(userReceivedGroupName, userCallingMethod))
-                    .build(userSendResponseId);
+                    .build(List.of(userSendResponseId));
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageHandlerResponse.newBuilder()
                     .textMessage(e.getMessage())
-                    .build(userSendResponseId);
+                    .build(List.of(userSendResponseId));
         }
     }
 
@@ -341,7 +355,7 @@ public final class MessageHandlerImpl implements MessageHandler {
     private MessageHandlerResponse subscribeTo(String userReceivedGroupName, String userSendResponseId) {
 
         if (!usersBase.contains(userSendResponseId)) {
-            return NOT_AUTHED_USER.build(userSendResponseId);
+            return NOT_AUTHED_USER.build(List.of(userSendResponseId));
         }
 
         BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
@@ -349,11 +363,11 @@ public final class MessageHandlerImpl implements MessageHandler {
         try {
             return MessageHandlerResponse.newBuilder()
                     .textMessage(socialNetwork.subscribeTo(groupsBase, userReceivedGroupName, userCallingMethod).getSubscribeMessage())
-                    .build(userSendResponseId);
+                    .build(List.of(userSendResponseId));
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageHandlerResponse.newBuilder()
                     .textMessage(e.getMessage())
-                    .build(userSendResponseId);
+                    .build(List.of(userSendResponseId));
         }
     }
 
@@ -370,7 +384,7 @@ public final class MessageHandlerImpl implements MessageHandler {
     private MessageHandlerResponse unsubscribeFrom(String userReceivedGroupName, String userSendResponseId) {
 
         if (!usersBase.contains(userSendResponseId)) {
-            return NOT_AUTHED_USER.build(userSendResponseId);
+            return NOT_AUTHED_USER.build(List.of(userSendResponseId));
         }
 
         BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
@@ -379,14 +393,14 @@ public final class MessageHandlerImpl implements MessageHandler {
             boolean isUnsubscribed = socialNetwork.unsubscribeFrom(groupsBase, userReceivedGroupName, userCallingMethod);
 
             if (isUnsubscribed) {
-                return UNSUBSCRIBED.build(userSendResponseId);
+                return UNSUBSCRIBED.build(List.of(userSendResponseId));
             }
 
-            return NOT_SUBSCRIBER.build(userSendResponseId);
+            return NOT_SUBSCRIBER.build(List.of(userSendResponseId));
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageHandlerResponse.newBuilder()
                     .textMessage(e.getMessage())
-                    .build(userSendResponseId);
+                    .build(List.of(userSendResponseId));
         }
     }
 
@@ -399,14 +413,14 @@ public final class MessageHandlerImpl implements MessageHandler {
     private MessageHandlerResponse getUserSubscribedGroupsLinks(String userSendResponseId) {
 
         if (!usersBase.contains(userSendResponseId)) {
-            return NOT_AUTHED_USER.build(userSendResponseId);
+            return NOT_AUTHED_USER.build(List.of(userSendResponseId));
         }
 
         BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
         Set<String> userSubscribedGroupsName = groupsBase.getUserSubscribedGroups(userCallingMethod.getTelegramId());
 
         if (userSubscribedGroupsName.isEmpty()) {
-            return NO_SUBSCRIBED_GROUPS.build(userSendResponseId);
+            return NO_SUBSCRIBED_GROUPS.build(List.of(userSendResponseId));
         }
 
         StringBuilder userSubscribedGroupsLinks = new StringBuilder();
@@ -415,7 +429,7 @@ public final class MessageHandlerImpl implements MessageHandler {
         }
         return MessageHandlerResponse.newBuilder()
                 .textMessage(userSubscribedGroupsLinks.toString())
-                .build(userSendResponseId);
+                .build(List.of(userSendResponseId));
     }
 
     /**
@@ -434,7 +448,7 @@ public final class MessageHandlerImpl implements MessageHandler {
     private MessageHandlerResponse getFiveLastPosts(String userReceivedGroupName, String userSendResponseId) {
 
         if (!usersBase.contains(userSendResponseId)) {
-            return NOT_AUTHED_USER.build(userSendResponseId);
+            return NOT_AUTHED_USER.build(List.of(userSendResponseId));
         }
 
         BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
@@ -443,19 +457,19 @@ public final class MessageHandlerImpl implements MessageHandler {
         try {
             groupFindPosts = socialNetwork.getLastPostsAsStrings(userReceivedGroupName, DEFAULT_POST_NUMBER, userCallingMethod);
         } catch (NoSuchElementException e) {
-            return NO_POSTS_IN_GROUP.build(userSendResponseId);
+            return NO_POSTS_IN_GROUP.build(List.of(userSendResponseId));
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageHandlerResponse.newBuilder()
                     .textMessage(e.getMessage())
-                    .build(userSendResponseId);
+                    .build(List.of(userSendResponseId));
         }
 
         if (groupFindPosts.isEmpty()) {
-            return NO_POSTS_IN_GROUP.build(userSendResponseId);
+            return NO_POSTS_IN_GROUP.build(List.of(userSendResponseId));
         }
 
         return MessageHandlerResponse.newBuilder()
                 .postsText(groupFindPosts)
-                .build(userSendResponseId);
+                .build(List.of(userSendResponseId));
     }
 }

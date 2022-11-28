@@ -55,6 +55,11 @@ public final class UserService implements UserBase {
         return new BotUser(Math.toIntExact(userDto.getVkId()), userDto.getAccessToken(), userDto.getTelegramId());
     }
 
+    @Override
+    public List<String> getAllUsersId() {
+        return userRepository.getAllUsersId();
+    }
+
     public List<GroupDto> findUserSubscribedGroups(String userId) {
         UserDto userDto = userRepository.findByTelegramId(userId);
         return userDto.getSubscribedGroups();

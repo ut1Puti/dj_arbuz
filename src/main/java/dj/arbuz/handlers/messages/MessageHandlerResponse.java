@@ -23,8 +23,7 @@ public final class MessageHandlerResponse {
     /**
      * Поле id пользователя которому будет отправлен ответ
      */
-    @Getter
-    private final String userSendResponseId;
+    private final List<String> usersSendResponseId;
     /**
      * Поле текстового сообщения
      */
@@ -48,6 +47,15 @@ public final class MessageHandlerResponse {
      */
     public static MessageHandlerResponseBuilder newBuilder() {
         return new MessageHandlerResponseBuilder();
+    }
+
+    /**
+     * Метод возвращающий всех пользователей, которым будут отправлены сообщение
+     *
+     * @return список id пользователей, которым будет отправлено сообщение
+     */
+    public List<String> getUsersSendResponseId() {
+        return List.copyOf(usersSendResponseId);
     }
 
     /**
@@ -159,9 +167,9 @@ public final class MessageHandlerResponse {
          * Метод строящий новый ответ обработчика
          *
          * @return новый экземпляр {@code MessageExecutorResponse}
-         * @see MessageHandlerResponse#MessageHandlerResponse(String, String, CompletableFuture, List)
+         * @see MessageHandlerResponse#MessageHandlerResponse(List, String, CompletableFuture, List)
          */
-        public MessageHandlerResponse build(String userSendResponseId) {
+        public MessageHandlerResponse build(List<String> userSendResponseId) {
             return new MessageHandlerResponse(userSendResponseId, textMessage, updateUser, postsMessages);
         }
     }

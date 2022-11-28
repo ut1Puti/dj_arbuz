@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version 1.0
  */
 public class ServerListeningThreadTests {
+    private final int testPort = 8081;
     /**
      * Поле потока обрабатывающего сообщения
      */
@@ -29,7 +30,7 @@ public class ServerListeningThreadTests {
      */
     @BeforeEach
     public void setListeningThread() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(HttpServerConfiguration.PORT);
+        ServerSocket serverSocket = new ServerSocket(testPort);
         serverListenerThread = new ServerListenerThread(serverSocket);
         serverListenerThread.start();
     }
@@ -58,17 +59,5 @@ public class ServerListeningThreadTests {
         assertTrue(serverListenerThread.isWorking());
         serverListenerThread.stopWithInterrupt();
         assertFalse(serverListenerThread.isWorking());
-    }
-
-    /**
-     * Метод тестирующий метод, получающий параметры get запроса отправленного на сервер
-     */
-    @Test
-    public void testGetHttpRequestParameters() {
-        String expectedHttpParameters = "code";
-        ClientBuilder.newClient().target("http://localhost:8080/redirect.html?{parameters}")
-                .resolveTemplate("parameters", expectedHttpParameters).request().get();
-        String httpParameters = serverListenerThread.getHttpRequestParameters();
-        assertEquals(expectedHttpParameters, httpParameters);
     }
 }

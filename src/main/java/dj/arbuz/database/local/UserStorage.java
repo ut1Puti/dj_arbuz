@@ -7,6 +7,7 @@ import dj.arbuz.user.BotUser;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -91,5 +92,15 @@ public final class UserStorage implements UserBase {
      */
     public BotUser getUser(String userId) {
         return usersBase.get(userId);
+    }
+
+    /**
+     * Метод получающий всех пользователей пользующихся консольной версией бота
+     *
+     * @return список id пользователей пользующихся консольной версией бота
+     */
+    @Override
+    public List<String> getAllUsersId() {
+        return usersBase.keySet().stream().toList();
     }
 }

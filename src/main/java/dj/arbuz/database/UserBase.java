@@ -2,6 +2,8 @@ package dj.arbuz.database;
 
 import dj.arbuz.user.BotUser;
 
+import java.util.List;
+
 /**
  * Интерфейс базы данных пользователей
  *
@@ -34,4 +36,11 @@ public interface UserBase {
      * @return экземпляр класса пользователя по id
      */
     BotUser getUser(String userId);
+
+    /**
+     * Метод получающий id все пользователей пользующихся ботом
+     *
+     * @return список id все пользователей
+     */
+    List<String> getAllUsersId();
 }

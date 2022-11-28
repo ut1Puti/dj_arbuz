@@ -27,14 +27,14 @@ public class MessageHandlerResponseTests {
      */
     @Test
     public void testNullMessageConstructor() {
-        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().build(testUserId);
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().build(List.of(testUserId));
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
         assertEquals(List.of(), response.getPostsMessages());
         assertFalse((response.hasUpdateUser()));
         assertNull(response.getUpdateUser());
-        assertEquals(testUserId, response.getUserSendResponseId());
+        assertEquals(List.of(testUserId), response.getUsersSendResponseId());
     }
     /**
      * Метод тестирующий методы связанные с текстовым сообщением от бота
@@ -42,14 +42,14 @@ public class MessageHandlerResponseTests {
     @Test
     public void testTextMessageConstructorsAndSettersAndGetters() {
         String expectedMessage = "some test message";
-        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().textMessage(expectedMessage).build(testUserId);
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().textMessage(expectedMessage).build(List.of(testUserId));
         assertTrue(response.hasTextMessage());
         assertEquals(expectedMessage, response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
         assertEquals(List.of(), response.getPostsMessages());
         assertFalse((response.hasUpdateUser()));
         assertNull(response.getUpdateUser());
-        assertEquals(testUserId, response.getUserSendResponseId());
+        assertEquals(List.of(testUserId), response.getUsersSendResponseId());
     }
 
     /**
@@ -59,14 +59,14 @@ public class MessageHandlerResponseTests {
     public void testUpdateUserConstructorsAndSettersAndGetters() {
         MessageHandlerResponse response = MessageHandlerResponse.newBuilder()
                 .updateUser(CompletableFuture.supplyAsync(() -> new BotUser(100, "accessToken", testUserId)))
-                .build(testUserId);
+                .build(List.of(testUserId));
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
         assertEquals(List.of(), response.getPostsMessages());
         assertTrue((response.hasUpdateUser()));
         assertNotNull(response.getUpdateUser());
-        assertEquals(testUserId, response.getUserSendResponseId());
+        assertEquals(List.of(testUserId), response.getUsersSendResponseId());
     }
 
     /**
@@ -75,7 +75,7 @@ public class MessageHandlerResponseTests {
     @Test
     public void testNewPostsConstructorsAndSettersAndGetters() {
         List<String> newPosts = Arrays.asList("first post", "second post");
-        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().postsText(newPosts).build(testUserId);
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().postsText(newPosts).build(List.of(testUserId));
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertTrue((response.hasPostsMessages()));
@@ -83,6 +83,6 @@ public class MessageHandlerResponseTests {
         assertEquals(newPosts, response.getPostsMessages());
         assertFalse((response.hasUpdateUser()));
         assertNull(response.getUpdateUser());
-        assertEquals(testUserId, response.getUserSendResponseId());
+        assertEquals(List.of(testUserId), response.getUsersSendResponseId());
     }
 }

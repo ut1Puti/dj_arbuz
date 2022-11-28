@@ -39,4 +39,18 @@ public final class UserRepository extends EntityRepository<UserDto> {
         }
         return result;
     }
+
+    public List<String> getAllUsersId() {
+        Transaction transaction = null;
+        List<String> result;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            result = new ArrayList<>(session.createQuery("select b.telegramId from dj.arbuz.database.hibernate.user.UserDto b", String.class).getResultList());
+            transaction.commit();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return new ArrayList<>();
+        }
+        return result;
+    }
 }
