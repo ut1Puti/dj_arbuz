@@ -1,9 +1,12 @@
 jar {
     manifest {
-        attributes 'Main-Class': 'dj.arbuz.bots.telegram.TelegramBot'
+        attributes 'Main-Class': 'dj.arbuz.bots.telegram.TelegramBot',
+
+                'Implementation-Version': project.version
     }
 }
 
 dependencies {
     implementation project(':common')
+    implementation files('common/build/libs/common-4.0.0-SNAPSHOT.jar')
 }

@@ -14,8 +14,8 @@ class VkMock extends AbstractVk {
      */
     VkMock() {
         super(new VkAuthMock(),
-                new VkGroupsMock(Path.of("common/src/test/resources/vk_tests/groups.json")),
-                new VkWallMock(Path.of("common/src/test/resources/vk_tests/posts.json"))
+                new VkGroupsMock(Path.of("src/test/resources/vk_tests/groups.json")),
+                new VkWallMock(Path.of("src/test/resources/vk_tests/posts.json"))
         );
     }
 }

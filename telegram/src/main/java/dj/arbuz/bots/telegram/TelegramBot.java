@@ -78,6 +78,7 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
     }
 
     public static void main(String[] args) throws RuntimeException {
+        System.out.println(System.getProperty("java.classpath"));
         HibernateUtil.getSessionFactory();
         HttpServer httpServer = HttpServer.getInstance();
 
