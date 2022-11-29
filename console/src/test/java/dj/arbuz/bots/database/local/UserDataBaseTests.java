@@ -1,9 +1,9 @@
-package dj.arbuz.database.local;
+package dj.arbuz.bots.database.local;
 
 
+import dj.arbuz.user.BotUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import dj.arbuz.user.BotUser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

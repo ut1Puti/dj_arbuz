@@ -1,5 +1,6 @@
 package dj.arbuz.bots.database.hibernate;
 
+import dj.arbuz.bots.TelegramConfigPaths;
 import dj.arbuz.bots.database.hibernate.group.GroupDto;
 import dj.arbuz.bots.database.hibernate.user.UserDto;
 import org.hibernate.SessionFactory;
@@ -21,7 +22,7 @@ public class HibernateUtil {
 
     private static SessionFactory buildSessionFactory() {
         try {
-            return new Configuration().configure(new File(ConfigPaths.HIBERNATE_CONFIG_PATH_AS_STRING))
+            return new Configuration().configure(new File(TelegramConfigPaths.HIBERNATE_CONFIG_PATH_AS_STRING))
                     .addAnnotatedClass(UserDto.class)
                     .addAnnotatedClass(GroupDto.class)
                     .buildSessionFactory();

@@ -2,6 +2,7 @@ package dj.arbuz.bots.telegram;
 
 import dj.arbuz.bots.BotMessageExecutable;
 import dj.arbuz.bots.StoppableByUser;
+import dj.arbuz.bots.TelegramConfigPaths;
 import dj.arbuz.bots.database.hibernate.HibernateUtil;
 import httpserver.server.HttpServer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -14,7 +15,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import dj.arbuz.ConfigPaths;
 import stoppable.Stoppable;
 
 import java.nio.file.Path;
@@ -87,7 +87,7 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
 
         httpServer.start();
 
-        TelegramBot telegramBot = new TelegramBot(ConfigPaths.TELEGRAM_CONFIG_PATH);
+        TelegramBot telegramBot = new TelegramBot(TelegramConfigPaths.TELEGRAM_CONFIG_PATH);
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(telegramBot);

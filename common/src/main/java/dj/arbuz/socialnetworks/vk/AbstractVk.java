@@ -47,7 +47,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * Метод обертка возвращающий ссылку для аутентификации
      *
      * @return ссылку для аутентификации, если сервер недоступен, то эта ссылка {@code null}
-     * @see VkAuth#getAuthUrl(String)
+     * @see dj.arbuz.socialnetworks.vk.oAuth.VkAuth#getAuthUrl(String) 
      */
     @Override
     public final String getAuthUrl(String userTelegramId) {
@@ -59,7 +59,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      *
      * @param userSystemId id пользователя в системе
      * @return {@code CompletableFuture<User>}, который выполняет логику создания пользователя,
-     * посмотреть ее можно в метода {@link VkAuth#createBotUser(String)}
+     * посмотреть ее можно в метода {@link dj.arbuz.socialnetworks.vk.oAuth.VkAuth#createBotUser(String)}
      */
     public CompletableFuture<BotUser> createBotUserAsync(String userSystemId) {
         return CompletableFuture.supplyAsync(() -> oAuth.createBotUser(userSystemId));
@@ -73,8 +73,8 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @return возвращает ссылку на группу в vk
      * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
-     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
-     * @see VkGroups#searchGroup(String, BotUser)
+     * @throws dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException возникает при ошибке аутентификации пользователя
+     * @see dj.arbuz.socialnetworks.vk.groups.VkGroups#searchGroup(String, BotUser) (String, BotUser)
      */
     @Override
     public final String getGroupUrl(String userReceivedGroupName, BotUser userCallingMethod)
@@ -89,9 +89,9 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @param userCallingMethod     пользователь вызвавший метод
      * @return возвращает id группы
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
-     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
+     * @throws dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
-     * @see VkGroups#searchGroup(String, BotUser)
+     * @see dj.arbuz.socialnetworks.vk.groups.VkGroups#searchGroup(String, BotUser) (String, BotUser)
      */
     @Override
     public final String getGroupId(String userReceivedGroupName, BotUser userCallingMethod)
@@ -110,9 +110,9 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * {@link SubscribeStatus#GROUP_IS_CLOSED} - сообщает, что невозможно подписаться, тк группа закрыта
      * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
-     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
-     * @see VkGroups#searchGroup(String, BotUser)
-     * @see GroupsStorage#addSubscriber(String, String)
+     * @throws dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException возникает при ошибке аутентификации пользователя
+     * @see dj.arbuz.socialnetworks.vk.groups.VkGroups#searchGroup(String, BotUser) (String, BotUser)
+     * @see GroupBase#addSubscriber(String, String) (String, String)
      */
     @Override
     public SubscribeStatus subscribeTo(GroupBase groupBase, String userReceivedGroupName, BotUser userCallingMethod)
@@ -137,7 +137,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @return {@code true} если пользователь был отписан, {@code false} если пользователь не был отписан
      * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
-     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
+     * @throws dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
     @Override
     public boolean unsubscribeFrom(GroupBase groupBase, String userReceivedGroupName, BotUser userCallingMethod)
@@ -161,11 +161,11 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @return возвращает последние amountOfPosts постов
      * @throws NoGroupException           возникает если не нашлась группа по заданной подстроке
      * @throws SocialNetworkException     возникает при ошибке обращения к vk api
-     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
+     * @throws dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      * @throws IllegalArgumentException   возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                    Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
-     * @see VkGroups#searchGroup(String, BotUser)
-     * @see VkWall#getPostsStrings(String, int, Actor)
+     * @see dj.arbuz.socialnetworks.vk.groups.VkGroups#searchGroup(String, BotUser) (String, BotUser)
+     * @see dj.arbuz.socialnetworks.vk.wall.VkWall#getPostsStrings(String, int, Actor) (String, int, Actor)
      */
     @Override
     public List<String> getLastPostsAsStrings(String userReceivedGroupName, int amountOfPosts, BotUser userCallingMethod)
@@ -183,7 +183,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @return {@code amountOfPosts} постов в виде {@code WallpostFull}
      * @throws NoGroupException           возникает если группа по заданной подстроке не была найдена
      * @throws SocialNetworkException     возникает при ошибках обращения к api социальной сети
-     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
+     * @throws dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
     @Override
     public List<WallpostFull> getLastPostsAsPosts(String userReceivedGroupName, int amountOfPosts, BotUser userCalledMethod) throws NoGroupException, SocialNetworkException {

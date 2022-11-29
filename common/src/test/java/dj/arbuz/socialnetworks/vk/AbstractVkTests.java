@@ -2,12 +2,13 @@ package dj.arbuz.socialnetworks.vk;
 
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.objects.wall.WallpostFull;
-import org.junit.jupiter.api.BeforeEach;
+import dj.arbuz.database.GroupBase;
 import org.junit.jupiter.api.Test;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.SubscribeStatus;
 import dj.arbuz.user.BotUser;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,19 +35,12 @@ public class AbstractVkTests {
     /**
      * Поле хранилища подписок на группы
      */
-    private final GroupsStorage groupsStorage = GroupsStorage.getInstance();
+
+    private final GroupBase groupBase = Mockito.mock(GroupBase.class);
     /**
      * Поле тестовой реализации vk
      */
     private final AbstractVk vk = new VkMock();
-
-    /**
-     * Метод создающий новое хранилище перед каждым тестом
-     */
-    @BeforeEach
-    public void setUpStorage() {
-        groupsStorage.clear();
-    }
 
     /**
      * Метод тестирующий получение ссылки для аутентификации
@@ -147,9 +141,11 @@ public class AbstractVkTests {
      */
     @Test
     public void testSubscribeToNotSubscribedExistGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
+        Mockito.when(groupBase.addSubscriber("sqwore", userSystemId))
+                .thenReturn(true);
         BotUser user = vk.createBotUserAsync(userSystemId).get();
         String userReceivedGroupName = "Sqwore";
-        assertEquals(SubscribeStatus.SUBSCRIBED, vk.subscribeTo(groupsStorage, userReceivedGroupName, user));
+        assertEquals(SubscribeStatus.SUBSCRIBED, vk.subscribeTo(groupBase, userReceivedGroupName, user));
     }
 
     /**
@@ -163,7 +159,7 @@ public class AbstractVkTests {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
         String userReceivedGroupName = "abracadabra";
         assertThrows(NoGroupException.class,
-                () -> vk.subscribeTo(groupsStorage, userReceivedGroupName, user),
+                () -> vk.subscribeTo(groupBase, userReceivedGroupName, user),
                 "Группы с названием" + userReceivedGroupName + " не существует");
     }
 
@@ -179,7 +175,7 @@ public class AbstractVkTests {
     public void testSubscribeToClosedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
         String userReceivedGroupName = "Мемняя дыра, про мамку Щюклина";
-        assertEquals(SubscribeStatus.GROUP_IS_CLOSED, vk.subscribeTo(groupsStorage, userReceivedGroupName, user));
+        assertEquals(SubscribeStatus.GROUP_IS_CLOSED, vk.subscribeTo(groupBase, userReceivedGroupName, user));
     }
 
     /**
@@ -192,10 +188,12 @@ public class AbstractVkTests {
      */
     @Test
     public void testSubscribeToSubscribedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
+        Mockito.when(groupBase.addSubscriber("abracadabra", userSystemId))
+                .thenReturn(false);
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        groupsStorage.addSubscriber("sqwore", userSystemId);
+        groupBase.addSubscriber("sqwore", userSystemId);
         String userReceivedGroupName = "Sqwore";
-        assertEquals(SubscribeStatus.ALREADY_SUBSCRIBED, vk.subscribeTo(groupsStorage, userReceivedGroupName, user));
+        assertEquals(SubscribeStatus.ALREADY_SUBSCRIBED, vk.subscribeTo(groupBase, userReceivedGroupName, user));
     }
 
     /**
@@ -208,10 +206,11 @@ public class AbstractVkTests {
      */
     @Test
     public void testUnsubscribeFromExistSubscribedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
+        Mockito.when(groupBase.deleteSubscriber("sqwore", userSystemId))
+                .thenReturn(true);
         BotUser user = vk.createBotUserAsync(userSystemId).get();
-        groupsStorage.addSubscriber("sqwore", userSystemId);
         String userReceivedGroupName = "Sqwore";
-        assertTrue(vk.unsubscribeFrom(groupsStorage, userReceivedGroupName, user));
+        assertTrue(vk.unsubscribeFrom(groupBase, userReceivedGroupName, user));
     }
 
     /**
@@ -225,7 +224,7 @@ public class AbstractVkTests {
         BotUser user = vk.createBotUserAsync(userSystemId).get();
         String userReceivedGroupName = "abracadabra";
         assertThrows(NoGroupException.class,
-                () -> vk.subscribeTo(groupsStorage, userReceivedGroupName, user),
+                () -> vk.unsubscribeFrom(groupBase, userReceivedGroupName, user),
                 "Группы с названием" + userReceivedGroupName + " не существует");
     }
 
@@ -239,9 +238,11 @@ public class AbstractVkTests {
      */
     @Test
     public void testUnsubscribeFromClosedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
+        Mockito.when(groupBase.deleteSubscriber("Мемняя дыра, про мамку Щюклина", userSystemId))
+                .thenReturn(false);
         BotUser user = vk.createBotUserAsync(userSystemId).get();
         String userReceivedGroupName = "Мемняя дыра, про мамку Щюклина";
-        assertFalse(vk.unsubscribeFrom(groupsStorage, userReceivedGroupName, user));
+        assertFalse(vk.unsubscribeFrom(groupBase, userReceivedGroupName, user));
     }
 
     /**
@@ -254,9 +255,11 @@ public class AbstractVkTests {
      */
     @Test
     public void testUnsubscribeFromExistNotSubscribedGroup() throws ExecutionException, InterruptedException, NoGroupException, SocialNetworkException {
+        Mockito.when(groupBase.deleteSubscriber("sqwore", userSystemId))
+                .thenReturn(false);
         BotUser user = vk.createBotUserAsync(userSystemId).get();
         String userReceivedGroupName = "Sqwore";
-        assertFalse(vk.unsubscribeFrom(groupsStorage, userReceivedGroupName, user));
+        assertFalse(vk.unsubscribeFrom(groupBase, userReceivedGroupName, user));
     }
 
     /**

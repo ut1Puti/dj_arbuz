@@ -57,7 +57,7 @@ public final class ConsoleBot extends StoppableThread implements StoppableByUser
      * Метод с логикой выполняемой внутри потока
      *
      * @see StoppableThread#run()
-     * @see MessageHandlerImpl#handleMessage(String, String, StoppableByUser)
+     * @see dj.arbuz.handlers.messages.MessageHandlerImpl#handleMessage(String, String, StoppableByUser)
      * @see ConsolePostsPullingThread#start()
      * @see ConsolePostsPullingThread#stopWithInterrupt()
      */

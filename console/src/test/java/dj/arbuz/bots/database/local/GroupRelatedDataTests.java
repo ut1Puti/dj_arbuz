@@ -1,4 +1,4 @@
-package dj.arbuz.database.local;
+package dj.arbuz.bots.database.local;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
