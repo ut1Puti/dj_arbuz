@@ -1,3 +1,9 @@
+jar {
+    manifest {
+        attributes 'Main-Class': 'dj.arbuz.bots.telegram.TelegramBot'
+    }
+}
+
 dependencies {
     implementation project(':common')
 }

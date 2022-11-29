@@ -6,4 +6,4 @@ COPY ./ /usr/dj_arbuz
 
 EXPOSE 8080
 
-ENTRYPOINT ["bash", "./src/main/resources/scripts/run/run.sh"]
+ENTRYPOINT ["bash", "./telegram/src/main/resources/scripts/run/run.sh"]

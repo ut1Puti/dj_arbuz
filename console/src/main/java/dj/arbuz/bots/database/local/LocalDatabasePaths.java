@@ -19,9 +19,9 @@ class LocalDatabasePaths {
     /**
      * Поле пути до файла с данными о группах
      */
-    static final Path LOCAL_GROUP_DATA_BASE_PATH = Path.of("src", "main", "resources", "anonsrc", "database_for_groups.json");
+    static final Path LOCAL_GROUP_DATA_BASE_PATH = Path.of("console", "src", "main", "resources", "anonsrc", "database_for_groups.json");
     /**
      * Поле пути до файла с данными о пользователях
      */
-    static final Path LOCAL_USER_DATA_BASE_PATH = Path.of("src", "main", "resources", "anonsrc", "database_for_users.json");
+    static final Path LOCAL_USER_DATA_BASE_PATH = Path.of("console", "src", "main", "resources", "anonsrc", "database_for_users.json");
 }

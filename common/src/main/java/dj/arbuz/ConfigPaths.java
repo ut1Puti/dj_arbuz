@@ -19,5 +19,5 @@ public class ConfigPaths {
     /**
      * Поле пути до файла с конфигурацией vk
      */
-    public static final Path VK_CONFIG_PATH = Path.of("src", "main", "resources", "configs", "vk.cfg.json");
+    public static final Path VK_CONFIG_PATH = Path.of("common", "src", "main", "resources", "configs", "vk.cfg.json");
 }

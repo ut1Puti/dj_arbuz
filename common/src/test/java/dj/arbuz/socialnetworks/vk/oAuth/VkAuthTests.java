@@ -7,7 +7,6 @@ import com.vk.api.sdk.httpclient.HttpTransportClient;
 import dj.arbuz.ConfigPaths;
 import httpserver.server.HttpServer;
 import org.junit.jupiter.api.Test;
-import dj.arbuz.user.BotUser;
 
 import static org.junit.jupiter.api.Assertions.*;
 

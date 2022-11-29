@@ -19,10 +19,10 @@ public class TelegramConfigPaths {
     /**
      * Поле пути до файла с конфигурацией телеграма
      */
-    public static final Path TELEGRAM_CONFIG_PATH = Path.of("src", "main", "resources", "configs", "telegram.cfg.json");
+    public static final Path TELEGRAM_CONFIG_PATH = Path.of("telegram", "src", "main", "resources", "configs", "telegram.cfg.json");
 
     /**
      * Поле пути до файла с конфигурацией hibernate
      */
-    public static final String HIBERNATE_CONFIG_PATH_AS_STRING = "src/main/resources/configs/hibernate.cfg.xml";
+    public static final String HIBERNATE_CONFIG_PATH_AS_STRING = "telegram/src/main/resources/configs/hibernate.cfg.xml";
 }
