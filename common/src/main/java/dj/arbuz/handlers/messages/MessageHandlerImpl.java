@@ -4,8 +4,11 @@ import dj.arbuz.bots.BotTextResponse;
 import dj.arbuz.bots.StoppableByUser;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
+import dj.arbuz.socialnetworks.socialnetwork.AbstractSocialNetwork;
+import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
+import dj.arbuz.socialnetworks.socialnetwork.groups.SubscribeStatus;
 import dj.arbuz.socialnetworks.vk.Vk;
 import dj.arbuz.socialnetworks.vk.VkConstants;
 import dj.arbuz.user.BotUser;
@@ -99,17 +102,17 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see BotTextResponse#NO_SUBSCRIBED_GROUPS
      */
     private static final MessageHandlerResponse.MessageHandlerResponseBuilder NO_SUBSCRIBED_GROUPS = MessageHandlerResponse.newBuilder()
-            .textMessage(BotTextResponse.NO_SUBSCRIBED_GROUPS);
+                                                                                                                           .textMessage(BotTextResponse.NO_SUBSCRIBED_GROUPS);
     /**
      * Поле хранилища групп, на которые оформлена подписка
      *
-     * @see GroupsStorage
+//     * @see GroupsStorage
      */
     private final GroupBase groupsBase;
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
-     * @see UserStorage
+//     * @see UserStorage
      */
     private final UserBase usersBase;
     /**
@@ -144,12 +147,12 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerImpl#HELP_INFO
      * @see MessageHandlerImpl#getAuthResponse(String)
      * @see MessageHandlerImpl#getStopResponse(StoppableByUser, String)
-     * @see UserStorage#contains(String)
+//     * @see UserStorage#contains(String)
      * @see MessageHandlerImpl#NOT_AUTHED_USER
-     * @see UserStorage#getUser(String)
+//     * @see UserStorage#getUser(String)
      * @see MessageHandlerImpl#isItSingleArgCommand(String[])
      * @see MessageHandlerImpl#getGroupUrl(String, String)
-     * @see MessageHandlerImpl#getGroupId(String, String)
+//     * @see MessageHandlerImpl#getGroupId(String, String)
      * @see MessageHandlerImpl#subscribeTo(String, String)
      * @see MessageHandlerImpl#getFiveLastPosts(String, String)
      * @see MessageHandlerImpl#UNKNOWN_COMMAND
@@ -161,7 +164,8 @@ public final class MessageHandlerImpl implements MessageHandler {
         if (isItNoArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
                 case "/help" -> {
-                    return HELP_INFO.build(List.of(userSendResponseId));
+                    MessageTelegramHandler getHelp = new HelpInfo();
+                    return getHelp.sendMessage(null,userSendResponseId);
                 }
                 case "/auth" -> {
                     return getAuthResponse(userSendResponseId);
@@ -184,19 +188,29 @@ public final class MessageHandlerImpl implements MessageHandler {
                     return postToAllUsers(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/link" -> {
-                    return getGroupUrl(commandAndArgs[ARG_INDEX], userSendResponseId);
+                    MessageTelegramHandler getGroupUrlMessage = new GetGroupUrl(usersBase,socialNetwork);
+                    return  getGroupUrlMessage.sendMessage(commandAndArgs[ARG_INDEX], userSendResponseId);
+//                    return getGroupUrl(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/id" -> {
-                    return getGroupId(commandAndArgs[ARG_INDEX], userSendResponseId);
+                    MessageTelegramHandler groupIdMessage = new GetGroupId(usersBase,socialNetwork);
+                    return groupIdMessage.sendMessage(commandAndArgs[ARG_INDEX],userSendResponseId);
+//                    return getGroupId(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/subscribe" -> {
-                    return subscribeTo(commandAndArgs[ARG_INDEX], userSendResponseId);
+                    MessageTelegramHandler subscribeToMessage = new SubsribeTo(groupsBase,usersBase,socialNetwork);
+                    return subscribeToMessage.sendMessage(commandAndArgs[ARG_INDEX], userSendResponseId);
+//                    return subscribeTo(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/unsubscribe" -> {
-                    return unsubscribeFrom(commandAndArgs[ARG_INDEX], userSendResponseId);
+                    MessageTelegramHandler unsubscribeFrom = new UnsubscribeFrom(groupsBase,usersBase,socialNetwork);
+                    return unsubscribeFrom.sendMessage(commandAndArgs[ARG_INDEX], userSendResponseId);
+//                    return unsubscribeFrom(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/five_posts" -> {
-                    return getFiveLastPosts(commandAndArgs[ARG_INDEX], userSendResponseId);
+                    MessageTelegramHandler getFiveLastPosts = new GetFiveLastPosts(usersBase,socialNetwork);
+                    return getFiveLastPosts.sendMessage(commandAndArgs[ARG_INDEX], userSendResponseId);
+//                    return getFiveLastPosts(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
             }
         }
@@ -317,24 +331,24 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse#newBuilder()
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
      */
-    private MessageHandlerResponse getGroupId(String userReceivedGroupName, String userSendResponseId) {
-
-        if (!usersBase.contains(userSendResponseId)) {
-            return NOT_AUTHED_USER.build(List.of(userSendResponseId));
-        }
-
-        BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
-
-        try {
-            return MessageHandlerResponse.newBuilder()
-                    .textMessage(socialNetwork.getGroupId(userReceivedGroupName, userCallingMethod))
-                    .build(List.of(userSendResponseId));
-        } catch (NoGroupException | SocialNetworkException e) {
-            return MessageHandlerResponse.newBuilder()
-                    .textMessage(e.getMessage())
-                    .build(List.of(userSendResponseId));
-        }
-    }
+//    private MessageHandlerResponse getGroupId(String userReceivedGroupName, String userSendResponseId) {
+//
+//        if (!usersBase.contains(userSendResponseId)) {
+//            return NOT_AUTHED_USER.build(List.of(userSendResponseId));
+//        }
+//
+//        BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
+//
+//        try {
+//            return MessageHandlerResponse.newBuilder()
+//                    .textMessage(socialNetwork.getGroupId(userReceivedGroupName, userCallingMethod))
+//                    .build(List.of(userSendResponseId));
+//        } catch (NoGroupException | SocialNetworkException e) {
+//            return MessageHandlerResponse.newBuilder()
+//                    .textMessage(e.getMessage())
+//                    .build(List.of(userSendResponseId));
+//        }
+//    }
 
     /**
      * Метод для подписки пользователя
