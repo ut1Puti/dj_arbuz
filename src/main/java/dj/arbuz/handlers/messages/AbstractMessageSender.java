@@ -65,7 +65,7 @@ abstract class AbstractMessageSender implements MessageSender {
 
             if (currentUser == null) {
                 messageSender.send(usersSendMessageId.get(0), BotTextResponse.AUTH_ERROR);
-            }else if (userStorage.addUser(usersSendMessageId.get(0), currentUser)) {
+            } else if (userStorage.addUser(usersSendMessageId.get(0), currentUser)) {
                 messageSender.send(usersSendMessageId.get(0), BotTextResponse.AUTH_SUCCESS);
             } else {
                 messageSender.send(usersSendMessageId.get(0), BotTextResponse.AUTH_ERROR);

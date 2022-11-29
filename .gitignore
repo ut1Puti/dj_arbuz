@@ -1,5 +1,6 @@
-#игнорируемые директории 
-target/
+#игнорируемые директории
+.gradle/
+build/
 lib/
 postgres-data/
 
@@ -9,7 +10,6 @@ postgres-data/
 
 #игнорируемые файлы ide
 *.iml
-pom.xml
 
 #игнорирование файла файловой системы mac os
 .DS_Store

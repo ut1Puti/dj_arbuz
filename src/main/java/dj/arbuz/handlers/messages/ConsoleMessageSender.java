@@ -24,8 +24,8 @@ public final class ConsoleMessageSender extends AbstractMessageSender {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param consoleBot консольный бот
-     * @param userStorage хранилище пользователей
+     * @param consoleBot                консольный бот
+     * @param userStorage               хранилище пользователей
      * @param notificationPullingThread поток получающий новые посты в группах
      */
     public ConsoleMessageSender(ConsoleBot consoleBot, UserStorage userStorage, ConsolePostsPullingThread notificationPullingThread) {

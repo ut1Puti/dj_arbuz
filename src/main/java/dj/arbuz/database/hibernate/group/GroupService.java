@@ -22,7 +22,7 @@ public final class GroupService implements GroupBase {
      * Метод добавления информации о подписчиках группы
      *
      * @param groupScreenName короткое имя группы
-     * @param subscriberId      пользователь подписавшийся на группу
+     * @param subscriberId    пользователь подписавшийся на группу
      * @return {@code true} - если пользователь был добавлен в базу данных подписчиков группы,
      * {@code false} - если пользователь не был добавлен в базу данных
      */
@@ -58,7 +58,7 @@ public final class GroupService implements GroupBase {
      * Метод удаления пользователь из подписчиков группы
      *
      * @param groupScreenName короткое имя группы
-     * @param subscriberId      пользователь подписавшийся на группу
+     * @param subscriberId    пользователь подписавшийся на группу
      * @return {@code true} - если пользователь был удален, {@code false} - если пользователь не был удален
      */
     @Override
@@ -113,11 +113,11 @@ public final class GroupService implements GroupBase {
      */
     @Override
     public Set<String> getUserSubscribedGroups(String subscriberId) {
-         return userService.findUserSubscribedGroups(subscriberId)
-                 .stream()
-                 .filter(Objects::nonNull)
-                 .map(GroupDto::getGroupName)
-                 .collect(Collectors.toSet());
+        return userService.findUserSubscribedGroups(subscriberId)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(GroupDto::getGroupName)
+                .collect(Collectors.toSet());
     }
 
     /**
