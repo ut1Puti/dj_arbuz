@@ -113,11 +113,7 @@ public final class GroupService implements GroupBase {
      */
     @Override
     public Set<String> getUserSubscribedGroups(String subscriberId) {
-        return userService.findUserSubscribedGroups(subscriberId)
-                .stream()
-                .filter(Objects::nonNull)
-                .map(GroupDto::getGroupName)
-                .collect(Collectors.toSet());
+        return new HashSet<>(groupRepository.findBySubscriberIdGroupsScreenName(subscriberId));
     }
 
     /**

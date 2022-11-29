@@ -43,6 +43,22 @@ public final class GroupRepository extends EntityRepository<GroupDto> {
         return result;
     }
 
+    public List<String> findBySubscriberIdGroupsScreenName(String subscriberId) {
+        Transaction transaction = null;
+        List<String> result;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            Query<String> query = session.createQuery("select b.groupName from dj.arbuz.database.hibernate.group.GroupDto b join b.subscribedUsers u where u.telegramId = :id", String.class);
+            query.setParameter("id", subscriberId);
+            result = query.getResultList();
+            transaction.commit();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return new ArrayList<>();
+        }
+        return result;
+    }
+
     public List<GroupDto> findAllGroups() {
         Transaction transaction = null;
         List<GroupDto> result;
