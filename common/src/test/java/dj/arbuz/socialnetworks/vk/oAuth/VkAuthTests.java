@@ -4,7 +4,6 @@ import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import dj.arbuz.ConfigPaths;
 import httpserver.server.HttpServer;
 import org.junit.jupiter.api.Test;
 

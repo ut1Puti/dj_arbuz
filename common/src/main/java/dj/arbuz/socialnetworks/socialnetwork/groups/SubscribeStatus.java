@@ -1,6 +1,6 @@
 package dj.arbuz.socialnetworks.socialnetwork.groups;
 
-import dj.arbuz.bots.BotTextResponse;
+import dj.arbuz.BotTextResponse;
 
 /**
  * Енум результатов подписки на группу

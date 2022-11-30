@@ -1,7 +1,7 @@
 package dj.arbuz.handlers.messages;
 
-import dj.arbuz.bots.BotTextResponse;
-import dj.arbuz.bots.StoppableByUser;
+import dj.arbuz.BotTextResponse;
+import dj.arbuz.StoppableByUser;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
 import dj.arbuz.socialnetworks.socialnetwork.AbstractSocialNetwork;

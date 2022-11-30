@@ -1,8 +1,5 @@
-//plugins {
-//    id 'com.github.johnrengejman.shadow' version '7.0.0'
-//}
-
 jar {
+    dependsOn(':common:jar')
     manifest {
         attributes 'Main-Class': 'dj.arbuz.bots.telegram.TelegramBot'
     }

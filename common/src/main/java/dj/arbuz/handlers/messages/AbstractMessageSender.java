@@ -1,7 +1,7 @@
 package dj.arbuz.handlers.messages;
 
-import dj.arbuz.bots.BotMessageExecutable;
-import dj.arbuz.bots.BotTextResponse;
+import dj.arbuz.BotMessageExecutable;
+import dj.arbuz.BotTextResponse;
 import dj.arbuz.database.UserBase;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

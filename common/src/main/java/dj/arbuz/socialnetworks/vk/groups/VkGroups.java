@@ -1,6 +1,6 @@
 package dj.arbuz.socialnetworks.vk.groups;
 
-import dj.arbuz.bots.BotTextResponse;
+import dj.arbuz.BotTextResponse;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiAuthException;

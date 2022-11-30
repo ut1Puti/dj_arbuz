@@ -1,6 +1,6 @@
 package dj.arbuz.handlers.messages;
 
-import dj.arbuz.bots.StoppableByUser;
+import dj.arbuz.StoppableByUser;
 
 /**
  * Интерфейс для обработки сообщений бота, полученные от пользователя
