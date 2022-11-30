@@ -4,6 +4,8 @@ import com.vk.api.sdk.client.actors.ServiceActor;
 import dj.arbuz.socialnetworks.vk.oAuth.AbstractVkAuth;
 import dj.arbuz.user.BotUser;
 
+import java.util.List;
+
 /**
  * Тестовый класс авторизации в vk
  *
@@ -55,5 +57,10 @@ class VkAuthMock extends AbstractVkAuth {
     @Override
     public String getAuthUrl(String userTelegramId) {
         return authUrl + "&state=" + userTelegramId;
+    }
+
+    @Override
+    public String getGroupAuthUrl(List<String> adminGroupsId) {
+        return null;
     }
 }

@@ -1,7 +1,7 @@
 jar {
     dependsOn(':common:jar')
     manifest {
-        attributes 'Main-Class': 'dj.arbuz.bots.console.ConsoleBot'
+        attributes 'Main-Class': 'dj.arbuz.console.ConsoleBot'
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from {

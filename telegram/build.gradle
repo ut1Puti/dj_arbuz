@@ -1,7 +1,7 @@
 jar {
     dependsOn(':common:jar')
     manifest {
-        attributes 'Main-Class': 'dj.arbuz.bots.telegram.TelegramBot'
+        attributes 'Main-Class': 'dj.arbuz.telegram.TelegramBot'
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from {

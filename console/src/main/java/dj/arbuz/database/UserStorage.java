@@ -102,4 +102,9 @@ public final class UserStorage implements UserBase {
     public List<String> getAllUsersId() {
         return usersBase.keySet().stream().toList();
     }
+
+    @Override
+    public boolean isAdmin(String userId) {
+        return true;
+    }
 }

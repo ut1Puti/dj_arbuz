@@ -26,7 +26,7 @@ public abstract class AbstractMessageSender implements MessageSender {
     /**
      * Поле хранилища пользователей
      *
-     * @see UserStorage
+     * @see UserBase
      */
     private final UserBase userStorage;
 
@@ -42,6 +42,16 @@ public abstract class AbstractMessageSender implements MessageSender {
         if (userSendResponse.hasTextMessage()) {
             for (String userSendMessageId : usersSendMessageId) {
                 messageSender.send(userSendMessageId, userSendResponse.getTextMessage());
+            }
+        }
+
+        if (userSendResponse.hasAdditionalMessage()) {
+            try {
+                for (String userSendMessageId : usersSendMessageId) {
+                    messageSender.send(userSendMessageId, userSendResponse.getAdditionalMessage().get());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                System.err.println(e.getMessage());
             }
         }
 

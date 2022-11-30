@@ -232,6 +232,19 @@ public final class GroupsStorage implements GroupBase {
     }
 
     /**
+     *
+     *
+     * @param groupScreenName
+     * @param userId
+     * @return
+     */
+    @Override
+    public boolean isGroupAdmin(String groupScreenName, String userId) {
+        return false;
+    }
+
+
+    /**
      * Метод очищающий хранилище подписок и сохраняющий его в файл
      */
     public void clear() {

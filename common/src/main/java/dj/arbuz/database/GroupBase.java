@@ -77,4 +77,6 @@ public interface GroupBase {
      * @return {@code true} - если группа есть в базе данных, {@code false} - если группы нет в базе данных
      */
     boolean containsGroup(String groupScreenName);
+
+    boolean isGroupAdmin(String groupScreenName, String userId);
 }

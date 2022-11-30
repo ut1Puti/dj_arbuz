@@ -27,7 +27,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"subscribedUsers"})
+@EqualsAndHashCode(exclude = {"subscribedUsers", "admins"})
 @Entity(name = "group_data")
 @Table(schema = "public", catalog = "users_database")
 public class GroupDto {
@@ -37,6 +37,14 @@ public class GroupDto {
 
     @Column(name = "date_last_post", nullable = false)
     private Long dateLastPost;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "admins",
+            joinColumns = @JoinColumn(name = "group_name"),
+            inverseJoinColumns = @JoinColumn(name = "admin_id")
+    )
+    private List<UserDto> admins;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(

@@ -52,6 +52,11 @@ public final class UserService implements UserBase {
     @Override
     public BotUser getUser(String userId) {
         UserDto userDto = userRepository.findByTelegramId(userId);
+
+        if (userDto == null) {
+            return null;
+        }
+
         return new BotUser(Math.toIntExact(userDto.getVkId()), userDto.getAccessToken(), userDto.getTelegramId());
     }
 
@@ -60,8 +65,24 @@ public final class UserService implements UserBase {
         return userRepository.getAllUsersId();
     }
 
+    @Override
+    public boolean isAdmin(String userId) {
+        UserDto userDto = userRepository.findByTelegramId(userId);
+
+        if (userDto == null) {
+            return false;
+        }
+
+        return userDto.getAdmin();
+    }
+
     public List<GroupDto> findUserSubscribedGroups(String userId) {
         UserDto userDto = userRepository.findByTelegramId(userId);
-        return userDto.getSubscribedGroups();
+
+        if (userDto == null) {
+            return List.of();
+        }
+
+        return List.copyOf(userDto.getSubscribedGroups());
     }
 }

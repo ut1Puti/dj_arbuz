@@ -1,9 +1,11 @@
 package dj.arbuz.socialnetworks.vk.oAuth;
 
 import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
+import com.vk.api.sdk.objects.GroupAuthResponse;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import httpserver.server.HttpServer;
 import dj.arbuz.user.BotUser;
@@ -11,6 +13,7 @@ import dj.arbuz.user.BotUser;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.List;
 
 /**
  * Класс для аутентификации пользователей
@@ -82,6 +85,16 @@ public final class VkAuth extends AbstractVkAuth {
         return authConfiguration.AUTH_URL + "&state=" + userTelegramId;
     }
 
+    @Override
+    public String getGroupAuthUrl(List<String> adminGroupId) {
+        StringBuilder sb = new StringBuilder("https://oauth.vk.com/authorize?client_id=51434490&display=page&redirect_uri=http://localhost:8080/redirect.html&group_ids=");
+        for (String s : adminGroupId) {
+            sb.append(s).append(',');
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.append("&scope=messages&response_type=code&v=5.131&state=").append(adminGroupId.hashCode()).toString();
+    }
+
     /**
      * Метод интерфейса CreateUser создающий пользователя.
      * Создается с помощью Vk Java SDK, получая код с сервера
@@ -112,9 +125,33 @@ public final class VkAuth extends AbstractVkAuth {
                     .execute();
             return new BotUser(authResponse.getUserId(), authResponse.getAccessToken(), userSystemId);
         } catch (ApiException | ClientException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public List<GroupActor> createGroupActor(List<String> groupsId) {
+        String authCode = getAuthCodeFromHttpServer(String.valueOf(Math.abs(groupsId.hashCode()) * -1));
+
+        if (authCode == null) {
+            return null;
+        }
+
+        GroupAuthResponse authResponse;
+        try {
+            authResponse = vkApiClient.oAuth().groupAuthorizationCodeFlow(
+                            authConfiguration.APP_ID,
+                            authConfiguration.CLIENT_SECRET,
+                            authConfiguration.REDIRECT_URL,
+                            authCode)
+                    .execute();
+        } catch (ApiException | ClientException e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+        return authResponse.getAccessTokens().entrySet()
+                .stream().map(entry -> new GroupActor(entry.getKey(), entry.getValue())).toList();
     }
 
     /**

@@ -4,6 +4,7 @@ import dj.arbuz.database.GroupBase;
 import dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.SubscribeStatus;
+import dj.arbuz.user.BotUser;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -15,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
  * @author Кедровсикх Олег
  * @version 1.0
  */
-public interface SocialNetwork<W, U> {
+public interface SocialNetwork<W, G, U, GU> {
     /**
      * Метод получающий ссылку для аутентификации пользователя с помощью социальной сети
      *
@@ -24,12 +25,22 @@ public interface SocialNetwork<W, U> {
     String getAuthUrl(String userSystemId);
 
     /**
+     * Метод получающий ссылку для авторизации пользователя как админа групп
+     *
+     * @param adminGroupId id пользователя
+     * @return строку, содержащую ссылку для авторизации пользователя
+     */
+    String getGroupsAuthUrl(List<String> adminGroupId);
+
+    /**
      * Метод для асинхронного создания пользователя
      *
      * @param userId id пользователя в системе
      * @return {@code CompletableFuture<User>}, который выполняет логику создания пользователя
      */
     CompletableFuture<U> createBotUserAsync(String userId);
+
+    CompletableFuture<List<GU>> createGroupActorAsync(List<String> adminGroupsId);
 
     /**
      * Метод получающий ссылку на группу, найденную по подстроке полученной от пользователя
@@ -56,6 +67,14 @@ public interface SocialNetwork<W, U> {
      */
     String getGroupId(String userReceivedGroupName, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
+
+    /**
+     *
+     *
+     * @param userCallingMethod
+     * @return
+     */
+    List<? extends G> searchUserAdminGroups(BotUser userCallingMethod) throws SocialNetworkException;
 
     /**
      * Метод подписывающий пользователя на группу, найденную в социальной сети

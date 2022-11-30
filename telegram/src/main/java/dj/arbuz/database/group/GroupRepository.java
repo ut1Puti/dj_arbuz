@@ -16,7 +16,7 @@ public final class GroupRepository extends EntityRepository<GroupDto> {
         GroupDto result;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Query<GroupDto> query = session.createQuery("select b from dj.arbuz.bots.database.hibernate.group.GroupDto b where b.groupName = :name", GroupDto.class);
+            Query<GroupDto> query = session.createQuery("select b from dj.arbuz.database.group.GroupDto b where b.groupName = :name", GroupDto.class);
             query.setParameter("name", groupScreenName);
             result = query.uniqueResult();
             transaction.commit();
@@ -32,7 +32,7 @@ public final class GroupRepository extends EntityRepository<GroupDto> {
         List<GroupDto> result;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Query<GroupDto> query = session.createQuery("select b from dj.arbuz.bots.database.hibernate.group.GroupDto b join b.subscribedUsers u where u.telegramId = :id", GroupDto.class);
+            Query<GroupDto> query = session.createQuery("select b from dj.arbuz.database.group.GroupDto b join b.subscribedUsers u where u.telegramId = :id", GroupDto.class);
             query.setParameter("id", subscriberId);
             result = query.getResultList();
             transaction.commit();
@@ -48,7 +48,7 @@ public final class GroupRepository extends EntityRepository<GroupDto> {
         List<String> result;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Query<String> query = session.createQuery("select b.groupName from dj.arbuz.bots.database.hibernate.group.GroupDto b join b.subscribedUsers u where u.telegramId = :id", String.class);
+            Query<String> query = session.createQuery("select b.groupName from dj.arbuz.database.group.GroupDto b join b.subscribedUsers u where u.telegramId = :id", String.class);
             query.setParameter("id", subscriberId);
             result = query.getResultList();
             transaction.commit();
@@ -64,7 +64,7 @@ public final class GroupRepository extends EntityRepository<GroupDto> {
         List<GroupDto> result;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            result = new ArrayList<>(session.createQuery("select b from dj.arbuz.bots.database.hibernate.group.GroupDto b", GroupDto.class).getResultList());
+            result = new ArrayList<>(session.createQuery("select b from dj.arbuz.database.group.GroupDto b", GroupDto.class).getResultList());
             transaction.commit();
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -78,7 +78,7 @@ public final class GroupRepository extends EntityRepository<GroupDto> {
         List<String> result;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            result = new ArrayList<>(session.createQuery("select b.groupName from dj.arbuz.bots.database.hibernate.group.GroupDto b", String.class).getResultList());
+            result = new ArrayList<>(session.createQuery("select b.groupName from dj.arbuz.database.group.GroupDto b", String.class).getResultList());
             transaction.commit();
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -92,7 +92,7 @@ public final class GroupRepository extends EntityRepository<GroupDto> {
         List<String> result;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Query<String> query = session.createQuery("select u.telegramId from dj.arbuz.bots.database.hibernate.group.GroupDto b join b.subscribedUsers u where b.groupName = :name", String.class);
+            Query<String> query = session.createQuery("select u.telegramId from dj.arbuz.database.group.GroupDto b join b.subscribedUsers u where b.groupName = :name", String.class);
             query.setParameter("name", groupScreenName);
             result = query.getResultList();
             transaction.commit();

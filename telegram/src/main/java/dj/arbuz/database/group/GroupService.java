@@ -160,4 +160,15 @@ public final class GroupService implements GroupBase {
     public boolean containsGroup(String groupScreenName) {
         return groupRepository.getByScreenName(groupScreenName) != null;
     }
+
+    @Override
+    public boolean isGroupAdmin(String groupScreenName, String userId) {
+        GroupDto group = groupRepository.getByScreenName(groupScreenName);
+
+        if (group == null) {
+            return false;
+        }
+
+        return group.getAdmins().stream().anyMatch(userDto -> userDto.getTelegramId().equals(userId));
+    }
 }

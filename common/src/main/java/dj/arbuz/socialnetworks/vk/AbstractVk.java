@@ -1,6 +1,7 @@
 package dj.arbuz.socialnetworks.vk;
 
 import com.vk.api.sdk.client.actors.Actor;
+import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.GroupIsClosed;
@@ -25,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
  * @version 1.0
  * @see AbstractSocialNetwork
  */
-public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFull, BotUser, ServiceActor, Actor> {
+public class AbstractVk extends AbstractSocialNetwork<Group, WallpostFull, BotUser, ServiceActor, Actor, GroupActor> {
     /**
      * Поле пользователя приложения vk
      */
@@ -54,6 +55,11 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
         return oAuth.getAuthUrl(userTelegramId);
     }
 
+    @Override
+    public final String getGroupsAuthUrl(List<String> adminGroupId) {
+        return oAuth.getGroupAuthUrl(adminGroupId);
+    }
+
     /**
      * Метод для асинхронного создания пользователя
      *
@@ -61,8 +67,14 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @return {@code CompletableFuture<User>}, который выполняет логику создания пользователя,
      * посмотреть ее можно в метода {@link dj.arbuz.socialnetworks.vk.oAuth.VkAuth#createBotUser(String)}
      */
+    @Override
     public CompletableFuture<BotUser> createBotUserAsync(String userSystemId) {
         return CompletableFuture.supplyAsync(() -> oAuth.createBotUser(userSystemId));
+    }
+
+    @Override
+    public CompletableFuture<List<GroupActor>> createGroupActorAsync(List<String> adminGroupsId) {
+        return CompletableFuture.supplyAsync(() -> oAuth.createGroupActor(adminGroupsId));
     }
 
     /**
@@ -99,6 +111,11 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
         return String.valueOf(groups.searchGroup(userReceivedGroupName, userCallingMethod).getId());
     }
 
+    @Override
+    public final List<? extends Group> searchUserAdminGroups(BotUser userCallingMethod) throws SocialNetworkException {
+        return groups.searchUserAdminGroups(userCallingMethod);
+    }
+
     /**
      * Метод для подписки пользователя(сохранение в базу данных id пользователя в телеграмме и группы)
      *
@@ -115,7 +132,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @see GroupBase#addSubscriber(String, String) (String, String)
      */
     @Override
-    public SubscribeStatus subscribeTo(GroupBase groupBase, String userReceivedGroupName, BotUser userCallingMethod)
+    public final SubscribeStatus subscribeTo(GroupBase groupBase, String userReceivedGroupName, BotUser userCallingMethod)
             throws SocialNetworkException, NoGroupException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
 
@@ -140,7 +157,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @throws dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
     @Override
-    public boolean unsubscribeFrom(GroupBase groupBase, String userReceivedGroupName, BotUser userCallingMethod)
+    public final boolean unsubscribeFrom(GroupBase groupBase, String userReceivedGroupName, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
 
@@ -168,7 +185,7 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @see dj.arbuz.socialnetworks.vk.wall.VkWall#getPostsStrings(String, int, Actor) (String, int, Actor)
      */
     @Override
-    public List<String> getLastPostsAsStrings(String userReceivedGroupName, int amountOfPosts, BotUser userCallingMethod)
+    public final List<String> getLastPostsAsStrings(String userReceivedGroupName, int amountOfPosts, BotUser userCallingMethod)
             throws NoGroupException, SocialNetworkException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCallingMethod);
         return wall.getPostsStrings(userFindGroup.getScreenName(), amountOfPosts, userCallingMethod);
@@ -186,12 +203,12 @@ public abstract class AbstractVk extends AbstractSocialNetwork<Group, WallpostFu
      * @throws dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
     @Override
-    public List<WallpostFull> getLastPostsAsPosts(String userReceivedGroupName, int amountOfPosts, BotUser userCalledMethod) throws NoGroupException, SocialNetworkException {
+    public final List<WallpostFull> getLastPostsAsPosts(String userReceivedGroupName, int amountOfPosts, BotUser userCalledMethod) throws NoGroupException, SocialNetworkException {
         Group userFindGroup = groups.searchGroup(userReceivedGroupName, userCalledMethod);
         return wall.getPosts(userFindGroup.getScreenName(), amountOfPosts, userCalledMethod);
     }
 
-    public List<WallpostFull> getLastPostAsPostsUnsafe(String groupScreenName, int amountOfPosts) throws SocialNetworkException {
+    public final List<WallpostFull> getLastPostAsPostsUnsafe(String groupScreenName, int amountOfPosts) throws SocialNetworkException {
         return wall.getPosts(groupScreenName, amountOfPosts, vkApp);
     }
 }

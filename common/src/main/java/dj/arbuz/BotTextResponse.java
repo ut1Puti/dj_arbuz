@@ -80,7 +80,6 @@ public final class BotTextResponse {
      */
     public static final String GROUP_IS_CLOSED = "Не могу подписать так как группа закрыта";
     /**
-     * <<<<<<< HEAD
      * Поле сообщения, о том что пользователь был успешно отписан от группы
      */
     public static final String UNSUBSCRIBED = "Вы были отписаны от группы";
@@ -108,4 +107,8 @@ public final class BotTextResponse {
     public static final String VK_API_ERROR = """
             Возникла ошибка при обращении к вк.
             Попробуйте еще раз, если ошибка возникнет еще раз, попробуйте позже.""";
+    /**
+     * Поле сообщения о том, что пользователь не является админом
+     */
+    public static final String IS_NOT_ADMIN = "Вы не является админом этой группы. Если это не так пройди авторизацию с помощью команды /auth_as_admin";
 }

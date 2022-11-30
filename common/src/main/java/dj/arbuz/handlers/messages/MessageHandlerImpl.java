@@ -1,9 +1,13 @@
 package dj.arbuz.handlers.messages;
 
+import com.vk.api.sdk.client.actors.GroupActor;
+import com.vk.api.sdk.objects.groups.Group;
+import com.vk.api.sdk.objects.groups.GroupAccess;
 import dj.arbuz.BotTextResponse;
 import dj.arbuz.StoppableByUser;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
+import dj.arbuz.handlers.messages.MessageHandlerResponse.MessageHandlerResponseBuilder;
 import dj.arbuz.socialnetworks.socialnetwork.AbstractSocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
@@ -17,6 +21,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Класс для обработки сообщений пользователей, а также создающий ответы на них
@@ -45,7 +50,7 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#AUTH_ERROR
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder AUTH_ERROR = MessageHandlerResponse.newBuilder()
+    private static final MessageHandlerResponseBuilder AUTH_ERROR = MessageHandlerResponse.newBuilder()
             .textMessage(BotTextResponse.AUTH_ERROR);
     /**
      * Поле help сообщения бота
@@ -53,7 +58,7 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#HELP_INFO
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder HELP_INFO = MessageHandlerResponse.newBuilder()
+    private static final MessageHandlerResponseBuilder HELP_INFO = MessageHandlerResponse.newBuilder()
             .textMessage(BotTextResponse.HELP_INFO);
     /**
      * Поле сообщения о получении неизвестной команды
@@ -61,7 +66,7 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#UNKNOWN_COMMAND
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder UNKNOWN_COMMAND = MessageHandlerResponse.newBuilder()
+    private static final MessageHandlerResponseBuilder UNKNOWN_COMMAND = MessageHandlerResponse.newBuilder()
             .textMessage(BotTextResponse.UNKNOWN_COMMAND);
     /**
      * Поле сообщения с текстом, в котором говориться, что пользователь не аутентифицировался в социальной сети
@@ -69,7 +74,7 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#NOT_AUTHED_USER
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
+    private static final MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
             .textMessage(BotTextResponse.NOT_AUTHED_USER);
     /**
      * Поле сообщения с текстом, в котором говориться, что не нашлось постов в группе
@@ -77,7 +82,7 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#NO_POSTS_IN_GROUP
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder NO_POSTS_IN_GROUP = MessageHandlerResponse.newBuilder()
+    private static final MessageHandlerResponseBuilder NO_POSTS_IN_GROUP = MessageHandlerResponse.newBuilder()
             .textMessage(BotTextResponse.NO_POSTS_IN_GROUP);
     /**
      * Поле сообщения с текстом, в котором говориться, что пользователь быд отписан от группы
@@ -85,7 +90,7 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#UNSUBSCRIBED
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder UNSUBSCRIBED = MessageHandlerResponse.newBuilder()
+    private static final MessageHandlerResponseBuilder UNSUBSCRIBED = MessageHandlerResponse.newBuilder()
             .textMessage(BotTextResponse.UNSUBSCRIBED);
     /**
      * Поле сообщения с текстом, в котором говориться, что пользователь не был подписчиком группы
@@ -93,7 +98,7 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#NOT_SUBSCRIBER
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder NOT_SUBSCRIBER = MessageHandlerResponse.newBuilder()
+    private static final MessageHandlerResponseBuilder NOT_SUBSCRIBER = MessageHandlerResponse.newBuilder()
             .textMessage(BotTextResponse.NOT_SUBSCRIBER);
     /**
      * Поле сообщения с текстом, в котором говориться, что пользователь не подписан ни на одну группу
@@ -101,8 +106,13 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#NO_SUBSCRIBED_GROUPS
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder NO_SUBSCRIBED_GROUPS = MessageHandlerResponse.newBuilder()
-                                                                                                                           .textMessage(BotTextResponse.NO_SUBSCRIBED_GROUPS);
+    private static final MessageHandlerResponseBuilder NO_SUBSCRIBED_GROUPS = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NO_SUBSCRIBED_GROUPS);
+    /**
+     *
+     */
+    private static final MessageHandlerResponseBuilder IS_NOT_ADMIN = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.IS_NOT_ADMIN);
     /**
      * Поле хранилища групп, на которые оформлена подписка
      *
@@ -170,6 +180,9 @@ public final class MessageHandlerImpl implements MessageHandler {
                 case "/auth" -> {
                     return getAuthResponse(userSendResponseId);
                 }
+                case "/auth_as_admin" -> {
+                    return authAsAdmin(userSendResponseId);
+                }
                 case "/stop" -> {
                     return getStopResponse(stoppableByUserThread, userSendResponseId);
                 }
@@ -184,8 +197,11 @@ public final class MessageHandlerImpl implements MessageHandler {
 
         if (isItSingleArgCommand(commandAndArgs)) {
             switch (commandAndArgs[COMMAND_INDEX]) {
-                case "/post" -> {
+                case "/post_to_all" -> {
                     return postToAllUsers(commandAndArgs[ARG_INDEX], userSendResponseId);
+                }
+                case "/post_to_group" -> {
+                    return postToSubscribers(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/link" -> {
                     MessageTelegramHandler getGroupUrlMessage = new GetGroupUrl(usersBase,socialNetwork);
@@ -263,6 +279,54 @@ public final class MessageHandlerImpl implements MessageHandler {
                 .build(List.of(userSendResponseId));
     }
 
+    private MessageHandlerResponse authAsAdmin(String userSendResponseId) {
+
+        if (!usersBase.contains(userSendResponseId)) {
+            return NOT_AUTHED_USER.build(List.of(userSendResponseId));
+        }
+
+        BotUser userCallingMethod = usersBase.getUser(userSendResponseId);
+        List<? extends Group> userAdminGroups;
+        try {
+            userAdminGroups = socialNetwork.searchUserAdminGroups(userCallingMethod);
+        } catch (SocialNetworkException e) {
+            return MessageHandlerResponse.newBuilder()
+                    .textMessage(e.getMessage())
+                    .build(List.of(userSendResponseId));
+        }
+        List<String> ids = userAdminGroups.stream().map(Group::getId).map(String::valueOf).toList();
+        String groupAuthURL = socialNetwork.getGroupsAuthUrl(ids);
+
+        if (groupAuthURL == null) {
+            return AUTH_ERROR.build(List.of(userSendResponseId));
+        }
+
+        CompletableFuture<String> c = CompletableFuture.supplyAsync(() -> groupAuthValidationAnswer(socialNetwork.createGroupActorAsync(ids), userAdminGroups, userSendResponseId));
+
+        return MessageHandlerResponse.newBuilder()
+                .textMessage(groupAuthURL)
+                .additionalMesage(c)
+                .build(List.of(userSendResponseId));
+    }
+
+    private String groupAuthValidationAnswer(CompletableFuture<List<GroupActor>> a, List<? extends Group> g, String userSendResponseId) {
+        List<GroupActor> l;
+        try {
+            l = a.get();
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println(e.getMessage());
+            return BotTextResponse.AUTH_ERROR;
+        }
+        StringBuilder sb = new StringBuilder("Вы стали админом следующих групп:\n");
+        List<Integer> i = l.stream().map(GroupActor::getGroupId).toList();
+        for (Group g1 : g) {
+            if (i.contains(g1.getId())) {
+                sb.append(g1.getName()).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
     /**
      * Метод формирующий ответ на команду /stop
      *
@@ -289,7 +353,34 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @return ответ содержащий сообщение верифицированного пользователя, от имени которого будет отправлено сообщение
      */
     private MessageHandlerResponse postToAllUsers(String usersSendMessage, String userReceivedMessageId) {
+        if (!usersBase.isAdmin(userReceivedMessageId)) {
+            return UNKNOWN_COMMAND.build(List.of(userReceivedMessageId));
+        }
+
         return MessageHandlerResponse.newBuilder().textMessage(usersSendMessage).build(usersBase.getAllUsersId());
+    }
+
+    /**
+     *
+     *
+     * @param usersSendMessage
+     * @param userReceivedMessageId
+     * @return
+     */
+    private MessageHandlerResponse postToSubscribers(String usersSendMessage, String userReceivedMessageId) {
+        String[] groupNameAndPostText = usersSendMessage.split(" ", 2);
+
+        if (!groupsBase.isGroupAdmin(groupNameAndPostText[0], userReceivedMessageId)) {
+            return IS_NOT_ADMIN.build(List.of(userReceivedMessageId));
+        }
+
+        if (!groupsBase.containsGroup(groupNameAndPostText[0])) {
+            return MessageHandlerResponse.newBuilder()
+                    .textMessage(new NoGroupException(groupNameAndPostText[0]).getMessage())
+                    .build(List.of(userReceivedMessageId));
+        }
+
+        return MessageHandlerResponse.newBuilder().textMessage(groupNameAndPostText[1]).build(usersBase.getAllUsersId());
     }
 
     /**

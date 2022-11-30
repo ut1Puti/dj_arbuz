@@ -34,6 +34,8 @@ public final class MessageHandlerResponse {
      */
     @Getter
     private final CompletableFuture<BotUser> updateUser;
+    @Getter
+    private final CompletableFuture<String> additionalMessage;
     /**
      * Поле со списком постов в виде строк
      */
@@ -56,6 +58,10 @@ public final class MessageHandlerResponse {
      */
     public List<String> getUsersSendResponseId() {
         return List.copyOf(usersSendResponseId);
+    }
+
+    public boolean hasAdditionalMessage() {
+        return additionalMessage != null;
     }
 
     /**
@@ -126,6 +132,7 @@ public final class MessageHandlerResponse {
          * Поле со списком постов в виде строк
          */
         private List<String> postsMessages;
+        private CompletableFuture<String> additionalMessage;
 
         /**
          * Метод устанавливающий значение {@code testMessage}
@@ -151,6 +158,11 @@ public final class MessageHandlerResponse {
             return this;
         }
 
+        public MessageHandlerResponseBuilder additionalMesage(CompletableFuture<String> additionalMessage) {
+            this.additionalMessage = additionalMessage;
+            return this;
+        }
+
         /**
          * Метод устанавливающий значение {@code postsText}
          *
@@ -170,7 +182,7 @@ public final class MessageHandlerResponse {
          * @see MessageHandlerResponse#MessageHandlerResponse(List, String, CompletableFuture, List)
          */
         public MessageHandlerResponse build(List<String> userSendResponseId) {
-            return new MessageHandlerResponse(userSendResponseId, textMessage, updateUser, postsMessages);
+            return new MessageHandlerResponse(userSendResponseId, textMessage, updateUser, additionalMessage, postsMessages);
         }
     }
 }

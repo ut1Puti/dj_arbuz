@@ -5,6 +5,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +19,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"subscribedGroups"})
+@EqualsAndHashCode(exclude = {"subscribedGroups", "adminGroup"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -28,11 +30,18 @@ public class UserDto {
     @Column(name = "telegram_id", nullable = false)
     private String telegramId;
 
+    @Builder.Default
+    @Column(name = "admin", nullable = false)
+    private Boolean admin = false;
+
     @Column(name = "user_id", nullable = false)
     private Long vkId;
 
     @Column(name = "access_token", nullable = false)
     private String accessToken;
+
+    @ManyToMany(mappedBy = "admins")
+    private List<GroupDto> adminGroup;
 
     @ManyToMany(mappedBy = "subscribedUsers")
     private List<GroupDto> subscribedGroups;
