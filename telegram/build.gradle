@@ -1,12 +1,20 @@
+//plugins {
+//    id 'com.github.johnrengejman.shadow' version '7.0.0'
+//}
+
 jar {
     manifest {
-        attributes 'Main-Class': 'dj.arbuz.bots.telegram.TelegramBot',
-
-                'Implementation-Version': project.version
+        attributes 'Main-Class': 'dj.arbuz.bots.telegram.TelegramBot'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
 dependencies {
     implementation project(':common')
-    implementation files('common/build/libs/common-4.0.0-SNAPSHOT.jar')
+    implementation 'org.telegram:telegrambots:6.1.0'
+    implementation 'org.hibernate.orm:hibernate-core:6.1.4.Final'
+    runtimeOnly  'org.postgresql:postgresql:42.5.0'
 }

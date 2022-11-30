@@ -1,6 +1,7 @@
 package dj.arbuz.bots.database.local;
 
 
+import dj.arbuz.bots.database.local.UserStorage;
 import dj.arbuz.user.BotUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

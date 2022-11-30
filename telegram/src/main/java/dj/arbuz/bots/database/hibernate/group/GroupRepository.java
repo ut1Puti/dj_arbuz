@@ -1,7 +1,7 @@
 package dj.arbuz.bots.database.hibernate.group;
 
-import dj.arbuz.bots.database.hibernate.HibernateUtil;
 import dj.arbuz.bots.database.hibernate.entity.EntityRepository;
+import dj.arbuz.bots.database.hibernate.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;

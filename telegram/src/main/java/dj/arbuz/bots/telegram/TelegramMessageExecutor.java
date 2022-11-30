@@ -1,10 +1,10 @@
 package dj.arbuz.bots.telegram;
 
+import dj.arbuz.bots.database.hibernate.group.GroupService;
+import dj.arbuz.bots.database.hibernate.user.UserService;
 import dj.arbuz.bots.StoppableByUser;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
-import dj.arbuz.bots.database.hibernate.group.GroupService;
-import dj.arbuz.bots.database.hibernate.user.UserService;
 import dj.arbuz.handlers.messages.MessageHandler;
 import dj.arbuz.handlers.messages.MessageHandlerImpl;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;

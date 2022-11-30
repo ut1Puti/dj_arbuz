@@ -1,7 +1,7 @@
 package dj.arbuz.bots.database.hibernate.user;
 
-import dj.arbuz.database.UserBase;
 import dj.arbuz.bots.database.hibernate.group.GroupDto;
+import dj.arbuz.database.UserBase;
 import dj.arbuz.user.BotUser;
 
 import java.util.List;

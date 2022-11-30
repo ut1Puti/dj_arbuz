@@ -5,7 +5,6 @@ import dj.arbuz.bots.database.hibernate.group.GroupDto;
 import dj.arbuz.bots.database.hibernate.user.UserDto;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import dj.arbuz.ConfigPaths;
 
 import java.io.File;
 
