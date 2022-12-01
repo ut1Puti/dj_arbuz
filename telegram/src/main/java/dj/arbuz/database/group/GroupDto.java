@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Entity класс для взаимодействия Hibernate ORM и PostgreSQL(таблица group_data)
@@ -27,7 +27,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"subscribedUsers", "admins"})
+@EqualsAndHashCode(exclude = {"subscribedUsers", "admins", "dateLastPost"})
 @Entity(name = "group_data")
 @Table(schema = "public", catalog = "users_database")
 public class GroupDto {
@@ -43,14 +43,14 @@ public class GroupDto {
             name = "admins",
             joinColumns = @JoinColumn(name = "group_name"),
             inverseJoinColumns = @JoinColumn(name = "admin_id"))
-    private List<UserDto> admins;
+    private Set<UserDto> admins;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "subscribers",
             joinColumns = @JoinColumn(name = "group_name"),
             inverseJoinColumns = @JoinColumn(name = "user_telegram_id"))
-    private List<UserDto> subscribedUsers;
+    private Set<UserDto> subscribedUsers;
 
     public void addNewSubscriber(UserDto subscriber) {
         subscribedUsers.add(subscriber);

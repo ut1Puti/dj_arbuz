@@ -38,7 +38,7 @@ public final class GroupService implements GroupBase {
             dbSavedGroup = GroupDto.builder()
                     .groupName(groupScreenName)
                     .dateLastPost(Instant.now().getEpochSecond())
-                    .subscribedUsers(List.of(subscriberDto))
+                    .subscribedUsers(Set.of(subscriberDto))
                     .build();
             return groupRepository.save(dbSavedGroup) == dbSavedGroup;
         } else {

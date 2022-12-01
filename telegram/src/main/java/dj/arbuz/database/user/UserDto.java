@@ -12,16 +12,14 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"subscribedGroups", "adminGroup"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -42,13 +40,35 @@ public class UserDto {
     @Column(name = "access_token", nullable = false)
     private String accessToken;
 
-    @ManyToMany(mappedBy = "admins", fetch = FetchType.EAGER)
-    private List<GroupDto> adminGroup;
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "admins",
+            joinColumns = @JoinColumn(name = "admin_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_name"))
+    private Set<GroupDto> adminGroup;
 
-    @ManyToMany(mappedBy = "subscribedUsers", fetch = FetchType.EAGER)
-    private List<GroupDto> subscribedGroups;
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "subscribers",
+            joinColumns = @JoinColumn(name = "user_telegram_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_name"))
+    private Set<GroupDto> subscribedGroups;
 
     public void addSubscribedGroup(GroupDto subscribedGroup) {
         subscribedGroups.add(subscribedGroup);
+    }
+
+    @Override
+    public int hashCode() {
+        return telegramId.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof UserDto userDto)) {
+            return false;
+        }
+
+        return userDto.telegramId.equals(telegramId);
     }
 }
