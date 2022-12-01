@@ -1,0 +1,14 @@
+jar {
+    dependsOn(':common:jar')
+    manifest {
+        attributes 'Main-Class': 'dj.arbuz.console.ConsoleBot'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+dependencies {
+    implementation project(':common')
+}
