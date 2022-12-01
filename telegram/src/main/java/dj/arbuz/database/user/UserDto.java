@@ -9,8 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,19 +42,10 @@ public class UserDto {
     @Column(name = "access_token", nullable = false)
     private String accessToken;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "admins",
-            joinColumns = @JoinColumn(name = "admin_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_name")
-    )
+    @ManyToMany(mappedBy = "admins", fetch = FetchType.EAGER)
     private List<GroupDto> adminGroup;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "subscribers",
-            joinColumns = @JoinColumn(name = "user_telegram_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_name"))
+    @ManyToMany(mappedBy = "subscribedUsers", fetch = FetchType.EAGER)
     private List<GroupDto> subscribedGroups;
 
     public void addSubscribedGroup(GroupDto subscribedGroup) {

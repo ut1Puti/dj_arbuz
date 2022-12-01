@@ -17,7 +17,7 @@ public class SubsribeTo implements MessageTelegramHandler{
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
-     * @see UserStorage
+     * @see UserBase
      */
     private final UserBase usersBase;
     private final GroupBase groupsBase;
