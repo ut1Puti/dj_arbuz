@@ -24,6 +24,7 @@ public class GetFiveLastPosts  implements MessageTelegramHandler{
                                                                                                                         .textMessage(BotTextResponse.NO_POSTS_IN_GROUP);
   private static final MessageHandlerResponse.MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
                                                                                                                       .textMessage(BotTextResponse.NOT_AUTHED_USER);
+
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
