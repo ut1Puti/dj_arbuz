@@ -51,4 +51,11 @@ public interface UserBase {
      * @return {@code true} - если является, {@code false} - если не является
      */
     boolean isAdmin(String userId);
+
+    /**
+     * Метод удаляющий пользователя из базы данных
+     *
+     * @param userTelegramId id пользователя в телеграме
+     */
+    void deleteUser(String userTelegramId);
 }

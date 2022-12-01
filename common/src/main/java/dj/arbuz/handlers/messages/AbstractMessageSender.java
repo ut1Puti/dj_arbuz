@@ -2,13 +2,13 @@ package dj.arbuz.handlers.messages;
 
 import dj.arbuz.BotMessageExecutable;
 import dj.arbuz.BotTextResponse;
-import dj.arbuz.database.UserBase;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import dj.arbuz.user.BotUser;
 
 import java.util.concurrent.ExecutionException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Класс-отправитель сообщений пользователям
@@ -23,12 +23,6 @@ public abstract class AbstractMessageSender implements MessageSender {
      * которую необходимо отправить пользователю
      */
     private final BotMessageExecutable messageSender;
-    /**
-     * Поле хранилища пользователей
-     *
-     * @see UserBase
-     */
-    private final UserBase userStorage;
 
     /**
      * Реализация метод, который отправляет сообщения пользователям
@@ -45,16 +39,6 @@ public abstract class AbstractMessageSender implements MessageSender {
             }
         }
 
-        if (userSendResponse.hasAdditionalMessage()) {
-            try {
-                for (String userSendMessageId : usersSendMessageId) {
-                    messageSender.send(userSendMessageId, userSendResponse.getAdditionalMessage().get());
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                System.err.println(e.getMessage());
-            }
-        }
-
         if (userSendResponse.hasPostsMessages()) {
             for (String postMessage : userSendResponse.getPostsMessages()) {
                 for (String userSendMessageId : usersSendMessageId) {
@@ -63,23 +47,28 @@ public abstract class AbstractMessageSender implements MessageSender {
             }
         }
 
-        if (userSendResponse.hasUpdateUser()) {
-            BotUser currentUser = null;
-            try {
-                currentUser = userSendResponse.getUpdateUser().get();
-            } catch (InterruptedException | ExecutionException ignored) {
+        if (userSendResponse.hasAdditionalMessage()) {
+            String userSendMessage = getAdditionalMessageFromResponse(userSendResponse);
+            for (String userSendMessageId : usersSendMessageId) {
+                messageSender.send(userSendMessageId, userSendMessage);
             }
+        }
+    }
 
-            assert usersSendMessageId.size() == 1;
-
-            if (currentUser == null) {
-                messageSender.send(usersSendMessageId.get(0), BotTextResponse.AUTH_ERROR);
-            } else if (userStorage.addUser(usersSendMessageId.get(0), currentUser)) {
-                messageSender.send(usersSendMessageId.get(0), BotTextResponse.AUTH_SUCCESS);
-            } else {
-                messageSender.send(usersSendMessageId.get(0), BotTextResponse.AUTH_ERROR);
-            }
-
+    /**
+     * Метод получающий дополнительное сообщение для пользователя
+     *
+     * @param userSendHandlerResponse {@code CompletableFuture} который возвращает текстовое сообщение для пользователя
+     * @return строку соержащую сообщение, которое будет отправлено пользователю
+     */
+    private String getAdditionalMessageFromResponse(MessageHandlerResponse userSendHandlerResponse) {
+        try {
+            return userSendHandlerResponse.getAdditionalMessage().get(1, TimeUnit.MINUTES);
+        } catch (TimeoutException e) {
+            return BotTextResponse.TIME_EXPIRED;
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println(e.getMessage());
+            return BotTextResponse.HANDLER_ERROR;
         }
     }
 

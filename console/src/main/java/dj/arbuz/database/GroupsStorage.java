@@ -232,23 +232,26 @@ public final class GroupsStorage implements GroupBase {
     }
 
     /**
+     * Метод проверяющий является ли пользователь админом группы
      *
-     *
-     * @param groupScreenName
-     * @param userId
-     * @return
+     * @param groupScreenName короткое имя группы
+     * @param userId id пользователя
+     * @return {@code true} - если является, {@code false} - если не является
      */
     @Override
     public boolean isGroupAdmin(String groupScreenName, String userId) {
         return false;
     }
 
-
     /**
-     * Метод очищающий хранилище подписок и сохраняющий его в файл
+     * Метод добавляющий значение в базу, если такого значения еще не было
+     *
+     * @param groupScreenName короткое название группы
+     * @return {@code true} если было добавлено или уже было в базе, {@code false} - если не было добавлено из-за ошибки
      */
-    public void clear() {
-        saveToJsonFile();
-        groupsBase.clear();
+    @Override
+    public boolean putIfAbsent(String groupScreenName) {
+        groupsBase.putIfAbsent(groupScreenName, new GroupRelatedData(Instant.now().getEpochSecond()));
+        return true;
     }
 }

@@ -7,6 +7,7 @@ import dj.arbuz.user.BotUser;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,8 +33,8 @@ public class MessageHandlerResponseTests {
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
         assertEquals(List.of(), response.getPostsMessages());
-        assertFalse((response.hasUpdateUser()));
-        assertNull(response.getUpdateUser());
+        assertFalse((response.hasAdditionalMessage()));
+        assertNull(response.getAdditionalMessage());
         assertEquals(List.of(testUserId), response.getUsersSendResponseId());
     }
     /**
@@ -47,8 +48,8 @@ public class MessageHandlerResponseTests {
         assertEquals(expectedMessage, response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
         assertEquals(List.of(), response.getPostsMessages());
-        assertFalse((response.hasUpdateUser()));
-        assertNull(response.getUpdateUser());
+        assertFalse((response.hasAdditionalMessage()));
+        assertNull(response.getAdditionalMessage());
         assertEquals(List.of(testUserId), response.getUsersSendResponseId());
     }
 
@@ -56,16 +57,16 @@ public class MessageHandlerResponseTests {
      * Метод тестирующий методы связанный с созданием нового пользователя
      */
     @Test
-    public void testUpdateUserConstructorsAndSettersAndGetters() {
+    public void testUpdateUserConstructorsAndSettersAndGetters() throws ExecutionException, InterruptedException {
         MessageHandlerResponse response = MessageHandlerResponse.newBuilder()
-                .updateUser(CompletableFuture.supplyAsync(() -> new BotUser(100, "accessToken", testUserId)))
+                .additionalMesage(CompletableFuture.supplyAsync(() -> "Hello"))
                 .build(List.of(testUserId));
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
         assertEquals(List.of(), response.getPostsMessages());
-        assertTrue((response.hasUpdateUser()));
-        assertNotNull(response.getUpdateUser());
+        assertTrue((response.hasAdditionalMessage()));
+        assertEquals("Hello", response.getAdditionalMessage().get());
         assertEquals(List.of(testUserId), response.getUsersSendResponseId());
     }
 
@@ -81,8 +82,8 @@ public class MessageHandlerResponseTests {
         assertTrue((response.hasPostsMessages()));
         assertNotNull(response.getPostsMessages());
         assertEquals(newPosts, response.getPostsMessages());
-        assertFalse((response.hasUpdateUser()));
-        assertNull(response.getUpdateUser());
+        assertFalse((response.hasAdditionalMessage()));
+        assertNull(response.getAdditionalMessage());
         assertEquals(List.of(testUserId), response.getUsersSendResponseId());
     }
 }

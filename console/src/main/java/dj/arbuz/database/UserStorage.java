@@ -103,8 +103,24 @@ public final class UserStorage implements UserBase {
         return usersBase.keySet().stream().toList();
     }
 
+    /**
+     * Метод проверяющий является ли пользователь админом приложения
+     *
+     * @param userId id пользователя
+     * @return {@code true} тк пользователь консольной версии является единственным пользователем приложения
+     */
     @Override
     public boolean isAdmin(String userId) {
         return true;
+    }
+
+    /**
+     * Метод удаляющий пользователя из базы данных
+     *
+     * @param userTelegramId id пользователя в телеграме
+     */
+    @Override
+    public void deleteUser(String userTelegramId) {
+        usersBase.remove(userTelegramId);
     }
 }

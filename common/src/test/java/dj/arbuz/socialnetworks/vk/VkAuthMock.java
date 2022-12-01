@@ -1,5 +1,6 @@
 package dj.arbuz.socialnetworks.vk;
 
+import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import dj.arbuz.socialnetworks.vk.oAuth.AbstractVkAuth;
 import dj.arbuz.user.BotUser;
@@ -61,6 +62,15 @@ class VkAuthMock extends AbstractVkAuth {
 
     @Override
     public String getGroupAuthUrl(List<String> adminGroupsId) {
+        return null;
+    }
+
+    /**
+     * @param groupsId
+     * @return
+     */
+    @Override
+    public List<GroupActor> createGroupActor(List<String> groupsId) {
         return null;
     }
 }

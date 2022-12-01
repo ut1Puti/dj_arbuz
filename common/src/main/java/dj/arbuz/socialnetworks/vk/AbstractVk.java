@@ -68,13 +68,13 @@ public class AbstractVk extends AbstractSocialNetwork<Group, WallpostFull, BotUs
      * посмотреть ее можно в метода {@link dj.arbuz.socialnetworks.vk.oAuth.VkAuth#createBotUser(String)}
      */
     @Override
-    public CompletableFuture<BotUser> createBotUserAsync(String userSystemId) {
-        return CompletableFuture.supplyAsync(() -> oAuth.createBotUser(userSystemId));
+    public BotUser createBotUser(String userSystemId) {
+        return oAuth.createBotUser(userSystemId);
     }
 
     @Override
-    public CompletableFuture<List<GroupActor>> createGroupActorAsync(List<String> adminGroupsId) {
-        return CompletableFuture.supplyAsync(() -> oAuth.createGroupActor(adminGroupsId));
+    public List<GroupActor> createGroupActors(List<String> adminGroupsId) {
+        return oAuth.createGroupActor(adminGroupsId);
     }
 
     /**

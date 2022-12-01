@@ -171,4 +171,26 @@ public final class GroupService implements GroupBase {
 
         return group.getAdmins().stream().anyMatch(userDto -> userDto.getTelegramId().equals(userId));
     }
+
+    /**
+     * Метод добавляющий значение в базу, если такого значения еще не было
+     *
+     * @param groupScreenName короткое название группы
+     * @return {@code true} если было добавлено или уже было в базе, {@code false} - если не было добавлено из-за ошибки
+     */
+    @Override
+    public boolean putIfAbsent(String groupScreenName) {
+        GroupDto dbSavingGroup = groupRepository.getByScreenName(groupScreenName);
+
+        if (dbSavingGroup == null) {
+            return true;
+        }
+
+        dbSavingGroup = GroupDto.builder()
+                .groupName(groupScreenName)
+                .dateLastPost(Instant.now().getEpochSecond())
+                .build();
+
+        return groupRepository.save(dbSavingGroup) == dbSavingGroup;
+    }
 }

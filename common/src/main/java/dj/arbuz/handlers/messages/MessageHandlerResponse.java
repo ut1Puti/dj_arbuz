@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
  * @see MessageHandlerResponseBuilder
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(exclude = {"updateUser"})
+@EqualsAndHashCode(exclude = {"additionalMessage"})
 public final class MessageHandlerResponse {
     /**
      * Поле id пользователя которому будет отправлен ответ
@@ -29,11 +29,6 @@ public final class MessageHandlerResponse {
      */
     @Getter
     private final String textMessage;
-    /**
-     * Поле содержащее интерфейс для создания или обновления пользователя
-     */
-    @Getter
-    private final CompletableFuture<BotUser> updateUser;
     @Getter
     private final CompletableFuture<String> additionalMessage;
     /**
@@ -102,15 +97,6 @@ public final class MessageHandlerResponse {
     }
 
     /**
-     * Метод проверяющий наличие интерфейса для обновления или создания пользователя
-     *
-     * @return наличие интерфейса для обновления или создания пользователя
-     */
-    public boolean hasUpdateUser() {
-        return updateUser != null;
-    }
-
-    /**
      * Класс {@code builder} для класса {@code MessageHandlerResponse}
      *
      * @author Кедровских Олег
@@ -118,16 +104,12 @@ public final class MessageHandlerResponse {
      * @see MessageHandlerResponse
      */
     @NoArgsConstructor
-    @EqualsAndHashCode(exclude = {"updateUser"})
+    @EqualsAndHashCode(exclude = {"additionalMessage"})
     public static class MessageHandlerResponseBuilder {
         /**
          * Поле текстового сообщения
          */
         private String textMessage;
-        /**
-         * Поле содержащее интерфейс для создания или обновления пользователя
-         */
-        private CompletableFuture<BotUser> updateUser = null;
         /**
          * Поле со списком постов в виде строк
          */
@@ -143,18 +125,6 @@ public final class MessageHandlerResponse {
          */
         public MessageHandlerResponseBuilder textMessage(String textMessage) {
             this.textMessage = textMessage;
-            return this;
-        }
-
-        /**
-         * Метод устанавливающий значение {@code updateUser}
-         *
-         * @param updateUser Поле содержащее интерфейс для создания или обновления пользователя
-         * @return этот же {@code Builder}
-         * @see MessageHandlerResponseBuilder#updateUser
-         */
-        public MessageHandlerResponseBuilder updateUser(CompletableFuture<BotUser> updateUser) {
-            this.updateUser = updateUser;
             return this;
         }
 
@@ -182,7 +152,7 @@ public final class MessageHandlerResponse {
          * @see MessageHandlerResponse#MessageHandlerResponse(List, String, CompletableFuture, List)
          */
         public MessageHandlerResponse build(List<String> userSendResponseId) {
-            return new MessageHandlerResponse(userSendResponseId, textMessage, updateUser, additionalMessage, postsMessages);
+            return new MessageHandlerResponse(userSendResponseId, textMessage, additionalMessage, postsMessages);
         }
     }
 }

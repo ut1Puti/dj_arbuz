@@ -1,6 +1,5 @@
 package dj.arbuz.console;
 
-import dj.arbuz.database.UserStorage;
 import dj.arbuz.handlers.messages.AbstractMessageSender;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
 
@@ -25,11 +24,10 @@ public final class ConsoleMessageSender extends AbstractMessageSender {
      * Конструктор - создает экземпляр класса
      *
      * @param consoleBot                консольный бот
-     * @param userStorage               хранилище пользователей
      * @param notificationPullingThread поток получающий новые посты в группах
      */
-    public ConsoleMessageSender(ConsoleBot consoleBot, UserStorage userStorage, ConsolePostsPullingThread notificationPullingThread) {
-        super(consoleBot, userStorage);
+    public ConsoleMessageSender(ConsoleBot consoleBot, ConsolePostsPullingThread notificationPullingThread) {
+        super(consoleBot);
         this.notificationPullingThread = notificationPullingThread;
     }
 

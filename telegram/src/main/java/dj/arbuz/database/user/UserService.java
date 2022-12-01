@@ -19,17 +19,19 @@ public final class UserService implements UserBase {
      */
     @Override
     public boolean addUser(String userId, BotUser botUser) {
-        UserDto userDto = UserDto.builder()
-                .telegramId(botUser.getTelegramId())
-                .vkId(Long.valueOf(botUser.getId()))
-                .accessToken(botUser.getAccessToken())
-                .build();
+        UserDto dbSavedUser = userRepository.findByTelegramId(userId);
 
-        if (contains(userId)) {
-            return userRepository.update(userDto) == userDto;
+        if (dbSavedUser == null) {
+            dbSavedUser = UserDto.builder()
+                    .telegramId(botUser.getTelegramId())
+                    .vkId(Long.valueOf(botUser.getId()))
+                    .accessToken(botUser.getAccessToken())
+                    .build();
+            return userRepository.save(dbSavedUser) == dbSavedUser;
         }
-
-        return userRepository.save(userDto) == userDto;
+        dbSavedUser.setVkId(Long.valueOf(botUser.getId()));
+        dbSavedUser.setAccessToken(botUser.getAccessToken());
+        return userRepository.update(dbSavedUser) == dbSavedUser;
     }
 
     /**
@@ -74,6 +76,21 @@ public final class UserService implements UserBase {
         }
 
         return userDto.getAdmin();
+    }
+
+    /**
+     * Метод удаляющий пользователя из базы данных
+     *
+     * @param userTelegramId id пользователя в телеграме
+     */
+    @Override
+    public void deleteUser(String userTelegramId) {
+        UserDto botUser = userRepository.findByTelegramId(userTelegramId);
+
+        if (botUser != null) {
+            botUser.getSubscribedGroups().clear();
+            userRepository.delete(botUser);
+        }
     }
 
     public List<GroupDto> findUserSubscribedGroups(String userId) {

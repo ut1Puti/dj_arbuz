@@ -1,7 +1,6 @@
 package dj.arbuz.console;
 
 import dj.arbuz.BotMessageExecutable;
-import dj.arbuz.StoppableByUser;
 import httpserver.server.HttpServer;
 import stoppable.StoppableThread;
 
@@ -13,9 +12,8 @@ import java.util.Scanner;
  * @author Кедровских Олег
  * @version 1.2
  * @see StoppableThread
- * @see StoppableByUser
  */
-public final class ConsoleBot extends StoppableThread implements StoppableByUser, BotMessageExecutable {
+public final class ConsoleBot extends StoppableThread implements BotMessageExecutable {
     /**
      * Поле id пользователя консольной версии бота
      */
@@ -57,7 +55,7 @@ public final class ConsoleBot extends StoppableThread implements StoppableByUser
      * Метод с логикой выполняемой внутри потока
      *
      * @see StoppableThread#run()
-     * @see dj.arbuz.handlers.messages.MessageHandlerImpl#handleMessage(String, String, StoppableByUser)
+     * @see dj.arbuz.handlers.messages.MessageHandlerImpl#handleMessage(String, String)
      * @see ConsolePostsPullingThread#start()
      * @see ConsolePostsPullingThread#stopWithInterrupt()
      */
@@ -68,7 +66,7 @@ public final class ConsoleBot extends StoppableThread implements StoppableByUser
         while (working.get()) {
 
             if (userInput.hasNextLine()) {
-                messageExecutor.executeTextMessage(defaultConsoleUserId, userInput.nextLine(), this);
+                messageExecutor.executeTextMessage(defaultConsoleUserId, userInput.nextLine());
             }
 
         }
@@ -91,13 +89,5 @@ public final class ConsoleBot extends StoppableThread implements StoppableByUser
         }
 
         System.out.println(responseSendMessage);
-    }
-
-    /**
-     * Метод реализующий интерфейс для остановки бота пользователем
-     */
-    @Override
-    public void stopByUser() {
-        stopWithInterrupt();
     }
 }

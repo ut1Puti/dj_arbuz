@@ -10,6 +10,7 @@ psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "users_database" <<-EOSQL
             telegram_id text NOT NULL,
             user_id bigint NOT NULL,
             access_token text NOT NULL,
+            admin boolean NOT NULL,
             CONSTRAINT user_data_pkey PRIMARY KEY (telegram_id)
         );
         CREATE TABLE subscribers (

@@ -38,19 +38,10 @@ public class GroupDto {
     @Column(name = "date_last_post", nullable = false)
     private Long dateLastPost;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "admins",
-            joinColumns = @JoinColumn(name = "group_name"),
-            inverseJoinColumns = @JoinColumn(name = "admin_id")
-    )
+    @ManyToMany(mappedBy = "adminGroup", fetch = FetchType.EAGER)
     private List<UserDto> admins;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "subscribers",
-            joinColumns = @JoinColumn(name = "group_name"),
-            inverseJoinColumns = @JoinColumn(name = "user_telegram_id"))
+    @ManyToMany(mappedBy = "subscribedGroups", fetch = FetchType.EAGER)
     private List<UserDto> subscribedUsers;
 
     public void addNewSubscriber(UserDto subscriber) {

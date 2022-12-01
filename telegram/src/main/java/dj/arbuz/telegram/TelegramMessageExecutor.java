@@ -2,7 +2,6 @@ package dj.arbuz.telegram;
 
 import dj.arbuz.database.group.GroupService;
 import dj.arbuz.database.user.UserService;
-import dj.arbuz.StoppableByUser;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
 import dj.arbuz.handlers.messages.MessageHandler;
@@ -46,7 +45,7 @@ public final class TelegramMessageExecutor {
         GroupBase groupsStorage = new GroupService();
         Vk vk = new Vk();
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
-        messageSender = new TelegramMessageSender(telegramBot, userStorage);
+        messageSender = new TelegramMessageSender(telegramBot);
         notificationPullingThread = new TelegramPostsPullingThread(telegramBot, groupsStorage, vk);
     }
 
@@ -62,10 +61,9 @@ public final class TelegramMessageExecutor {
      *
      * @param userReceivedId        id пользователя от которого было получено сообщение
      * @param userReceivedMessage   полученное от пользователя сообщение
-     * @param stoppableByUserThread поток из которого было получено сообщение
      */
-    public void executeUserMessage(String userReceivedId, String userReceivedMessage, StoppableByUser stoppableByUserThread) {
-        MessageHandlerResponse response = messageHandler.handleMessage(userReceivedMessage, userReceivedId, stoppableByUserThread);
+    public void executeUserMessage(String userReceivedId, String userReceivedMessage) {
+        MessageHandlerResponse response = messageHandler.handleMessage(userReceivedMessage, userReceivedId);
         messageSender.sendResponse(response);
     }
 

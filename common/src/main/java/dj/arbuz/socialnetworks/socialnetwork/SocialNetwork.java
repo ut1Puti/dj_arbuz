@@ -7,7 +7,6 @@ import dj.arbuz.socialnetworks.socialnetwork.groups.SubscribeStatus;
 import dj.arbuz.user.BotUser;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Интерфейс для взаимодействия с социальными сетями
@@ -38,9 +37,15 @@ public interface SocialNetwork<W, G, U, GU> {
      * @param userId id пользователя в системе
      * @return {@code CompletableFuture<User>}, который выполняет логику создания пользователя
      */
-    CompletableFuture<U> createBotUserAsync(String userId);
+    U createBotUser(String userId);
 
-    CompletableFuture<List<GU>> createGroupActorAsync(List<String> adminGroupsId);
+    /**
+     *
+     *
+     * @param adminGroupsId
+     * @return
+     */
+    List<GU> createGroupActors(List<String> adminGroupsId);
 
     /**
      * Метод получающий ссылку на группу, найденную по подстроке полученной от пользователя

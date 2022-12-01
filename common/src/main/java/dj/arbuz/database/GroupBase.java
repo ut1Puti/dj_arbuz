@@ -78,5 +78,20 @@ public interface GroupBase {
      */
     boolean containsGroup(String groupScreenName);
 
+    /**
+     * Метод проверяющий является ли пользователь админом группы
+     *
+     * @param groupScreenName короткое имя группы
+     * @param userId id пользователя
+     * @return {@code true} - если является, {@code false} - если не является
+     */
     boolean isGroupAdmin(String groupScreenName, String userId);
+
+    /**
+     * Метод добавляющий значение в базу, если такого значения еще не было
+     *
+     * @param groupScreenName короткое название группы
+     * @return {@code true} если было добавлено или уже было в базе, {@code false} - если не было добавлено из-за ошибки
+     */
+    boolean putIfAbsent(String groupScreenName);
 }

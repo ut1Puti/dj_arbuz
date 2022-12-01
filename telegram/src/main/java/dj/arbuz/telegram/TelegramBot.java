@@ -1,7 +1,6 @@
 package dj.arbuz.telegram;
 
 import dj.arbuz.BotMessageExecutable;
-import dj.arbuz.StoppableByUser;
 import dj.arbuz.TelegramConfigPaths;
 import dj.arbuz.database.HibernateUtil;
 import httpserver.server.HttpServer;
@@ -27,7 +26,7 @@ import java.util.List;
  * @author Щёголев Андрей
  * @version 1.2
  */
-public final class TelegramBot extends TelegramLongPollingBot implements StoppableByUser, Stoppable, BotMessageExecutable {
+public final class TelegramBot extends TelegramLongPollingBot implements Stoppable, BotMessageExecutable {
     /**
      * Поле класса содержащего конфигурацию телеграм бота
      *
@@ -133,7 +132,7 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
         if (update.hasMessage() && update.getMessage().hasText()) {
             String userReceivedMessage = update.getMessage().getText();
             String userReceivedMessageId = update.getMessage().getChatId().toString();
-            messageExecutor.executeUserMessage(userReceivedMessageId, userReceivedMessage, this);
+            messageExecutor.executeUserMessage(userReceivedMessageId, userReceivedMessage);
         }
 
     }
@@ -174,13 +173,5 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
     public void stopWithInterrupt() {
         messageExecutor.stop();
         exe.shutdownNow();
-    }
-
-    /**
-     * Реализация интерфейса позволяющая останавливать поток по запросу пользователя
-     */
-    @Override
-    public void stopByUser() {
-        stopWithInterrupt();
     }
 }
