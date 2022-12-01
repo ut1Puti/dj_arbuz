@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/BotMessageExecutable.java
+package dj.arbuz;
+========
 package dj.arbuz.bots;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/BotMessageExecutable.java
 
 /**
  * Интерфейс для отправки сообщений ботом
@@ -6,6 +10,7 @@ package dj.arbuz.bots;
  * @author Кедровских Олег
  * @version 1.0
  */
+@FunctionalInterface
 public interface BotMessageExecutable {
     /**
      * Метод отправляющий сообщение пользователю

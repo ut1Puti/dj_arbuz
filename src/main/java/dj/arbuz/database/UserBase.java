@@ -1,6 +1,11 @@
 package dj.arbuz.database;
 
 import dj.arbuz.user.BotUser;
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/database/UserBase.java
+
+import java.util.List;
+========
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/database/UserBase.java
 
 /**
  * Интерфейс базы данных пользователей
@@ -17,7 +22,7 @@ public interface UserBase {
      * @return {@code true} - если пользователь был успешно добавлен,
      * {@code false} - если пользователь не был добавлен
      */
-    boolean addInfoUser(String userId, BotUser botUser);
+    boolean addUser(String userId, BotUser botUser);
 
     /**
      * Метод проверяющий наличие пользователя в базе по id
@@ -34,4 +39,26 @@ public interface UserBase {
      * @return экземпляр класса пользователя по id
      */
     BotUser getUser(String userId);
+
+    /**
+     * Метод получающий id все пользователей пользующихся ботом
+     *
+     * @return список id все пользователей
+     */
+    List<String> getAllUsersId();
+
+    /**
+     * Метод проверяющий является ли пользователь админом
+     *
+     * @param userId id пользователя
+     * @return {@code true} - если является, {@code false} - если не является
+     */
+    boolean isAdmin(String userId);
+
+    /**
+     * Метод удаляющий пользователя из базы данных
+     *
+     * @param userTelegramId id пользователя в телеграме
+     */
+    void deleteUser(String userTelegramId);
 }

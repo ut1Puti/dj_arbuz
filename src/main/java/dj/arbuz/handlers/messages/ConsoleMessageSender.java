@@ -1,8 +1,17 @@
+<<<<<<<< HEAD:console/src/main/java/dj/arbuz/console/ConsoleMessageSender.java
+package dj.arbuz.console;
+
+import dj.arbuz.handlers.messages.AbstractMessageSender;
+import dj.arbuz.handlers.messages.MessageHandlerResponse;
+
+import java.util.List;
+========
 package dj.arbuz.handlers.messages;
 
 import dj.arbuz.bots.console.ConsoleBot;
 import dj.arbuz.database.local.UserStorage;
 import dj.arbuz.handlers.notifcations.ConsolePostsPullingThread;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/handlers/messages/ConsoleMessageSender.java
 
 /**
  * Класс-отправитель сообщений консольного бота
@@ -11,7 +20,7 @@ import dj.arbuz.handlers.notifcations.ConsolePostsPullingThread;
  * @version 1.0
  * @see AbstractMessageSender
  */
-public class ConsoleMessageSender extends AbstractMessageSender {
+public final class ConsoleMessageSender extends AbstractMessageSender {
     /**
      * Поле потока, получающего новые посты для консольного бота
      *
@@ -22,12 +31,11 @@ public class ConsoleMessageSender extends AbstractMessageSender {
     /**
      * Конструктор - создает экземпляр класса
      *
-     * @param consoleBot консольный бот
-     * @param userStorage хранилище пользователей
+     * @param consoleBot                консольный бот
      * @param notificationPullingThread поток получающий новые посты в группах
      */
-    public ConsoleMessageSender(ConsoleBot consoleBot, UserStorage userStorage, ConsolePostsPullingThread notificationPullingThread) {
-        super(consoleBot, userStorage);
+    public ConsoleMessageSender(ConsoleBot consoleBot, ConsolePostsPullingThread notificationPullingThread) {
+        super(consoleBot);
         this.notificationPullingThread = notificationPullingThread;
     }
 
@@ -39,11 +47,13 @@ public class ConsoleMessageSender extends AbstractMessageSender {
     @Override
     public void sendResponse(MessageHandlerResponse userSendResponse) {
         super.sendResponse(userSendResponse);
-        String userSendResponseId = userSendResponse.getUserSendResponseId();
+        List<String> usersSendResponseId = userSendResponse.getUsersSendResponseId();
 
         if (notificationPullingThread.hasNewPosts()) {
             for (String newPostText : notificationPullingThread.getNewPosts()) {
-                this.sendSingleMessage(userSendResponseId, newPostText);
+                for (String userSendResponseId : usersSendResponseId) {
+                    this.sendSingleMessage(userSendResponseId, newPostText);
+                }
             }
         }
 

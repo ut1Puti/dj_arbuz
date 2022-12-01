@@ -1,6 +1,10 @@
 package dj.arbuz.socialnetworks.vk.groups;
 
+<<<<<<<< HEAD:common/src/test/java/dj/arbuz/socialnetworks/vk/groups/SubscribeStatusTests.java
+import dj.arbuz.BotTextResponse;
+========
 import dj.arbuz.bots.BotTextResponse;
+>>>>>>>> developTaskFour:src/test/java/dj/arbuz/socialnetworks/vk/groups/SubscribeStatusTests.java
 import org.junit.jupiter.api.Test;
 import dj.arbuz.socialnetworks.socialnetwork.groups.SubscribeStatus;
 

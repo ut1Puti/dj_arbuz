@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:console/src/test/java/dj/arbuz/database/GroupRelatedDataTests.java
+package dj.arbuz.database;
+========
 package dj.arbuz.database.local;
+>>>>>>>> developTaskFour:src/test/java/dj/arbuz/database/local/GroupRelatedDataTests.java
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

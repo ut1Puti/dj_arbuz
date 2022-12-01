@@ -1,6 +1,11 @@
 package dj.arbuz.socialnetworks.vk.groups;
 
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/socialnetworks/vk/groups/VkGroups.java
+import com.vk.api.sdk.objects.groups.Filter;
+import dj.arbuz.BotTextResponse;
+========
 import dj.arbuz.bots.BotTextResponse;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/socialnetworks/vk/groups/VkGroups.java
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiAuthException;
@@ -11,8 +16,13 @@ import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.responses.GetByIdObjectLegacyResponse;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/socialnetworks/vk/groups/VkGroups.java
+import dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
+import dj.arbuz.socialnetworks.vk.VkConstants;
+========
 import dj.arbuz.socialnetworks.vk.VkConstants;
 import dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/socialnetworks/vk/groups/VkGroups.java
 import dj.arbuz.user.BotUser;
 
 import java.util.HashMap;
@@ -100,6 +110,34 @@ public final class VkGroups extends AbstractVkGroups {
         return groupWithSimilarName;
     }
 
+    @Override
+    public List<? extends Group> searchUserAdminGroups(BotUser userCallingMethod) throws SocialNetworkException {
+        try {
+            List<Integer> userAdminGroupsId = vkApiClient.groups().get(userCallingMethod).filter(Filter.ADMIN)
+                    .offset(VkConstants.DEFAULT_OFFSET).count(1000)
+                    .execute().getItems();
+
+            return getGroupById(userAdminGroupsId, userCallingMethod);
+        } catch (ApiAuthException e) {
+            throw new SocialNetworkAuthException(BotTextResponse.UPDATE_TOKEN, e);
+        } catch (ApiException | ClientException e) {
+            throw new SocialNetworkException(BotTextResponse.VK_API_ERROR, e);
+        }
+    }
+
+    private List<GetByIdObjectLegacyResponse> getGroupById(List<? extends Number> groupsId, BotUser userCallingMethod) throws SocialNetworkException {
+        try {
+            return vkApiClient.groups().getByIdObjectLegacy(userCallingMethod)
+                    .groupIds(groupsId.stream().map(String::valueOf).toList())
+                    .fields(Fields.MEMBERS_COUNT)
+                    .execute();
+        } catch (ApiAuthException e) {
+            throw new SocialNetworkAuthException(BotTextResponse.UPDATE_TOKEN, e);
+        } catch (ApiException | ClientException e) {
+            throw new SocialNetworkException(BotTextResponse.VK_API_ERROR, e);
+        }
+    }
+
     /**
      * Метод выбирающий группу соответсвующая подстроке
      *
@@ -117,17 +155,7 @@ public final class VkGroups extends AbstractVkGroups {
         int maxMembersCount = Integer.MIN_VALUE;
         Group resultGroup = null;
         List<String> userFindGroupsId = userFindGroups.stream().map(group -> String.valueOf(group.getId())).toList();
-        List<GetByIdObjectLegacyResponse> userFindByIdGroups;
-        try {
-            userFindByIdGroups = vkApiClient.groups().getByIdObjectLegacy(userCallingMethod)
-                    .groupIds(userFindGroupsId)
-                    .fields(Fields.MEMBERS_COUNT)
-                    .execute();
-        } catch (ApiAuthException e) {
-            throw new SocialNetworkAuthException(BotTextResponse.UPDATE_TOKEN, e);
-        } catch (ApiException | ClientException e) {
-            throw new SocialNetworkException(BotTextResponse.VK_API_ERROR, e);
-        }
+        List<GetByIdObjectLegacyResponse> userFindByIdGroups = getGroupById(userFindGroups.stream().map(Group::getId).toList(), userCallingMethod);
         for (GetByIdObjectLegacyResponse userFindByIdGroup : userFindByIdGroups) {
             String[] foundByIdGroupNames = userFindByIdGroup.getName().split("[/|]");
             for (String foundByIdGroupName : foundByIdGroupNames) {

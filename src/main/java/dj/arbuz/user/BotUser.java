@@ -1,7 +1,10 @@
 package dj.arbuz.user;
 
 import com.vk.api.sdk.client.actors.UserActor;
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/user/BotUser.java
+========
 import dj.arbuz.database.hibernate.entity.UserData;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/user/BotUser.java
 
 /**
  * Класс пользователя
@@ -26,10 +29,6 @@ public final class BotUser extends UserActor {
     public BotUser(Integer vkId, String accessToken, String telegramId) {
         super(vkId, accessToken);
         this.telegramId = telegramId;
-    }
-    public BotUser(UserData userData) {
-        super(userData.getUserId(), userData.getAccessToken());
-        this.telegramId = userData.getTelegramId();
     }
 
     /**

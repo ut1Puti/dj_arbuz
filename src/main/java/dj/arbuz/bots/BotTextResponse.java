@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/BotTextResponse.java
+package dj.arbuz;
+========
 package dj.arbuz.bots;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/BotTextResponse.java
 
 /**
  * Класс возможных ответов на сообщения пользователя
@@ -54,7 +58,7 @@ public final class BotTextResponse {
     /**
      * Поле сообщения об остановке бота
      */
-    public static final String STOP_INFO = "Остановлен.";
+    public static final String STOP_INFO = "Бот удалил информацию о вас. Если захотите вновь начать пользоваться ботом напишите команду /auth. Будем рады увидеть вас позже";
     /**
      * Поле сообщения с просьбой перейти по ссылке
      */
@@ -80,7 +84,6 @@ public final class BotTextResponse {
      */
     public static final String GROUP_IS_CLOSED = "Не могу подписать так как группа закрыта";
     /**
-     * <<<<<<< HEAD
      * Поле сообщения, о том что пользователь был успешно отписан от группы
      */
     public static final String UNSUBSCRIBED = "Вы были отписаны от группы";
@@ -99,8 +102,8 @@ public final class BotTextResponse {
     /**
      * Поле сообщения об ошибке на стороны сервера
      */
-    public static final String SERVER_ERROR = """
-            Возникла ошибка при получении данных с сервера.
+    public static final String HANDLER_ERROR = """
+            Возникла ошибка при обработке данных.
             Попробуйте повторить позже""";
     /**
      * Поле сообщения об ошибке при обращении к vk api
@@ -108,4 +111,12 @@ public final class BotTextResponse {
     public static final String VK_API_ERROR = """
             Возникла ошибка при обращении к вк.
             Попробуйте еще раз, если ошибка возникнет еще раз, попробуйте позже.""";
+    /**
+     * Поле сообщения о том, что пользователь не является админом
+     */
+    public static final String IS_NOT_ADMIN = "Вы не является админом этой группы. Если это не так пройди авторизацию с помощью команды /auth_as_admin";
+    /**
+     * Поле сообщения о том, что время ожидания ответа вышло
+     */
+    public static final String TIME_EXPIRED = "Превышен лимит ожидания ответа, повторите операцию еще раз";
 }

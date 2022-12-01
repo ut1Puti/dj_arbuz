@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:console/src/main/java/dj/arbuz/database/GroupRelatedData.java
+package dj.arbuz.database;
+========
 package dj.arbuz.database.local;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/database/local/GroupRelatedData.java
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -14,7 +18,11 @@ import java.util.List;
  * @version 1.5
  */
 @EqualsAndHashCode
+<<<<<<<< HEAD:console/src/main/java/dj/arbuz/database/GroupRelatedData.java
+final class GroupRelatedData {
+========
 class GroupRelatedData {
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/database/local/GroupRelatedData.java
     /**
      * Поле хранящее подписанных пользователей
      */

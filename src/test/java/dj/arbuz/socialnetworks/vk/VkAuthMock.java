@@ -1,8 +1,14 @@
 package dj.arbuz.socialnetworks.vk;
 
+import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import dj.arbuz.socialnetworks.vk.oAuth.AbstractVkAuth;
 import dj.arbuz.user.BotUser;
+<<<<<<<< HEAD:common/src/test/java/dj/arbuz/socialnetworks/vk/VkAuthMock.java
+
+import java.util.List;
+========
+>>>>>>>> developTaskFour:src/test/java/dj/arbuz/socialnetworks/vk/VkAuthMock.java
 
 /**
  * Тестовый класс авторизации в vk
@@ -53,7 +59,21 @@ class VkAuthMock extends AbstractVkAuth {
      * @return ссылку на страницу с авторизацией
      */
     @Override
-    public String getAuthUrl() {
-        return authUrl;
+    public String getAuthUrl(String userTelegramId) {
+        return authUrl + "&state=" + userTelegramId;
+    }
+
+    @Override
+    public String getGroupAuthUrl(List<String> adminGroupsId) {
+        return null;
+    }
+
+    /**
+     * @param groupsId
+     * @return
+     */
+    @Override
+    public List<GroupActor> createGroupActor(List<String> groupsId) {
+        return null;
     }
 }

@@ -1,4 +1,9 @@
 package dj.arbuz.socialnetworks.socialnetwork.oAuth;
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/socialnetworks/socialnetwork/oAuth/SocialNetworkAuth.java
+
+import java.util.List;
+========
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/socialnetworks/socialnetwork/oAuth/SocialNetworkAuth.java
 
 /**
  * Интерфейс для аутентификации пользователя в социальной сети
@@ -8,7 +13,7 @@ package dj.arbuz.socialnetworks.socialnetwork.oAuth;
  * @author Кедровских Олег
  * @version 1.0
  */
-public interface SocialNetworkAuth<S, U> {
+public interface SocialNetworkAuth<S, U, GU> {
     /**
      * Метод для создания пользователя приложения социальной сети
      *
@@ -31,5 +36,15 @@ public interface SocialNetworkAuth<S, U> {
      *
      * @return ссылку для аутентификации в социальной сети, если ссылка по какой-то причине отсутствует возвращает {@code null}
      */
-    String getAuthUrl();
+    String getAuthUrl(String userInSystemId);
+
+    /**
+     *
+     *
+     * @param adminGroupsId
+     * @return
+     */
+    String getGroupAuthUrl(List<String> adminGroupsId);
+
+    List<GU> createGroupActor(List<String> groupsId);
 }

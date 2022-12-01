@@ -1,9 +1,15 @@
+<<<<<<<< HEAD:console/src/main/java/dj/arbuz/console/ConsoleBot.java
+package dj.arbuz.console;
+
+import dj.arbuz.BotMessageExecutable;
+========
 package dj.arbuz.bots.console;
 
 import dj.arbuz.bots.BotMessageExecutable;
 import dj.arbuz.handlers.messages.MessageHandlerImpl;
 import dj.arbuz.handlers.notifcations.ConsolePostsPullingThread;
 import dj.arbuz.bots.StoppableByUser;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/console/ConsoleBot.java
 import httpserver.server.HttpServer;
 import stoppable.StoppableThread;
 
@@ -15,9 +21,12 @@ import java.util.Scanner;
  * @author Кедровских Олег
  * @version 1.2
  * @see StoppableThread
- * @see StoppableByUser
  */
+<<<<<<<< HEAD:console/src/main/java/dj/arbuz/console/ConsoleBot.java
+public final class ConsoleBot extends StoppableThread implements BotMessageExecutable {
+========
 public final class ConsoleBot extends StoppableThread implements StoppableByUser, BotMessageExecutable {
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/console/ConsoleBot.java
     /**
      * Поле id пользователя консольной версии бота
      */
@@ -59,7 +68,7 @@ public final class ConsoleBot extends StoppableThread implements StoppableByUser
      * Метод с логикой выполняемой внутри потока
      *
      * @see StoppableThread#run()
-     * @see MessageHandlerImpl#handleMessage(String, String, StoppableByUser)
+     * @see dj.arbuz.handlers.messages.MessageHandlerImpl#handleMessage(String, String)
      * @see ConsolePostsPullingThread#start()
      * @see ConsolePostsPullingThread#stopWithInterrupt()
      */
@@ -70,7 +79,7 @@ public final class ConsoleBot extends StoppableThread implements StoppableByUser
         while (working.get()) {
 
             if (userInput.hasNextLine()) {
-                messageExecutor.executeTextMessage(defaultConsoleUserId, userInput.nextLine(), this);
+                messageExecutor.executeTextMessage(defaultConsoleUserId, userInput.nextLine());
             }
 
         }
@@ -93,13 +102,5 @@ public final class ConsoleBot extends StoppableThread implements StoppableByUser
         }
 
         System.out.println(responseSendMessage);
-    }
-
-    /**
-     * Метод реализующий интерфейс для остановки бота пользователем
-     */
-    @Override
-    public void stopByUser() {
-        stopWithInterrupt();
     }
 }

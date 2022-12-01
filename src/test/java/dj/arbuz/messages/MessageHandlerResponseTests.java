@@ -7,6 +7,7 @@ import dj.arbuz.user.BotUser;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,14 +28,20 @@ public class MessageHandlerResponseTests {
      */
     @Test
     public void testNullMessageConstructor() {
-        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().build(testUserId);
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().build(List.of(testUserId));
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
         assertEquals(List.of(), response.getPostsMessages());
+<<<<<<<< HEAD:common/src/test/java/dj/arbuz/messages/MessageHandlerResponseTests.java
+        assertFalse((response.hasAdditionalMessage()));
+        assertNull(response.getAdditionalMessage());
+        assertEquals(List.of(testUserId), response.getUsersSendResponseId());
+========
         assertFalse((response.hasUpdateUser()));
         assertNull(response.getUpdateUser());
         assertEquals(testUserId, response.getUserSendResponseId());
+>>>>>>>> developTaskFour:src/test/java/dj/arbuz/messages/MessageHandlerResponseTests.java
     }
     /**
      * Метод тестирующий методы связанные с текстовым сообщением от бота
@@ -42,31 +49,43 @@ public class MessageHandlerResponseTests {
     @Test
     public void testTextMessageConstructorsAndSettersAndGetters() {
         String expectedMessage = "some test message";
-        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().textMessage(expectedMessage).build(testUserId);
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().textMessage(expectedMessage).build(List.of(testUserId));
         assertTrue(response.hasTextMessage());
         assertEquals(expectedMessage, response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
         assertEquals(List.of(), response.getPostsMessages());
+<<<<<<<< HEAD:common/src/test/java/dj/arbuz/messages/MessageHandlerResponseTests.java
+        assertFalse((response.hasAdditionalMessage()));
+        assertNull(response.getAdditionalMessage());
+        assertEquals(List.of(testUserId), response.getUsersSendResponseId());
+========
         assertFalse((response.hasUpdateUser()));
         assertNull(response.getUpdateUser());
         assertEquals(testUserId, response.getUserSendResponseId());
+>>>>>>>> developTaskFour:src/test/java/dj/arbuz/messages/MessageHandlerResponseTests.java
     }
 
     /**
      * Метод тестирующий методы связанный с созданием нового пользователя
      */
     @Test
-    public void testUpdateUserConstructorsAndSettersAndGetters() {
+    public void testUpdateUserConstructorsAndSettersAndGetters() throws ExecutionException, InterruptedException {
         MessageHandlerResponse response = MessageHandlerResponse.newBuilder()
-                .updateUser(CompletableFuture.supplyAsync(() -> new BotUser(100, "accessToken", testUserId)))
-                .build(testUserId);
+                .additionalMesage(CompletableFuture.supplyAsync(() -> "Hello"))
+                .build(List.of(testUserId));
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
         assertEquals(List.of(), response.getPostsMessages());
+<<<<<<<< HEAD:common/src/test/java/dj/arbuz/messages/MessageHandlerResponseTests.java
+        assertTrue((response.hasAdditionalMessage()));
+        assertEquals("Hello", response.getAdditionalMessage().get());
+        assertEquals(List.of(testUserId), response.getUsersSendResponseId());
+========
         assertTrue((response.hasUpdateUser()));
         assertNotNull(response.getUpdateUser());
         assertEquals(testUserId, response.getUserSendResponseId());
+>>>>>>>> developTaskFour:src/test/java/dj/arbuz/messages/MessageHandlerResponseTests.java
     }
 
     /**
@@ -75,14 +94,14 @@ public class MessageHandlerResponseTests {
     @Test
     public void testNewPostsConstructorsAndSettersAndGetters() {
         List<String> newPosts = Arrays.asList("first post", "second post");
-        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().postsText(newPosts).build(testUserId);
+        MessageHandlerResponse response = MessageHandlerResponse.newBuilder().postsText(newPosts).build(List.of(testUserId));
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertTrue((response.hasPostsMessages()));
         assertNotNull(response.getPostsMessages());
         assertEquals(newPosts, response.getPostsMessages());
-        assertFalse((response.hasUpdateUser()));
-        assertNull(response.getUpdateUser());
-        assertEquals(testUserId, response.getUserSendResponseId());
+        assertFalse((response.hasAdditionalMessage()));
+        assertNull(response.getAdditionalMessage());
+        assertEquals(List.of(testUserId), response.getUsersSendResponseId());
     }
 }

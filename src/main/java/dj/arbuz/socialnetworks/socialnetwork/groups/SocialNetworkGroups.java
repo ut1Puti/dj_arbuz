@@ -1,7 +1,11 @@
 package dj.arbuz.socialnetworks.socialnetwork.groups;
 
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/socialnetworks/socialnetwork/groups/SocialNetworkGroups.java
+import dj.arbuz.user.BotUser;
+========
 import dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/socialnetworks/socialnetwork/groups/SocialNetworkGroups.java
 
 import java.util.List;
 
@@ -36,8 +40,10 @@ public interface SocialNetworkGroups<G, U> {
      * @throws NoGroupException возникает если не нашлось групп по полученной от пользователя строке,
      * либо если среди полученных групп ни одна, ни совпадает хотя бы на 50% с исходной строкой
      * @throws SocialNetworkException возникает при ошибках обращения к api социальной сети
-     * @throws SocialNetworkAuthException возникает при ошибке аутентификации пользователя
+     * @throws dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException возникает при ошибке аутентификации пользователя
      */
     G searchGroup(String userReceivedGroupName, U userCallingMethod)
             throws NoGroupException, SocialNetworkException;
+
+    List<? extends G> searchUserAdminGroups(BotUser userCallingMethod) throws SocialNetworkException;
 }

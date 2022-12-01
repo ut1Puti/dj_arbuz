@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:console/src/main/java/dj/arbuz/database/UserStorage.java
+package dj.arbuz.database;
+========
 package dj.arbuz.database.local;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/database/local/UserStorage.java
 
 import com.google.gson.reflect.TypeToken;
 import dj.arbuz.database.UserBase;
@@ -7,10 +11,11 @@ import dj.arbuz.user.BotUser;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
-public class UserStorage implements UserBase {
+public final class UserStorage implements UserBase {
     private Map<String, BotUser> usersBase;
 
     private static UserStorage userStorage = null;
@@ -22,7 +27,7 @@ public class UserStorage implements UserBase {
      * @param botUser данные юзера
      * @return {@code true}
      */
-    public boolean addInfoUser(String userId, BotUser botUser) {
+    public boolean addUser(String userId, BotUser botUser) {
         usersBase.put(userId, botUser);
         return true;
     }
@@ -35,7 +40,7 @@ public class UserStorage implements UserBase {
         }.getType();
         GsonLoader<Map<String, BotUser>> loader = new GsonLoader<>(userStorageMapType);
         try {
-            loader.loadToJson("src/main/resources/anonsrc/database_for_users.json", usersBase);
+            loader.loadToJson(LocalDatabasePaths.LOCAL_USER_DATA_BASE_PATH, usersBase);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -49,7 +54,7 @@ public class UserStorage implements UserBase {
         }.getType();
         GsonLoader<Map<String, BotUser>> loader = new GsonLoader<>(userStorageMapType);
         try {
-            usersBase = loader.loadFromJson("src/main/resources/anonsrc/database_for_users.json");
+            usersBase = loader.loadFromJson(LocalDatabasePaths.LOCAL_USER_DATA_BASE_PATH);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -91,5 +96,36 @@ public class UserStorage implements UserBase {
      */
     public BotUser getUser(String userId) {
         return usersBase.get(userId);
+    }
+
+    /**
+     * Метод получающий всех пользователей пользующихся консольной версией бота
+     *
+     * @return список id пользователей пользующихся консольной версией бота
+     */
+    @Override
+    public List<String> getAllUsersId() {
+        return usersBase.keySet().stream().toList();
+    }
+
+    /**
+     * Метод проверяющий является ли пользователь админом приложения
+     *
+     * @param userId id пользователя
+     * @return {@code true} тк пользователь консольной версии является единственным пользователем приложения
+     */
+    @Override
+    public boolean isAdmin(String userId) {
+        return true;
+    }
+
+    /**
+     * Метод удаляющий пользователя из базы данных
+     *
+     * @param userTelegramId id пользователя в телеграме
+     */
+    @Override
+    public void deleteUser(String userTelegramId) {
+        usersBase.remove(userTelegramId);
     }
 }

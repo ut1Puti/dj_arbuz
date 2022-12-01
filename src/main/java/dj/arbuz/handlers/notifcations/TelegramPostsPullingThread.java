@@ -1,8 +1,15 @@
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramPostsPullingThread.java
+package dj.arbuz.telegram;
+
+import dj.arbuz.database.GroupBase;
+import dj.arbuz.handlers.notifcations.PostsPullingThread;
+========
 package dj.arbuz.handlers.notifcations;
 
 import dj.arbuz.bots.telegram.TelegramBot;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.local.GroupsStorage;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/handlers/notifcations/TelegramPostsPullingThread.java
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.vk.Vk;
 
@@ -16,7 +23,7 @@ import java.util.Optional;
  * @version 1.7
  * @see PostsPullingThread
  */
-public class TelegramPostsPullingThread extends PostsPullingThread {
+public final class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Поле телеграмм бота
      *
@@ -39,13 +46,13 @@ public class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Метод логики выполняемой внутри {@code TelegramPostsPullingThread}
      *
-     * @see GroupsStorage#getGroups()
+     * @see GroupsStorage#getGroupsScreenName()
      * @see GroupsStorage#getSubscribedToGroupUsersId(String)
      */
     @Override
     public void run() {
         while (working.get()) {
-            for (String groupScreenName : groupsBase.getGroups()) {
+            for (String groupScreenName : groupsBase.getGroupsScreenName()) {
                 Optional<List<String>> threadFindNewPosts;
                 try {
                     threadFindNewPosts = getNewPostsAsStrings(groupScreenName);

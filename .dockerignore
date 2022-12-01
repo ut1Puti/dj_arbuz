@@ -1,0 +1,21 @@
+# игнорируем модули не относящиеся к запускаемому
+console/
+
+# игнорируем папки связанные с разработкой
+.idea/
+.fleet/
+.git/
+README.md
+.gitignore
+
+# игнорируем файлы связанные со сборкой проекта
+gradle/
+.gradle/
+gradlew
+gradlew.bat
+gradle.properties
+*.gradle
+
+# игнорируем папки связанные с тестирование проекта
+postgres-data/
+test

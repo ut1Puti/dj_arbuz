@@ -7,7 +7,12 @@ import com.vk.api.sdk.httpclient.HttpTransportClient;
 import dj.arbuz.socialnetworks.vk.oAuth.VkAuth;
 import httpserver.server.HttpServer;
 import org.junit.jupiter.api.Test;
+<<<<<<<< HEAD:common/src/test/java/dj/arbuz/socialnetworks/vk/oAuth/VkAuthTests.java
+
+import java.nio.file.Path;
+========
 import dj.arbuz.user.BotUser;
+>>>>>>>> developTaskFour:src/test/java/dj/arbuz/socialnetworks/vk/oAuth/VkAuthTests.java
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,9 +38,7 @@ public class VkAuthTests {
     /**
      * Поле класса аутентификации пользователя в vk
      */
-    private static final VkAuth vkAuth = new VkAuth(
-            vk, httpServer,"src/test/resources/anonsrc/vk_config.json"
-    );
+    private static final VkAuth vkAuth = new VkAuth(vk, httpServer, Path.of("src", "test", "resources", "configs", "vk.cfg.json"));
 
     /**
      * Метод для тестирования создания пользователя приложения vk
@@ -51,17 +54,8 @@ public class VkAuthTests {
      */
     @Test
     public void testAuthUrl() {
-        String expectedAuthUrl = "https://oauth.vk.com/authorize?client_id=51434490&display=page&redirect_uri=http://localhost:8080/redirect.html&scope=270336&response_type=code&v=5.131";
-        String authUrl = vkAuth.getAuthUrl();
+        String expectedAuthUrl = "https://oauth.vk.com/authorize?client_id=51434490&display=page&redirect_uri=http://localhost:8080/redirect.html&scope=270336&response_type=code&v=5.131&state=1";
+        String authUrl = vkAuth.getAuthUrl("1");
         assertEquals(expectedAuthUrl, authUrl);
-    }
-
-    /**
-     * Метод для тестирования случая при котором пользователь не согласился принимать разрешения доступа бота
-     */
-    @Test
-    public void testCreateUserWithRejectionOfStates() {
-        BotUser user = vkAuth.createBotUser("some telegram id");
-        assertNull(user);
     }
 }

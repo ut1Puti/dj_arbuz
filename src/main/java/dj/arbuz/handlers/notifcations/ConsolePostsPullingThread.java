@@ -1,12 +1,18 @@
+<<<<<<<< HEAD:console/src/main/java/dj/arbuz/console/ConsolePostsPullingThread.java
+package dj.arbuz.console;
+
+import dj.arbuz.database.GroupsStorage;
+import dj.arbuz.handlers.notifcations.PostsPullingThread;
+========
 package dj.arbuz.handlers.notifcations;
 
 import dj.arbuz.database.local.GroupsStorage;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/handlers/notifcations/ConsolePostsPullingThread.java
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.vk.Vk;
 
 import java.util.List;
 import java.util.Optional;
-
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -16,7 +22,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @version 1.7
  * @see PostsPullingThread
  */
-public class ConsolePostsPullingThread extends PostsPullingThread {
+public final class ConsolePostsPullingThread extends PostsPullingThread {
     /**
      * Поле хранящее новые посты
      */

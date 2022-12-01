@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramBotConfiguration.java
+package dj.arbuz.telegram;
+========
 package dj.arbuz.bots.telegram;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramBotConfiguration.java
 
 import com.google.gson.JsonSyntaxException;
 import loaders.gson.GsonLoader;
@@ -7,6 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramBotConfiguration.java
+import java.nio.file.Path;
+========
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramBotConfiguration.java
 
 /**
  * Класс хранящий конфигурацию телеграм бота
@@ -32,7 +40,7 @@ public final class TelegramBotConfiguration {
      * @param telegramBotConfigurationJsonFilePath путь до json файла с конфигурацией бота
      * @return {@code TelegramBotConfiguration} с конфигурацией указанной в файле
      */
-    static TelegramBotConfiguration loadTelegramBotConfigurationFromJson(String telegramBotConfigurationJsonFilePath) {
+    static TelegramBotConfiguration loadTelegramBotConfigurationFromJson(Path telegramBotConfigurationJsonFilePath) {
         try {
             GsonLoader<TelegramBotConfiguration> telegramBotConfigurationGsonLoader =
                     new GsonLoader<>(TelegramBotConfiguration.class);
@@ -50,7 +58,6 @@ public final class TelegramBotConfiguration {
     }
 
     /**
-     * <<<<<<< HEAD
      * Метод создающий объект класса из параметров окружения программы
      *
      * @return {@code TelegramBotConfiguration} с параметрами конфигрурации из локального окружения

@@ -1,21 +1,34 @@
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramBot.java
+package dj.arbuz.telegram;
+
+import dj.arbuz.BotMessageExecutable;
+import dj.arbuz.TelegramConfigPaths;
+import dj.arbuz.database.HibernateUtil;
+========
 package dj.arbuz.bots.telegram;
 
 import dj.arbuz.bots.BotMessageExecutable;
 import dj.arbuz.bots.StoppableByUser;
 import dj.arbuz.database.hibernate.HibernateUtil;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramBot.java
 import httpserver.server.HttpServer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramBot.java
+========
 import stoppable.Stoppable;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramBot.java
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import stoppable.Stoppable;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +38,22 @@ import java.util.List;
  * @author Щёголев Андрей
  * @version 1.2
  */
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramBot.java
+public final class TelegramBot extends TelegramLongPollingBot implements Stoppable, BotMessageExecutable {
+========
 public final class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser, BotMessageExecutable {
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramBot.java
     /**
      * Поле класса содержащего конфигурацию телеграм бота
      *
      * @see TelegramBotConfiguration
      */
     private final TelegramBotConfiguration telegramBotConfiguration;
+    /**
+     * Поле класс для исполнения сообщений пользователя
+     *
+     * @see TelegramMessageExecutor
+     */
     private final TelegramMessageExecutor messageExecutor;
 
     /**
@@ -52,11 +74,12 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
      *
      * @param tgConfigurationFilePath путь до json файла с конфигурацией
      */
-    public TelegramBot(String tgConfigurationFilePath) {
+    public TelegramBot(Path tgConfigurationFilePath) {
         //TODO кнопки
         super();
         telegramBotConfiguration = TelegramBotConfiguration.loadTelegramBotConfigurationFromJson(tgConfigurationFilePath);
         messageExecutor = new TelegramMessageExecutor(this);
+        messageExecutor.start();
     }
 
     /**
@@ -69,7 +92,8 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
         messageExecutor.start();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RuntimeException {
+        HibernateUtil.getSessionFactory();
         HttpServer httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {
@@ -78,7 +102,7 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
 
         httpServer.start();
 
-        TelegramBot telegramBot = new TelegramBot();
+        TelegramBot telegramBot = new TelegramBot(TelegramConfigPaths.TELEGRAM_CONFIG_PATH);
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(telegramBot);
@@ -88,7 +112,7 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
         while (telegramBot.isWorking()) Thread.onSpinWait();
         telegramBot.stopWithInterrupt();
         httpServer.stop();
-        HibernateUtil.getSessionFactory().close();
+        HibernateUtil.shutdown();
         System.exit(0);
     }
 
@@ -124,7 +148,7 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
         if (update.hasMessage() && update.getMessage().hasText()) {
             String userReceivedMessage = update.getMessage().getText();
             String userReceivedMessageId = update.getMessage().getChatId().toString();
-            messageExecutor.executeUserMessage(userReceivedMessageId, userReceivedMessage, this);
+            messageExecutor.executeUserMessage(userReceivedMessageId, userReceivedMessage);
         }
 
     }
@@ -137,10 +161,15 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
      */
     @Override
     public void send(String userSendResponseId, String responseSendMessage) {
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramBot.java
+        SendMessage sendMessage = new SendMessage(userSendResponseId, TelegramMessageParser.parseMessageTextToHtml(responseSendMessage));
+        sendMessage.setParseMode(ParseMode.HTML);
+========
         SendMessage sendMessage = new SendMessage();
         sendMessage.setParseMode(ParseMode.HTML);
         sendMessage.setText(TelegramMessageParser.parseMessageTextToHtml(responseSendMessage));
         sendMessage.setChatId(userSendResponseId);
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramBot.java
         ReplyKeyboardMarkup keyBoardMarkup = new ReplyKeyboardMarkup();
         keyBoardMarkup.setKeyboard(keyBoardRows);
         try {
@@ -167,13 +196,5 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
     public void stopWithInterrupt() {
         messageExecutor.stop();
         exe.shutdownNow();
-    }
-
-    /**
-     * Реализация интерфейса позволяющая останавливать поток по запросу пользователя
-     */
-    @Override
-    public void stopByUser() {
-        stopWithInterrupt();
     }
 }

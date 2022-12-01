@@ -1,15 +1,25 @@
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramMessageExecutor.java
+package dj.arbuz.telegram;
+
+import dj.arbuz.database.group.GroupService;
+import dj.arbuz.database.user.UserService;
+========
 package dj.arbuz.bots.telegram;
 
 import dj.arbuz.bots.StoppableByUser;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramMessageExecutor.java
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
 import dj.arbuz.handlers.messages.MessageHandler;
 import dj.arbuz.handlers.messages.MessageHandlerImpl;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramMessageExecutor.java
+========
 import dj.arbuz.handlers.messages.TelegramMessageSender;
 import dj.arbuz.handlers.notifcations.TelegramPostsPullingThread;
 import dj.arbuz.database.hibernate.UsersDao.GroupDatabase;
 import dj.arbuz.database.hibernate.UsersDao.UserDatabase;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramMessageExecutor.java
 import dj.arbuz.socialnetworks.vk.Vk;
 
 /**
@@ -44,11 +54,11 @@ public final class TelegramMessageExecutor {
      * @param telegramBot экземпляр телеграм бота
      */
     public TelegramMessageExecutor(TelegramBot telegramBot) {
-        UserBase userStorage = new UserDatabase();
-        GroupBase groupsStorage = new GroupDatabase();
+        UserBase userStorage = new UserService();
+        GroupBase groupsStorage = new GroupService();
         Vk vk = new Vk();
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
-        messageSender = new TelegramMessageSender(telegramBot, userStorage);
+        messageSender = new TelegramMessageSender(telegramBot);
         notificationPullingThread = new TelegramPostsPullingThread(telegramBot, groupsStorage, vk);
     }
 
@@ -64,10 +74,9 @@ public final class TelegramMessageExecutor {
      *
      * @param userReceivedId        id пользователя от которого было получено сообщение
      * @param userReceivedMessage   полученное от пользователя сообщение
-     * @param stoppableByUserThread поток из которого было получено сообщение
      */
-    public void executeUserMessage(String userReceivedId, String userReceivedMessage, StoppableByUser stoppableByUserThread) {
-        MessageHandlerResponse response = messageHandler.handleMessage(userReceivedMessage, userReceivedId, stoppableByUserThread);
+    public void executeUserMessage(String userReceivedId, String userReceivedMessage) {
+        MessageHandlerResponse response = messageHandler.handleMessage(userReceivedMessage, userReceivedId);
         messageSender.sendResponse(response);
     }
 

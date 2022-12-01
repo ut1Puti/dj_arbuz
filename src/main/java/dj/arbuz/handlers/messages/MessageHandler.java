@@ -1,6 +1,9 @@
 package dj.arbuz.handlers.messages;
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/handlers/messages/MessageHandler.java
+========
 
 import dj.arbuz.bots.StoppableByUser;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/handlers/messages/MessageHandler.java
 
 /**
  * Интерфейс для обработки сообщений бота, полученные от пользователя
@@ -14,8 +17,7 @@ public interface MessageHandler {
      *
      * @param message     сообщение пользователя
      * @param userIdInBot id пользователя в системе бота
-     * @param stoppableByUserThread   поток бота, из которого был получен запрос
      * @return ответ бота на сообщение пользователя
      */
-    MessageHandlerResponse handleMessage(String message, String userIdInBot, StoppableByUser stoppableByUserThread);
+    MessageHandlerResponse handleMessage(String message, String userIdInBot);
 }

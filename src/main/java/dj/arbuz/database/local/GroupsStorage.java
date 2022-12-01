@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:console/src/main/java/dj/arbuz/database/GroupsStorage.java
+package dj.arbuz.database;
+========
 package dj.arbuz.database.local;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/database/local/GroupsStorage.java
 
 import com.google.gson.reflect.TypeToken;
 import dj.arbuz.database.GroupBase;
@@ -22,7 +26,7 @@ import java.util.stream.Collectors;
  * @author Щёголев Андрей
  * @version 1.0
  */
-public class GroupsStorage implements GroupBase {
+public final class GroupsStorage implements GroupBase {
     /**
      * Поле хеш таблицы, где ключ - имя группы в социальной сети, значение - список пользователей
      */
@@ -69,7 +73,7 @@ public class GroupsStorage implements GroupBase {
      * @see GroupsStorage#addNewGroup(String, String)
      * @see GroupsStorage#addOldGroup(String, String)
      */
-    public boolean addInfoToGroup(String groupScreenName, String userSubscribedToGroupId) {
+    public boolean addSubscriber(String groupScreenName, String userSubscribedToGroupId) {
         if (groupsBase.get(groupScreenName) == null) {
             addNewGroup(groupScreenName, userSubscribedToGroupId);
             return true;
@@ -101,7 +105,7 @@ public class GroupsStorage implements GroupBase {
         }.getType();
         GsonLoader<Map<String, GroupRelatedData>> groupStorageMapGsonLoader = new GsonLoader<>(groupStorageMapType);
         try {
-            groupStorageMapGsonLoader.loadToJson("src/main/resources/anonsrc/database_for_groups.json", groupsBase);
+            groupStorageMapGsonLoader.loadToJson(LocalDatabasePaths.LOCAL_GROUP_DATA_BASE_PATH, groupsBase);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -117,7 +121,7 @@ public class GroupsStorage implements GroupBase {
         }.getType();
         GsonLoader<Map<String, GroupRelatedData>> loader = new GsonLoader<>(groupStorageMapType);
         try {
-            groupsBase = loader.loadFromJson("src/main/resources/anonsrc/database_for_groups.json");
+            groupsBase = loader.loadFromJson(LocalDatabasePaths.LOCAL_GROUP_DATA_BASE_PATH);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -130,7 +134,7 @@ public class GroupsStorage implements GroupBase {
      * @param userSubscribedToGroupId id пользователя
      * @return {@code true} если пользователь был удален, {@code false} если пользователь не был удален
      */
-    public boolean deleteInfoFromGroup(String groupScreenName, String userSubscribedToGroupId) {
+    public boolean deleteSubscriber(String groupScreenName, String userSubscribedToGroupId) {
 
         if (!groupsBase.containsKey(groupScreenName)) {
             return false;
@@ -156,7 +160,7 @@ public class GroupsStorage implements GroupBase {
      *
      * @return неизменяемый набор коротких названий групп на которые оформлены подписки
      */
-    public Set<String> getGroups() {
+    public Set<String> getGroupsScreenName() {
         return Set.copyOf(groupsBase.keySet());
     }
 
@@ -233,10 +237,26 @@ public class GroupsStorage implements GroupBase {
     }
 
     /**
-     * Метод очищающий хранилище подписок и сохраняющий его в файл
+     * Метод проверяющий является ли пользователь админом группы
+     *
+     * @param groupScreenName короткое имя группы
+     * @param userId id пользователя
+     * @return {@code true} - если является, {@code false} - если не является
      */
-    public void clear() {
-        saveToJsonFile();
-        groupsBase.clear();
+    @Override
+    public boolean isGroupAdmin(String groupScreenName, String userId) {
+        return false;
+    }
+
+    /**
+     * Метод добавляющий значение в базу, если такого значения еще не было
+     *
+     * @param groupScreenName короткое название группы
+     * @return {@code true} если было добавлено или уже было в базе, {@code false} - если не было добавлено из-за ошибки
+     */
+    @Override
+    public boolean putIfAbsent(String groupScreenName) {
+        groupsBase.putIfAbsent(groupScreenName, new GroupRelatedData(Instant.now().getEpochSecond()));
+        return true;
     }
 }

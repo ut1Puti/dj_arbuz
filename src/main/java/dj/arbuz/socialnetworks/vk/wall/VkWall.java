@@ -1,6 +1,10 @@
 package dj.arbuz.socialnetworks.vk.wall;
 
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/socialnetworks/vk/wall/VkWall.java
+import dj.arbuz.BotTextResponse;
+========
 import dj.arbuz.bots.BotTextResponse;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/socialnetworks/vk/wall/VkWall.java
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.Actor;
 import com.vk.api.sdk.client.actors.ServiceActor;
@@ -9,8 +13,13 @@ import com.vk.api.sdk.exceptions.ApiAuthException;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.wall.WallpostFull;
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/socialnetworks/vk/wall/VkWall.java
+import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
+import dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
+========
 import dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/socialnetworks/vk/wall/VkWall.java
 import dj.arbuz.socialnetworks.vk.VkConstants;
 import dj.arbuz.user.BotUser;
 
@@ -76,15 +85,13 @@ public final class VkWall extends AbstractVkWall {
      * @param groupSearchString короткое имя группы в которой ищем посты
      * @param amountOfPosts     кол-во постов
      * @return список постов в виде {@link WallpostFull}
-     * @throws SocialNetworkException     возникает при ошибке обращения к vk api
      * @throws SocialNetworkAuthException возникает при ошибках аутентификации пользователя в vk
      * @throws IllegalArgumentException   возникает при передаче кол-ва постов большего, чем можно получить(max 100).
      *                                    Возникает при вызове пользователем не имеющем доступа к этому методу(пример из vk sdk GroupActor)
      * @see VkWall#searchPostsInGroup(String, int, Actor)
      */
     @Override
-    public List<WallpostFull> getPosts(String groupSearchString, int amountOfPosts, Actor userCalledMethod)
-            throws SocialNetworkException {
+    public List<WallpostFull> getPosts(String groupSearchString, int amountOfPosts, Actor userCalledMethod) throws SocialNetworkException {
 
         if (amountOfPosts > 100) {
             throw new IllegalArgumentException("Кол-во запрашиваемых постов превышает кол-во доступных к получению");

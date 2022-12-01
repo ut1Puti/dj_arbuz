@@ -1,6 +1,10 @@
 package dj.arbuz.socialnetworks.socialnetwork.groups;
 
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/socialnetworks/socialnetwork/groups/SubscribeStatus.java
+import dj.arbuz.BotTextResponse;
+========
 import dj.arbuz.bots.BotTextResponse;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/socialnetworks/socialnetwork/groups/SubscribeStatus.java
 
 /**
  * Енум результатов подписки на группу

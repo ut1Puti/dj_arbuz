@@ -1,3 +1,12 @@
+<<<<<<<< HEAD:console/src/main/java/dj/arbuz/console/ConsoleMessageExecutor.java
+package dj.arbuz.console;
+
+import dj.arbuz.database.GroupsStorage;
+import dj.arbuz.database.UserStorage;
+import dj.arbuz.handlers.messages.MessageHandler;
+import dj.arbuz.handlers.messages.MessageHandlerImpl;
+import dj.arbuz.handlers.messages.MessageHandlerResponse;
+========
 package dj.arbuz.bots.console;
 
 import dj.arbuz.bots.StoppableByUser;
@@ -8,6 +17,7 @@ import dj.arbuz.handlers.messages.MessageHandler;
 import dj.arbuz.handlers.messages.MessageHandlerImpl;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import dj.arbuz.handlers.notifcations.ConsolePostsPullingThread;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/console/ConsoleMessageExecutor.java
 import dj.arbuz.socialnetworks.vk.Vk;
 
 /**
@@ -47,7 +57,7 @@ public final class ConsoleMessageExecutor {
         Vk vk = new Vk();
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
         notificationPullingThread = new ConsolePostsPullingThread(consoleBot.getName(), groupsStorage, vk);
-        messageSender = new ConsoleMessageSender(consoleBot, userStorage, notificationPullingThread);
+        messageSender = new ConsoleMessageSender(consoleBot, notificationPullingThread);
     }
 
     /**
@@ -62,10 +72,9 @@ public final class ConsoleMessageExecutor {
      *
      * @param userReceivedId id пользователя от которого было получено сообщение
      * @param userReceivedMessage полученное от пользователя сообщение
-     * @param stoppableByUserThread поток из которого было получено сообщение
      */
-    public void executeTextMessage(String userReceivedId, String userReceivedMessage, StoppableByUser stoppableByUserThread) {
-        MessageHandlerResponse response = messageHandler.handleMessage(userReceivedMessage, userReceivedId, stoppableByUserThread);
+    public void executeTextMessage(String userReceivedId, String userReceivedMessage) {
+        MessageHandlerResponse response = messageHandler.handleMessage(userReceivedMessage, userReceivedId);
         messageSender.sendResponse(response);
     }
 
