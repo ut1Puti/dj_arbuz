@@ -2,16 +2,27 @@ package dj.arbuz.socialnetworks.vk;
 
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.objects.wall.WallpostFull;
+<<<<<<<< HEAD:common/src/test/java/dj/arbuz/socialnetworks/vk/AbstractVkTests.java
 import dj.arbuz.database.GroupBase;
+========
+import dj.arbuz.database.local.GroupsStorage;
+import org.junit.jupiter.api.BeforeEach;
+>>>>>>>> developTaskFour:src/test/java/dj/arbuz/socialnetworks/vk/AbstractVkTests.java
 import org.junit.jupiter.api.Test;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.SubscribeStatus;
 import dj.arbuz.user.BotUser;
+<<<<<<<< HEAD:common/src/test/java/dj/arbuz/socialnetworks/vk/AbstractVkTests.java
 import org.mockito.Mockito;
+========
+>>>>>>>> developTaskFour:src/test/java/dj/arbuz/socialnetworks/vk/AbstractVkTests.java
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

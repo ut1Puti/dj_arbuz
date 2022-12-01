@@ -7,6 +7,10 @@ import dj.arbuz.socialnetworks.vk.wall.VkWall;
 import httpserver.server.HttpServer;
 import dj.arbuz.socialnetworks.vk.groups.VkGroups;
 import dj.arbuz.socialnetworks.vk.oAuth.VkAuth;
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/socialnetworks/vk/Vk.java
+import dj.arbuz.socialnetworks.vk.wall.VkWall;
+========
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/socialnetworks/vk/Vk.java
 
 /**
  * Класс обрабатывающий запросы пользователя к Vk API

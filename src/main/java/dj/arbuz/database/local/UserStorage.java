@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:console/src/main/java/dj/arbuz/database/UserStorage.java
 package dj.arbuz.database;
+========
+package dj.arbuz.database.local;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/database/local/UserStorage.java
 
 import com.google.gson.reflect.TypeToken;
 import dj.arbuz.database.UserBase;

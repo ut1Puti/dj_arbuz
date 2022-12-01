@@ -1,13 +1,25 @@
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramMessageExecutor.java
 package dj.arbuz.telegram;
 
 import dj.arbuz.database.group.GroupService;
 import dj.arbuz.database.user.UserService;
+========
+package dj.arbuz.bots.telegram;
 
+import dj.arbuz.bots.StoppableByUser;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramMessageExecutor.java
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
 import dj.arbuz.handlers.messages.MessageHandler;
 import dj.arbuz.handlers.messages.MessageHandlerImpl;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramMessageExecutor.java
+========
+import dj.arbuz.handlers.messages.TelegramMessageSender;
+import dj.arbuz.handlers.notifcations.TelegramPostsPullingThread;
+import dj.arbuz.database.hibernate.UsersDao.GroupDatabase;
+import dj.arbuz.database.hibernate.UsersDao.UserDatabase;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramMessageExecutor.java
 import dj.arbuz.socialnetworks.vk.Vk;
 
 /**

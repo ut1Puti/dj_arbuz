@@ -7,6 +7,7 @@ import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.GroupIsClosed;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import dj.arbuz.database.GroupBase;
+<<<<<<<< HEAD:common/src/main/java/dj/arbuz/socialnetworks/vk/AbstractVk.java
 import dj.arbuz.socialnetworks.socialnetwork.AbstractSocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
@@ -14,10 +15,24 @@ import dj.arbuz.socialnetworks.socialnetwork.groups.SubscribeStatus;
 import dj.arbuz.socialnetworks.vk.groups.AbstractVkGroups;
 import dj.arbuz.socialnetworks.vk.oAuth.AbstractVkAuth;
 import dj.arbuz.socialnetworks.vk.wall.AbstractVkWall;
+========
+import dj.arbuz.database.local.GroupsStorage;
+import dj.arbuz.socialnetworks.socialnetwork.AbstractSocialNetwork;
+import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
+import dj.arbuz.socialnetworks.vk.wall.AbstractVkWall;
+import dj.arbuz.socialnetworks.vk.wall.VkWall;
+import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
+import dj.arbuz.socialnetworks.socialnetwork.groups.SubscribeStatus;
+import dj.arbuz.socialnetworks.socialnetwork.oAuth.SocialNetworkAuthException;
+import dj.arbuz.socialnetworks.vk.groups.AbstractVkGroups;
+import dj.arbuz.socialnetworks.vk.groups.VkGroups;
+import dj.arbuz.socialnetworks.vk.oAuth.AbstractVkAuth;
 import dj.arbuz.socialnetworks.vk.oAuth.VkAuth;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/socialnetworks/vk/AbstractVk.java
 import dj.arbuz.user.BotUser;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Абстрактный класс обработчика запросов к vk api

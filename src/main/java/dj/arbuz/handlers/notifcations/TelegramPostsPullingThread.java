@@ -1,7 +1,15 @@
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramPostsPullingThread.java
 package dj.arbuz.telegram;
 
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.handlers.notifcations.PostsPullingThread;
+========
+package dj.arbuz.handlers.notifcations;
+
+import dj.arbuz.bots.telegram.TelegramBot;
+import dj.arbuz.database.GroupBase;
+import dj.arbuz.database.local.GroupsStorage;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/handlers/notifcations/TelegramPostsPullingThread.java
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.vk.Vk;
 
@@ -38,8 +46,8 @@ public final class TelegramPostsPullingThread extends PostsPullingThread {
     /**
      * Метод логики выполняемой внутри {@code TelegramPostsPullingThread}
      *
-     * @see GroupBase#getGroupsScreenName()
-     * @see GroupBase#getSubscribedToGroupUsersId(String)
+     * @see GroupsStorage#getGroupsScreenName()
+     * @see GroupsStorage#getSubscribedToGroupUsersId(String)
      */
     @Override
     public void run() {

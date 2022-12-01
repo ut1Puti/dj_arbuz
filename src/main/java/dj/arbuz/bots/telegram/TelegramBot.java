@@ -1,16 +1,26 @@
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramBot.java
 package dj.arbuz.telegram;
 
 import dj.arbuz.BotMessageExecutable;
 import dj.arbuz.TelegramConfigPaths;
 import dj.arbuz.database.HibernateUtil;
+========
+package dj.arbuz.bots.telegram;
 
+import dj.arbuz.bots.BotMessageExecutable;
+import dj.arbuz.bots.StoppableByUser;
+import dj.arbuz.database.hibernate.HibernateUtil;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramBot.java
 import httpserver.server.HttpServer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramBot.java
+========
 import stoppable.Stoppable;
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramBot.java
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -28,7 +38,11 @@ import java.util.List;
  * @author Щёголев Андрей
  * @version 1.2
  */
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramBot.java
 public final class TelegramBot extends TelegramLongPollingBot implements Stoppable, BotMessageExecutable {
+========
+public final class TelegramBot extends TelegramLongPollingBot implements Stoppable, StoppableByUser, BotMessageExecutable {
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramBot.java
     /**
      * Поле класса содержащего конфигурацию телеграм бота
      *
@@ -147,8 +161,15 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
      */
     @Override
     public void send(String userSendResponseId, String responseSendMessage) {
+<<<<<<<< HEAD:telegram/src/main/java/dj/arbuz/telegram/TelegramBot.java
         SendMessage sendMessage = new SendMessage(userSendResponseId, TelegramMessageParser.parseMessageTextToHtml(responseSendMessage));
         sendMessage.setParseMode(ParseMode.HTML);
+========
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setParseMode(ParseMode.HTML);
+        sendMessage.setText(TelegramMessageParser.parseMessageTextToHtml(responseSendMessage));
+        sendMessage.setChatId(userSendResponseId);
+>>>>>>>> developTaskFour:src/main/java/dj/arbuz/bots/telegram/TelegramBot.java
         ReplyKeyboardMarkup keyBoardMarkup = new ReplyKeyboardMarkup();
         keyBoardMarkup.setKeyboard(keyBoardRows);
         try {
