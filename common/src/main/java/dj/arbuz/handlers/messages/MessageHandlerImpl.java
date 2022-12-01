@@ -186,7 +186,6 @@ public final class MessageHandlerImpl implements MessageHandler {
                 default -> {
                     MessageTelegramHandler unknownCommand = new UnknownCommand();
                     return unknownCommand.sendMessage(null, userSendResponseId);
-//                    return UNKNOWN_COMMAND.build(List.of(userSendResponseId));
                 }
             }
         }
@@ -202,27 +201,22 @@ public final class MessageHandlerImpl implements MessageHandler {
                 case "/link" -> {
                     MessageTelegramHandler getGroupUrlMessage = new GetGroupUrl(usersBase, vk);
                     return getGroupUrlMessage.sendMessage(commandAndArgs[ARG_INDEX], userSendResponseId);
-//                    return getGroupUrl(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/id" -> {
                     MessageTelegramHandler groupIdMessage = new GetGroupId(usersBase, vk);
                     return groupIdMessage.sendMessage(commandAndArgs[ARG_INDEX],userSendResponseId);
-//                    return getGroupId(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/subscribe" -> {
                     MessageTelegramHandler subscribeToMessage = new SubsribeTo(groupsBase,usersBase, vk);
                     return subscribeToMessage.sendMessage(commandAndArgs[ARG_INDEX], userSendResponseId);
-//                    return subscribeTo(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/unsubscribe" -> {
                     MessageTelegramHandler unsubscribeFrom = new UnsubscribeFrom(groupsBase,usersBase, vk);
                     return unsubscribeFrom.sendMessage(commandAndArgs[ARG_INDEX], userSendResponseId);
-//                    return unsubscribeFrom(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/five_posts" -> {
                     MessageTelegramHandler getFiveLastPosts = new GetFiveLastPosts(usersBase, vk);
                     return getFiveLastPosts.sendMessage(commandAndArgs[ARG_INDEX], userSendResponseId);
-//                    return getFiveLastPosts(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
             }
         }
@@ -341,7 +335,7 @@ public final class MessageHandlerImpl implements MessageHandler {
     /**
      * Метод отправляющий сообщение всем пользователям
      *
-     * @param usersSendMessage      сообщение, которое будет отправлено пользователям
+     * @param usersSendMessage сообщение, которое будет отправлено пользователям
      * @param userReceivedMessageId id пользователя от имени которого будет отправлено сообщение
      * @return ответ содержащий сообщение верифицированного пользователя, от имени которого будет отправлено сообщение
      */
@@ -428,6 +422,7 @@ public final class MessageHandlerImpl implements MessageHandler {
 //        try {
 //            return MessageHandlerResponse.newBuilder()
 //                    .textMessage(socialNetwork.getGroupUrl(userReceivedGroupName, userCallingMethod))
+//                    .textMessage(socialNetwork.getGroupId(userReceivedGroupName, userCallingMethod))
 //                    .build(List.of(userSendResponseId));
 //        } catch (NoGroupException | SocialNetworkException e) {
 //            return MessageHandlerResponse.newBuilder()

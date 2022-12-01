@@ -9,6 +9,7 @@ public class TelegramMessageParser {
      */
     private static final Pattern groupNameAndLinkRegex = Pattern.compile("\\[(?<name>[@а-яА-Я\\w\\s]+)]\\((?<link>https://vk.com/\\w*\\d*)\\)?");
     private static final Pattern urlLinkRegex = Pattern.compile("\\[(?<name>[@а-яА-Я\\w\\s]+)]\\((?<link>https://oauth.vk.com/\\w*\\d*.*)\\)?");
+  
     /**
      * Конструктор - приватный тк этот запрещено создавать экземпляры этого класса
      */
