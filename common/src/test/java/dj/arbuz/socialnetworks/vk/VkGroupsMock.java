@@ -89,6 +89,11 @@ class VkGroupsMock extends AbstractVkGroups {
 
         throw new NoGroupException(userReceivedGroupName);
     }
+
+    @Override
+    public List<? extends Group> searchUserAdminGroups(BotUser userCallingMethod) throws SocialNetworkException {
+        return null;
+    }
 }
 
 class GroupList extends ArrayList<Group> {

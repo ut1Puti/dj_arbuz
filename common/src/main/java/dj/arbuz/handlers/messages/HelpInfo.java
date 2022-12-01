@@ -1,6 +1,6 @@
 package dj.arbuz.handlers.messages;
 
-import dj.arbuz.bots.BotTextResponse;
+import dj.arbuz.BotTextResponse;
 
 import java.util.List;
 

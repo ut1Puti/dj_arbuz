@@ -1,8 +1,9 @@
 package dj.arbuz.handlers.messages;
 
-import dj.arbuz.bots.BotTextResponse;
+import dj.arbuz.BotTextResponse;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
+import dj.arbuz.handlers.messages.MessageHandlerResponse.MessageHandlerResponseBuilder;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
 import dj.arbuz.socialnetworks.vk.Vk;
 import dj.arbuz.socialnetworks.vk.VkConstants;
@@ -18,29 +19,29 @@ public class GetUserSubscribedGroupsLinks implements MessageTelegramHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#NOT_AUTHED_USER
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
-                                                                                                                      .textMessage(BotTextResponse.NOT_AUTHED_USER);
+    private static final MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NOT_AUTHED_USER);
     /**
      * Поле сообщения с текстом, в котором говориться, что пользователь не был подписчиком группы
      *
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#NOT_SUBSCRIBER
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder NOT_SUBSCRIBER = MessageHandlerResponse.newBuilder()
-                                                                                                                     .textMessage(BotTextResponse.NOT_SUBSCRIBER);
+    private static final MessageHandlerResponseBuilder NOT_SUBSCRIBER = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NOT_SUBSCRIBER);
     /**
      * Поле сообщения с текстом, в котором говориться, что пользователь не подписан ни на одну группу
      *
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#NO_SUBSCRIBED_GROUPS
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder NO_SUBSCRIBED_GROUPS = MessageHandlerResponse.newBuilder()
-                                                                                                                           .textMessage(BotTextResponse.NO_SUBSCRIBED_GROUPS);
+    private static final MessageHandlerResponseBuilder NO_SUBSCRIBED_GROUPS = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NO_SUBSCRIBED_GROUPS);
 
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
-     * @see UserStorage
+     * @see UserBase
      */
     private final UserBase usersBase;
     private final GroupBase groupsBase;

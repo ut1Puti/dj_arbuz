@@ -16,7 +16,7 @@ public class HttpServerConfiguration {
     /**
      * Поле пути до файлов доступных серверу
      */
-    public static final String WEB_SRC = "src/main/resources/websrc";
+    public static final String WEB_SRC = "common/src/main/resources/websrc";
     /**
      * Поле файла при истечении времени аутентификации
      */

@@ -4,10 +4,10 @@ import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import dj.arbuz.ConfigPaths;
 import httpserver.server.HttpServer;
 import org.junit.jupiter.api.Test;
-import dj.arbuz.user.BotUser;
+
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,7 +33,7 @@ public class VkAuthTests {
     /**
      * Поле класса аутентификации пользователя в vk
      */
-    private static final VkAuth vkAuth = new VkAuth(vk, httpServer, ConfigPaths.VK_CONFIG_PATH);
+    private static final VkAuth vkAuth = new VkAuth(vk, httpServer, Path.of("src", "test", "resources", "configs", "vk.cfg.json"));
 
     /**
      * Метод для тестирования создания пользователя приложения vk

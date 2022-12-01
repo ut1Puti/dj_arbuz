@@ -1,5 +1,9 @@
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'java-library'
+
+    group = 'dj-arbuz'
+    version = '4.0.0-SNAPSHOT'
 
     java {
         toolchain {
@@ -15,9 +19,6 @@ subprojects {
         options.encoding('UTF-8')
     }
 
-    group = 'dj_arbuz'
-    version = '4.0.0-SNAPSHOT'
-
     configurations {
         compileOnly {
             extendsFrom annotationProcessor
@@ -29,10 +30,6 @@ subprojects {
     }
 
     dependencies {
-        implementation 'org.telegram:telegrambots:6.1.0'
-        implementation 'com.vk.api:sdk:1.0.14'
-        implementation 'org.hibernate.orm:hibernate-core:6.1.4.Final'
-        implementation 'org.postgresql:postgresql:42.5.0'
         compileOnly 'org.projectlombok:lombok:1.18.24'
         annotationProcessor 'org.projectlombok:lombok:1.18.24'
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'

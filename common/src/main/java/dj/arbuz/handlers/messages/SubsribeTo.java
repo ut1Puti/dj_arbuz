@@ -1,6 +1,6 @@
 package dj.arbuz.handlers.messages;
 
-import dj.arbuz.bots.BotTextResponse;
+import dj.arbuz.BotTextResponse;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
@@ -17,7 +17,7 @@ public class SubsribeTo implements MessageTelegramHandler{
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
-     * @see UserStorage
+     * @see UserBase
      */
     private final UserBase usersBase;
     private final GroupBase groupsBase;

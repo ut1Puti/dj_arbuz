@@ -6,7 +6,7 @@ services:
     restart: always
     container_name: dj_arbuz_telegram_bot
     volumes:
-      - ./src/main/resources/configs:/usr/dj_arbuz/src/main/resources/configs
+      - ./telegram/src/main/resources/configs:/usr/telegram/dj_arbuz/telegram/src/main/resources/configs
     ports:
       - "8080:8080"
     links:

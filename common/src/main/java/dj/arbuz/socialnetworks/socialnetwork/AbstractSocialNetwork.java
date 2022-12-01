@@ -15,13 +15,13 @@ import dj.arbuz.socialnetworks.socialnetwork.wall.SocialNetworkWall;
  * @author Кедровских Олег
  * @version 1.0
  */
-public abstract class AbstractSocialNetwork<G, P, U, S, A> implements SocialNetwork<P, U> {
+public abstract class AbstractSocialNetwork<G, P, U, S, A, GU> implements SocialNetwork<P, G, U, GU> {
     /**
      * Поле класс для авторизации в социальной сети
      *
      * @see SocialNetworkAuth
      */
-    protected final SocialNetworkAuth<S, U> oAuth;
+    protected final SocialNetworkAuth<S, U, GU> oAuth;
     /**
      * Поле класса групп социальной сети
      *
@@ -42,7 +42,7 @@ public abstract class AbstractSocialNetwork<G, P, U, S, A> implements SocialNetw
      * @param groups класс групп социальной сети
      * @param wall класс стены социальной сети
      */
-    protected AbstractSocialNetwork(SocialNetworkAuth<S, U> oAuth, SocialNetworkGroups<G, U> groups, SocialNetworkWall<P, A> wall) {
+    protected AbstractSocialNetwork(SocialNetworkAuth<S, U, GU> oAuth, SocialNetworkGroups<G, U> groups, SocialNetworkWall<P, A> wall) {
         this.oAuth = oAuth;
         this.groups = groups;
         this.wall = wall;

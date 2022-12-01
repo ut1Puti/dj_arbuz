@@ -1,6 +1,6 @@
 package dj.arbuz.socialnetworks.vk.groups;
 
-import dj.arbuz.bots.BotTextResponse;
+import dj.arbuz.BotTextResponse;
 import org.junit.jupiter.api.Test;
 import dj.arbuz.socialnetworks.socialnetwork.groups.SubscribeStatus;
 
