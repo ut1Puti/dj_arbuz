@@ -182,7 +182,7 @@ public final class GroupService implements GroupBase {
     public boolean putIfAbsent(String groupScreenName) {
         GroupDto dbSavingGroup = groupRepository.getByScreenName(groupScreenName);
 
-        if (dbSavingGroup == null) {
+        if (dbSavingGroup != null) {
             return true;
         }
 
@@ -192,5 +192,36 @@ public final class GroupService implements GroupBase {
                 .build();
 
         return groupRepository.save(dbSavingGroup) == dbSavingGroup;
+    }
+
+    /**
+     * Метод добавляющий нового админа группы
+     *
+     * @param groupScreenName короткое имя группы
+     * @param userId id пользователя
+     * @return {@code true} - если сохранение прошло успешно,
+     * {@code false} - если пользователя нет в базе данных или возникла ошибка при сохранении
+     */
+    @Override
+    public boolean addAdmin(String groupScreenName, String userId) {
+        GroupDto dbSavedGroup = groupRepository.getByScreenName(groupScreenName);
+
+        if (dbSavedGroup == null) {
+            return false;
+        }
+
+        BotUser subscriber = userService.getUser(userId);
+        UserDto subscriberDto = UserDto.builder()
+                .telegramId(subscriber.getTelegramId())
+                .vkId(Long.valueOf(subscriber.getId()))
+                .accessToken(subscriber.getAccessToken())
+                .build();
+
+        if (dbSavedGroup.getAdmins().contains(subscriberDto)) {
+            return true;
+        } else {
+            dbSavedGroup.addAdmin(subscriberDto);
+            return groupRepository.update(dbSavedGroup) == dbSavedGroup;
+        }
     }
 }

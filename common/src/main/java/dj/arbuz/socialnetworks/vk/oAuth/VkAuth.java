@@ -1,11 +1,9 @@
 package dj.arbuz.socialnetworks.vk.oAuth;
 
 import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.GroupAuthResponse;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import httpserver.server.HttpServer;
 import dj.arbuz.user.BotUser;
@@ -13,7 +11,6 @@ import dj.arbuz.user.BotUser;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.List;
 
 /**
  * Класс для аутентификации пользователей
@@ -128,7 +125,7 @@ public final class VkAuth extends AbstractVkAuth {
      */
     private String getAuthCodeFromHttpServer(String userSystemId) {
         String authCode = null;
-        for (int codeRequestsCounter = 0; codeRequestsCounter < 60; codeRequestsCounter++) {
+        while (authCode == null){
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -140,8 +137,8 @@ public final class VkAuth extends AbstractVkAuth {
 
             if (httpGetParam.userTelegramId.equals(userSystemId)) {
                 authCode = httpGetParam.authCode;
-                break;
             }
+
         }
         return authCode;
     }

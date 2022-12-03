@@ -252,4 +252,17 @@ public final class GroupsStorage implements GroupBase {
         groupsBase.putIfAbsent(groupScreenName, new GroupRelatedData(Instant.now().getEpochSecond()));
         return true;
     }
+
+    /**
+     * Метод добавляющий нового админа группы
+     *
+     * @param groupScreenName короткое имя группы
+     * @param userId          id пользователя
+     * @return {@code true} - если сохранение прошло успешно,
+     * {@code false} - если пользователя нет в базе данных или возникла ошибка при сохранении
+     */
+    @Override
+    public boolean addAdmin(String groupScreenName, String userId) {
+        return false;
+    }
 }

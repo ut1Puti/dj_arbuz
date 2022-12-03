@@ -1,16 +1,23 @@
 package dj.arbuz.handlers.messages;
 
-import dj.arbuz.BotTextResponse;
-import dj.arbuz.handlers.messages.MessageHandlerResponse.MessageHandlerResponseBuilder;
-
 import java.util.List;
 
-public class UnknownCommand implements MessageTelegramHandler{
-    private static final MessageHandlerResponseBuilder UNKNOWN_COMMAND = MessageHandlerResponse.newBuilder()
-            .textMessage(BotTextResponse.UNKNOWN_COMMAND);
-
+/**
+ * Класс для обработки неизвестной команды
+ *
+ * @author Кедровских Олег
+ * @version 1.0
+ */
+public class UnknownCommand extends DjArbuzAbstractMessageHandler {
+    /**
+     * Метод для обработки сообщения пользователем
+     *
+     * @param message     сообщение пользователя
+     * @param userSendResponseId id пользователя в системе бота
+     * @return ответ бота на сообщение пользователя
+     */
     @Override
-    public MessageHandlerResponse sendMessage(String userReceivedGroupName, String userSendResponseId) {
+    public MessageHandlerResponse handleMessage(String message, String userSendResponseId) {
         return UNKNOWN_COMMAND.build(List.of(userSendResponseId));
     }
 }

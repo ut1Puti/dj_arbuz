@@ -1,19 +1,23 @@
 package dj.arbuz.handlers.messages;
 
-import dj.arbuz.BotTextResponse;
 import dj.arbuz.database.UserBase;
-import dj.arbuz.handlers.messages.MessageHandlerResponse.MessageHandlerResponseBuilder;
-import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
+import dj.arbuz.socialnetworks.socialnetwork.AbstractSocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
 import dj.arbuz.socialnetworks.vk.AbstractVk;
 import dj.arbuz.user.BotUser;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-public class GetGroupUrl implements MessageTelegramHandler {
-    private static final MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
-            .textMessage(BotTextResponse.NOT_AUTHED_USER);
+/**
+ * Класс обработки команды /link
+ *
+ * @author Щеголев Андрей
+ * @version 1.0
+ */
+@RequiredArgsConstructor
+public class GetGroupUrl extends DjArbuzAbstractMessageHandler {
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
@@ -23,17 +27,26 @@ public class GetGroupUrl implements MessageTelegramHandler {
     /**
      * Поле класса для взаимодействия с api социальной сети
      *
-     * @see SocialNetwork
+     * @see AbstractVk
      */
     private final AbstractVk socialNetwork;
 
-    public GetGroupUrl(UserBase usersBase, AbstractVk vk) {
-        this.usersBase = usersBase;
-        this.socialNetwork = vk;
-    }
-
+    /**
+     * Метод возвращающий ответ на /link
+     *
+     * @param userReceivedGroupName имя группы
+     * @param userSendResponseId    id пользователю, которому будет отправлен ответ
+     * @return ссылку на верифицированную группу если такая нашлась
+     * @see AbstractSocialNetwork#getGroupUrl(String, Object)
+     * @see MessageHandlerResponse#newBuilder()
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
+     */
     @Override
-    public MessageHandlerResponse sendMessage(String userReceivedGroupName, String userSendResponseId) {
+    public MessageHandlerResponse handleMessage(String userReceivedGroupName, String userSendResponseId) {
+        if (userReceivedGroupName == null) {
+            return createNoArgumentMessage("/link", "название группы или исполнителя")
+                    .build(List.of(userSendResponseId));
+        }
 
         if (!usersBase.contains(userSendResponseId)) {
             return NOT_AUTHED_USER.build(List.of(userSendResponseId));

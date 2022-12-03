@@ -55,4 +55,8 @@ public class GroupDto {
     public void addNewSubscriber(UserDto subscriber) {
         subscribedUsers.add(subscriber);
     }
+
+    public void addAdmin(UserDto admin) {
+        admins.add(admin);
+    }
 }

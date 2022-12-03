@@ -1,8 +1,8 @@
 package dj.arbuz.handlers.messages;
 
-public class PostToAllUsers implements MessageTelegramHandler{
+public class PostToAllUsers extends DjArbuzAbstractMessageHandler{
     @Override
-    public MessageHandlerResponse sendMessage(String userReceivedGroupName, String userSendResponseId) {
+    public MessageHandlerResponse handleMessage(String userReceivedGroupName, String userSendResponseId) {
         return null;
     }
 }

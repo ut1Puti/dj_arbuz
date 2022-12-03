@@ -94,4 +94,14 @@ public interface GroupBase {
      * @return {@code true} если было добавлено или уже было в базе, {@code false} - если не было добавлено из-за ошибки
      */
     boolean putIfAbsent(String groupScreenName);
+
+    /**
+     * Метод добавляющий нового админа группы
+     *
+     * @param groupScreenName короткое имя группы
+     * @param userId id пользователя
+     * @return {@code true} - если сохранение прошло успешно,
+     * {@code false} - если пользователя нет в базе данных или возникла ошибка при сохранении
+     */
+    boolean addAdmin(String groupScreenName, String userId);
 }
