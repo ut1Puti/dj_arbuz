@@ -55,11 +55,6 @@ public class AbstractVk extends AbstractSocialNetwork<Group, WallpostFull, BotUs
         return oAuth.getAuthUrl(userTelegramId);
     }
 
-    @Override
-    public final String getGroupsAuthUrl(List<String> adminGroupId) {
-        return oAuth.getGroupAuthUrl(adminGroupId);
-    }
-
     /**
      * Метод для асинхронного создания пользователя
      *
@@ -74,11 +69,6 @@ public class AbstractVk extends AbstractSocialNetwork<Group, WallpostFull, BotUs
     @Override
     public BotUser createBotUser(String userSystemId) {
         return oAuth.createBotUser(userSystemId);
-    }
-
-    @Override
-    public List<GroupActor> createGroupActors(List<String> adminGroupsId) {
-        return oAuth.createGroupActor(adminGroupsId);
     }
 
     /**

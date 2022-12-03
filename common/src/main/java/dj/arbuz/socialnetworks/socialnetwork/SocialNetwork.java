@@ -24,28 +24,12 @@ public interface SocialNetwork<W, G, U, GU> {
     String getAuthUrl(String userSystemId);
 
     /**
-     * Метод получающий ссылку для авторизации пользователя как админа групп
-     *
-     * @param adminGroupId id пользователя
-     * @return строку, содержащую ссылку для авторизации пользователя
-     */
-    String getGroupsAuthUrl(List<String> adminGroupId);
-
-    /**
      * Метод для асинхронного создания пользователя
      *
      * @param userId id пользователя в системе
      * @return {@code CompletableFuture<User>}, который выполняет логику создания пользователя
      */
     U createBotUser(String userId);
-
-    /**
-     *
-     *
-     * @param adminGroupsId
-     * @return
-     */
-    List<GU> createGroupActors(List<String> adminGroupsId);
 
     /**
      * Метод получающий ссылку на группу, найденную по подстроке полученной от пользователя

@@ -157,7 +157,7 @@ public final class VkWall extends AbstractVkWall {
         final int minGroupId = -1;
 
         if (groupPostSearchingId > minGroupId) {
-            throw new IllegalArgumentException("Id группы не может быть положительным числом");
+            throw new IllegalArgumentException("Id группы не может быть не отрицательным числом");
         }
 
         if (userCalledMethod instanceof BotUser) {

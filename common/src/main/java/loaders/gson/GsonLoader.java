@@ -25,19 +25,6 @@ public final class GsonLoader<T> {
      * @see Gson
      */
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    /**
-     * Поле типа, который преобразуем
-     */
-    private final Type jsonLoadingType;
-
-    /**
-     * Конструктор - создает экземпляр класса
-     *
-     * @param jsonLoadingType тип, который будет обрабатываться экземпляром {@code GenericsGsonLoader}
-     */
-    public GsonLoader(Type jsonLoadingType) {
-        this.jsonLoadingType = jsonLoadingType;
-    }
 
     /**
      * Метод превращающий прочитанную из json файла строку в экземпляр типа {@code T}
@@ -46,7 +33,7 @@ public final class GsonLoader<T> {
      * @return экземпляр типа {@code T} созданный из строки из переданного файла
      * @throws IOException возникает при ошибках чтения файла
      */
-    public T loadFromJson(Path pathToLoadObject) throws IOException {
+    public T loadFromJson(Path pathToLoadObject, Type jsonLoadingType) throws IOException {
         try (Reader fileReader = Files.newBufferedReader(pathToLoadObject)) {
             return GSON.fromJson(fileReader, jsonLoadingType);
         }
@@ -58,7 +45,7 @@ public final class GsonLoader<T> {
      * @param objectToString объект, который превратиться в json строку
      * @return json строку объекта
      */
-    public String createToJsonString(T objectToString) {
+    public String toJsonString(T objectToString) {
         return GSON.toJson(objectToString);
     }
 
@@ -68,7 +55,7 @@ public final class GsonLoader<T> {
      * @param jsonString json строка объекта
      * @return объект построенный по json строке
      */
-    public T createFromJsonString(String jsonString) {
+    public T fromJsonString(String jsonString, Type jsonLoadingType) {
         return GSON.fromJson(jsonString, jsonLoadingType);
     }
 
@@ -88,6 +75,7 @@ public final class GsonLoader<T> {
         String json = GSON.toJson(objectToSave);
         try (Writer fileWriter = Files.newBufferedWriter(pathToSaveObject, StandardCharsets.UTF_8)) {
             fileWriter.write(json);
+            fileWriter.flush();
         }
     }
 }

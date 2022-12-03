@@ -1,4 +1,4 @@
-package dj.arbuz.user;
+package dj.arbuz.handlers.user;
 
 import dj.arbuz.user.BotUser;
 import org.junit.jupiter.api.Test;

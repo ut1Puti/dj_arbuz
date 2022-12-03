@@ -34,14 +34,4 @@ public interface SocialNetworkAuth<S, U, GU> {
      * @return ссылку для аутентификации в социальной сети, если ссылка по какой-то причине отсутствует возвращает {@code null}
      */
     String getAuthUrl(String userInSystemId);
-
-    /**
-     *
-     *
-     * @param adminGroupsId
-     * @return
-     */
-    String getGroupAuthUrl(List<String> adminGroupsId);
-
-    List<GU> createGroupActor(List<String> groupsId);
 }

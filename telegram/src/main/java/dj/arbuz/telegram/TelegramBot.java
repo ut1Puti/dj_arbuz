@@ -65,7 +65,6 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
         super();
         telegramBotConfiguration = TelegramBotConfiguration.loadTelegramBotConfigurationFromJson(tgConfigurationFilePath);
         messageExecutor = new TelegramMessageExecutor(this);
-        messageExecutor.start();
     }
 
     /**
@@ -75,7 +74,6 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
         super();
         telegramBotConfiguration = TelegramBotConfiguration.loadFromEnvVariables();
         messageExecutor = new TelegramMessageExecutor(this);
-        messageExecutor.start();
     }
 
     public static void main(String[] args) throws RuntimeException {

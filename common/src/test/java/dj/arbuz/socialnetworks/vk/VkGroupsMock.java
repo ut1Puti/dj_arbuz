@@ -28,9 +28,9 @@ class VkGroupsMock extends AbstractVkGroups {
     private final Map<String, List<Group>> testVkGroupsMap = new HashMap<>();
 
     VkGroupsMock(Path groupsTestDataJsonFilePath) {
-        GsonLoader<GroupList> jsonLoader = new GsonLoader<>(GroupList.class);
+        GsonLoader<GroupList> jsonLoader = new GsonLoader<>();
         try {
-            GroupList groups = jsonLoader.loadFromJson(groupsTestDataJsonFilePath);
+            GroupList groups = jsonLoader.loadFromJson(groupsTestDataJsonFilePath, GroupList.class);
             for (Group group : groups) {
                 testVkGroupsMap.put(group.getName(), List.of(group));
             }

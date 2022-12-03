@@ -10,6 +10,10 @@ import dj.arbuz.handlers.messages.MessageHandlerImpl;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import dj.arbuz.socialnetworks.vk.Vk;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Класс исполнителя сообщений пользователя телеграм бота
  *
@@ -32,9 +36,9 @@ public final class TelegramMessageExecutor {
     /**
      * Поле потока получения уведомлений о новых постах
      *
-     * @see TelegramPostsPullingThread
+     * @see TelegramPostsPullingTask
      */
-    private final TelegramPostsPullingThread notificationPullingThread;
+    private final ScheduledExecutorService telegramPostsPullingThread = Executors.newScheduledThreadPool(1);
 
     /**
      * Конструктор - создает экземпляр класса
@@ -47,14 +51,7 @@ public final class TelegramMessageExecutor {
         Vk vk = new Vk();
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
         messageSender = new TelegramMessageSender(telegramBot);
-        notificationPullingThread = new TelegramPostsPullingThread(telegramBot, groupsStorage, vk);
-    }
-
-    /**
-     * Метод запускающий исполнитель
-     */
-    public void start() {
-        notificationPullingThread.start();
+        telegramPostsPullingThread.scheduleAtFixedRate(new TelegramPostsPullingTask(telegramBot, groupsStorage, vk), 0, 1, TimeUnit.HOURS);
     }
 
     /**
@@ -72,6 +69,6 @@ public final class TelegramMessageExecutor {
      * Метод останавливающий работу исполнителя
      */
     public void stop() {
-        notificationPullingThread.stopWithInterrupt();
+        telegramPostsPullingThread.shutdown();
     }
 }

@@ -56,12 +56,9 @@ public final class ConsoleBot extends StoppableThread implements BotMessageExecu
      *
      * @see StoppableThread#run()
      * @see dj.arbuz.handlers.messages.MessageHandlerImpl#handleMessage(String, String)
-     * @see ConsolePostsPullingThread#start()
-     * @see ConsolePostsPullingThread#stopWithInterrupt()
      */
     @Override
     public void run() {
-        messageExecutor.start();
         Scanner userInput = new Scanner(System.in);
         while (working.get()) {
 

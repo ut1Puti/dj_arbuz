@@ -10,7 +10,7 @@ import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.SubscribeStatus;
-import dj.arbuz.socialnetworks.vk.Vk;
+import dj.arbuz.socialnetworks.vk.AbstractVk;
 import dj.arbuz.socialnetworks.vk.VkConstants;
 import dj.arbuz.user.BotUser;
 
@@ -126,7 +126,7 @@ public final class MessageHandlerImpl implements MessageHandler {
      *
      * @see SocialNetwork
      */
-    private final Vk vk;
+    private final AbstractVk vk;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -135,7 +135,7 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @param usersBase  хранилище пользователей, которые аутентифицированы в социальной сети
      * @param vk         класс для взаимодействия с vk
      */
-    public MessageHandlerImpl(GroupBase groupsBase, UserBase usersBase, Vk vk) {
+    public MessageHandlerImpl(GroupBase groupsBase, UserBase usersBase, AbstractVk vk) {
         this.groupsBase = groupsBase;
         this.usersBase = usersBase;
         this.vk = vk;
@@ -207,7 +207,7 @@ public final class MessageHandlerImpl implements MessageHandler {
                     return groupIdMessage.sendMessage(commandAndArgs[ARG_INDEX],userSendResponseId);
                 }
                 case "/subscribe" -> {
-                    MessageTelegramHandler subscribeToMessage = new SubsribeTo(groupsBase,usersBase, vk);
+                    MessageTelegramHandler subscribeToMessage = new SubscribeTo(groupsBase,usersBase, vk);
                     return subscribeToMessage.sendMessage(commandAndArgs[ARG_INDEX], userSendResponseId);
                 }
                 case "/unsubscribe" -> {
@@ -322,10 +322,6 @@ public final class MessageHandlerImpl implements MessageHandler {
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
      */
     private MessageHandlerResponse getStopResponse(String userReceivedMessageId) {
-        if (usersBase.isAdmin(userReceivedMessageId)) {
-            System.exit(0);
-        }
-
         usersBase.deleteUser(userReceivedMessageId);
         return MessageHandlerResponse.newBuilder()
                 .textMessage(BotTextResponse.STOP_INFO)

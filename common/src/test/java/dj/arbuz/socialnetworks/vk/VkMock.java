@@ -8,11 +8,11 @@ import java.nio.file.Path;
  * @author Кедровских Олег
  * @version 1.0
  */
-class VkMock extends AbstractVk {
+public class VkMock extends AbstractVk {
     /**
      * Конструктор - создает экземпляр класса
      */
-    VkMock() {
+    public VkMock() {
         super(new VkAuthMock(),
                 new VkGroupsMock(Path.of("src/test/resources/vk_tests/groups.json")),
                 new VkWallMock(Path.of("src/test/resources/vk_tests/posts.json"))

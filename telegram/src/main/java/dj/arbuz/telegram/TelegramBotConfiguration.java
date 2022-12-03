@@ -35,10 +35,9 @@ public final class TelegramBotConfiguration {
      */
     static TelegramBotConfiguration loadTelegramBotConfigurationFromJson(Path telegramBotConfigurationJsonFilePath) {
         try {
-            GsonLoader<TelegramBotConfiguration> telegramBotConfigurationGsonLoader =
-                    new GsonLoader<>(TelegramBotConfiguration.class);
+            GsonLoader<TelegramBotConfiguration> telegramBotConfigurationGsonLoader = new GsonLoader<>();
             TelegramBotConfiguration telegramBotConfiguration =
-                    telegramBotConfigurationGsonLoader.loadFromJson(telegramBotConfigurationJsonFilePath);
+                    telegramBotConfigurationGsonLoader.loadFromJson(telegramBotConfigurationJsonFilePath, TelegramBotConfiguration.class);
 
             if (telegramBotConfiguration.botUserName == null || telegramBotConfiguration.telegramBotToken == null) {
                 throw new RuntimeException("В переданном файл отсутствуют необходимые для запуска данные");

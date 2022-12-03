@@ -28,9 +28,9 @@ class VkWallMock extends AbstractVkWall {
     private final Map<String, List<WallpostFull>> testVkWallMap = new HashMap<>();
 
     VkWallMock(Path testWallDataJsonFilePath) {
-        GsonLoader<WallpostList> jsonLoader = new GsonLoader<>(WallpostList.class);
+        GsonLoader<WallpostList> jsonLoader = new GsonLoader<>();
         try {
-            WallpostList wallPosts = jsonLoader.loadFromJson(testWallDataJsonFilePath);
+            WallpostList wallPosts = jsonLoader.loadFromJson(testWallDataJsonFilePath, WallpostList.class);
             testVkWallMap.put("sqwore", wallPosts);
             testVkWallMap.put("no groups test", new ArrayList<>());
         } catch (IOException e) {

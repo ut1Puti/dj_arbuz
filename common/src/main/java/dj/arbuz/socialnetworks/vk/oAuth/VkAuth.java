@@ -85,16 +85,6 @@ public final class VkAuth extends AbstractVkAuth {
         return authConfiguration.AUTH_URL + "&state=" + userTelegramId;
     }
 
-    @Override
-    public String getGroupAuthUrl(List<String> adminGroupId) {
-        StringBuilder sb = new StringBuilder("https://oauth.vk.com/authorize?client_id=51434490&display=page&redirect_uri=http://localhost:8080/redirect.html&group_ids=");
-        for (String s : adminGroupId) {
-            sb.append(s).append(',');
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        return sb.append("&scope=messages&response_type=code&v=5.131&state=").append(adminGroupId.hashCode()).toString();
-    }
-
     /**
      * Метод интерфейса CreateUser создающий пользователя.
      * Создается с помощью Vk Java SDK, получая код с сервера
@@ -128,30 +118,6 @@ public final class VkAuth extends AbstractVkAuth {
             System.err.println(e.getMessage());
             return null;
         }
-    }
-
-    @Override
-    public List<GroupActor> createGroupActor(List<String> groupsId) {
-        String authCode = getAuthCodeFromHttpServer(String.valueOf(Math.abs(groupsId.hashCode()) * -1));
-
-        if (authCode == null) {
-            return null;
-        }
-
-        GroupAuthResponse authResponse;
-        try {
-            authResponse = vkApiClient.oAuth().groupAuthorizationCodeFlow(
-                            authConfiguration.APP_ID,
-                            authConfiguration.CLIENT_SECRET,
-                            authConfiguration.REDIRECT_URL,
-                            authCode)
-                    .execute();
-        } catch (ApiException | ClientException e) {
-            System.err.println(e.getMessage());
-            return null;
-        }
-        return authResponse.getAccessTokens().entrySet()
-                .stream().map(entry -> new GroupActor(entry.getKey(), entry.getValue())).toList();
     }
 
     /**

@@ -32,6 +32,7 @@ public final class VkGroups extends AbstractVkGroups {
      * Поле класс позволяющего работать с vk api
      */
     private final VkApiClient vkApiClient;
+    private static final int MAX_ADMIN_GROUP_TO_GET = 1000;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -105,7 +106,7 @@ public final class VkGroups extends AbstractVkGroups {
     public List<? extends Group> searchUserAdminGroups(BotUser userCallingMethod) throws SocialNetworkException {
         try {
             List<Integer> userAdminGroupsId = vkApiClient.groups().get(userCallingMethod).filter(Filter.ADMIN)
-                    .offset(VkConstants.DEFAULT_OFFSET).count(1000)
+                    .offset(VkConstants.DEFAULT_OFFSET).count(MAX_ADMIN_GROUP_TO_GET)
                     .execute().getItems();
 
             return getGroupById(userAdminGroupsId, userCallingMethod);
@@ -145,7 +146,6 @@ public final class VkGroups extends AbstractVkGroups {
             throws SocialNetworkException {
         int maxMembersCount = Integer.MIN_VALUE;
         Group resultGroup = null;
-        List<String> userFindGroupsId = userFindGroups.stream().map(group -> String.valueOf(group.getId())).toList();
         List<GetByIdObjectLegacyResponse> userFindByIdGroups = getGroupById(userFindGroups.stream().map(Group::getId).toList(), userCallingMethod);
         for (GetByIdObjectLegacyResponse userFindByIdGroup : userFindByIdGroups) {
             String[] foundByIdGroupNames = userFindByIdGroup.getName().split("[/|]");

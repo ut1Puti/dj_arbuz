@@ -18,17 +18,17 @@ public final class ConsoleMessageSender extends AbstractMessageSender {
      *
      * @see ConsolePostsPullingThread
      */
-    private final ConsolePostsPullingThread notificationPullingThread;
+    private final ConsolePostsPullingTask notificationPullingTask;
 
     /**
      * Конструктор - создает экземпляр класса
      *
      * @param consoleBot                консольный бот
-     * @param notificationPullingThread поток получающий новые посты в группах
+     * @param notificationPullingTask поток получающий новые посты в группах
      */
-    public ConsoleMessageSender(ConsoleBot consoleBot, ConsolePostsPullingThread notificationPullingThread) {
+    public ConsoleMessageSender(ConsoleBot consoleBot, ConsolePostsPullingTask notificationPullingTask) {
         super(consoleBot);
-        this.notificationPullingThread = notificationPullingThread;
+        this.notificationPullingTask = notificationPullingTask;
     }
 
     /**
@@ -41,8 +41,8 @@ public final class ConsoleMessageSender extends AbstractMessageSender {
         super.sendResponse(userSendResponse);
         List<String> usersSendResponseId = userSendResponse.getUsersSendResponseId();
 
-        if (notificationPullingThread.hasNewPosts()) {
-            for (String newPostText : notificationPullingThread.getNewPosts()) {
+        if (notificationPullingTask.hasNewPosts()) {
+            for (String newPostText : notificationPullingTask.getNewPosts()) {
                 for (String userSendResponseId : usersSendResponseId) {
                     this.sendSingleMessage(userSendResponseId, newPostText);
                 }

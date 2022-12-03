@@ -32,9 +32,7 @@ public final class UserStorage implements UserBase {
      * Метод для сохранения базы данных в json файл
      */
     public void saveToJsonFile() {
-        Type userStorageMapType = new TypeToken<Map<String, BotUser>>() {
-        }.getType();
-        GsonLoader<Map<String, BotUser>> loader = new GsonLoader<>(userStorageMapType);
+        GsonLoader<Map<String, BotUser>> loader = new GsonLoader<>();
         try {
             loader.loadToJson(LocalDatabasePaths.LOCAL_USER_DATA_BASE_PATH, usersBase);
         } catch (IOException e) {
@@ -48,9 +46,9 @@ public final class UserStorage implements UserBase {
     public void returnStorageFromDatabase() {
         Type userStorageMapType = new TypeToken<Map<String, BotUser>>() {
         }.getType();
-        GsonLoader<Map<String, BotUser>> loader = new GsonLoader<>(userStorageMapType);
+        GsonLoader<Map<String, BotUser>> loader = new GsonLoader<>();
         try {
-            usersBase = loader.loadFromJson(LocalDatabasePaths.LOCAL_USER_DATA_BASE_PATH);
+            usersBase = loader.loadFromJson(LocalDatabasePaths.LOCAL_USER_DATA_BASE_PATH, userStorageMapType);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

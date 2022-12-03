@@ -96,9 +96,7 @@ public final class GroupsStorage implements GroupBase {
      * Метод для сохранения хеш таблицы в виде файла с расширением json
      */
     public void saveToJsonFile() {
-        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {
-        }.getType();
-        GsonLoader<Map<String, GroupRelatedData>> groupStorageMapGsonLoader = new GsonLoader<>(groupStorageMapType);
+        GsonLoader<Map<String, GroupRelatedData>> groupStorageMapGsonLoader = new GsonLoader<>();
         try {
             groupStorageMapGsonLoader.loadToJson(LocalDatabasePaths.LOCAL_GROUP_DATA_BASE_PATH, groupsBase);
         } catch (IOException e) {
@@ -114,9 +112,9 @@ public final class GroupsStorage implements GroupBase {
     public void returnStorageFromDatabase() {
         Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {
         }.getType();
-        GsonLoader<Map<String, GroupRelatedData>> loader = new GsonLoader<>(groupStorageMapType);
+        GsonLoader<Map<String, GroupRelatedData>> loader = new GsonLoader<>();
         try {
-            groupsBase = loader.loadFromJson(LocalDatabasePaths.LOCAL_GROUP_DATA_BASE_PATH);
+            groupsBase = loader.loadFromJson(LocalDatabasePaths.LOCAL_GROUP_DATA_BASE_PATH, groupStorageMapType);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

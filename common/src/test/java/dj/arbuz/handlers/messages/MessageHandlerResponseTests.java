@@ -1,4 +1,4 @@
-package dj.arbuz.messages;
+package dj.arbuz.handlers.messages;
 
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import org.junit.jupiter.api.Test;

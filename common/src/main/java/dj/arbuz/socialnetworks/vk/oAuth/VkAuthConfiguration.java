@@ -61,8 +61,8 @@ public final class VkAuthConfiguration {
      */
     static VkAuthConfiguration loadVkAuthConfigurationFromJson(Path vkAuthConfigurationJsonFilePath) {
         try {
-            GsonLoader<VkAuthConfiguration> vkAuthConfigurationGsonLoader = new GsonLoader<>(VkAuthConfiguration.class);
-            VkAuthConfiguration loadedConf = vkAuthConfigurationGsonLoader.loadFromJson(vkAuthConfigurationJsonFilePath);
+            GsonLoader<VkAuthConfiguration> vkAuthConfigurationGsonLoader = new GsonLoader<>();
+            VkAuthConfiguration loadedConf = vkAuthConfigurationGsonLoader.loadFromJson(vkAuthConfigurationJsonFilePath, VkAuthConfiguration.class);
             if (loadedConf.APP_ID == null || loadedConf.AUTH_URL == null ||
                     loadedConf.REDIRECT_URL == null || loadedConf.CLIENT_SECRET == null ||
                     loadedConf.SERVICE_CLIENT_SECRET == null) {

@@ -3,17 +3,18 @@ package dj.arbuz.handlers.messages;
 import dj.arbuz.BotTextResponse;
 import dj.arbuz.database.GroupBase;
 import dj.arbuz.database.UserBase;
+import dj.arbuz.handlers.messages.MessageHandlerResponse.MessageHandlerResponseBuilder;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
-import dj.arbuz.socialnetworks.vk.Vk;
+import dj.arbuz.socialnetworks.vk.AbstractVk;
 import dj.arbuz.user.BotUser;
 
 import java.util.List;
 
-public class SubsribeTo implements MessageTelegramHandler{
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
-                                                                                                                      .textMessage(BotTextResponse.NOT_AUTHED_USER);
+public class SubscribeTo implements MessageTelegramHandler {
+    private static final MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NOT_AUTHED_USER);
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
@@ -26,14 +27,15 @@ public class SubsribeTo implements MessageTelegramHandler{
      *
      * @see SocialNetwork
      */
-    private final Vk socialNetwork;
+    private final AbstractVk socialNetwork;
 
 
-    public SubsribeTo(GroupBase groupBase,UserBase usersBase, Vk vk) {
+    public SubscribeTo(GroupBase groupBase, UserBase usersBase, AbstractVk vk) {
         this.groupsBase = groupBase;
         this.usersBase = usersBase;
         this.socialNetwork = vk;
     }
+
     @Override
     public MessageHandlerResponse sendMessage(String userReceivedGroupName, String userSendResponseId) {
 
@@ -45,12 +47,12 @@ public class SubsribeTo implements MessageTelegramHandler{
 
         try {
             return MessageHandlerResponse.newBuilder()
-                                         .textMessage(socialNetwork.subscribeTo(groupsBase, userReceivedGroupName, userCallingMethod).getSubscribeMessage())
-                                         .build(List.of(userSendResponseId));
+                    .textMessage(socialNetwork.subscribeTo(groupsBase, userReceivedGroupName, userCallingMethod).getSubscribeMessage())
+                    .build(List.of(userSendResponseId));
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageHandlerResponse.newBuilder()
-                                         .textMessage(e.getMessage())
-                                         .build(List.of(userSendResponseId));
+                    .textMessage(e.getMessage())
+                    .build(List.of(userSendResponseId));
         }
     }
 }

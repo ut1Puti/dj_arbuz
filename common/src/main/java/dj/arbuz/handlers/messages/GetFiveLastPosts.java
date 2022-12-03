@@ -3,10 +3,11 @@ package dj.arbuz.handlers.messages;
 import dj.arbuz.BotTextResponse;
 
 import dj.arbuz.database.UserBase;
+import dj.arbuz.handlers.messages.MessageHandlerResponse.MessageHandlerResponseBuilder;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
-import dj.arbuz.socialnetworks.vk.Vk;
+import dj.arbuz.socialnetworks.vk.AbstractVk;
 import dj.arbuz.user.BotUser;
 
 import java.util.List;
@@ -20,15 +21,14 @@ public class GetFiveLastPosts  implements MessageTelegramHandler{
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
      * @see BotTextResponse#NO_POSTS_IN_GROUP
      */
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder NO_POSTS_IN_GROUP = MessageHandlerResponse.newBuilder()
-                                                                                                                        .textMessage(BotTextResponse.NO_POSTS_IN_GROUP);
-  private static final MessageHandlerResponse.MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
-                                                                                                                      .textMessage(BotTextResponse.NOT_AUTHED_USER);
-
+    private static final MessageHandlerResponseBuilder NO_POSTS_IN_GROUP = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NO_POSTS_IN_GROUP);
+    private static final MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NOT_AUTHED_USER);
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
-     * @see UserStorage
+     * @see UserBase
      */
     private final UserBase usersBase;
     /**
@@ -36,8 +36,8 @@ public class GetFiveLastPosts  implements MessageTelegramHandler{
      *
      * @see SocialNetwork
      */
-    private final Vk socialNetwork;
-    public GetFiveLastPosts(UserBase usersBase, Vk vk) {
+    private final AbstractVk socialNetwork;
+    public GetFiveLastPosts(UserBase usersBase, AbstractVk vk) {
         this.usersBase = usersBase;
         this.socialNetwork = vk;
     }

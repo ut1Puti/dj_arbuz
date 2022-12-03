@@ -7,6 +7,10 @@ import dj.arbuz.handlers.messages.MessageHandlerImpl;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import dj.arbuz.socialnetworks.vk.Vk;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Класс исполнителя сообщений пользователя консольного бота
  *
@@ -27,11 +31,15 @@ public final class ConsoleMessageExecutor {
      */
     private final ConsoleMessageSender messageSender;
     /**
+     *
+     */
+    private final ConsolePostsPullingTask consolePostsPullingTask;
+    /**
      * Поле потока получения уведомлений о новых постах
      *
-     * @see ConsolePostsPullingThread
+     * @see ConsolePostsPullingTask
      */
-    private final ConsolePostsPullingThread notificationPullingThread;
+    private final ScheduledExecutorService consolePostsPullingThread = Executors.newScheduledThreadPool(1);
 
     /**
      * Конструктор - создает экземпляр класса
@@ -43,16 +51,11 @@ public final class ConsoleMessageExecutor {
         GroupsStorage groupsStorage = GroupsStorage.getInstance();
         Vk vk = new Vk();
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
-        notificationPullingThread = new ConsolePostsPullingThread(consoleBot.getName(), groupsStorage, vk);
-        messageSender = new ConsoleMessageSender(consoleBot, notificationPullingThread);
+        consolePostsPullingTask = new ConsolePostsPullingTask(consoleBot.getName(), groupsStorage, vk);
+        consolePostsPullingThread.scheduleAtFixedRate(consolePostsPullingTask, 0, 1, TimeUnit.HOURS);
+        messageSender = new ConsoleMessageSender(consoleBot, consolePostsPullingTask);
     }
 
-    /**
-     * Метод запускающий исполнитель
-     */
-    public void start() {
-        notificationPullingThread.start();
-    }
 
     /**
      * Метод исполняющий текстовое сообщение пользователя
@@ -69,7 +72,7 @@ public final class ConsoleMessageExecutor {
      * Метод останавливающий работу исполнителя
      */
     public void stop() {
-        notificationPullingThread.stopWithInterrupt();
+        consolePostsPullingThread.shutdown();
         UserStorage.getInstance().saveToJsonFile();
         GroupsStorage.getInstance().saveToJsonFile();
     }

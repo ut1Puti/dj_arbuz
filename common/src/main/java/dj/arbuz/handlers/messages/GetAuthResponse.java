@@ -3,7 +3,7 @@ package dj.arbuz.handlers.messages;
 import dj.arbuz.BotTextResponse;
 import dj.arbuz.database.UserBase;
 import dj.arbuz.handlers.messages.MessageHandlerResponse.MessageHandlerResponseBuilder;
-import dj.arbuz.socialnetworks.vk.Vk;
+import dj.arbuz.socialnetworks.vk.AbstractVk;
 import dj.arbuz.user.BotUser;
 
 import java.util.List;
@@ -13,10 +13,10 @@ public class GetAuthResponse implements MessageTelegramHandler {
     private static final MessageHandlerResponseBuilder AUTH_ERROR = MessageHandlerResponse.newBuilder()
             .textMessage(BotTextResponse.AUTH_ERROR);
 
-    private final Vk vk;
+    private final AbstractVk vk;
     private final UserBase usersBase;
 
-    public GetAuthResponse(Vk vk, UserBase usersBase) {
+    public GetAuthResponse(AbstractVk vk, UserBase usersBase) {
         this.vk = vk;
         this.usersBase = usersBase;
     }

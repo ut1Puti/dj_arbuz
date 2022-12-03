@@ -2,21 +2,22 @@ package dj.arbuz.handlers.messages;
 
 import dj.arbuz.BotTextResponse;
 import dj.arbuz.database.UserBase;
+import dj.arbuz.handlers.messages.MessageHandlerResponse.MessageHandlerResponseBuilder;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.socialnetwork.groups.NoGroupException;
-import dj.arbuz.socialnetworks.vk.Vk;
+import dj.arbuz.socialnetworks.vk.AbstractVk;
 import dj.arbuz.user.BotUser;
 
 import java.util.List;
 
-public class GetGroupUrl implements MessageTelegramHandler{
-    private static final MessageHandlerResponse.MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
-                                                                                                                      .textMessage(BotTextResponse.NOT_AUTHED_USER);
+public class GetGroupUrl implements MessageTelegramHandler {
+    private static final MessageHandlerResponseBuilder NOT_AUTHED_USER = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.NOT_AUTHED_USER);
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
-     * @see UserStorage
+     * @see UserBase
      */
     private final UserBase usersBase;
     /**
@@ -24,11 +25,13 @@ public class GetGroupUrl implements MessageTelegramHandler{
      *
      * @see SocialNetwork
      */
-    private final Vk socialNetwork;
-    public GetGroupUrl(UserBase usersBase, Vk vk) {
+    private final AbstractVk socialNetwork;
+
+    public GetGroupUrl(UserBase usersBase, AbstractVk vk) {
         this.usersBase = usersBase;
         this.socialNetwork = vk;
     }
+
     @Override
     public MessageHandlerResponse sendMessage(String userReceivedGroupName, String userSendResponseId) {
 
@@ -40,12 +43,12 @@ public class GetGroupUrl implements MessageTelegramHandler{
 
         try {
             return MessageHandlerResponse.newBuilder()
-                                         .textMessage(socialNetwork.getGroupUrl(userReceivedGroupName, userCallingMethod))
-                                         .build(List.of(userSendResponseId));
+                    .textMessage(socialNetwork.getGroupUrl(userReceivedGroupName, userCallingMethod))
+                    .build(List.of(userSendResponseId));
         } catch (NoGroupException | SocialNetworkException e) {
             return MessageHandlerResponse.newBuilder()
-                                         .textMessage(e.getMessage())
-                                         .build(List.of(userSendResponseId));
+                    .textMessage(e.getMessage())
+                    .build(List.of(userSendResponseId));
         }
     }
 }
