@@ -8,7 +8,7 @@ import java.util.List;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class UnknownCommand extends DjArbuzAbstractMessageHandler {
+public final class UnknownCommandHandler extends DjArbuzAbstractMessageHandler {
     /**
      * Метод для обработки сообщения пользователем
      *

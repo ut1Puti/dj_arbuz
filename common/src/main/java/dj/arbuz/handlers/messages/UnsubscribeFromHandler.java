@@ -18,7 +18,7 @@ import java.util.List;
  * @version 1.0
  */
 @RequiredArgsConstructor
-public class UnsubscribeFrom extends DjArbuzAbstractMessageHandler {
+public final class UnsubscribeFromHandler extends DjArbuzAbstractMessageHandler {
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *

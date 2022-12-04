@@ -31,7 +31,7 @@ public final class MessageHandlerImpl extends DjArbuzAbstractMessageHandler {
     /**
      * Поле обработчика неизвестной команды
      */
-    private final MessageHandler unknownCommand = new UnknownCommand();
+    private final MessageHandler unknownCommand = new UnknownCommandHandler();
 
     public MessageHandlerImpl(GroupBase groupBase, UserBase userBase, AbstractVk vk) {
         initCommandMap(groupBase, userBase, vk);
@@ -41,18 +41,18 @@ public final class MessageHandlerImpl extends DjArbuzAbstractMessageHandler {
      * Метод инициализирующий {@code map} командами и их обработчиками
      */
     private void initCommandMap(GroupBase groupBase, UserBase userBase, AbstractVk vk) {
-        commandMap.put("/help", new HelpInfo());
-        commandMap.put("/auth", new GetAuthResponse(vk, userBase));
-        commandMap.put("/auth_as_admin", new AuthAsAdmin(groupBase, userBase, vk));
+        commandMap.put("/help", new HelpHandler());
+        commandMap.put("/auth", new AuthHandler(vk, userBase));
+        commandMap.put("/auth_as_admin", new AuthAsAdminHandler(groupBase, userBase, vk));
         commandMap.put("/subscribed", new GetUserSubscribedGroupsLinks(userBase, groupBase));
-        commandMap.put("/stop", new Stop(userBase));
-        commandMap.put("/link", new GetGroupUrl(userBase, vk));
-        commandMap.put("/id", new GetGroupId(userBase, vk));
-        commandMap.put("/subscribe", new SubscribeTo(userBase, groupBase, vk));
-        commandMap.put("/unsubscribe", new UnsubscribeFrom(userBase, groupBase, vk));
-        commandMap.put("/five_posts", new GetFiveLastPosts(userBase, vk));
-        commandMap.put("/post_to_all", new PostToAll(userBase));
-        commandMap.put("/post_to_group", new PostToGroup(groupBase));
+        commandMap.put("/stop", new StopHandler(userBase));
+        commandMap.put("/link", new LinkHandler(userBase, vk));
+        commandMap.put("/id", new IdHandler(userBase, vk));
+        commandMap.put("/subscribe", new SubscribeToHandler(userBase, groupBase, vk));
+        commandMap.put("/unsubscribe", new UnsubscribeFromHandler(userBase, groupBase, vk));
+        commandMap.put("/five_posts", new FivePostsHandler(userBase, vk));
+        commandMap.put("/post_to_all", new PostToAllHandler(userBase));
+        commandMap.put("/post_to_group", new PostToGroupHandler(groupBase));
     }
 
     /**

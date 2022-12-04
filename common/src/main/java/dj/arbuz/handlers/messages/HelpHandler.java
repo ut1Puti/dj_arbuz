@@ -8,7 +8,7 @@ import java.util.List;
  * @author Щеголев Андрей
  * @version 1.0
  */
-public class HelpInfo extends DjArbuzAbstractMessageHandler {
+public final class HelpHandler extends DjArbuzAbstractMessageHandler {
     /**
      * Метод для обработки команды /help пользователем
      *

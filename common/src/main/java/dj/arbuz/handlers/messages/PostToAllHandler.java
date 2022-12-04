@@ -12,7 +12,7 @@ import java.util.List;
  * @version 1.0
  */
 @RequiredArgsConstructor
-public class PostToAll extends DjArbuzAbstractMessageHandler {
+public final class PostToAllHandler extends DjArbuzAbstractMessageHandler {
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *

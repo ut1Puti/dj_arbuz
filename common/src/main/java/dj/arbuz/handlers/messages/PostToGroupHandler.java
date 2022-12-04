@@ -13,7 +13,7 @@ import java.util.List;
  * @version 1.0
  */
 @RequiredArgsConstructor
-public class PostToGroup extends DjArbuzAbstractMessageHandler {
+public final class PostToGroupHandler extends DjArbuzAbstractMessageHandler {
     /**
      * Поле хранилища групп, на которые оформлена подписка
      *

@@ -13,7 +13,7 @@ import java.util.List;
  * @version 1.0
  */
 @RequiredArgsConstructor
-public class Stop extends DjArbuzAbstractMessageHandler {
+public final class StopHandler extends DjArbuzAbstractMessageHandler {
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *

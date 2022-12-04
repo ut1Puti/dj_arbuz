@@ -36,10 +36,6 @@ public class ServerListenerThread extends StoppableThread {
      * Поле reader'а читающего параметры полученных сервером get параметров http запросов
      */
     private final BufferedReader parametersReader;
-    /**
-     * Поле времени ожидания получения get параметров
-     */
-    private final int oneMinute = 1;
 
     /**
      * Конструктор - создает экземпляр класса
@@ -58,7 +54,6 @@ public class ServerListenerThread extends StoppableThread {
      * @see HttpRequest
      * @see HttpParser#parseRequest(InputStream)
      * @see HttpRequest#getRequestTarget()
-     * @see ServerListenerThread#oneMinute
      * @see ServerListenerThread#sendFileFromServer(String, OutputStream)
      * @see HttpServerUtils#closeServerStream(Closeable)
      */

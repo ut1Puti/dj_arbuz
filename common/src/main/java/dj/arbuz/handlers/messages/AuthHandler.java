@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
  * @version 1.0
  */
 @RequiredArgsConstructor
-public class GetAuthResponse extends DjArbuzAbstractMessageHandler {
+public final class AuthHandler extends DjArbuzAbstractMessageHandler {
     /**
      * Поле класса для взаимодействия с api социальной сети
      *

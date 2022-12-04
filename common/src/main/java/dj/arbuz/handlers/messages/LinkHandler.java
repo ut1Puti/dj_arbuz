@@ -17,7 +17,7 @@ import java.util.List;
  * @version 1.0
  */
 @RequiredArgsConstructor
-public class GetGroupUrl extends DjArbuzAbstractMessageHandler {
+public final class LinkHandler extends DjArbuzAbstractMessageHandler {
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *

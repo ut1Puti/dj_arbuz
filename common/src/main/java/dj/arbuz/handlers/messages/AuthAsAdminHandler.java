@@ -18,7 +18,7 @@ import java.util.List;
  * @version 1.0
  */
 @RequiredArgsConstructor
-public class AuthAsAdmin extends DjArbuzAbstractMessageHandler {
+public final class AuthAsAdminHandler extends DjArbuzAbstractMessageHandler {
     /**
      * Поле хранилища групп, на которые оформлена подписка
      *

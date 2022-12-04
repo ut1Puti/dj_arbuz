@@ -17,7 +17,7 @@ import java.util.List;
  * @version 1.0
  */
 @RequiredArgsConstructor
-public class SubscribeTo extends DjArbuzAbstractMessageHandler {
+public final class SubscribeToHandler extends DjArbuzAbstractMessageHandler {
     /**
      * Поле хранилища пользователей, аутентифицированный в социальной сети
      *
