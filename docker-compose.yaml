@@ -6,7 +6,8 @@ services:
     restart: always
     container_name: dj_arbuz_telegram_bot
     volumes:
-      - ./telegram/src/main/resources/configs:/usr/telegram/dj_arbuz/telegram/src/main/resources/configs
+      - ./common/src/main/resources/configs:/usr/dj_arbuz/common/src/main/resources/configs
+      - ./telegram/src/main/resources/configs:/usr/dj_arbuz/telegram/src/main/resources/configs
     ports:
       - "8080:8080"
     links:
@@ -23,7 +24,7 @@ services:
       POSTGRES_PASSWORD: utiputi
       POSTGRES_DB: users_database
     volumes:
-      - ./src/main/resources/scripts/postgres:/docker-entrypoint-initdb.d
+      - ./scripts/postgres:/docker-entrypoint-initdb.d
       - ./postgres-data:/var/lib/postgresql/data
     expose:
       - "5432"
