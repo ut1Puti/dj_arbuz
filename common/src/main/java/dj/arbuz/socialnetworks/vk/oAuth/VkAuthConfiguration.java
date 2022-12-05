@@ -74,6 +74,20 @@ public final class VkAuthConfiguration {
         }
     }
 
+    static VkAuthConfiguration loadFromEnvVariables() {
+        String authUrl = System.getenv("AUTH_URL");
+        String appId = System.getenv("APP_ID");
+        String clientSecret = System.getenv("CLIENT_SECRET");
+        String secretClientSecret = System.getenv("SECRET_CLIENT_SECRET");
+        String redirectUrl = System.getenv("REDIRECT_URL");
+
+        if (authUrl == null || appId == null || clientSecret == null || secretClientSecret == null || redirectUrl == null) {
+            throw new RuntimeException("Недостаточно переменных окружения");
+        }
+
+        return new VkAuthConfiguration(authUrl, Integer.parseInt(appId), clientSecret, secretClientSecret, redirectUrl);
+    }
+
     /**
      * Метод вычисляющий хэш экземляра класса
      *

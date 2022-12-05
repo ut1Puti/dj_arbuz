@@ -9,6 +9,10 @@ jar {
     }
 }
 
+buildscript {
+    File telegramConfig = new File('src/resources/configs')
+}
+
 dependencies {
     implementation project(':common')
     implementation 'org.telegram:telegrambots:6.3.0'
