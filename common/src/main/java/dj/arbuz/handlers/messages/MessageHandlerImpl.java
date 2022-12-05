@@ -71,7 +71,7 @@ public final class MessageHandlerImpl extends DjArbuzAbstractMessageHandler {
         MessageHandler messageHandler = commandMap.getOrDefault(commandAndArgs[COMMAND_INDEX], unknownCommand);
 
         if (isItNoArgCommand(commandAndArgs)) {
-            return messageHandler.handleMessage(null, userSendResponseId);
+            return messageHandler.handleMessage("", userSendResponseId);
         } else {
             return messageHandler.handleMessage(commandAndArgs[ARG_INDEX], userSendResponseId);
         }

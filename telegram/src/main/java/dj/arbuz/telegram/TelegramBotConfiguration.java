@@ -26,6 +26,10 @@ public final class TelegramBotConfiguration {
      * Поле токена доступа бота, к telegram api
      */
     final String telegramBotToken;
+    /**
+     * Поле id создателя
+     */
+    final Long creatorId;
 
     /**
      * Метод загружающий объект класса из json файла
@@ -57,6 +61,7 @@ public final class TelegramBotConfiguration {
     static TelegramBotConfiguration loadFromEnvVariables() {
         String telegramBotName = System.getenv("telegram_bot_name");
         String telegramBotToken = System.getenv("telegram_bot_token");
+        Long creatorId = Long.parseLong(System.getenv("creator_id"));
 
         if (telegramBotName == null) {
             throw new RuntimeException("Имя бота не может быть null");
@@ -64,6 +69,6 @@ public final class TelegramBotConfiguration {
             throw new RuntimeException("Token бота не может быть null");
         }
 
-        return new TelegramBotConfiguration(telegramBotName, telegramBotToken);
+        return new TelegramBotConfiguration(telegramBotName, telegramBotToken, creatorId);
     }
 }

@@ -46,7 +46,7 @@ public final class AuthHandler extends DjArbuzAbstractMessageHandler {
      */
     @Override
     public MessageHandlerResponse handleMessage(String message, String userSendResponseId) {
-        if (message != null) {
+        if (!message.isBlank()) {
             return createIllegalArgumentMessage("/auth", message).build(List.of(userSendResponseId));
         }
 

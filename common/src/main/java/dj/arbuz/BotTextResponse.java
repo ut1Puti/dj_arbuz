@@ -45,19 +45,19 @@ public final class BotTextResponse {
     /**
      * Поле сообщения об успешной авторизации
      */
-    public static final String AUTH_SUCCESS = "Вы успешно прошли авторизацию";
+    public static final String AUTH_SUCCESS = "Вы успешно прошли авторизацию \uD83C\uDF1A.";
     /**
      * Поле сообщения об ошибке при аутентификации
      */
-    public static final String AUTH_ERROR = "Ошибка при аутентификации. Повторите позже.";
+    public static final String AUTH_ERROR = "Ошибка при аутентификации. Повторите позже \uD83C\uDF1A.";
     /**
      * Поле сооббщения о необходимости обновить токен
      */
-    public static final String UPDATE_TOKEN = "Продлите токен с помощью команды /auth.";
+    public static final String UPDATE_TOKEN = "Продлите токен с помощью команды /auth \uD83D\uDCF2.";
     /**
      * Поле сообщения об остановке бота
      */
-    public static final String STOP_INFO = "Бот удалил информацию о вас. Если захотите вновь начать пользоваться ботом напишите команду /auth. Будем рады увидеть вас позже";
+    public static final String STOP_INFO = "Бот удалил информацию о вас. Если захотите вновь начать пользоваться ботом напишите команду /auth. Будем рады увидеть вас позже \uD83E\uDD84";
     /**
      * Поле сообщения с просьбой перейти по ссылке
      */
@@ -65,23 +65,23 @@ public final class BotTextResponse {
     /**
      * Поле сообщения с просьбой пройти аутентификации через vk
      */
-    public static final String NOT_AUTHED_USER = "Сначала пройдите аутентификацию с помощью вк. Для этого используйте /auth";
+    public static final String NOT_AUTHED_USER = "Сначала пройдите аутентификацию с помощью вк. Для этого используйте /auth \uD83D\uDCF2";
     /**
      * Поле сообщения неизвестной команды
      */
-    public static final String UNKNOWN_COMMAND = "Неизвестная команда. Используйте /help, чтобы увидеть доступные";
+    public static final String UNKNOWN_COMMAND = "Неизвестная команда. Используйте /help, чтобы увидеть доступные \uD83E\uDD21";
     /**
      * Поле сообщения подписки на группу
      */
-    public static final String SUBSCRIBE = "Вы успешно подписаны на группу!";
+    public static final String SUBSCRIBE = "Вы успешно подписаны на группу \uD83E\uDD84!";
     /**
      * Поле сообщения о том, что пользователь уже подписан
      */
-    public static final String ALREADY_SUBSCRIBER = "Вы уже подписаны на эту группу";
+    public static final String ALREADY_SUBSCRIBER = "Вы уже подписаны на эту группу \uD83E\uDD21";
     /**
      * Поле сообщения, о том что группа закрыта
      */
-    public static final String GROUP_IS_CLOSED = "Не могу подписать так как группа закрыта";
+    public static final String GROUP_IS_CLOSED = "Не могу подписать так как группа закрыта \uD83C\uDF1A";
     /**
      * Поле сообщения, о том что пользователь был успешно отписан от группы
      */
@@ -89,7 +89,7 @@ public final class BotTextResponse {
     /**
      * Поле сообщения, о том что пользователь не был подписан на эту группу
      */
-    public static final String NOT_SUBSCRIBER = "Вы не были подписаны на эту группу";
+    public static final String NOT_SUBSCRIBER = "Вы не были подписаны на эту группу \uD83E\uDD21";
     /**
      * Поле сообщения, о том что пользователь не подписан ни на одну группу
      */
@@ -97,35 +97,35 @@ public final class BotTextResponse {
     /**
      * Поле сообщения о том, что в группе отсутствуют посты
      */
-    public static final String NO_POSTS_IN_GROUP = "В этой группе нет постов";
+    public static final String NO_POSTS_IN_GROUP = "В этой группе нет постов \uD83E\uDD21";
     /**
      * Поле сообщения об ошибке на стороны сервера
      */
     public static final String HANDLER_ERROR = """
             Возникла ошибка при обработке данных.
-            Попробуйте повторить позже""";
+            Попробуйте повторить позже \uD83C\uDF1A.""";
     /**
      * Поле сообщения об ошибке при обращении к vk api
      */
     public static final String VK_API_ERROR = """
             Возникла ошибка при обращении к вк.
-            Попробуйте еще раз, если ошибка возникнет еще раз, попробуйте позже.""";
+            Попробуйте еще раз, если ошибка возникнет еще раз, попробуйте позже \uD83C\uDF1A.""";
     /**
      * Поле сообщения о том, что пользователь не является админом
      */
-    public static final String IS_NOT_ADMIN = "Вы не является админом этой группы. Если это не так пройди авторизацию с помощью команды /auth_as_admin";
+    public static final String IS_NOT_ADMIN = "Вы не является админом этой группы. Если это не так пройди авторизацию с помощью команды /auth_as_admin \uD83D\uDCF2.";
     /**
      * Поле сообщения о том, что время ожидания ответа вышло
      */
-    public static final String TIME_EXPIRED = "Превышен лимит ожидания ответа, повторите операцию еще раз";
+    public static final String TIME_EXPIRED = "Превышен лимит ожидания ответа, повторите операцию еще раз \uD83E\uDD71";
     /**
      * Поле сообщения о том, что команда не принимает аргумент.
      * При отправке необходимо в начале добавить название команды, а также отправить аргумент, который команда считает неправильным
      */
-    public static final String ILLEGAL_ARGUMENT = " не принимает аргумент: ";
+    public static final String ILLEGAL_ARGUMENT = " не принимает аргумент \uD83E\uDD21 : ";
     /**
      * Поле сообщения о том, что команда ожидает аргумент.
      * При отправке необходимо в начале добавить название команды, а в конце тип аргумента
      */
-    public static final String NO_ARGUMENT = " команда ожидает аргумент: ";
+    public static final String NO_ARGUMENT = " команда ожидает аргумент \uD83E\uDD21 : ";
 }

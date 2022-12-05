@@ -50,7 +50,7 @@ public final class SubscribeToHandler extends DjArbuzAbstractMessageHandler {
      */
     @Override
     public MessageHandlerResponse handleMessage(String userReceivedGroupName, String userSendResponseId) {
-        if (userReceivedGroupName == null) {
+        if (userReceivedGroupName.isBlank()) {
             return createNoArgumentMessage("/subscribe", "название группы или исполнителя")
                     .build(List.of(userSendResponseId));
         }

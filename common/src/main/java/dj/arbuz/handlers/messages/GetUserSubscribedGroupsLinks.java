@@ -38,7 +38,7 @@ public class GetUserSubscribedGroupsLinks extends DjArbuzAbstractMessageHandler 
      */
     @Override
     public MessageHandlerResponse handleMessage(String message, String userSendResponseId) {
-        if (message != null) {
+        if (!message.isBlank()) {
             return createIllegalArgumentMessage("/subscribed", message).build(List.of(userSendResponseId));
         }
 

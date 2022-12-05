@@ -33,7 +33,7 @@ public final class PostToAllHandler extends DjArbuzAbstractMessageHandler {
             return UNKNOWN_COMMAND.build(List.of(userReceivedMessageId));
         }
 
-        if (message == null) {
+        if (message.isBlank()) {
             return createNoArgumentMessage("/post_to_all", "сообщение в виде строки, которое будет отправлено всем пользователям")
                     .build(List.of(userReceivedMessageId));
         }

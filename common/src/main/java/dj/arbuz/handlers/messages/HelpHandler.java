@@ -18,7 +18,7 @@ public final class HelpHandler extends DjArbuzAbstractMessageHandler {
      */
     @Override
     public MessageHandlerResponse handleMessage(String message, String userSendResponseId) {
-        if (message != null) {
+        if (!message.isBlank()) {
             return createIllegalArgumentMessage("/help", message).build(List.of(userSendResponseId));
         }
 

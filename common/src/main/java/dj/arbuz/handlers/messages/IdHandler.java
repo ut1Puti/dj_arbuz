@@ -43,7 +43,7 @@ public final class IdHandler extends DjArbuzAbstractMessageHandler {
      */
     @Override
     public MessageHandlerResponse handleMessage(String userReceivedGroupName, String userSendResponseId) {
-        if (userReceivedGroupName == null) {
+        if (userReceivedGroupName.isBlank()) {
             return createNoArgumentMessage("/id", "название группы или исполнителя")
                     .build(List.of(userSendResponseId));
         }

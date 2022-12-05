@@ -48,7 +48,7 @@ public final class FivePostsHandler extends DjArbuzAbstractMessageHandler {
      */
     @Override
     public MessageHandlerResponse handleMessage(String userReceivedGroupName, String userSendResponseId) {
-        if (userReceivedGroupName == null) {
+        if (userReceivedGroupName.isBlank()) {
             return createNoArgumentMessage("/five_posts", "название группы или исполнителя")
                     .build(List.of(userSendResponseId));
         }

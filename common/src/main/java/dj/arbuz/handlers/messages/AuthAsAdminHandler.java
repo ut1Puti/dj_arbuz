@@ -47,7 +47,7 @@ public final class AuthAsAdminHandler extends DjArbuzAbstractMessageHandler {
      */
     @Override
     public MessageHandlerResponse handleMessage(String message, String userReceivedRequestId) {
-        if (message != null) {
+        if (!message.isBlank()) {
             return createIllegalArgumentMessage("/auth_as_admin", message)
                     .build(List.of(userReceivedRequestId));
         }

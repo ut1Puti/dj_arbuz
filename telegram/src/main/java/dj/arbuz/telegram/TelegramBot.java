@@ -7,8 +7,13 @@ import dj.arbuz.database.HibernateUtil;
 import httpserver.server.HttpServer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
+import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
+import org.telegram.telegrambots.meta.api.methods.stickers.GetCustomEmojiStickers;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import stoppable.Stoppable;
 
@@ -86,18 +91,12 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
 
         httpServer.start();
 
-        TelegramBot telegramBot = new TelegramBot(TelegramConfigPaths.TELEGRAM_CONFIG_PATH);
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(telegramBot);
+            botsApi.registerBot(new TelegramBot(TelegramConfigPaths.TELEGRAM_CONFIG_PATH));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        while (telegramBot.isWorking()) Thread.onSpinWait();
-        telegramBot.stopWithInterrupt();
-        httpServer.stop();
-        HibernateUtil.shutdown();
-        System.exit(0);
     }
 
     /**
@@ -129,10 +128,14 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
     @Override
     public void onUpdateReceived(Update update) {
 
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String userReceivedMessage = update.getMessage().getText();
-            String userReceivedMessageId = update.getMessage().getChatId().toString();
-            messageExecutor.executeUserMessage(userReceivedMessageId, userReceivedMessage);
+        if (update.hasMessage()) {
+            if (update.getMessage().hasText()) {
+                String userReceivedMessage = update.getMessage().getText();
+                String userReceivedMessageId = update.getMessage().getChatId().toString();
+                messageExecutor.executeUserMessage(userReceivedMessageId, userReceivedMessage);
+            } else if (update.getMessage().hasSticker()) {
+
+            }
         }
 
     }

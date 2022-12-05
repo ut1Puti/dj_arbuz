@@ -30,7 +30,7 @@ public final class PostToGroupHandler extends DjArbuzAbstractMessageHandler {
      */
     @Override
     public MessageHandlerResponse handleMessage(String message, String userReceivedMessageId) {
-        if (message == null) {
+        if (message.isBlank()) {
             return createNoArgumentMessage("/post_to_group", "строка с сообщением, которое будет отправлено подписчикам")
                     .build(List.of(userReceivedMessageId));
         }

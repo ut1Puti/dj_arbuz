@@ -30,7 +30,7 @@ public final class StopHandler extends DjArbuzAbstractMessageHandler {
      */
     @Override
     public MessageHandlerResponse handleMessage(String message, String userReceivedMessageId) {
-        if (message != null) {
+        if (!message.isBlank()) {
             return createIllegalArgumentMessage("/stop", message).build(List.of(userReceivedMessageId));
         }
 
