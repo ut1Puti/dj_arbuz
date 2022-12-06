@@ -1,8 +1,9 @@
 package httpserver.server;
 
-import java.io.*;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
+import stoppable.Stoppable;
+
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.ServerSocket;
 
 /**
@@ -11,7 +12,7 @@ import java.net.ServerSocket;
  * @author Кедровских Олег
  * @version 1.0
  */
-public class HttpServer {
+public class HttpServer implements Stoppable {
     /**
      * Поле запущенного в программе сервера
      *
@@ -97,7 +98,7 @@ public class HttpServer {
      * @see ServerListenerThread#stopWithInterrupt()
      * @see HttpServerUtils#closeServerStream(Closeable)
      */
-    public void stop() {
+    public void stopWithInterrupt() {
         listenerThread.stopWithInterrupt();
         HttpServerUtils.closeServerStream(serverSocket);
         serverSocket = null;

@@ -86,7 +86,7 @@ public final class VkAuth extends AbstractVkAuth {
      * Метод интерфейса CreateUser создающий пользователя.
      * Создается с помощью Vk Java SDK, получая код с сервера
      *
-     * @param userSystemId - id пользователя в системе
+     * @param userSystemId id пользователя в системе
      * @return нового пользователя, null если возникли проблемы при обращении к серверу, при ошибках на сервере
      * или при ошибке обращения к vk api
      * @see HttpServer#getHttpRequestParameters()
@@ -125,7 +125,7 @@ public final class VkAuth extends AbstractVkAuth {
      */
     private String getAuthCodeFromHttpServer(String userSystemId) {
         String authCode = null;
-        while (authCode == null){
+        while (authCode == null) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -146,7 +146,7 @@ public final class VkAuth extends AbstractVkAuth {
     /**
      * Метод, который получает code из get параметров GET запроса на сервер
      *
-     * @param httpRequestGetParameters - get параметры отправленные на сервер
+     * @param httpRequestGetParameters get параметры отправленные на сервер
      * @return {@code code}
      */
     private OAuthParams getCodeAndUserTelegramIfFromHttpGetParam(String httpRequestGetParameters) {
@@ -160,8 +160,8 @@ public final class VkAuth extends AbstractVkAuth {
     /**
      * Хранит параметры для аутентификации с помощью oAuth 2.0
      *
-     * @param authCode       - код oAuth 2.0
-     * @param userTelegramId - id пользователя в телеграм
+     * @param authCode       код oAuth 2.0
+     * @param userTelegramId id пользователя в телеграм
      */
     private record OAuthParams(String authCode, String userTelegramId) {
     }

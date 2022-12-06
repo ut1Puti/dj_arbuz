@@ -26,12 +26,12 @@ public class HttpRequestTarget {
      *
      * @param requestTargetReceiverFromRequest - таргет отправленный на сервер
      * @throws HttpParserException - возникает при ошибке формирования таргета из запроса
-     * @see HttpStatusCode#SERVER_ERROR_500_INTERNAL_SERVER_ERROR
+     * @see HttpStatusCode#INTERNAL_SERVER_ERROR_500
      * @see HttpStatusCode#CLIENT_ERROR_400_BAD_REQUEST
      */
     public HttpRequestTarget(String requestTargetReceiverFromRequest) throws HttpParserException {
         if (requestTargetReceiverFromRequest == null) {
-            throw new HttpParserException(HttpStatusCode.SERVER_ERROR_500_INTERNAL_SERVER_ERROR);
+            throw new HttpParserException(HttpStatusCode.INTERNAL_SERVER_ERROR_500);
         }
 
         String[] split = requestTargetReceiverFromRequest.split("\\?", 2);

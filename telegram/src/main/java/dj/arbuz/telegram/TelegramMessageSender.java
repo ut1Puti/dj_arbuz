@@ -6,7 +6,6 @@ import dj.arbuz.handlers.messages.MessageHandlerResponse;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.FutureTask;
 
 /**
  * Класс-отправитель сообщений телеграм бота

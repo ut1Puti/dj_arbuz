@@ -60,7 +60,7 @@ public class HttpRequest extends HttpMessage {
      *
      * @param methodName - название метода в виде строки
      * @throws HttpParserException - возникает при отсутствии реализации полученного метода
-     * @see HttpStatusCode#SERVER_ERROR_501_NOT_IMPLEMENTED
+     * @see HttpStatusCode#NOT_IMPLEMENTED_501
      */
     public void setMethod(String methodName) throws HttpParserException {
         for (HttpMethod method : HttpMethod.values()) {
@@ -71,7 +71,7 @@ public class HttpRequest extends HttpMessage {
             }
 
         }
-        throw new HttpParserException(HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED);
+        throw new HttpParserException(HttpStatusCode.NOT_IMPLEMENTED_501);
     }
 
     /**
@@ -117,14 +117,14 @@ public class HttpRequest extends HttpMessage {
      * @param requestHttpVersion - полученная версия http
      * @throws HttpParserException - ошибка парсера, возникает если версия в полученном запросе некорректна
      * @see HttpVersion#getBestCompatibleVersion(String)
-     * @see HttpStatusCode#SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED
+     * @see HttpStatusCode#HTTP_VERSION_NOT_SUPPORTED_505
      */
     public void setHttpVersion(String requestHttpVersion) throws HttpParserException {
         originalHttpVersion = requestHttpVersion;
         bestCompatibleHttpVersion = HttpVersion.getBestCompatibleVersion(requestHttpVersion);
 
         if (bestCompatibleHttpVersion == null) {
-            throw new HttpParserException(HttpStatusCode.SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED);
+            throw new HttpParserException(HttpStatusCode.HTTP_VERSION_NOT_SUPPORTED_505);
         }
 
     }

@@ -19,10 +19,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Класс создающий ответ http сервера
+ * Класс ответа http сервера
  *
  * @author Кедровских Олег
- * @version 0.1
+ * @version 1.0
  */
 @Getter
 @Setter
@@ -47,12 +47,12 @@ public class HttpResponse extends HttpMessage {
         httpResponse.setHttpVersion(httpRequest.getBestCompatibleHttpVersion());
         try (BufferedReader reader = Files.newBufferedReader(Path.of(HttpServerConfiguration.WEB_SRC, httpRequest.getRequestTarget().getRequestTargetFile()))) {
             String body = reader.lines().collect(Collectors.joining(" "));
-            httpResponse.setHttpStatusCode(HttpStatusCode.OK)
+            httpResponse.setHttpStatusCode(HttpStatusCode.OK_200)
                     .setBody(body)
                     .addHeader("Content-Type:", "text/html; charset=utf-8")
                     .addHeader("Content-Length:", String.valueOf(body.getBytes().length));
         } catch (IOException e) {
-            throw new HttpParserException(HttpStatusCode.NOT_FOUND);
+            throw new HttpParserException(HttpStatusCode.NOT_FOUND_404);
         }
         return httpResponse;
     }

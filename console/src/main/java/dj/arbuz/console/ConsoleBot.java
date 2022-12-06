@@ -48,7 +48,7 @@ public final class ConsoleBot extends StoppableThread implements BotMessageExecu
             Thread.onSpinWait();
         }
         consoleBot.stopWithInterrupt();
-        httpServer.stop();
+        httpServer.stopWithInterrupt();
     }
 
     /**

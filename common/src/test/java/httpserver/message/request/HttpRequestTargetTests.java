@@ -59,7 +59,7 @@ public class HttpRequestTargetTests {
         try {
             new HttpRequestTarget(null);
         } catch (HttpParserException e) {
-            assertEquals(HttpStatusCode.SERVER_ERROR_500_INTERNAL_SERVER_ERROR.getCodeMessage(), e.getMessage());
+            assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR_500.getCodeMessage(), e.getMessage());
             return;
         }
         fail();

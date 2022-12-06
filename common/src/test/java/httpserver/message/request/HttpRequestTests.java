@@ -48,7 +48,7 @@ public class HttpRequestTests {
         try {
             request.setMethod(method);
         } catch (HttpParserException e) {
-            assertEquals(HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED.getCodeMessage(), e.getMessage());
+            assertEquals(HttpStatusCode.NOT_IMPLEMENTED_501.getCodeMessage(), e.getMessage());
             return;
         }
         fail();
@@ -63,7 +63,7 @@ public class HttpRequestTests {
         try {
             request.setMethod(method);
         } catch (HttpParserException e) {
-            assertEquals(HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED.getCodeMessage(), e.getMessage());
+            assertEquals(HttpStatusCode.NOT_IMPLEMENTED_501.getCodeMessage(), e.getMessage());
             return;
         }
         fail();

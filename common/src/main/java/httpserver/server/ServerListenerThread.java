@@ -16,13 +16,12 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.Executors;
 
 /**
  * Класс слушающий новые сообщения поступающие сокету
  *
  * @author Кедровских Олег
- * @version 0.3
+ * @version 1.0
  */
 public class ServerListenerThread extends StoppableThread {
     /**
@@ -91,6 +90,20 @@ public class ServerListenerThread extends StoppableThread {
     }
 
     /**
+     * Метод получающий get параметры последнего запроса
+     *
+     * @return полученные get параметры последнего запроса,
+     * null если в течение 1 минуты параметры не пришли, или поток был прерван
+     */
+    public String getHttpRequestParameters() {
+        try {
+            return parametersReader.readLine();
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    /**
      * Метод проверяющий работает ли поток
      *
      * @return true - если поток работает
@@ -114,19 +127,5 @@ public class ServerListenerThread extends StoppableThread {
         HttpServerUtils.closeServerStream(serverSocket);
         HttpServerUtils.closeServerStream(parametersOutputStream);
         HttpServerUtils.closeServerStream(parametersReader);
-    }
-
-    /**
-     * Метод получающий get параметры последнего запроса
-     *
-     * @return полученные get параметры последнего запроса,
-     * null если в течение 1 минуты параметры не пришли, или поток был прерван
-     */
-    public String getHttpRequestParameters() {
-        try {
-            return parametersReader.readLine();
-        } catch (IOException e) {
-            return "";
-        }
     }
 }

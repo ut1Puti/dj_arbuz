@@ -53,7 +53,7 @@ public class HttpParser {
      * @see HttpRequest#setMethod(String)
      * @see HttpRequest#setRequestTarget(String)
      * @see HttpRequest#setHttpVersion(String)
-     * @see HttpStatusCode#SERVER_ERROR_500_INTERNAL_SERVER_ERROR
+     * @see HttpStatusCode#INTERNAL_SERVER_ERROR_500
      * @see HttpStatusCode#CLIENT_ERROR_400_BAD_REQUEST
      */
     private static void parseRequestLine(Scanner httpRequestScanner, HttpRequest httpRequest)
@@ -64,7 +64,7 @@ public class HttpParser {
             String[] requestLine = httpRequestScanner.next().split(" ");
 
             if (requestLine.length != 3) {
-                throw new HttpParserException(HttpStatusCode.SERVER_ERROR_500_INTERNAL_SERVER_ERROR);
+                throw new HttpParserException(HttpStatusCode.INTERNAL_SERVER_ERROR_500);
             }
 
             httpRequest.setMethod(requestLine[0]);
@@ -104,11 +104,11 @@ public class HttpParser {
     /**
      * Метод парсящий body http запроса
      *
-     * @param httpRequestScanner - сканер с потоком из которого читаются данные
-     * @param httpRequest        - ?отпрашенный? запрос
+     * @param httpRequestScanner сканер с потоком из которого читаются данные
+     * @param httpRequest        ?отпрашенный? запрос
      * @see HttpRequest#body
      */
-    private static void parseBody(Scanner httpRequestScanner, HttpRequest httpRequest) {
+    private static void parseBody(Scanner httpRequestScanner, HttpRequest httpRequest) throws HttpParserException {
         StringBuilder httpRequestBody = new StringBuilder();
 
         if (httpRequest.headers.containsKey("Content-Length")) {
@@ -118,6 +118,11 @@ public class HttpParser {
                 String read = httpRequestScanner.next();
                 httpRequestBody.append(read);
                 readLength += read.length();
+
+                if (readLength > contentLength) {
+                    throw new HttpParserException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+                }
+
             }
         }
 

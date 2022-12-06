@@ -68,7 +68,7 @@ public class HttpParserTests {
         try {
             HttpParser.parseRequest(inputStream);
         } catch (HttpParserException e) {
-            assertEquals(HttpStatusCode.SERVER_ERROR_500_INTERNAL_SERVER_ERROR.getCodeMessage(), e.getMessage());
+            assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR_500.getCodeMessage(), e.getMessage());
             return;
         }
         fail();
@@ -92,7 +92,7 @@ public class HttpParserTests {
             HttpParser.parseRequest(inputStream);
         } catch (IOException ignored) {
         } catch (HttpParserException e) {
-            assertEquals(HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED.getCodeMessage(), e.getMessage());
+            assertEquals(HttpStatusCode.NOT_IMPLEMENTED_501.getCodeMessage(), e.getMessage());
             return;
         }
         fail();
@@ -116,7 +116,7 @@ public class HttpParserTests {
             HttpParser.parseRequest(inputStream);
         } catch (IOException ignored) {
         } catch (HttpParserException e) {
-            assertEquals(HttpStatusCode.SERVER_ERROR_500_INTERNAL_SERVER_ERROR.getCodeMessage(), e.getMessage());
+            assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR_500.getCodeMessage(), e.getMessage());
             return;
         }
         fail();

@@ -1,27 +1,27 @@
 package httpserver.messages;
 
 /**
- * Енум ошибок http сервера
+ * Перечисление кодов http ответов сервера
  *
- * @author Кедровсикх Олег
- * @version 1.0
+ * @author Кедровских Олег
+ * @version 2.0
  */
 public enum HttpStatusCode {
     /**
      * Значения ответа
      */
-    OK(200, "Ok"),
-    NOT_FOUND(404, "Not found"),
+    OK_200(200, "Ok"),
+    NOT_FOUND_404(404, "Not found"),
     /**
      * Значения ошибок клиента
      */
-    CLIENT_ERROR_400_BAD_REQUEST(400, "Bad Request"),
+    BAD_REQUEST_400(400, "Bad Request"),
     /**
      * Значения ошибок сервера
      */
-    SERVER_ERROR_500_INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
-    SERVER_ERROR_501_NOT_IMPLEMENTED(501, "Not Implemented"),
-    SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED(505, "Http Version Not Supported");
+    INTERNAL_SERVER_ERROR_500(500, "Internal Server Error"),
+    NOT_IMPLEMENTED_501(501, "Not Implemented"),
+    HTTP_VERSION_NOT_SUPPORTED_505(505, "Http Version Not Supported");
 
     /**
      * Поле кода ошибки
