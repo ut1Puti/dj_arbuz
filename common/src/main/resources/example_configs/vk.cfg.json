@@ -1,0 +1,7 @@
+{
+  "AUTH_URL":"example",
+  "APP_ID":0,
+  "CLIENT_SECRET":"example",
+  "SERVICE_CLIENT_SECRET":"example",
+  "REDIRECT_URL":"example"
+}

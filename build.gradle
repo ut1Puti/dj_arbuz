@@ -1,0 +1,44 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+
+    group = 'dj-arbuz'
+    version = '4.0.0-SNAPSHOT'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    compileJava {
+        options.encoding('UTF-8')
+    }
+
+    compileTestJava {
+        options.encoding('UTF-8')
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.24'
+        annotationProcessor 'org.projectlombok:lombok:1.18.24'
+        implementation 'com.vdurmont:emoji-java:3.3.0'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+        testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
