@@ -1,7 +1,9 @@
 package database;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import loaders.gson.GsonLoader;
+
+import java.lang.reflect.Type;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -19,53 +21,59 @@ import java.util.stream.Collectors;
  * @author Щёголев Андрей
  * @version 1.0
  */
-public class GroupsStorage {
+public class GroupsStorage implements GroupBase {
     /**
-     * Поле хеш таблицы, где ключ - айди группы, значение - список пользователей
+     * Поле хеш таблицы, где ключ - имя группы в социальной сети, значение - список пользователей
      */
     private Map<String, GroupRelatedData> groupsBase;
-    private static GroupsStorage groupsStorage = null;
+
+    /**
+     * Поле блокировки обновления даты последнего поста
+     */
+    private final Object dataLock = new Object();
+
+    private static GroupsStorage groupsStorage;
 
     /**
      * Метод для создания нового пользователя в наш класс
      *
-     * @param userId  -айди пользователя
-     * @param groupId - айди группы
+     * @param userSubscribedToGroupId id пользователя
+     * @param groupScreenName         короткое имя группы
      */
-    private void addNewGroup(String groupId, String userId) {
-        List<String> newList = new LinkedList<>();
-        newList.add(userId);
-        groupsBase.put(groupId, new GroupRelatedData(newList, (int)Instant.now().getEpochSecond()));
+    private void addNewGroup(String groupScreenName, String userSubscribedToGroupId) {
+        List<String> newList = new ArrayList<>();
+        newList.add(userSubscribedToGroupId);
+        groupsBase.put(groupScreenName, new GroupRelatedData(newList, Instant.now().getEpochSecond()));
     }
 
     /**
      * Метод для добавления информации для имеющегося в базе группы
      *
-     * @param groupId - Айди группы
-     * @param userId  - Айди пользователя
+     * @param groupScreenName         короткое имя группы
+     * @param userSubscribedToGroupId id пользователя
      */
-    private boolean addOldGroup(String groupId, String userId) {
-        if (!groupsBase.get(groupId).contains(userId)) {
-            groupsBase.get(groupId).addNewSubscriber(userId);
+    private boolean addOldGroup(String groupScreenName, String userSubscribedToGroupId) {
+        if (!groupsBase.get(groupScreenName).contains(userSubscribedToGroupId)) {
+            groupsBase.get(groupScreenName).addNewSubscriber(userSubscribedToGroupId);
             return true;
         }
         return false;
     }
 
     /**
-     * метод для добавления информации где происходит ветвление на методы добавления старой/новой группы
+     * метод для добавления информации, где происходит ветвление на методы добавления старой/новой группы
      *
-     * @param groupId - айди группы
-     * @param userID  - айди пользователя
+     * @param groupScreenName         короткое имя группы
+     * @param userSubscribedToGroupId id пользователя
      * @see GroupsStorage#addNewGroup(String, String)
      * @see GroupsStorage#addOldGroup(String, String)
      */
-    public boolean addInfoToGroup(String groupId, String userID) {
-        if (groupsBase.get(groupId) == null) {
-            addNewGroup(groupId, userID);
+    public boolean addInfoToGroup(String groupScreenName, String userSubscribedToGroupId) {
+        if (groupsBase.get(groupScreenName) == null) {
+            addNewGroup(groupScreenName, userSubscribedToGroupId);
             return true;
         } else {
-            return addOldGroup(groupId, userID);
+            return addOldGroup(groupScreenName, userSubscribedToGroupId);
         }
     }
 
@@ -88,44 +96,64 @@ public class GroupsStorage {
      * Метод для сохранения хеш таблицы в виде файла с расширением json
      */
     public void saveToJsonFile() {
-        Gson gson = new Gson();
-        String json = gson.toJson(groupsBase);
+        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {
+        }.getType();
+        GsonLoader<Map<String, GroupRelatedData>> groupStorageMapGsonLoader = new GsonLoader<>(groupStorageMapType);
         try {
-            FileWriter file = new FileWriter("src/main/resources/anonsrc/database_for_groups.json");
-            file.write(json);
-            file.close();
+            groupStorageMapGsonLoader.loadToJson("src/main/resources/anonsrc/database_for_groups.json", groupsBase);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
     /**
-     * Метод для возврата хеш таблицы с помощью созданнового json файла
+     * Метод для возврата хеш таблицы с помощью созданного json файла
      *
      * @see GroupsStorage#saveToJsonFile()
      */
     public void returnStorageFromDatabase() {
+        Type groupStorageMapType = new TypeToken<Map<String, GroupRelatedData>>() {
+        }.getType();
+        GsonLoader<Map<String, GroupRelatedData>> loader = new GsonLoader<>(groupStorageMapType);
         try {
-            FileReader file = new FileReader("src/main/resources/anonsrc/database_for_groups.json");
-            Scanner scanner = new Scanner(file);
-            try {
-                String json = scanner.nextLine();
-                Gson jsonFile = new Gson();
-                groupsBase = jsonFile.fromJson(json, new TypeToken<Map<String, GroupRelatedData>>() {
-                }.getType());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-            file.close();
+            groupsBase = loader.loadFromJson("src/main/resources/anonsrc/database_for_groups.json");
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    /**
+     * Метод для удаления пользователя из подписчика группы
+     *
+     * @param groupScreenName         название группы в базе данных
+     * @param userSubscribedToGroupId id пользователя
+     * @return {@code true} если пользователь был удален, {@code false} если пользователь не был удален
+     */
+    public boolean deleteInfoFromGroup(String groupScreenName, String userSubscribedToGroupId) {
+
+        if (!groupsBase.containsKey(groupScreenName)) {
+            return false;
+        }
+
+        List<String> subscribedToGroupUsers = groupsBase.get(groupScreenName).getSubscribedUsersId();
+
+        if (!subscribedToGroupUsers.contains(userSubscribedToGroupId)) {
+            return false;
+        }
+
+        boolean isUnsubscribed = subscribedToGroupUsers.remove(userSubscribedToGroupId);
+
+        if (isUnsubscribed && subscribedToGroupUsers.isEmpty()) {
+            groupsBase.remove(groupScreenName);
+        }
+
+        return isUnsubscribed;
     }
 
     /**
      * Метод получающий все группы на которые оформлены подписки
      *
-     * @return группы на которые оформлены подписки
+     * @return неизменяемый набор коротких названий групп на которые оформлены подписки
      */
     public Set<String> getGroups() {
         return Set.copyOf(groupsBase.keySet());
@@ -135,16 +163,16 @@ public class GroupsStorage {
      * Метод получающий всех подписчиков определенной группы
      *
      * @param groupScreenName - короткое название группы
-     * @return подписчиков группы
+     * @return неизменяемый список подписчиков группы
      */
     public List<String> getSubscribedToGroupUsersId(String groupScreenName) {
-        return groupsBase.get(groupScreenName).getSubscribedUsersId().stream().toList();
+        return List.copyOf(groupsBase.get(groupScreenName).getSubscribedUsersId());
     }
 
     /**
      * Метод получающий подписки пользователя
      *
-     * @param userId - id пользователя, подписки которого нужно получить
+     * @param userId id пользователя, подписки которого нужно получить
      * @return подписки пользователя
      */
     public Set<String> getUserSubscribedGroups(String userId) {
@@ -160,12 +188,14 @@ public class GroupsStorage {
      * @return дату последнего поста
      */
     public Optional<Long> getGroupLastPostDate(String groupScreenName) {
+        synchronized (dataLock) {
 
-        if (!groupsBase.containsKey(groupScreenName)) {
-            return Optional.empty();
+            if (!groupsBase.containsKey(groupScreenName)) {
+                return Optional.empty();
+            }
+
+            return Optional.of(groupsBase.get(groupScreenName).getLastPostDate());
         }
-
-        return Optional.of(groupsBase.get(groupScreenName).getLastPostDate());
     }
 
     /**
@@ -175,12 +205,19 @@ public class GroupsStorage {
      * @param newLastPostDate - новая дата последнего поста для группы
      */
     public void updateGroupLastPost(String groupScreenName, long newLastPostDate) {
+        synchronized (dataLock) {
 
-        if (!groupsBase.containsKey(groupScreenName)) {
-            return;
+            if (!groupsBase.containsKey(groupScreenName)) {
+                return;
+            }
+
+            if (newLastPostDate <= groupsBase.get(groupScreenName).getLastPostDate()) {
+                return;
+            }
+
+            GroupRelatedData newGroupData = groupsBase.get(groupScreenName).updateLastPostDate(newLastPostDate);
+            groupsBase.put(groupScreenName, newGroupData);
         }
-
-        groupsBase.get(groupScreenName).updateLastPostDate(newLastPostDate);
     }
 
     /**
@@ -192,5 +229,13 @@ public class GroupsStorage {
      */
     public boolean containsGroup(String groupScreenName) {
         return groupsBase.containsKey(groupScreenName);
+    }
+
+    /**
+     * Метод очищающий хранилище подписок и сохраняющий его в файл
+     */
+    public void clear() {
+        saveToJsonFile();
+        groupsBase.clear();
     }
 }

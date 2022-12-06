@@ -1,60 +1,105 @@
 package bots.console;
 
-import bots.BotUtils;
+import bots.BotMessageExecutable;
+import handlers.messages.MessageHandlerImpl;
+import handlers.notifcations.ConsolePostsPullingThread;
+import bots.StoppableByUser;
+import httpserver.server.HttpServer;
+import stoppable.StoppableThread;
+
+import java.util.Scanner;
 
 /**
- * Класс консольного бота
+ * Класс потока обрабатывающего сообщения пользователя с консоли
  *
  * @author Кедровских Олег
- * @version 2.0
+ * @version 1.2
+ * @see StoppableThread
+ * @see StoppableByUser
  */
-public class ConsoleBot {
+public class ConsoleBot extends StoppableThread implements StoppableByUser, BotMessageExecutable {
     /**
      * Поле id пользователя консольной версии бота
      */
-    private final String defaultConsoleUserId = "consoleUser";
+    private static final String defaultConsoleUserId = "consoleUser";
     /**
-     * Поле потока обрабатывающего и получающего сообщения пользователей
+     * Поле класса исполняющего команды полученные от пользователя
      *
-     * @see ConsoleBotThread
+     * @see ConsoleMessageExecutor
      */
-    private final ConsoleBotThread consoleBotThread = new ConsoleBotThread(defaultConsoleUserId);
+    private final ConsoleMessageExecutor messageExecutor;
+
+    /**
+     * Конструктор - создает экземпляр класса
+     */
+    public ConsoleBot() {
+        super(defaultConsoleUserId);
+        messageExecutor = new ConsoleMessageExecutor(this);
+    }
 
     public static void main(String[] args) {
-        BotUtils.initInstances();
+        HttpServer httpServer = HttpServer.getInstance();
+
+        if (httpServer == null) {
+            throw new RuntimeException("Не удалось настроить сервер");
+        }
+
+        httpServer.start();
+
         ConsoleBot consoleBot = new ConsoleBot();
         consoleBot.start();
-        while (consoleBot.isWorking()) Thread.onSpinWait();
-        consoleBot.stop();
-        BotUtils.stopInstances();
+        while (consoleBot.isWorking()) {
+            Thread.onSpinWait();
+        }
+        consoleBot.stopWithInterrupt();
+        httpServer.stop();
     }
 
     /**
-     * Метод запускающий {@code consoleBotThread}, обрабатывающий сообщения пользователя
+     * Метод с логикой выполняемой внутри потока
      *
-     * @see ConsoleBotThread#start()
+     * @see StoppableThread#run()
+     * @see MessageHandlerImpl#handleMessage(String, String, StoppableByUser)
+     * @see ConsolePostsPullingThread#start()
+     * @see ConsolePostsPullingThread#stopWithInterrupt()
      */
-    public void start() {
-        consoleBotThread.start();
+    @Override
+    public void run() {
+        messageExecutor.start();
+        Scanner userInput = new Scanner(System.in);
+        while (working.get()) {
+
+            if (userInput.hasNextLine()) {
+                messageExecutor.executeTextMessage(defaultConsoleUserId, userInput.nextLine(), this);
+            }
+
+        }
+        working.set(false);
+        userInput.close();
+        messageExecutor.stop();
     }
 
     /**
-     * Метод проверяющий работает ли {@code consoleBotThread}
+     * Реализация интерфейса для отправки сообщения пользователю, выводит сообщение в консоль
      *
-     * @return {@code true} если поток обрабатывающий сообщения пользователя работает,
-     * {@code false} если поток обрабатывающий сообщения завершил свою работу
-     * @see ConsoleBotThread#isWorking()
+     * @param userSendResponseId  id пользователя, которому необходимо отправить сообщение
+     * @param responseSendMessage сообщение, которое будет отправлено пользователю
      */
-    public boolean isWorking() {
-        return consoleBotThread.isWorking();
+    @Override
+    public void send(String userSendResponseId, String responseSendMessage) {
+
+        if (!userSendResponseId.equals(defaultConsoleUserId)) {
+            return;
+        }
+
+        System.out.println(responseSendMessage);
     }
 
     /**
-     * Метод прекращающая работу {@code consoleBotThread}
-     *
-     * @see ConsoleBotThread#stopWithInterrupt()
+     * Метод реализующий интерфейс для остановки бота пользователем
      */
-    public void stop() {
-        consoleBotThread.stopWithInterrupt();
+    @Override
+    public void stopByUser() {
+        stopWithInterrupt();
     }
 }

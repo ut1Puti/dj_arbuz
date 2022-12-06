@@ -1,5 +1,7 @@
 package stoppable;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Класс останавливаемых потоков
  *
@@ -12,7 +14,7 @@ public class StoppableThread extends Thread implements Stoppable {
     /**
      * Поле показывающее находится ли поток в бесконечном цикле
      */
-    protected volatile boolean working = false;
+    protected volatile AtomicBoolean working = new AtomicBoolean();
 
     /**
      * Конструктор - создает экземпляр класса
@@ -125,8 +127,20 @@ public class StoppableThread extends Thread implements Stoppable {
      */
     @Override
     public final void start() {
-        working = true;
+        working.set(true);
         super.start();
+    }
+
+    /**
+<<<<<<< HEAD
+     * Метод выполняющий логику выполняемую внутри потока, наследники должны иметь внутри себя цикл
+     * {@code while(working.get) {some logic that Thread do} working.set(false);}, этот цикл реализует бесконечный цикл
+     * внутри которого будет исполняться логика потока
+     */
+    @Override
+    public void run() {
+        while (working.get()) Thread.onSpinWait();
+        working.set(false);
     }
 
     /**
@@ -138,7 +152,7 @@ public class StoppableThread extends Thread implements Stoppable {
      */
     @Override
     public boolean isWorking() {
-        return this.isAlive() && working;
+        return this.isAlive() && working.get();
     }
 
     /**
@@ -148,7 +162,7 @@ public class StoppableThread extends Thread implements Stoppable {
      */
     @Override
     public void stopWithInterrupt() {
-        working = false;
+        working.set(false);
         this.interrupt();
     }
 }

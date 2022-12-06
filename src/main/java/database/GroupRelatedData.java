@@ -7,37 +7,40 @@ import java.util.Objects;
 /**
  * Класс хранящий данные о группе в базе данных
  *
- * @author Кедровсикх Олег
- * @version 1.0
+ * @author Кедровских Олег
+ * @version 1.5
  */
 class GroupRelatedData {
     /**
      * Поле хранящее подписанных пользователей
      */
     private final List<String> subscribedUsersId;
+
     /**
      * Поле хранящее дату последнего поста
      */
-    private long lastPostDate = 0;
+    private final long lastPostDate;
 
     /**
-     * Констуктор - создает экземпляр класса
+     * Конструктор - создает экземпляр класса
      */
     GroupRelatedData() {
         this.subscribedUsersId = new ArrayList<>();
+        this.lastPostDate = 0;
     }
 
     /**
-     * Констуктор - создает экземпляр класса
+     * Конструктор - создает экземпляр класса
      *
      * @param subscribedUsersId - подписанные пользователи
      */
     GroupRelatedData(List<String> subscribedUsersId) {
         this.subscribedUsersId = subscribedUsersId;
+        this.lastPostDate = 0;
     }
 
     /**
-     * Констуктор - создает экземпляр класса
+     * Конструктор - создает экземпляр класса
      *
      * @param lastPostDate - дата последнего поста полученного в группе
      */
@@ -47,7 +50,7 @@ class GroupRelatedData {
     }
 
     /**
-     * Констуктор - создает экземпляр класса
+     * Конструктор - создает экземпляр класса
      *
      * @param subscribedUsersId - подписанные пользователи
      * @param lastPostDate      - дата последнего поста полученного в группе
@@ -103,8 +106,8 @@ class GroupRelatedData {
      *
      * @param newLastPostDate - новая дата последнего поста
      */
-    void updateLastPostDate(long newLastPostDate) {
-        this.lastPostDate = newLastPostDate;
+    GroupRelatedData updateLastPostDate(long newLastPostDate) {
+        return new GroupRelatedData(this.subscribedUsersId, newLastPostDate);
     }
 
     /**

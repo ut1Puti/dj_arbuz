@@ -1,12 +1,13 @@
 #игнорируемые директории 
 target
 .idea/
+.fleet/
+lib/
 
 #игнорируемые файлы ide
 .idea/*.xml
 *.iml
 *.xml
-*.json
 
 #игнорирование файла файловой системы mac os
 .DS_Store
