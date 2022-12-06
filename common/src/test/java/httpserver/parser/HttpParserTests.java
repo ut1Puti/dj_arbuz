@@ -1,6 +1,7 @@
 package httpserver.parser;
 
 import httpserver.message.request.HttpVersionTests;
+import httpserver.messages.HttpStatusCode;
 import httpserver.messages.request.HttpMethod;
 import httpserver.messages.request.HttpRequest;
 import httpserver.messages.request.HttpRequestTarget;

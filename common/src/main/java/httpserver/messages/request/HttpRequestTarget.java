@@ -1,7 +1,7 @@
 package httpserver.messages.request;
 
 import httpserver.parser.HttpParserException;
-import httpserver.parser.HttpStatusCode;
+import httpserver.messages.HttpStatusCode;
 
 import java.util.Objects;
 

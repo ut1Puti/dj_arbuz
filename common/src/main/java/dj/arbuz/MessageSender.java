@@ -1,4 +1,6 @@
-package dj.arbuz.handlers.messages;
+package dj.arbuz;
+
+import dj.arbuz.handlers.messages.MessageHandlerResponse;
 
 /**
  * Интерфейс для отправки сообщений пользователям

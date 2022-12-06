@@ -1,10 +1,10 @@
-package dj.arbuz.handlers.messages;
+package dj.arbuz;
 
-import dj.arbuz.BotMessageExecutable;
-import dj.arbuz.BotTextResponse;
+import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -34,24 +34,36 @@ public abstract class AbstractMessageSender implements MessageSender {
         List<String> usersSendMessageId = userSendResponse.getUsersSendResponseId();
 
         if (userSendResponse.hasTextMessage()) {
-            for (String userSendMessageId : usersSendMessageId) {
-                messageSender.send(userSendMessageId, userSendResponse.getTextMessage());
-            }
+            sendTextMessage(userSendResponse.getTextMessage(), usersSendMessageId);
         }
 
         if (userSendResponse.hasPostsMessages()) {
-            for (String postMessage : userSendResponse.getPostsMessages()) {
-                for (String userSendMessageId : usersSendMessageId) {
-                    messageSender.send(userSendMessageId, postMessage);
-                }
-            }
+            sendPostsMessage(userSendResponse.getPostsMessages(), usersSendMessageId);
         }
 
         if (userSendResponse.hasAdditionalMessage()) {
-            String userSendMessage = getAdditionalMessageFromResponse(userSendResponse);
+            sendAdditionalMessage(userSendResponse, usersSendMessageId);
+        }
+    }
+
+    protected void sendTextMessage(String textMessage, List<String> usersSendMessageId) {
+        for (String userSendMessageId : usersSendMessageId) {
+            messageSender.send(userSendMessageId, textMessage);
+        }
+    }
+
+    protected void sendPostsMessage(List<String> postsMessage, List<String> usersSendMessageId) {
+        for (String postMessage : postsMessage) {
             for (String userSendMessageId : usersSendMessageId) {
-                messageSender.send(userSendMessageId, userSendMessage);
+                messageSender.send(userSendMessageId, postMessage);
             }
+        }
+    }
+
+    protected void sendAdditionalMessage(MessageHandlerResponse userSendResponse, List<String> usersSendMessageId) {
+        String userSendMessage = getAdditionalMessageFromResponse(userSendResponse);
+        for (String userSendMessageId : usersSendMessageId) {
+            messageSender.send(userSendMessageId, userSendMessage);
         }
     }
 

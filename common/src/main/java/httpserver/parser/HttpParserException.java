@@ -1,5 +1,7 @@
 package httpserver.parser;
 
+import httpserver.messages.HttpStatusCode;
+
 /**
  * Класс ошибки парсинга http запроса
  *

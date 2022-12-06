@@ -1,4 +1,4 @@
-package httpserver.parser;
+package httpserver.messages;
 
 /**
  * Енум ошибок http сервера
@@ -7,6 +7,11 @@ package httpserver.parser;
  * @version 1.0
  */
 public enum HttpStatusCode {
+    /**
+     * Значения ответа
+     */
+    OK(200, "Ok"),
+    NOT_FOUND(404, "Not found"),
     /**
      * Значения ошибок клиента
      */

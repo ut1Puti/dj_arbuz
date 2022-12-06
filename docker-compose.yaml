@@ -1,20 +1,6 @@
 version: '3.8'
 
 services:
-  bot:
-    build: .
-    restart: always
-    container_name: dj_arbuz_telegram_bot
-    volumes:
-      - ./common/src/main/resources/configs:/usr/dj_arbuz/common/src/main/resources/configs
-      - ./telegram/src/main/resources/configs:/usr/dj_arbuz/telegram/src/main/resources/configs
-    ports:
-      - "8080:8080"
-    links:
-      - postgres
-    depends_on:
-      - postgres
-
   postgres:
     image: postgres:15-alpine
     container_name: dj_arbuz_postgres

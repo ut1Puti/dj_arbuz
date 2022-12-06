@@ -1,6 +1,6 @@
 package dj.arbuz.console;
 
-import dj.arbuz.handlers.messages.AbstractMessageSender;
+import dj.arbuz.AbstractMessageSender;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
 
 import java.util.List;

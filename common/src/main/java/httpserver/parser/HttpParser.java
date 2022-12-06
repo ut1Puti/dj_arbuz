@@ -1,5 +1,6 @@
 package httpserver.parser;
 
+import httpserver.messages.HttpStatusCode;
 import httpserver.messages.request.HttpRequest;
 import httpserver.server.HttpServerConfiguration;
 

@@ -2,7 +2,7 @@ package httpserver.message.request;
 
 import httpserver.messages.request.HttpVersion;
 import httpserver.parser.HttpParserException;
-import httpserver.parser.HttpStatusCode;
+import httpserver.messages.HttpStatusCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

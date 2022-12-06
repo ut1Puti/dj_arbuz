@@ -16,6 +16,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executors;
 
 /**
  * Класс слушающий новые сообщения поступающие сокету
@@ -54,53 +55,39 @@ public class ServerListenerThread extends StoppableThread {
      * @see HttpRequest
      * @see HttpParser#parseRequest(InputStream)
      * @see HttpRequest#getRequestTarget()
-     * @see ServerListenerThread#sendFileFromServer(String, OutputStream)
      * @see HttpServerUtils#closeServerStream(Closeable)
      */
     @Override
     public void run() {
         while (serverSocket.isBound() && working.get()) {
-            try (Socket socket = serverSocket.accept()){
+            try (Socket socket = serverSocket.accept()) {
                 if (socket.isBound() && socket.isConnected()) {
                     try (InputStream inputStream = socket.getInputStream();
                          OutputStream outputStream = socket.getOutputStream()) {
+                        try {
 
-                        if (socket.isBound() && socket.isConnected()) {
+                            if (socket.isBound() && socket.isConnected()) {
+                                HttpRequest request = HttpParser.parseRequest(inputStream);
+                                HttpResponse response = HttpResponse.createResponseFromRequest(request);
 
-                            HttpRequest request = HttpParser.parseRequest(inputStream);
-
-                            if (!request.getRequestTarget().getRequestTargetFile().isBlank()) {
+                                outputStream.write(response.toHttpMessage().getBytes());
+                                outputStream.flush();
                                 parametersOutputStream.write((request.getRequestTarget().getParameters() + '\n').getBytes());
                                 parametersOutputStream.flush();
-                                sendFileFromServer(request.getRequestTarget().getRequestTargetFile(), outputStream);
-                            } else {
-                                sendFileFromServer("/timeexpired.html", outputStream);
                             }
 
+                        } catch (HttpParserException e) {
+                            HttpResponse response = HttpResponse.createFromHttpErrorCode(e.getErrorCode());
+                            outputStream.write(response.toHttpMessage().getBytes());
+                            outputStream.flush();
                         }
-                    } catch (HttpParserException ignored) {
                     }
                 }
             } catch (IOException e) {
                 System.out.println(e.getMessage());
-                break;
             }
         }
         working.set(false);
-    }
-
-    /**
-     * Отправляет файл с сервера
-     *
-     * @param filePath     - путь до запрошенного файла
-     * @param outputStream - выходной поток(не тот что исполнения), куда будут записаны данные
-     * @throws IOException - возникает при отсутствии файла или при ошибке записи в поток
-     * @see HttpResponse#createResponse(String)
-     */
-    private void sendFileFromServer(String filePath, OutputStream outputStream) throws IOException {
-        String response = HttpResponse.createResponse(filePath);
-        outputStream.write(response.getBytes());
-        outputStream.flush();
     }
 
     /**

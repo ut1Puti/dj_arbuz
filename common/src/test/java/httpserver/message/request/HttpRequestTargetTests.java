@@ -2,7 +2,7 @@ package httpserver.message.request;
 
 import httpserver.messages.request.HttpRequestTarget;
 import httpserver.parser.HttpParserException;
-import httpserver.parser.HttpStatusCode;
+import httpserver.messages.HttpStatusCode;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;

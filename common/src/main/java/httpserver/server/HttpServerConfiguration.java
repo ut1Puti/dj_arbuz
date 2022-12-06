@@ -18,10 +18,6 @@ public class HttpServerConfiguration {
      */
     public static final String WEB_SRC = "common/src/main/resources/websrc";
     /**
-     * Поле файла при истечении времени аутентификации
-     */
-    public static final String AUTH_TIME_EXPIRED_FILE = "timeexpired.html";
-    /**
      * Поле CRLF
      */
     public static final String CRLF = "\r\n";
