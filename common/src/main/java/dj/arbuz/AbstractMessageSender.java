@@ -21,7 +21,7 @@ public abstract class AbstractMessageSender implements MessageSender {
      * Потребитель принимающий на вход id пользователя и строку содержащую сообщение,
      * которую необходимо отправить пользователю
      */
-    private final BotMessageExecutable messageSender;
+    private final ExecutableMessage messageSender;
 
     /**
      * Реализация метод, который отправляет сообщения пользователям

@@ -24,7 +24,7 @@ public final class GsonLoader<T> {
      *
      * @see Gson
      */
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     /**
      * Метод превращающий прочитанную из json файла строку в экземпляр типа {@code T}
@@ -34,7 +34,7 @@ public final class GsonLoader<T> {
      * @throws IOException возникает при ошибках чтения файла
      */
     public T loadFromJson(Path pathToLoadObject, Type jsonLoadingType) throws IOException {
-        try (Reader fileReader = Files.newBufferedReader(pathToLoadObject)) {
+        try (Reader fileReader = Files.newBufferedReader(pathToLoadObject, StandardCharsets.UTF_8)) {
             return GSON.fromJson(fileReader, jsonLoadingType);
         }
     }

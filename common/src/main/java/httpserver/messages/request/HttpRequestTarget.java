@@ -27,7 +27,7 @@ public class HttpRequestTarget {
      * @param requestTargetReceiverFromRequest - таргет отправленный на сервер
      * @throws HttpParserException - возникает при ошибке формирования таргета из запроса
      * @see HttpStatusCode#INTERNAL_SERVER_ERROR_500
-     * @see HttpStatusCode#CLIENT_ERROR_400_BAD_REQUEST
+     * @see HttpStatusCode#BAD_REQUEST_400
      */
     public HttpRequestTarget(String requestTargetReceiverFromRequest) throws HttpParserException {
         if (requestTargetReceiverFromRequest == null) {
@@ -37,7 +37,7 @@ public class HttpRequestTarget {
         String[] split = requestTargetReceiverFromRequest.split("\\?", 2);
 
         if (!split[0].contains("/")) {
-            throw new HttpParserException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+            throw new HttpParserException(HttpStatusCode.BAD_REQUEST_400);
         }
 
         this.requestTargetFile = split[0];

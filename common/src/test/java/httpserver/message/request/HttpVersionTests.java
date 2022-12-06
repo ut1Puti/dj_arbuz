@@ -59,7 +59,7 @@ public class HttpVersionTests {
         try {
             HttpVersion.getBestCompatibleVersion(httpVersion);
         } catch (HttpParserException e) {
-            assertEquals(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST.getCodeMessage(), e.getMessage());
+            assertEquals(HttpStatusCode.BAD_REQUEST_400.getCodeMessage(), e.getMessage());
             return;
         }
         fail();

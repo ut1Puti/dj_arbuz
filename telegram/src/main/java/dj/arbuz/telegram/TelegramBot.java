@@ -1,6 +1,6 @@
 package dj.arbuz.telegram;
 
-import dj.arbuz.BotMessageExecutable;
+import dj.arbuz.ExecutableMessage;
 import dj.arbuz.TelegramConfigPaths;
 import dj.arbuz.database.HibernateUtil;
 
@@ -20,8 +20,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * Класс для обработки сообщений, полученных из телеграммац
@@ -29,7 +27,7 @@ import java.util.WeakHashMap;
  * @author Щёголев Андрей
  * @version 1.2
  */
-public final class TelegramBot extends TelegramLongPollingBot implements Stoppable, BotMessageExecutable {
+public final class TelegramBot extends TelegramLongPollingBot implements Stoppable, ExecutableMessage {
     /**
      * Поле класса содержащего конфигурацию телеграм бота
      *
@@ -44,25 +42,12 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
     private final TelegramMessageExecutor messageExecutor;
 
     /**
-     * Поле кнопок в телеграмм
-     */
-    private final List<KeyboardRow> keyBoardRows = new ArrayList<>();
-
-    {
-        KeyboardRow rowFirst = new KeyboardRow();
-        rowFirst.add("/auth");
-        rowFirst.add("/help");
-        keyBoardRows.add(rowFirst);
-    }
-
-    /**
      * Конструктор класса для инициализации бота и поля кнопок
      * Также полученные данных бота(ник и токен)
      *
      * @param tgConfigurationFilePath путь до json файла с конфигурацией
      */
     public TelegramBot(Path tgConfigurationFilePath) {
-        //TODO кнопки
         super();
         telegramBotConfiguration = TelegramBotConfiguration.loadTelegramBotConfigurationFromJson(tgConfigurationFilePath);
         messageExecutor = new TelegramMessageExecutor(this);
@@ -129,8 +114,6 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
                 String userReceivedMessage = update.getMessage().getText();
                 String userReceivedMessageId = update.getMessage().getChatId().toString();
                 messageExecutor.executeUserMessage(userReceivedMessageId, userReceivedMessage);
-            } else if (update.getMessage().hasSticker()) {
-
             }
         }
 
@@ -146,6 +129,11 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
     public void send(String userSendResponseId, String responseSendMessage) {
         SendMessage sendMessage = new SendMessage(userSendResponseId, TelegramMessageParser.parseMessageTextToHtml(responseSendMessage));
         sendMessage.setParseMode(ParseMode.HTML);
+        List<KeyboardRow> keyBoardRows = new ArrayList<>();
+        KeyboardRow rowFirst = new KeyboardRow();
+        rowFirst.add("/auth");
+        rowFirst.add("/help");
+        keyBoardRows.add(rowFirst);
         ReplyKeyboardMarkup keyBoardMarkup = new ReplyKeyboardMarkup();
         keyBoardMarkup.setKeyboard(keyBoardRows);
         try {

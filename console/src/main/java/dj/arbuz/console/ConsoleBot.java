@@ -1,6 +1,6 @@
 package dj.arbuz.console;
 
-import dj.arbuz.BotMessageExecutable;
+import dj.arbuz.ExecutableMessage;
 import httpserver.server.HttpServer;
 import stoppable.StoppableThread;
 
@@ -13,7 +13,7 @@ import java.util.Scanner;
  * @version 1.2
  * @see StoppableThread
  */
-public final class ConsoleBot extends StoppableThread implements BotMessageExecutable {
+public final class ConsoleBot extends StoppableThread implements ExecutableMessage {
     /**
      * Поле id пользователя консольной версии бота
      */

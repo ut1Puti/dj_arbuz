@@ -7,7 +7,7 @@ package dj.arbuz;
  * @version 1.0
  */
 @FunctionalInterface
-public interface BotMessageExecutable {
+public interface ExecutableMessage {
     /**
      * Метод отправляющий сообщение пользователю
      *

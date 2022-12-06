@@ -54,7 +54,7 @@ public class HttpParser {
      * @see HttpRequest#setRequestTarget(String)
      * @see HttpRequest#setHttpVersion(String)
      * @see HttpStatusCode#INTERNAL_SERVER_ERROR_500
-     * @see HttpStatusCode#CLIENT_ERROR_400_BAD_REQUEST
+     * @see HttpStatusCode#BAD_REQUEST_400
      */
     private static void parseRequestLine(Scanner httpRequestScanner, HttpRequest httpRequest)
             throws HttpParserException {
@@ -71,7 +71,7 @@ public class HttpParser {
             httpRequest.setRequestTarget(requestLine[1]);
             httpRequest.setHttpVersion(requestLine[2]);
         } else {
-            throw new HttpParserException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+            throw new HttpParserException(HttpStatusCode.BAD_REQUEST_400);
         }
 
     }
@@ -120,7 +120,7 @@ public class HttpParser {
                 readLength += read.length();
 
                 if (readLength > contentLength) {
-                    throw new HttpParserException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+                    throw new HttpParserException(HttpStatusCode.BAD_REQUEST_400);
                 }
 
             }

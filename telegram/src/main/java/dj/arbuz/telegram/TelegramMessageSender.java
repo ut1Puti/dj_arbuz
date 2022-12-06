@@ -1,6 +1,6 @@
 package dj.arbuz.telegram;
 
-import dj.arbuz.BotMessageExecutable;
+import dj.arbuz.ExecutableMessage;
 import dj.arbuz.AbstractMessageSender;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
 
@@ -20,7 +20,7 @@ public final class TelegramMessageSender extends AbstractMessageSender {
      *
      * @param telegramBot бот, от имени которого будет отправлено сообщение
      */
-    public TelegramMessageSender(BotMessageExecutable telegramBot) {
+    public TelegramMessageSender(ExecutableMessage telegramBot) {
         super(telegramBot);
     }
 

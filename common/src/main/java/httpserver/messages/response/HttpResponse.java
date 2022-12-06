@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class HttpResponse extends HttpMessage {
     public static HttpResponse createResponseFromRequest(HttpRequest httpRequest) throws HttpParserException {
         HttpResponse httpResponse = new HttpResponse();
         httpResponse.setHttpVersion(httpRequest.getBestCompatibleHttpVersion());
-        try (BufferedReader reader = Files.newBufferedReader(Path.of(HttpServerConfiguration.WEB_SRC, httpRequest.getRequestTarget().getRequestTargetFile()))) {
+        try (BufferedReader reader = Files.newBufferedReader(Path.of(HttpServerConfiguration.WEB_SRC, httpRequest.getRequestTarget().getRequestTargetFile()), StandardCharsets.UTF_8)) {
             String body = reader.lines().collect(Collectors.joining(" "));
             httpResponse.setHttpStatusCode(HttpStatusCode.OK_200)
                     .setBody(body)
