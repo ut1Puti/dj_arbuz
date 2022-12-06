@@ -53,7 +53,7 @@ public class ServerListenerThread extends StoppableThread {
      *
      * @see HttpRequest
      * @see HttpParser#parseRequest(InputStream)
-     * @see HttpRequest#getRequestTarget()
+     * @see HttpRequest#getTarget()
      * @see HttpServerUtils#closeServerStream(Closeable)
      */
     @Override
@@ -71,7 +71,7 @@ public class ServerListenerThread extends StoppableThread {
 
                                 outputStream.write(response.toHttpMessage().getBytes());
                                 outputStream.flush();
-                                parametersOutputStream.write((request.getRequestTarget().getParameters() + '\n').getBytes());
+                                parametersOutputStream.write((request.getTarget().getParameters() + '\n').getBytes());
                                 parametersOutputStream.flush();
                             }
 

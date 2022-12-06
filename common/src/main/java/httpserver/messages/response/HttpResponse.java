@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,6 +17,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Класс ответа http сервера
@@ -45,9 +45,14 @@ public class HttpResponse extends HttpMessage {
 
     public static HttpResponse createResponseFromRequest(HttpRequest httpRequest) throws HttpParserException {
         HttpResponse httpResponse = new HttpResponse();
-        httpResponse.setHttpVersion(httpRequest.getBestCompatibleHttpVersion());
-        try (BufferedReader reader = Files.newBufferedReader(Path.of(HttpServerConfiguration.WEB_SRC, httpRequest.getRequestTarget().getRequestTargetFile()), StandardCharsets.UTF_8)) {
-            String body = reader.lines().collect(Collectors.joining(" "));
+        Path requestTargetFile = Path.of(HttpServerConfiguration.WEB_SRC, httpRequest.getTarget().getTargetFile()).normalize();
+
+        if (!requestTargetFile.startsWith(HttpServerConfiguration.WEB_SRC)) {
+            throw new HttpParserException(HttpStatusCode.NOT_FOUND_404);
+        }
+
+        try (Stream<String> fileDataStream = Files.lines(requestTargetFile, StandardCharsets.UTF_8)) {
+            String body = fileDataStream.collect(Collectors.joining(" "));
             httpResponse.setHttpStatusCode(HttpStatusCode.OK_200)
                     .setBody(body)
                     .addHeader("Content-Type:", "text/html; charset=utf-8")
@@ -55,6 +60,8 @@ public class HttpResponse extends HttpMessage {
         } catch (IOException e) {
             throw new HttpParserException(HttpStatusCode.NOT_FOUND_404);
         }
+
+        httpResponse.setHttpVersion(httpRequest.getBestCompatibleHttpVersion());
         return httpResponse;
     }
 

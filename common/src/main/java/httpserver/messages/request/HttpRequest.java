@@ -79,7 +79,7 @@ public class HttpRequest extends HttpMessage {
      *
      * @return таргет запроса
      */
-    public HttpRequestTarget getRequestTarget() {
+    public HttpRequestTarget getTarget() {
         return requestTarget;
     }
 

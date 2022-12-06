@@ -54,7 +54,7 @@ public class HttpRequestTarget {
      *
      * @return цель запроса в виде имени файла
      */
-    public String getRequestTargetFile() {
+    public String getTargetFile() {
         return requestTargetFile;
     }
 

@@ -22,7 +22,7 @@ public class HttpRequestTargetTests {
         String requestedFile = "/file";
         String parameters = "param";
         HttpRequestTarget target = new HttpRequestTarget(requestedFile + "?" + parameters);
-        assertEquals(requestedFile, target.getRequestTargetFile());
+        assertEquals(requestedFile, target.getTargetFile());
         assertEquals(parameters, target.getParameters());
     }
 
@@ -33,7 +33,7 @@ public class HttpRequestTargetTests {
     public void testRequestTargetWithoutParameters() throws HttpParserException {
         String requestedFile = "/file";
         HttpRequestTarget target = new HttpRequestTarget(requestedFile);
-        assertEquals(requestedFile, target.getRequestTargetFile());
+        assertEquals(requestedFile, target.getTargetFile());
         assertEquals("", target.getParameters());
     }
 

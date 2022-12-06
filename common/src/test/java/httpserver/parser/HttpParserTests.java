@@ -49,7 +49,7 @@ public class HttpParserTests {
         headers.put("Host", "localhost:8080");
         headers.put("Connection", "keep-alive");
         assertEquals(HttpMethod.GET, request.getMethod());
-        assertEquals(new HttpRequestTarget("/redirect.html?code"), request.getRequestTarget());
+        assertEquals(new HttpRequestTarget("/redirect.html?code"), request.getTarget());
         assertEquals("HTTP/1.1", request.getOriginalHttpVersion());
         assertEquals(HttpVersion.HTTP_1_1, request.getBestCompatibleHttpVersion());
         assertEquals(headers, request.headers);
@@ -169,7 +169,7 @@ public class HttpParserTests {
         headers.put("Host", "localhost:8080");
         headers.put("Connection", "keep-alive");
         assertEquals(HttpMethod.GET, request.getMethod());
-        assertEquals(new HttpRequestTarget("/redirect.html?code"), request.getRequestTarget());
+        assertEquals(new HttpRequestTarget("/redirect.html?code"), request.getTarget());
         assertEquals(httpVersion, request.getOriginalHttpVersion());
         assertEquals(expectedBestCompatibleHttpVersion, request.getBestCompatibleHttpVersion());
         assertEquals(headers, request.headers);
