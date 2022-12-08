@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @version 1.0
  */
 public class ServerListeningThreadTests {
-    private final int testPort = 8081;
+    private final int testPort = 10000;
     /**
      * Поле потока обрабатывающего сообщения
      */
@@ -28,7 +29,7 @@ public class ServerListeningThreadTests {
      * @throws IOException - возникает при ошибке открытия сокета
      */
     @BeforeEach
-    public void setListeningThread() throws IOException {
+    public void setListeningThread() throws IOException, InterruptedException {
         ServerSocket serverSocket = new ServerSocket(testPort);
         serverListenerThread = new ServerListenerThread(serverSocket);
         serverListenerThread.start();

@@ -36,7 +36,7 @@ public class ServerListenerThread extends StoppableThread {
     /**
      * Поле потока в который записываются полученные сервером get параметры http запроса
      */
-    private static final PipedOutputStream parametersOutputStream = new PipedOutputStream();
+    private final PipedOutputStream parametersOutputStream = new PipedOutputStream();
     /**
      * Поле reader'а читающего параметры полученных сервером get параметров http запросов
      */
