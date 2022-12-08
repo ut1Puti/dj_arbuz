@@ -5,6 +5,7 @@ import stoppable.Stoppable;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.stream.Stream;
 
 /**
  * Класс http сервера
@@ -29,7 +30,6 @@ public class HttpServer implements Stoppable {
      * @see ServerListenerThread
      */
     private final ServerListenerThread listenerThread;
-
 
     /**
      * Конструктор - создание объекта
@@ -75,10 +75,10 @@ public class HttpServer implements Stoppable {
      *
      * @return полученные get параметры последнего запроса,
      * null если в течение 5 минут параметры не пришли, или поток был прерван
-     * @see ServerListenerThread#getHttpRequestParameters()
+     * @see ServerListenerThread#getHttpGetRequestParams()
      */
-    public String getHttpRequestParameters() {
-        return listenerThread.getHttpRequestParameters();
+    public Stream<String> getHttpGetRequestParams() {
+        return listenerThread.getHttpGetRequestParams();
     }
 
     /**

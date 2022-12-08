@@ -1,8 +1,6 @@
 package dj.arbuz.handlers.messages;
 
-import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import org.junit.jupiter.api.Test;
-import dj.arbuz.user.BotUser;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +30,6 @@ public class MessageHandlerResponseTests {
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
-        assertEquals(List.of(), response.getPostsMessages());
         assertFalse((response.hasAdditionalMessage()));
         assertNull(response.getAdditionalMessage());
         assertEquals(List.of(testUserId), response.getUsersSendResponseId());
@@ -47,7 +44,6 @@ public class MessageHandlerResponseTests {
         assertTrue(response.hasTextMessage());
         assertEquals(expectedMessage, response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
-        assertEquals(List.of(), response.getPostsMessages());
         assertFalse((response.hasAdditionalMessage()));
         assertNull(response.getAdditionalMessage());
         assertEquals(List.of(testUserId), response.getUsersSendResponseId());
@@ -59,12 +55,11 @@ public class MessageHandlerResponseTests {
     @Test
     public void testUpdateUserConstructorsAndSettersAndGetters() throws ExecutionException, InterruptedException {
         MessageHandlerResponse response = MessageHandlerResponse.newBuilder()
-                .additionalMesage(CompletableFuture.supplyAsync(() -> "Hello"))
+                .additionalMessage(CompletableFuture.supplyAsync(() -> "Hello"))
                 .build(List.of(testUserId));
         assertFalse(response.hasTextMessage());
         assertNull(response.getTextMessage());
         assertFalse((response.hasPostsMessages()));
-        assertEquals(List.of(), response.getPostsMessages());
         assertTrue((response.hasAdditionalMessage()));
         assertEquals("Hello", response.getAdditionalMessage().get());
         assertEquals(List.of(testUserId), response.getUsersSendResponseId());

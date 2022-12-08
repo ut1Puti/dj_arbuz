@@ -16,6 +16,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.stream.Stream;
 
 /**
  * Класс слушающий новые сообщения поступающие сокету
@@ -95,12 +96,8 @@ public class ServerListenerThread extends StoppableThread {
      * @return полученные get параметры последнего запроса,
      * null если в течение 1 минуты параметры не пришли, или поток был прерван
      */
-    public String getHttpRequestParameters() {
-        try {
-            return parametersReader.readLine();
-        } catch (IOException e) {
-            return "";
-        }
+    public Stream<String> getHttpGetRequestParams() {
+        return parametersReader.lines();
     }
 
     /**

@@ -5,10 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import dj.arbuz.user.BotUser;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 /**
  * Класс ответов обработчика сообщений
@@ -30,7 +29,7 @@ public final class MessageHandlerResponse {
     @Getter
     private final String textMessage;
     @Getter
-    private final CompletableFuture<String> additionalMessage;
+    private final Future<String> additionalMessage;
     /**
      * Поле со списком постов в виде строк
      */
@@ -74,7 +73,6 @@ public final class MessageHandlerResponse {
      * @return {@code true} - если есть посты, {@code false} - если нет постов
      */
     public boolean hasPostsMessages() {
-
         if (postsMessages == null) {
             return false;
         }
@@ -88,11 +86,6 @@ public final class MessageHandlerResponse {
      * @return список постов
      */
     public List<String> getPostsMessages() {
-
-        if (postsMessages == null) {
-            return List.of();
-        }
-
         return List.copyOf(postsMessages);
     }
 
@@ -114,7 +107,7 @@ public final class MessageHandlerResponse {
          * Поле со списком постов в виде строк
          */
         private List<String> postsMessages;
-        private CompletableFuture<String> additionalMessage;
+        private Future<String> additionalMessage;
 
         /**
          * Метод устанавливающий значение {@code testMessage}
@@ -128,7 +121,7 @@ public final class MessageHandlerResponse {
             return this;
         }
 
-        public MessageHandlerResponseBuilder additionalMesage(CompletableFuture<String> additionalMessage) {
+        public MessageHandlerResponseBuilder additionalMessage(Future<String> additionalMessage) {
             this.additionalMessage = additionalMessage;
             return this;
         }
@@ -149,7 +142,7 @@ public final class MessageHandlerResponse {
          * Метод строящий новый ответ обработчика
          *
          * @return новый экземпляр {@code MessageExecutorResponse}
-         * @see MessageHandlerResponse#MessageHandlerResponse(List, String, CompletableFuture, List)
+         * @see MessageHandlerResponse#MessageHandlerResponse(List, String, Future, List)
          */
         public MessageHandlerResponse build(List<String> userSendResponseId) {
             return new MessageHandlerResponse(userSendResponseId, textMessage, additionalMessage, postsMessages);

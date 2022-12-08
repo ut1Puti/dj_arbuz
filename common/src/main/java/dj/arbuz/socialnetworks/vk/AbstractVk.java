@@ -1,7 +1,6 @@
 package dj.arbuz.socialnetworks.vk;
 
 import com.vk.api.sdk.client.actors.Actor;
-import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.objects.groups.Group;
 import com.vk.api.sdk.objects.groups.GroupIsClosed;
@@ -26,7 +25,7 @@ import java.util.List;
  * @version 1.0
  * @see AbstractSocialNetwork
  */
-public class AbstractVk extends AbstractSocialNetwork<Group, WallpostFull, BotUser, ServiceActor, Actor, GroupActor> {
+public class AbstractVk extends AbstractSocialNetwork<Group, WallpostFull, BotUser, Actor> {
     /**
      * Поле пользователя приложения vk
      */
@@ -60,11 +59,7 @@ public class AbstractVk extends AbstractSocialNetwork<Group, WallpostFull, BotUs
      *
      * @param userSystemId id пользователя в системе
      * @return {@code CompletableFuture<User>}, который выполняет логику создания пользователя,
-<<<<<<<< HEAD:common/src/main/java/dj/arbuz/socialnetworks/vk/AbstractVk.java
-     * посмотреть ее можно в метода {@link dj.arbuz.socialnetworks.vk.oAuth.VkAuth#createBotUser(String)}
-========
-     * посмотреть ее можно в метода {@link VkAuth#createBotUser(String)}
->>>>>>>> developTaskFour:src/main/java/dj/arbuz/socialnetworks/vk/AbstractVk.java
+     * посмотреть ее можно в метода {@link VkAuth#createBotUserWithCode(String, String)}
      */
     @Override
     public BotUser createBotUser(String userSystemId) {

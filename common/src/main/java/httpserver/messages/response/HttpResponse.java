@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,10 +55,10 @@ public class HttpResponse extends HttpMessage {
         try (Stream<String> fileDataStream = Files.lines(requestTargetFile, StandardCharsets.UTF_8)) {
             String body = fileDataStream.collect(Collectors.joining(" "));
             httpResponse.setHttpStatusCode(HttpStatusCode.OK_200)
-                    .setBody(body)
                     .addHeader("Content-Type:", "text/html; charset=utf-8")
-                    .addHeader("Content-Length:", String.valueOf(body.getBytes().length));
-        } catch (IOException e) {
+                    .addHeader("Content-Length:", String.valueOf(body.getBytes().length))
+                    .setBody(body);
+        } catch (IOException | UncheckedIOException e) {
             throw new HttpParserException(HttpStatusCode.NOT_FOUND_404);
         }
 

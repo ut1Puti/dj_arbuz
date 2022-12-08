@@ -15,7 +15,7 @@ import java.util.List;
  * @author Кедровсикх Олег
  * @version 1.0
  */
-public interface SocialNetwork<W, G, U, GU> {
+public interface SocialNetwork<W, G, U> {
     /**
      * Метод получающий ссылку для аутентификации пользователя с помощью социальной сети
      *

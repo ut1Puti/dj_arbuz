@@ -4,8 +4,11 @@ import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -70,14 +73,17 @@ public abstract class AbstractMessageSender implements MessageSender {
      * Метод получающий дополнительное сообщение для пользователя
      *
      * @param userSendHandlerResponse {@code CompletableFuture} который возвращает текстовое сообщение для пользователя
-     * @return строку соержащую сообщение, которое будет отправлено пользователю
+     * @return строку содержащую сообщение, которое будет отправлено пользователю
      */
     private String getAdditionalMessageFromResponse(MessageHandlerResponse userSendHandlerResponse) {
+        Future<String> additionalMessage = userSendHandlerResponse.getAdditionalMessage();
         try {
-            return userSendHandlerResponse.getAdditionalMessage().get(1, TimeUnit.MINUTES);
+            return additionalMessage.get(1, TimeUnit.MINUTES);
         } catch (TimeoutException e) {
+            additionalMessage.cancel(true);
             return BotTextResponse.TIME_EXPIRED;
         } catch (InterruptedException | ExecutionException e) {
+            additionalMessage.cancel(true);
             System.err.println(e.getMessage());
             return BotTextResponse.HANDLER_ERROR;
         }

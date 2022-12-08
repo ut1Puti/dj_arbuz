@@ -5,11 +5,13 @@ import dj.arbuz.database.UserBase;
 import dj.arbuz.socialnetworks.socialnetwork.AbstractSocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
 import dj.arbuz.socialnetworks.vk.AbstractVk;
+import dj.arbuz.socialnetworks.vk.oAuth.OAuthCodeQueue;
 import dj.arbuz.user.BotUser;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 /**
  * Класс обработки команды /auth
@@ -42,7 +44,7 @@ public final class AuthHandler extends DjArbuzAbstractMessageHandler {
      * @see MessageHandlerResponse#newBuilder()
      * @see BotTextResponse#AUTH_GO_VIA_LINK
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder#textMessage(String)
-     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#additionalMesage(CompletableFuture)
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder#additionalMessage(Future)
      */
     @Override
     public MessageHandlerResponse handleMessage(String message, String userSendResponseId) {
@@ -58,10 +60,9 @@ public final class AuthHandler extends DjArbuzAbstractMessageHandler {
 
         CompletableFuture<String> createUserActorAnswer =
                 CompletableFuture.supplyAsync(() -> botUserAuth(vk.createBotUser(userSendResponseId)));
-
         return MessageHandlerResponse.newBuilder()
                 .textMessage(BotTextResponse.AUTH_GO_VIA_LINK + authURL)
-                .additionalMesage(createUserActorAnswer)
+                .additionalMessage(createUserActorAnswer)
                 .build(List.of(userSendResponseId));
     }
 

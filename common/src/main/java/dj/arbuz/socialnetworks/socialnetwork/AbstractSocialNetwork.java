@@ -10,18 +10,17 @@ import dj.arbuz.socialnetworks.socialnetwork.wall.SocialNetworkWall;
  * @param <G> параметр типа данных используемый в качестве группы социальной сети
  * @param <P> параметр типа данных, который используется для представления поста со стены в социальной сети
  * @param <U> параметр типа данных используемого в качестве пользователя
- * @param <S> параметр типа данных используемого в качестве пользователя приложения социальной сети
  * @param <A> параметр типа данных используемого в качестве пользователя для стены социальной сети
  * @author Кедровских Олег
  * @version 1.0
  */
-public abstract class AbstractSocialNetwork<G, P, U, S, A, GU> implements SocialNetwork<P, G, U, GU> {
+public abstract class AbstractSocialNetwork<G, P, U, A> implements SocialNetwork<P, G, U> {
     /**
      * Поле класс для авторизации в социальной сети
      *
      * @see SocialNetworkAuth
      */
-    protected final SocialNetworkAuth<S, U, GU> oAuth;
+    protected final SocialNetworkAuth oAuth;
     /**
      * Поле класса групп социальной сети
      *
@@ -42,7 +41,7 @@ public abstract class AbstractSocialNetwork<G, P, U, S, A, GU> implements Social
      * @param groups класс групп социальной сети
      * @param wall класс стены социальной сети
      */
-    protected AbstractSocialNetwork(SocialNetworkAuth<S, U, GU> oAuth, SocialNetworkGroups<G, U> groups, SocialNetworkWall<P, A> wall) {
+    protected AbstractSocialNetwork(SocialNetworkAuth oAuth, SocialNetworkGroups<G, U> groups, SocialNetworkWall<P, A> wall) {
         this.oAuth = oAuth;
         this.groups = groups;
         this.wall = wall;
