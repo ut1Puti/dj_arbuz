@@ -25,4 +25,8 @@ public class TelegramConfigPaths {
      * Поле пути до файла с конфигурацией hibernate
      */
     public static final String HIBERNATE_CONFIG_PATH_AS_STRING = "telegram/src/main/resources/configs/hibernate.cfg.xml";
+    /**
+     *
+     */
+    public static final Path SERVER_CONFIG_PATH = Path.of("telegram", "src", "main", "resources", "configs", "server.cfg.json");
 }

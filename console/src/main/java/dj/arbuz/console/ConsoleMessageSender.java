@@ -16,7 +16,7 @@ public final class ConsoleMessageSender extends AbstractMessageSender {
     /**
      * Поле потока, получающего новые посты для консольного бота
      *
-     * @see ConsolePostsPullingThread
+     * @see ConsolePostsPullingTask
      */
     private final ConsolePostsPullingTask notificationPullingTask;
 

@@ -4,8 +4,7 @@ import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import dj.arbuz.socialnetworks.vk.oAuth.VkAuth;
-import httpserver.server.HttpServer;
+import httpserver.HttpServerNano;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -31,7 +30,7 @@ public class VkAuthTests {
      * Поле класса аутентификации пользователя в vk
      */
     private static final VkAuth vkAuth = new VkAuth(vk,
-            new OAuthCodeQueue(HttpServer.getInstance()),
+            new OAuthCodeQueue(HttpServerNano.getInstance()),
             Path.of("src", "test", "resources", "configs", "vk.cfg.json"));
 
     /**

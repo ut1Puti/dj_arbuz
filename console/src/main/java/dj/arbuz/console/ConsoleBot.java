@@ -1,9 +1,11 @@
 package dj.arbuz.console;
 
 import dj.arbuz.ExecutableMessage;
-import httpserver.server.HttpServer;
+import httpserver.HttpServerNano;
 import stoppable.StoppableThread;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Scanner;
 
 /**
@@ -33,22 +35,18 @@ public final class ConsoleBot extends StoppableThread implements ExecutableMessa
         messageExecutor = new ConsoleMessageExecutor(this);
     }
 
-    public static void main(String[] args) {
-        HttpServer httpServer = HttpServer.getInstance();
-
-        if (httpServer == null) {
-            throw new RuntimeException("Не удалось настроить сервер");
-        }
-
-        httpServer.start();
-
+    public static void main(String[] args) throws IOException {
+        HttpServerNano httpServerNano = HttpServerNano.createInstance(Path.of("common", "src", "main", "resources", "configs", "server.cfg.json"));
+        int startTimeout = 0;
+        boolean isDaemon = true;
+        httpServerNano.start(startTimeout, isDaemon);
         ConsoleBot consoleBot = new ConsoleBot();
         consoleBot.start();
         while (consoleBot.isWorking()) {
             Thread.onSpinWait();
         }
         consoleBot.stopWithInterrupt();
-        httpServer.stopWithInterrupt();
+        httpServerNano.stop();
     }
 
     /**

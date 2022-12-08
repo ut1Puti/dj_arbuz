@@ -1,6 +1,6 @@
 package dj.arbuz.socialnetworks.vk.oAuth;
 
-import httpserver.server.HttpServer;
+import httpserver.HttpServerNano;
 
 import java.io.UncheckedIOException;
 import java.util.Collections;
@@ -24,7 +24,7 @@ public class OAuthCodeQueue {
     private static final Map<String, String> communication = Collections.synchronizedMap(new WeakHashMap<>());
     private final ScheduledExecutorService service = new ScheduledThreadPoolExecutor(1);
 
-    public OAuthCodeQueue(HttpServer httpServer) {
+    public OAuthCodeQueue(HttpServerNano httpServer) {
         service.scheduleAtFixedRate(() -> {
             if (counter.get() > 0) {
                 this.addMessageFromHttpParams(httpServer.getHttpGetRequestParams());

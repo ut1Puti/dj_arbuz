@@ -5,7 +5,6 @@ import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import dj.arbuz.socialnetworks.vk.oAuth.OAuthCodeQueue;
 import dj.arbuz.socialnetworks.vk.wall.VkWall;
-import httpserver.server.HttpServer;
 import dj.arbuz.socialnetworks.vk.groups.VkGroups;
 import dj.arbuz.socialnetworks.vk.oAuth.VkAuth;
 

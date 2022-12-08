@@ -2,9 +2,8 @@ package dj.arbuz.telegram;
 
 import dj.arbuz.ExecutableMessage;
 import dj.arbuz.TelegramConfigPaths;
-import dj.arbuz.database.HibernateUtil;
 
-import httpserver.server.HttpServer;
+import httpserver.HttpServerNano;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -17,6 +16,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,14 +62,11 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
         messageExecutor = new TelegramMessageExecutor(this);
     }
 
-    public static void main(String[] args) throws RuntimeException {
-        HttpServer httpServer = HttpServer.getInstance();
-
-        if (httpServer == null) {
-            throw new RuntimeException("Не удалось настроить сервер");
-        }
-
-        httpServer.start();
+    public static void main(String[] args) throws RuntimeException, IOException {
+        HttpServerNano httpServerNano = HttpServerNano.createInstance(TelegramConfigPaths.SERVER_CONFIG_PATH);
+        int startTimeout = 0;
+        boolean isDaemon = true;
+        httpServerNano.start(startTimeout, isDaemon);
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(new TelegramBot(TelegramConfigPaths.TELEGRAM_CONFIG_PATH));

@@ -10,8 +10,9 @@ import dj.arbuz.handlers.messages.MessageHandlerImpl;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import dj.arbuz.socialnetworks.vk.Vk;
 import dj.arbuz.socialnetworks.vk.oAuth.OAuthCodeQueue;
-import httpserver.server.HttpServer;
+import httpserver.HttpServerNano;
 
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +51,7 @@ public final class TelegramMessageExecutor {
     public TelegramMessageExecutor(TelegramBot telegramBot) {
         UserBase userStorage = new UserService();
         GroupBase groupsStorage = new GroupService();
-        Vk vk = new Vk(new OAuthCodeQueue(HttpServer.getInstance()));
+        Vk vk = new Vk(new OAuthCodeQueue(HttpServerNano.getInstance()));
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
         messageSender = new TelegramMessageSender(telegramBot);
         telegramPostsPullingThread.scheduleAtFixedRate(new TelegramPostsPullingTask(telegramBot, groupsStorage, vk), 0, 1, TimeUnit.HOURS);

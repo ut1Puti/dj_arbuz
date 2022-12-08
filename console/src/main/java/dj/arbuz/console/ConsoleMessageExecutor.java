@@ -7,7 +7,7 @@ import dj.arbuz.handlers.messages.MessageHandlerImpl;
 import dj.arbuz.handlers.messages.MessageHandlerResponse;
 import dj.arbuz.socialnetworks.vk.Vk;
 import dj.arbuz.socialnetworks.vk.oAuth.OAuthCodeQueue;
-import httpserver.server.HttpServer;
+import httpserver.HttpServerNano;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -51,7 +51,7 @@ public final class ConsoleMessageExecutor {
     public ConsoleMessageExecutor(ConsoleBot consoleBot) {
         UserStorage userStorage = UserStorage.getInstance();
         GroupsStorage groupsStorage = GroupsStorage.getInstance();
-        Vk vk = new Vk(new OAuthCodeQueue(HttpServer.getInstance()));
+        Vk vk = new Vk(new OAuthCodeQueue(HttpServerNano.getInstance()));
         messageHandler = new MessageHandlerImpl(groupsStorage, userStorage, vk);
         consolePostsPullingTask = new ConsolePostsPullingTask(consoleBot.getName(), groupsStorage, vk);
         consolePostsPullingThread.scheduleAtFixedRate(consolePostsPullingTask, 0, 1, TimeUnit.HOURS);

@@ -1,0 +1,5 @@
+{
+  "hostName": "host",
+  "port": 1111,
+  "webDataPathAsString": "path"
+}
