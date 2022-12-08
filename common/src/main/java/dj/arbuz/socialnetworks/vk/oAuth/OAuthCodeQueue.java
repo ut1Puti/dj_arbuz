@@ -33,30 +33,19 @@ public class OAuthCodeQueue {
         }, 0, 10, TimeUnit.SECONDS);
     }
 
-    public void subscribeWithKey(String key) {
-        subscribeWithKeyHelper(key);
-    }
-
     private static void subscribeWithKeyHelper(String key) {
         communication.compute(key, (k, v) -> v);
         counter.incrementAndGet();
     }
 
-    public MessageQueue subscribeClosable(String key, HttpServer httpServer) {
-        return new MessageQueue(key, httpServer);
-    }
-
-    public String getMessageByKey(String key) {
-        return communication.get(key);
-    }
-
-    public void unsubscribeByKey(String key) {
-        unsubscribeByKeyHelper(key);
+    public MessageQueuePuller subscribe(String key) {
+        return new MessageQueuePuller(key);
     }
 
     private static void unsubscribeByKeyHelper(String key) {
-        communication.remove(key);
-        counter.updateAndGet(i -> i > 0 ? --i : i);
+        if (communication.remove(key) != null) {
+            counter.updateAndGet(i -> i > 0 ? --i : i);
+        }
     }
 
     public void addMessageFromHttpParams(Stream<String> params) {
@@ -99,20 +88,17 @@ public class OAuthCodeQueue {
     private record OAuthParams(String authCode, String userTelegramId) {
     }
 
-    public static final class MessageQueue implements AutoCloseable {
+    public static final class MessageQueuePuller implements AutoCloseable {
         private final String key;
-        private final HttpServer httpServer;
 
-        public MessageQueue(String key, HttpServer httpServer) {
+        public MessageQueuePuller(String key) {
             this.key = key;
-            this.httpServer = httpServer;
             subscribeWithKeyHelper(this.key);
         }
 
         public String pollMessage() {
             String res = null;
-            while (res == null) {
-                System.out.println("here");
+            for (int i = 0; i < 36; i++) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -125,7 +111,6 @@ public class OAuthCodeQueue {
 
         @Override
         public void close() throws Exception {
-            System.out.println("here" + counter);
             unsubscribeByKeyHelper(key);
         }
     }

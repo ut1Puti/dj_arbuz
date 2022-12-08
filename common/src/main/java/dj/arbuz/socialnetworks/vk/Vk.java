@@ -3,6 +3,7 @@ package dj.arbuz.socialnetworks.vk;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import dj.arbuz.socialnetworks.vk.oAuth.OAuthCodeQueue;
 import dj.arbuz.socialnetworks.vk.wall.VkWall;
 import httpserver.server.HttpServer;
 import dj.arbuz.socialnetworks.vk.groups.VkGroups;
@@ -29,9 +30,9 @@ public final class Vk extends AbstractVk {
     /**
      * Конструктор - создает экземпляр класса
      */
-    public Vk() {
+    public Vk(OAuthCodeQueue oAuthCodeQueue) {
         super(
-                new VkAuth(vkApiClient, HttpServer.getInstance(), VkConfigPaths.VK_CONFIG_PATH),
+                new VkAuth(vkApiClient, oAuthCodeQueue, VkConfigPaths.VK_CONFIG_PATH),
                 new VkGroups(vkApiClient),
                 new VkWall(vkApiClient)
         );

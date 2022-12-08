@@ -80,10 +80,8 @@ public abstract class AbstractMessageSender implements MessageSender {
         try {
             return additionalMessage.get(1, TimeUnit.MINUTES);
         } catch (TimeoutException e) {
-            additionalMessage.cancel(true);
             return BotTextResponse.TIME_EXPIRED;
         } catch (InterruptedException | ExecutionException e) {
-            additionalMessage.cancel(true);
             System.err.println(e.getMessage());
             return BotTextResponse.HANDLER_ERROR;
         }

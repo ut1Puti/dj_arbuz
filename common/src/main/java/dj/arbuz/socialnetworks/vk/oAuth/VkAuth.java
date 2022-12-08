@@ -5,7 +5,7 @@ import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.UserAuthResponse;
-import httpserver.server.HttpServer;
+import dj.arbuz.socialnetworks.vk.oAuth.OAuthCodeQueue.MessageQueuePuller;
 import dj.arbuz.user.BotUser;
 
 import java.nio.file.Path;
@@ -24,7 +24,6 @@ public final class VkAuth extends AbstractVkAuth {
      * @see VkApiClient
      */
     private final VkApiClient vkApiClient;
-    private final HttpServer httpServer;
     private final OAuthCodeQueue oAuthCodeQueue;
     /**
      * Поле с конфигурации данных для аутентификации пользователь и приложения
@@ -39,10 +38,9 @@ public final class VkAuth extends AbstractVkAuth {
      * @param vkApiClient                    клиент vk
      * @param vkAppConfigurationJsonFilePath путь до json файла с конфигурацией
      */
-    public VkAuth(VkApiClient vkApiClient, HttpServer httpServer, Path vkAppConfigurationJsonFilePath) {
+    public VkAuth(VkApiClient vkApiClient, OAuthCodeQueue oAuthCodeQueue, Path vkAppConfigurationJsonFilePath) {
         this.vkApiClient = vkApiClient;
-        this.httpServer = httpServer;
-        this.oAuthCodeQueue = new OAuthCodeQueue(this.httpServer);
+        this.oAuthCodeQueue = oAuthCodeQueue;
         this.authConfiguration = VkAuthConfiguration.loadVkAuthConfigurationFromJson(vkAppConfigurationJsonFilePath);
     }
 
@@ -87,8 +85,8 @@ public final class VkAuth extends AbstractVkAuth {
     @Override
     public BotUser createBotUser(String userTelegramId) {
         String oAuthCode = null;
-        try (OAuthCodeQueue.MessageQueue q = oAuthCodeQueue.subscribeClosable(userTelegramId, httpServer)){
-            oAuthCode = q.pollMessage();
+        try (MessageQueuePuller oAuthCodeQueuePuller = oAuthCodeQueue.subscribe(userTelegramId)) {
+            oAuthCode = oAuthCodeQueuePuller.pollMessage();
         } catch (Exception e) {
             return null;
         }

@@ -59,7 +59,7 @@ public class AbstractVk extends AbstractSocialNetwork<Group, WallpostFull, BotUs
      *
      * @param userSystemId id пользователя в системе
      * @return {@code CompletableFuture<User>}, который выполняет логику создания пользователя,
-     * посмотреть ее можно в метода {@link VkAuth#createBotUserWithCode(String, String)}
+     * посмотреть ее можно в метода {@link VkAuth#createBotUser(String)}
      */
     @Override
     public BotUser createBotUser(String userSystemId) {

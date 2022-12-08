@@ -63,7 +63,6 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
     }
 
     public static void main(String[] args) throws RuntimeException {
-        HibernateUtil.getSessionFactory();
         HttpServer httpServer = HttpServer.getInstance();
 
         if (httpServer == null) {
@@ -71,7 +70,6 @@ public final class TelegramBot extends TelegramLongPollingBot implements Stoppab
         }
 
         httpServer.start();
-
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(new TelegramBot(TelegramConfigPaths.TELEGRAM_CONFIG_PATH));
