@@ -4,6 +4,7 @@ import httpserver.messages.request.HttpRequest;
 import httpserver.messages.response.HttpResponse;
 import httpserver.parser.HttpParser;
 import httpserver.parser.HttpParserException;
+import lombok.RequiredArgsConstructor;
 import stoppable.StoppableThread;
 
 import java.io.BufferedReader;
@@ -14,8 +15,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Stream;
 
 /**
@@ -32,7 +36,7 @@ public class ServerListenerThread extends StoppableThread {
     /**
      * Поле потока в который записываются полученные сервером get параметры http запроса
      */
-    private final PipedOutputStream parametersOutputStream = new PipedOutputStream();
+    private static final PipedOutputStream parametersOutputStream = new PipedOutputStream();
     /**
      * Поле reader'а читающего параметры полученных сервером get параметров http запросов
      */
@@ -83,7 +87,7 @@ public class ServerListenerThread extends StoppableThread {
                         }
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException | UncheckedIOException e) {
                 System.out.println(e.getMessage());
             }
         }

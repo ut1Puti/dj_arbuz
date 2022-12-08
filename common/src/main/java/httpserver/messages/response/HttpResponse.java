@@ -36,7 +36,7 @@ public class HttpResponse extends HttpMessage {
     private String body = "";
 
     private HttpResponse() {
-        headers.put("Connection:", "close");
+        headers.put("Connection", "close");
     }
 
     public HttpResponse addHeader(String headerName, String headerValue) {
@@ -55,8 +55,8 @@ public class HttpResponse extends HttpMessage {
         try (Stream<String> fileDataStream = Files.lines(requestTargetFile, StandardCharsets.UTF_8)) {
             String body = fileDataStream.collect(Collectors.joining(" "));
             httpResponse.setHttpStatusCode(HttpStatusCode.OK_200)
-                    .addHeader("Content-Type:", "text/html; charset=utf-8")
-                    .addHeader("Content-Length:", String.valueOf(body.getBytes().length))
+                    .addHeader("Content-Type", "text/html; charset=utf-8")
+                    .addHeader("Content-Length", String.valueOf(body.getBytes().length))
                     .setBody(body);
         } catch (IOException | UncheckedIOException e) {
             throw new HttpParserException(HttpStatusCode.NOT_FOUND_404);
@@ -73,7 +73,7 @@ public class HttpResponse extends HttpMessage {
 
     public String toHttpMessage() {
         return httpVersion.getValueString() + ' ' + httpStatusCode.getStatusCode() + ' ' + httpStatusCode.getCodeMessage() + HttpServerConfiguration.CRLF +
-                headers.entrySet().stream().map(entry -> entry.getKey() + entry.getValue()).collect(Collectors.joining("\n")) + HttpServerConfiguration.CRLF +
+                headers.entrySet().stream().map(entry -> entry.getKey() + ':' + entry.getValue()).collect(Collectors.joining("\n")) + HttpServerConfiguration.CRLF +
                 HttpServerConfiguration.CRLF +
                 body;
     }

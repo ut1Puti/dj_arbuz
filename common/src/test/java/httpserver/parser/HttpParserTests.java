@@ -63,7 +63,7 @@ public class HttpParserTests {
      */
     @Test
     public void testIncorrectCRLFsInHttpRequest() throws IOException {
-        String httpRequest = " GET /redirect.html?code HTTP/1.1\rAccept: text/html,image/gif,image/jpeg,*;q=.2,*/*;q=.2\r User-Agent: Jersey/2.35(HttpUrlConnection18.0.2.1)\r Host: localhost:8080 Connection: keep-alive\r\r ";
+        String httpRequest = "GET /redirect.html?code HTTP/1.1\rAccept: text/html,image/gif,image/jpeg,*;q=.2,*/*;q=.2\r User-Agent: Jersey/2.35(HttpUrlConnection18.0.2.1)\r Host: localhost:8080 Connection: keep-alive\r\r ";
         InputStream inputStream = new ByteArrayInputStream(httpRequest.getBytes());
         try {
             HttpParser.parseRequest(inputStream);
@@ -116,7 +116,7 @@ public class HttpParserTests {
             HttpParser.parseRequest(inputStream);
         } catch (IOException ignored) {
         } catch (HttpParserException e) {
-            assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR_500.getCodeMessage(), e.getMessage());
+            assertEquals(HttpStatusCode.BAD_REQUEST_400.getCodeMessage(), e.getMessage());
             return;
         }
         fail();
