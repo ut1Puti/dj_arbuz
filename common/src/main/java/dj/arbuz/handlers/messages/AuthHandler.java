@@ -4,6 +4,7 @@ import dj.arbuz.BotTextResponse;
 import dj.arbuz.database.UserBase;
 import dj.arbuz.socialnetworks.socialnetwork.AbstractSocialNetwork;
 import dj.arbuz.socialnetworks.socialnetwork.SocialNetwork;
+import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.vk.AbstractVk;
 import dj.arbuz.user.BotUser;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 /**
  * Класс обработки команды /auth
@@ -58,13 +60,27 @@ public final class AuthHandler extends DjArbuzAbstractMessageHandler {
         }
 
         CompletableFuture<String> createUserActorAnswer =
-                CompletableFuture
-                        .supplyAsync(() -> vk.createBotUser(userSendResponseId))
-                        .thenApply((this::botUserAuth));
+                CompletableFuture.supplyAsync(userAuthAnswerSupplier(userSendResponseId));
         return MessageHandlerResponse.newBuilder()
                 .textMessage(BotTextResponse.AUTH_GO_VIA_LINK + authURL)
                 .additionalMessage(createUserActorAnswer)
                 .build(List.of(userSendResponseId));
+    }
+
+    /**
+     * Создает {@code supplier} производящий ответ на результат авторизации пользователя
+     *
+     * @param userSendResponseId id пользователя, которого авторизуют
+     * @return строку с ответом в зависимости от результата авторизации
+     */
+    private Supplier<String> userAuthAnswerSupplier(String userSendResponseId) {
+        return () -> {
+            try {
+                return botUserAuth(vk.createBotUser(userSendResponseId));
+            } catch (SocialNetworkException e) {
+                return BotTextResponse.AUTH_ERROR;
+            }
+        };
     }
 
     /**
@@ -75,7 +91,7 @@ public final class AuthHandler extends DjArbuzAbstractMessageHandler {
      */
     private String botUserAuth(BotUser botUserCreated) {
         if (botUserCreated == null) {
-            return BotTextResponse.AUTH_ERROR;
+            return BotTextResponse.TIME_EXPIRED;
         } else if (usersBase.addUser(botUserCreated.getTelegramId(), botUserCreated)) {
             return BotTextResponse.AUTH_SUCCESS;
         } else {

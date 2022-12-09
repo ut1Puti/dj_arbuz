@@ -11,6 +11,14 @@ import dj.arbuz.handlers.messages.MessageHandlerResponse.MessageHandlerResponseB
  */
 abstract class DjArbuzAbstractMessageHandler implements MessageHandler {
     /**
+     * Поле сообщения бота start
+     *
+     * @see MessageHandlerResponse.MessageHandlerResponseBuilder
+     * @see BotTextResponse#START
+     */
+    protected static final MessageHandlerResponseBuilder START = MessageHandlerResponse.newBuilder()
+            .textMessage(BotTextResponse.START);
+    /**
      * Поле help сообщения бота
      *
      * @see MessageHandlerResponse.MessageHandlerResponseBuilder
@@ -86,7 +94,7 @@ abstract class DjArbuzAbstractMessageHandler implements MessageHandler {
     /**
      * Метод создающий ответ при неправильном параметре
      *
-     * @param commandName название команды
+     * @param commandName     название команды
      * @param illegalArgument неправильный аргумент
      * @return ответ
      */
@@ -98,7 +106,7 @@ abstract class DjArbuzAbstractMessageHandler implements MessageHandler {
     /**
      * Метод создающий ответ при отсутствии необходимого параметра
      *
-     * @param commandName название команды
+     * @param commandName     название команды
      * @param exampleArgument пример необходимого аргумента
      * @return ответ
      */

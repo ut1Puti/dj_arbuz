@@ -5,6 +5,8 @@ import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.UserAuthResponse;
+import dj.arbuz.BotTextResponse;
+import dj.arbuz.socialnetworks.socialnetwork.SocialNetworkException;
 import dj.arbuz.socialnetworks.vk.oAuth.OAuthCodeQueue.MessageQueuePuller;
 import dj.arbuz.user.BotUser;
 
@@ -72,7 +74,7 @@ public final class VkAuth extends AbstractVkAuth {
     }
 
     /**
-     * Метод интерфейса CreateUser создающий пользователя.
+     * Метод создающий пользователя.
      * Создается с помощью Vk Java SDK, получая код с сервера
      *
      * @param userTelegramId id пользователя в системе
@@ -83,11 +85,13 @@ public final class VkAuth extends AbstractVkAuth {
      * @see VkAuthConfiguration#REDIRECT_URL
      */
     @Override
-    public BotUser createBotUser(String userTelegramId) {
-        String oAuthCode = null;
+    public BotUser createBotUser(String userTelegramId) throws SocialNetworkException {
+        String oAuthCode;
         try (MessageQueuePuller oAuthCodeQueuePuller = oAuthCodeQueue.subscribe(userTelegramId)) {
             oAuthCode = oAuthCodeQueuePuller.pollMessage();
-        } catch (Exception e) {
+        }
+
+        if (oAuthCode == null) {
             return null;
         }
 
@@ -101,7 +105,7 @@ public final class VkAuth extends AbstractVkAuth {
             return new BotUser(authResponse.getUserId(), authResponse.getAccessToken(), userTelegramId);
         } catch (ApiException | ClientException e) {
             System.err.println(e.getMessage());
-            return null;
+            throw new SocialNetworkException(BotTextResponse.AUTH_ERROR);
         }
     }
 }

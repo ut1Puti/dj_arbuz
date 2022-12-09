@@ -60,7 +60,7 @@ public class AbstractVkTests {
      * Метод тестирующий асинхронное создание пользователя системы
      */
     @Test
-    public void testCreateUserAsync() {
+    public void testCreateUserAsync() throws SocialNetworkException {
         BotUser updateUser = vk.createBotUser(userSystemId);
         assertEquals(new BotUser(1, "ACCESS_TOKEN", userSystemId), updateUser);
     }
@@ -82,7 +82,7 @@ public class AbstractVkTests {
      * Метод проверяющий получение ссылки на группу по подстроке, которой не соответствует ни одна группа среди доступных
      */
     @Test
-    public void testGetNotExistGroupUrl() {
+    public void testGetNotExistGroupUrl() throws SocialNetworkException {
         BotUser user = vk.createBotUser(userSystemId);
         String userReceivedGroupName = "abracadabra";
         assertThrows(NoGroupException.class,
@@ -107,7 +107,7 @@ public class AbstractVkTests {
      * Метод проверяющий получение id группы, которой не существует
      */
     @Test
-    public void testGetNotExistGroupId() {
+    public void testGetNotExistGroupId() throws SocialNetworkException {
         BotUser user = vk.createBotUser(userSystemId);
         String userReceivedGroupName = "abracadabra";
         assertThrows(NoGroupException.class,
@@ -134,7 +134,7 @@ public class AbstractVkTests {
      * Метод тестирующий подписку на несуществующую группу
      */
     @Test
-    public void testSubscribeToNotExistGroup() {
+    public void testSubscribeToNotExistGroup() throws SocialNetworkException {
         BotUser user = vk.createBotUser(userSystemId);
         String userReceivedGroupName = "abracadabra";
         assertThrows(NoGroupException.class,
@@ -190,7 +190,7 @@ public class AbstractVkTests {
      * Метод тестирующий отписки от несуществующей группы
      */
     @Test
-    public void testUnsubscribeFromNotExistGroup() {
+    public void testUnsubscribeFromNotExistGroup() throws SocialNetworkException {
         BotUser user = vk.createBotUser(userSystemId);
         String userReceivedGroupName = "abracadabra";
         assertThrows(NoGroupException.class,
@@ -246,7 +246,7 @@ public class AbstractVkTests {
      * Метод тестирующий получение постов в виде строк из не существующей группы
      */
     @Test
-    public void testGetLastPostsAsStringsFromNotExistGroup() {
+    public void testGetLastPostsAsStringsFromNotExistGroup() throws SocialNetworkException {
         BotUser user = vk.createBotUser(userSystemId);
         String userReceivedGroupName = "abracadabra";
         assertThrows(NoGroupException.class,
@@ -286,7 +286,7 @@ public class AbstractVkTests {
      * Метод тестирующий получение постов в виде {@code WallpostFull} из не существующей группы
      */
     @Test
-    public void testGetLastPostsAsPostsFromNotExistGroup() {
+    public void testGetLastPostsAsPostsFromNotExistGroup() throws SocialNetworkException {
         BotUser user = vk.createBotUser(userSystemId);
         String userReceivedGroupName = "abracadabra";
         assertThrows(NoGroupException.class,

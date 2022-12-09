@@ -28,5 +28,5 @@ public class TelegramConfigPaths {
     /**
      *
      */
-    public static final Path SERVER_CONFIG_PATH = Path.of("telegram", "src", "main", "resources", "configs", "server.cfg.json");
+    public static final Path SERVER_CONFIG_PATH = Path.of("telegram", "src", "main", "resources", "configs", "default_server.cfg.json");
 }

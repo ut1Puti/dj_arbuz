@@ -1,7 +1,8 @@
 package dj.arbuz.console;
 
 import dj.arbuz.ExecutableMessage;
-import httpserver.HttpServerNano;
+import httpserver.DefaultServerConfigPath;
+import httpserver.HttpServer;
 import stoppable.StoppableThread;
 
 import java.io.IOException;
@@ -36,17 +37,17 @@ public final class ConsoleBot extends StoppableThread implements ExecutableMessa
     }
 
     public static void main(String[] args) throws IOException {
-        HttpServerNano httpServerNano = HttpServerNano.createInstance(Path.of("common", "src", "main", "resources", "configs", "server.cfg.json"));
+        HttpServer httpServer = HttpServer.createInstance(DefaultServerConfigPath.DEFAULT_SERVER_CONFIG_PATH);
         int startTimeout = 0;
         boolean isDaemon = true;
-        httpServerNano.start(startTimeout, isDaemon);
+        httpServer.start(startTimeout, isDaemon);
         ConsoleBot consoleBot = new ConsoleBot();
         consoleBot.start();
         while (consoleBot.isWorking()) {
             Thread.onSpinWait();
         }
         consoleBot.stopWithInterrupt();
-        httpServerNano.stop();
+        httpServer.stop();
     }
 
     /**

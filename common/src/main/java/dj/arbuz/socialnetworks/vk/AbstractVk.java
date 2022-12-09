@@ -62,7 +62,7 @@ public class AbstractVk extends AbstractSocialNetwork<Group, WallpostFull, BotUs
      * посмотреть ее можно в метода {@link VkAuth#createBotUser(String)}
      */
     @Override
-    public BotUser createBotUser(String userSystemId) {
+    public BotUser createBotUser(String userSystemId) throws SocialNetworkException {
         return oAuth.createBotUser(userSystemId);
     }
 

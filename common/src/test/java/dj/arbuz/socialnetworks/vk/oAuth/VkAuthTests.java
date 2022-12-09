@@ -4,9 +4,10 @@ import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import httpserver.HttpServerNano;
+import httpserver.HttpServer;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,9 +30,17 @@ public class VkAuthTests {
     /**
      * Поле класса аутентификации пользователя в vk
      */
-    private static final VkAuth vkAuth = new VkAuth(vk,
-            new OAuthCodeQueue(HttpServerNano.getInstance()),
-            Path.of("src", "test", "resources", "configs", "vk.cfg.json"));
+    private static final VkAuth vkAuth;
+
+    static {
+        try {
+            vkAuth = new VkAuth(vk,
+                    new OAuthCodeQueue(HttpServer.createInstance(Path.of("src", "main", "resources", "configs", "default_server.cfg.json"))),
+                    Path.of("src", "test", "resources", "configs", "vk.cfg.json"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Метод для тестирования создания пользователя приложения vk

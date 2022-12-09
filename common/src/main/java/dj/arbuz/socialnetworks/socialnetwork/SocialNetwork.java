@@ -29,7 +29,7 @@ public interface SocialNetwork<W, G, U> {
      * @param userId id пользователя в системе
      * @return {@code CompletableFuture<User>}, который выполняет логику создания пользователя
      */
-    U createBotUser(String userId);
+    U createBotUser(String userId) throws SocialNetworkException;
 
     /**
      * Метод получающий ссылку на группу, найденную по подстроке полученной от пользователя

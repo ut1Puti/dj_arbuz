@@ -28,6 +28,9 @@ public final class MessageHandlerResponse {
      */
     @Getter
     private final String textMessage;
+    /**
+     * Поле дополнительного сообщения для пользователя
+     */
     @Getter
     private final Future<String> additionalMessage;
     /**
@@ -107,6 +110,9 @@ public final class MessageHandlerResponse {
          * Поле со списком постов в виде строк
          */
         private List<String> postsMessages;
+        /**
+         * Поле дополнительного сообщения для пользователя
+         */
         private Future<String> additionalMessage;
 
         /**
@@ -121,6 +127,13 @@ public final class MessageHandlerResponse {
             return this;
         }
 
+        /**
+         * Метод устанавливающий {@code Future}, из которого пользователь получит дополнительное сообщения
+         *
+         * @param additionalMessage {@code Future} дополнительного сообщения
+         * @return {@code this} {@code Builder}
+         * @see MessageHandlerResponseBuilder#additionalMessage
+         */
         public MessageHandlerResponseBuilder additionalMessage(Future<String> additionalMessage) {
             this.additionalMessage = additionalMessage;
             return this;

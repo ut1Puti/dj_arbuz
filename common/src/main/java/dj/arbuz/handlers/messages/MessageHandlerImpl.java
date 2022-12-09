@@ -41,6 +41,7 @@ public final class MessageHandlerImpl extends DjArbuzAbstractMessageHandler {
      * Метод инициализирующий {@code map} командами и их обработчиками
      */
     private void initCommandMap(GroupBase groupBase, UserBase userBase, AbstractVk vk) {
+        commandMap.put("/start", new StartHandler());
         commandMap.put("/help", new HelpHandler());
         commandMap.put("/auth", new AuthHandler(vk, userBase));
         commandMap.put("/auth_as_admin", new AuthAsAdminHandler(groupBase, userBase, vk));
